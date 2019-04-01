@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>it.polimi.ingsw</groupId>
-  <artifactId>AM00</artifactId>
+  <artifactId>AM06</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>AM00</name>
+  <name>AM06</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.eu</url>
 
