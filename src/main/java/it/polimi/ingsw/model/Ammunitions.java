@@ -8,23 +8,35 @@ public class Ammunitions {
     Ammunitions()
     {}
 
-    public void addRed(int i)
-    {}
+    public boolean addRed(int i)
+    {
+        return true;
+    }
 
-    public void addBlue(int i)
-    {}
+    public boolean addBlue(int i)
+    {
+        return true;
+    }
 
-    public void addYellow(int i)
-    {}
+    public boolean addYellow(int i)
+    {
+        return true;
+    }
 
-    public void useRed(int i)
-    {}
+    public boolean useRed(int i)
+    {
+        return true;
+    }
 
-    public void useBlue(int i)
-    {}
+    public boolean useBlue(int i)
+    {
+        return true;
+    }
 
-    public void useYellow(int i)
-    {}
+    public boolean useYellow(int i)
+    {
+        return true;
+    }
 
     public int getRed()
     {
