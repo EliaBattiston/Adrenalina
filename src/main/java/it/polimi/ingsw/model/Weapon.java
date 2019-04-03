@@ -2,6 +2,9 @@ package it.polimi.ingsw.model;
 
 import java.util.List;
 
+/**
+ * Class representing a weapon that give access to it's final attributes and let set the loaded property
+ */
 public class Weapon extends Card{
     private final int id;
     private final String name;
@@ -33,6 +36,8 @@ public class Weapon extends Card{
         return loaded;
     }
 
+    public void setLoaded(boolean l){ loaded = l; }
+
     public Action getBase() {
         return base;
     }
@@ -48,7 +53,4 @@ public class Weapon extends Card{
     public Color getColor() {
         return color;
     }
-
-    public void setLoaded(boolean l)
-    {}
 }
