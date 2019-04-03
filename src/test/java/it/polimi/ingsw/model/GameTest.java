@@ -1,10 +1,8 @@
 package it.polimi.ingsw.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class GameTest {
     /**
@@ -109,5 +107,65 @@ public class GameTest {
         //it changed the values
         assertTrue(p.getX() == 2);
         assertTrue(p.getY() == 3);
+    }
+
+    /**
+     * Tests the correct functioning of Kill class that has been initialized to true
+     */
+    @Test
+    public void TreuKillClass()
+    {
+        Player p = new Player("ERap320", "Yay!", Fighter.Dstruttor3);
+
+        //Usable Kill
+        Kill k = new Kill(true);
+        assertTrue(k.getSkull());
+
+        k.setKiller(p);
+        assertFalse(k.getSkull());
+        assertSame(k.getKiller(), p);
+        assertFalse(k.getOverkill());
+
+        k.setOverkill(true);
+        assertTrue(k.getOverkill());
+    }
+
+    /**
+     * Tests the correct retaining of a "without a skull" state of a false initialized Kill class
+     */
+    @Test
+    public void FalseKillClass()
+    {
+        Player p = new Player("ERap320", "Yay!", Fighter.Dstruttor3);
+
+        //Unusable Kill
+        Kill k = new Kill(false);
+        assertFalse(k.getSkull());
+
+        k.setKiller(p);
+        assertSame(k.getKiller(), null);
+        assertFalse(k.getSkull());
+
+        k.setOverkill(true);
+        assertFalse(k.getOverkill());
+    }
+
+    /**
+     * Test the behaviour of a Point instance
+     */
+    @Test
+    public void TestPoint()
+    {
+        Point p = new Point(1,2);
+        assertSame(p.getX(), 1);
+        assertSame(p.getY(), 2);
+
+        p.set(3,5);
+        assertNotSame(p.getX(),3);
+        assertNotSame(p.getY(),5);
+
+        p.set(-2,-5);
+        assertNotSame(p.getX(),-2);
+        assertNotSame(p.getY(),-3);
     }
 }
