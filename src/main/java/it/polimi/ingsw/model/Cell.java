@@ -1,33 +1,78 @@
 package it.polimi.ingsw.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The class represent the single cell of the board
+ */
 public abstract class Cell {
+    /**
+     * The attribute represents the sides of the cell (wall, door or nothing), ordered North-East-South-West
+     */
     private Side[] sides;
+    /**
+     * The attribute represents the players positioned in the cell
+     */
     private List<Player> pawns;
+    /**
+     * The attribute represents the Room Number (needed to distinguish the cells composing each room)
+     */
     private int roomNumber;
 
+    /**
+     * The constructor instantiate a cell without players inside, with the given sides and room number
+     * @param sides array describing the sides of the cell
+     * @param roomNumber identification number for the room
+     */
     Cell(Side[] sides, int roomNumber)
     {
         this.sides = sides;
         this.roomNumber = roomNumber;
+        pawns = new ArrayList<Player>();
     }
 
+    /**
+     * Returns an array with the sides of the cell, ordered N-E-S-W
+     * @return array of sides
+     */
     public Side[] getSides() {
         return sides;
     }
 
+    /**
+     * Returns a list with the players inside the cell
+     * @return list of players in the cell
+     */
     public List<Player> getPawns() {
         return pawns;
     }
 
+    /**
+     * returns the room identification number
+     * @return room id number
+     */
     public int getRoomNumber() {
         return roomNumber;
     }
 
+    /**
+     * Add a player to the cell (the player moved into the cell)
+     * @param pl player to be added in the cell
+     */
     public void addPawn(Player pl)
-    {}
+    {
+        pawns.add(pl);
+    }
 
+    /**
+     * The function removes the given player from the cell (if exists)
+     * @param pl player to be removed
+     */
     public void removePawn(Player pl)
-    {}
+    {
+        if(pawns.contains(pl)) {
+            pawns.remove(pl);
+        }
+    }
 }
