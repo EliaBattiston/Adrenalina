@@ -32,34 +32,23 @@ public class Kill {
 
     /**
      * Sets the killer for this box
-     * @param killer Player that made the kill
+     * @param k Player that made the kill
+     * @param over Presence of the 12th damage
+     * @return True if the state of the kill is correct, false otherwise
      */
-    public void setKiller(Player killer)
+    public boolean setKiller(Player k, boolean over)
     {
-        if(skull == true && overkill == false)
+        if(skull && this.killer == null && k != null)
         {
             skull = false;
-            this.killer = killer;
-        }
-        else
-        {
-            //TODO: add error
-        }
-    }
+            this.killer = k;
+            this.overkill = over;
 
-    /**
-     * Sets the overkill attribute
-     * @param overkill Presence of the 12th damage
-     */
-    public void setOverkill(boolean overkill)
-    {
-        if(skull == false && killer != null)
-        {
-            this.overkill = overkill;
+            return true;
         }
         else
         {
-            //TODO: add error
+            return false;
         }
     }
 
@@ -91,6 +80,22 @@ public class Kill {
         else //There can't be an overkill without a killer
         {
             return false;
+        }
+    }
+
+    /**
+     * Tells if the kill had a skull at the beginning or if it unused
+     * @return True if the kill il used, false otherwise
+     */
+    public boolean isUsed()
+    {
+        if(!skull && killer == null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 }

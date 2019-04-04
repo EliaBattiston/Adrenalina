@@ -18,9 +18,8 @@ public class Point {
      * @param x X coordinate
      * @param y Y coordinate
      */
-    Point(int x, int y)
+    Point(int x, int y) throws WrongPointException
     {
-        //TODO: add error checking
         set(x, y);
     }
 
@@ -28,8 +27,9 @@ public class Point {
      * Sets the two coordinates
      * @param x X coordinate
      * @param y Y coordinate
+     * @throws WrongPointException When the given coordinates are outside the map
      */
-    public void set(int x, int y)
+    public void set(int x, int y) throws WrongPointException
     {
         if(x>=0 && x<=2 && y>=0 && y<= 3)
         {
@@ -38,7 +38,7 @@ public class Point {
         }
         else
         {
-            //TODO: add error
+            throw new WrongPointException();
         }
     }
 

@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -73,7 +74,15 @@ public class Player
         this.skulls = 0;
         this.ammo = new Ammunitions();
         this.powers = new Power[3];
-        this.position = new Point(0,0);
+        try
+        {
+            this.position = new Point(0, 0);
+        }
+        catch(WrongPointException e)
+        {
+            this.position = null;
+        }
+
     }
 
     /**
@@ -127,7 +136,10 @@ public class Player
      */
     public List<Weapon> getWeapons()
     {
-        return Arrays.asList(weapons);
+        List<Weapon> list = new ArrayList<Weapon>(Arrays.asList(weapons));
+        while(list.contains(null))
+            list.remove(null);
+        return list;
     }
 
 
@@ -136,9 +148,9 @@ public class Player
      *
      * @return Player's received damage
      */
-    public List<Player> getReceivedDamage()
+    public Player[] getReceivedDamage()
     {
-        return Arrays.asList(receivedDamage);
+        return receivedDamage;
     }
 
     /**
@@ -159,14 +171,33 @@ public class Player
         return skulls;
     }
 
-    //TODO check if useful
+
     /**
-     *
-     * @return Player's ammunitions
+     * Gives the number of requested ammunition
+     * @param c Color of desired ammo
+     * @return Number of available ammo for that color
      */
-    public Ammunitions getAmmo()
+    public int getAmmo(Color c)
     {
-        return ammo;
+        switch(c)
+        {
+            case Red:
+            {
+                return ammo.getRed();
+            }
+            case Blue:
+            {
+                return ammo.getBlue();
+            }
+            case Yellow:
+            {
+                return ammo.getYellow();
+            }
+            default:
+            {
+                return 0;
+            }
+        }
     }
 
     /**
@@ -175,8 +206,18 @@ public class Player
      */
     public List<Power> getPowers()
     {
-        return Arrays.asList(powers);
+        List<Power> list = new ArrayList<Power>(Arrays.asList(powers));
+        while(list.contains(null))
+            list.remove(null);
+        return list;
     }
 
-
+    /**
+     *
+     * @return Number of points
+     */
+    public int getPoints()
+    {
+        return points;
+    }
 }

@@ -34,7 +34,6 @@ public class Ammunitions {
      */
     public boolean addRed(int i)
     {
-        //TODO: decide if returning false in some situation
         if(i>=0 && i<=3)
         {
             red = red + i;
@@ -56,7 +55,6 @@ public class Ammunitions {
      */
     public boolean addBlue(int i)
     {
-        //TODO: decide if returning false in some situation
         if(i>=0 && i<=3)
         {
             blue = blue + i;
@@ -78,7 +76,6 @@ public class Ammunitions {
      */
     public boolean addYellow(int i)
     {
-        //TODO: decide if returning false in some other situation
         if(i>=0 && i<=3)
         {
             yellow = yellow + i;
