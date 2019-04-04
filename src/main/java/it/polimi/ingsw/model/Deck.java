@@ -5,13 +5,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * A normal deck for non reusable cards
+ * @param <T> The type of cards handled by the deck
+ */
 public class Deck<T extends Card> {
     protected List<T> cards;
 
     /**
      * Build an empty Deck
      */
-    Deck(){ cards = new ArrayList<>(); }
+    public Deck(){ cards = new ArrayList<>(); }
 
     /**
      * Add a card to the Deck
@@ -21,24 +25,27 @@ public class Deck<T extends Card> {
 
     /**
      * Get the first card of the deck and remove from it
-     * @return the first card
+     * @return the first card of the deck
      * @throws EmptyDeckException if the deck is empty and you try to draw a card
      */
     public T draw() throws EmptyDeckException
     {
-        T card = cards.get(0);
-        if (card == null)
+        try{
+            T card = cards.get(0);
+            if (card == null)
+                throw new EmptyDeckException();
+            cards.remove(0);
+            return card;
+        }catch (IndexOutOfBoundsException e){
             throw new EmptyDeckException();
-        cards.remove(0);
-        return card;
+        }
+
     }
 
     /**
      * Shuffle the deck
      */
-    public void shuffle(){
-        Collections.shuffle(cards);
-    }
+    public void shuffle(){ Collections.shuffle(cards); }
 
     /**
      * Clone the Deck
@@ -57,8 +64,5 @@ public class Deck<T extends Card> {
      * Used for the Junit testing
      * @return the internal representation of the deck
      */
-    protected List<T> getCards()
-    {
-        return cards;
-    }
+    protected List<T> getCards() { return cards; }
 }

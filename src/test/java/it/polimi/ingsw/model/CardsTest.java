@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
@@ -29,15 +30,21 @@ public class CardsTest {
     @Test
     public void checkLootClass()
     {
-        Color[] c = new Color[]{Color.Red, Color.Blue};
+        Color[] c = new Color[]{Color.Red, Color.Blue, Color.Power};
         try {
             Loot l = new Loot(c);
             assertTrue(l.getContent() == c);
         }catch (ArrayDimensionException e){
-            ;
+            fail();
         }
 
-        //TODO check exception when we have junit5
+        Color[] c2 = new Color[]{Color.Red, Color.Blue};
+        try {
+            Loot l = new Loot(c2);
+            fail();
+        }catch (ArrayDimensionException e){
+            assertTrue(true);
+        }
     }
 
     /**
@@ -67,15 +74,14 @@ public class CardsTest {
     }
 
     /**
-     * Check Deck Class
+     * Check Deck Class: check it can contain the cards and give them correctly, check the shuffle function and the behavior when it's empty
      */
     @Test
     public void checkDeckClass()
     {
         Deck<Power> dP = new Deck<>();
-
-        //check Normal deck
         Power p1, p2, p3;
+
         p1 = new Power(1, "Pow1", null, Color.Red);
         p2 = new Power(2, "Pow2", null, Color.Blue);
         p3 = new Power(3, "Pow3", null, Color.Yellow);
@@ -83,13 +89,18 @@ public class CardsTest {
         dP.add(p2);
         dP.add(p3);
 
-        //Check the cards are inside
+        //Check that the cards are inside
         assertTrue(dP.getCards().contains(p1));
         assertTrue(dP.getCards().contains(p2));
         assertTrue(dP.getCards().contains(p3));
 
-        //check the shuffle function: try tree times to shuffle, if none of them change the order, there's a problem
-        ArrayList<Power> pows = (ArrayList<Power>) dP.getCards();
+        //check the clone function
+        Deck<Power> dP2 = dP.clone();
+        assertTrue(dP.getCards().equals(dP2.getCards()));
+
+        //check the shuffle function: try tree times to shuffle, if none of them change the order, there's probably a problem
+        ArrayList<Power> powsConn = (ArrayList<Power>) dP.getCards();
+        ArrayList<Power> pows = (ArrayList<Power>) powsConn.clone();
         dP.shuffle();
         if(!dP.getCards().equals(pows))
             assertTrue(true);
@@ -102,30 +113,26 @@ public class CardsTest {
                 if(!dP.getCards().equals(pows))
                     assertTrue(true);
                 else
-                    assertTrue(false);
+                    fail();
             }
         }
 
-        //check the function of the draw
+        //check the function of the draw -> use the cloned deck because dP has been shuffled
         try {
-            assertTrue(dP.draw() == p1);
-            assertTrue(dP.draw() == p2);
-            assertTrue(dP.draw() == p3);
+            assertTrue(dP2.draw() == p1);
+            assertTrue(dP2.draw() == p2);
+            assertTrue(dP2.draw() == p3);
         }catch(EmptyDeckException e){
-            assertTrue(false); //enter here if there's a problem in the try
+            fail(); //enter here if there's a problem in the try
         }
 
         try {
-            dP.draw();
+            dP2.draw();
 
-            assertTrue(false); //arrives here if there's a new card
+            fail(); //arrives here if there's a new card
         }catch(EmptyDeckException e){
             assertTrue(true);
         }
-
-        //check the clone function
-        Deck<Power> dP2 = dP.clone();
-        assertTrue(dP.getCards().equals(dP2.getCards()));
     }
 
     /**
@@ -149,7 +156,7 @@ public class CardsTest {
             assertTrue(dL.getCards().contains(l2));
             assertTrue(dL.getCards().contains(l3));
         }catch(ArrayDimensionException e){
-            assertTrue(false);
+            fail();
         }
 
         //draw the cards and check the EndlessDeck functionality is fine
@@ -162,8 +169,7 @@ public class CardsTest {
             dL.scrapCard(dL.draw());
             dL.scrapCard(dL.draw());
         }catch (EmptyDeckException e){
-            assertTrue(false);
+            fail();
         }
-
     }
 }

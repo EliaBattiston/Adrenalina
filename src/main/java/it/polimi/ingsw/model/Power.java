@@ -9,6 +9,13 @@ class Power extends Card{
     private final Action base;
     private final Color color;
 
+    /**
+     *
+     * @param id unique identifier of the card
+     * @param name name of the card
+     * @param base action that handle the effect of the card
+     * @param color color of the card
+     */
     public Power(int id, String name, Action base, Color color) {
         this.id = id;
         this.name = name;
