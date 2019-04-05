@@ -1,32 +1,68 @@
 package it.polimi.ingsw.model;
 
 
+import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 
+/**
+ * A normal deck for non reusable cards
+ * @param <T> The type of cards handled by the deck
+ */
 public class Deck<T extends Card> {
     protected List<T> cards;
 
-    Deck()
-    {}
+    /**
+     * Build an empty Deck
+     */
+    public Deck(){ cards = new ArrayList<>(); }
 
-    public void shuffle()
-    {}
+    /**
+     * Add a card to the Deck
+     * @param card
+     */
+    public void add(T card){ cards.add(card); }
 
-    public void add(T card)
-    {}
-
-    public T draw()
+    /**
+     * Get the first card of the deck and remove from it
+     * @return the first card of the deck
+     * @throws EmptyDeckException if the deck is empty and you try to draw a card
+     */
+    public T draw() throws EmptyDeckException
     {
-        return cards.get(0);
+        try{
+            T card = cards.get(0);
+            if (card == null)
+                throw new EmptyDeckException();
+            cards.remove(0);
+            return card;
+        }catch (IndexOutOfBoundsException e){
+            throw new EmptyDeckException();
+        }
+
     }
 
+    /**
+     * Shuffle the deck
+     */
+    public void shuffle(){ Collections.shuffle(cards); }
+
+    /**
+     * Clone the Deck
+     * @return the clone
+     */
     public Deck<T> clone()
     {
-        return new Deck<T>();
+        Deck<T> d = new Deck<>();
+        for(T c : cards){
+            d.add(c);//TODO check the order (maybe it's not needed)
+        }
+        return d;
     }
 
-    protected List<T> getCards()
-    {
-        return cards;
-    }
+    /**
+     * Used for the Junit testing
+     * @return the internal representation of the deck
+     */
+    protected List<T> getCards() { return cards; }
 }

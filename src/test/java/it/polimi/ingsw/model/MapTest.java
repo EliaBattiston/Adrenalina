@@ -75,7 +75,7 @@ public class MapTest {
         assertTrue(rc.getLoot() == l);
         assertTrue(rc.pickLoot() == l); //now we don't have it
         assertTrue(rc.getLoot() == null);
-        assertTrue(rc.pickLoot() == null);
+        assertTrue(rc.pickLoot() == null);*/
     }
 
     /**
