@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.exceptions;
 
 /**
  * This exception is thrown when trying to set a point outside the map

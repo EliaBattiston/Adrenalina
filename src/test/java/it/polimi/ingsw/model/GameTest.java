@@ -1,11 +1,12 @@
 package it.polimi.ingsw.model;
 
 
+import it.polimi.ingsw.exceptions.UsedNameException;
+import it.polimi.ingsw.exceptions.WrongPointException;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static junit.framework.TestCase.*;
 

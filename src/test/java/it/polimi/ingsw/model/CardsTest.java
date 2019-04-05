@@ -6,6 +6,8 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
+import it.polimi.ingsw.exceptions.ArrayDimensionException;
+import it.polimi.ingsw.exceptions.EmptyDeckException;
 import org.junit.Test;
 
 public class CardsTest {

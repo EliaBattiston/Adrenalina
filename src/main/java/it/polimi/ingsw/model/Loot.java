@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.ArrayDimensionException;
+
 /**
  * Represent a loot made of tree colors (or two plus a 'pick a power')
  */

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.EmptyDeckException;
+
 import java.util.List;
 import java.util.ArrayList;
 

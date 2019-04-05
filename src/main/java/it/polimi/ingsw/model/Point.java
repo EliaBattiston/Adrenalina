@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.WrongPointException;
+
 /**
  * Coordinates of a Player in the Map. Because of its use X values have to be between 0 and 2, Y values between 0 and 3
  */

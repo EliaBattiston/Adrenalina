@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.UsedNameException;
+
 import java.util.ArrayList;
 import java.util.List;
 
