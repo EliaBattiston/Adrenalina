@@ -28,7 +28,7 @@ public class ActionsTest {
         assertTrue(act.getDescription() == "Simple action");
         assertTrue(act.getCost() == cost);
 
-        //TODO: assertTrue per esecuzione lambda?
+        //TODO: assertTrue for lambda execution?
     }
 
     /**

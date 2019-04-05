@@ -1,13 +1,11 @@
 package it.polimi.ingsw.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class MapTest {
     /**
@@ -65,7 +63,15 @@ public class MapTest {
         sides[Direction.South.ordinal()] = Side.Nothing;
         sides[Direction.West.ordinal()] = Side.Door;
         RegularCell rc = new RegularCell( sides, 3);
-        Loot l = new Loot(new Color[]{Color.Blue, Color.Yellow, Color.Red});
+        Loot l = null;
+        try
+        {
+            l = new Loot(new Color[]{Color.Blue, Color.Yellow, Color.Red});
+        }
+        catch(ArrayDimensionException e)
+        {
+            fail();
+        }
 
         rc.refillLoot(l);
 
@@ -75,7 +81,7 @@ public class MapTest {
         assertTrue(rc.getLoot() == l);
         assertTrue(rc.pickLoot() == l); //now we don't have it
         assertTrue(rc.getLoot() == null);
-        assertTrue(rc.pickLoot() == null);*/
+        assertTrue(rc.pickLoot() == null);
     }
 
     /**
@@ -123,6 +129,5 @@ public class MapTest {
     public void checkMapClass()
     {
         //TODO: insert Map control for cells insertion and cell presence
-
     }
 }

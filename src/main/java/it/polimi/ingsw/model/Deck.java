@@ -55,7 +55,7 @@ public class Deck<T extends Card> {
     {
         Deck<T> d = new Deck<>();
         for(T c : cards){
-            d.add(c);//TODO check the order (maybe it's not needed)
+            d.add(c);
         }
         return d;
     }

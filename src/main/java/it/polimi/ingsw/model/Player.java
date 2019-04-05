@@ -142,8 +142,6 @@ public class Player
         return list;
     }
 
-
-    //TODO check return type
     /**
      *
      * @return Player's received damage
