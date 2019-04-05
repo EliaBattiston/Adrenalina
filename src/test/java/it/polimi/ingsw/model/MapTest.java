@@ -109,7 +109,7 @@ public class MapTest {
         Action base = new Action("BaseAction", "Make a basic action", cost, null);
         ArrayList<Action> acts = new ArrayList<>();
         acts.add(base);
-        Weapon w = new Weapon(1, "Weapon", base, acts, acts, Color.Red);
+        Weapon w = new Weapon(1, "Weapon","desc", base, acts, acts, Color.Red);
 
         sc.refillWeapon(w);
 

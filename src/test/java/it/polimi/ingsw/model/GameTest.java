@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 import org.junit.Test;
@@ -92,7 +93,7 @@ public class GameTest {
 
         Player b = new Player("DamageGiver", "Phrase2", Fighter.Dozer);
         Action doNothing = new Action("Do nothing", "Does nothing", new ArrayList<Color>(), null);
-        Weapon weapon = new Weapon(0, "Gun", doNothing, null, null, Color.Red);
+        Weapon weapon = new Weapon(0, "Gun","desc", doNothing, null, null, Color.Red);
         Power power = new Power(1, "Power", doNothing, Color.Blue);
 
         //check constructor
@@ -303,7 +304,26 @@ public class GameTest {
     {
         Gson gson = new GsonBuilder().create();
 
-        Game g = new Game(5, new Map("dummy"), new EndlessDeck<>(), new EndlessDeck<>(), new Deck<>() );
+        Deck<Weapon> dW = new Deck<>();
+        dW.add(new Weapon(1, "WeaponOne", "desc",null, null, null, Color.Blue));
+        dW.add(new Weapon(2, "WeaponOQwo", "desc",null, null, null, Color.Red));
+        dW.add(new Weapon(3, "WeaponTree", "desc",null, null, null, Color.Yellow));
+
+        EndlessDeck<Power> dP = new EndlessDeck<>();
+        dP.add(new Power(1, "Pow1", null, Color.Red));
+        dP.add(new Power(2, "Pow2", null, Color.Blue));
+        dP.add(new Power(3, "Pow3", null, Color.Yellow));
+
+        EndlessDeck<Loot> dL = new EndlessDeck<>();
+        try {
+            dL.add(new Loot(new Color[]{Color.Red, Color.Blue, Color.Power}));
+            dL.add(new Loot(new Color[]{Color.Red, Color.Yellow, Color.Power}));
+            dL.add(new Loot(new Color[]{Color.Blue, Color.Blue, Color.Power}));
+        }catch(ArrayDimensionException e){
+            fail();
+        }
+
+        Game g = new Game(5, new Map("dummy"), dP, dL, dW );
         String json = g.jsonSerialize();
 
         Game g2 = gson.fromJson(json, Game.class);

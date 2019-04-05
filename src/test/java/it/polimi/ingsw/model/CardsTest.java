@@ -56,7 +56,7 @@ public class CardsTest {
     public void checkWeaponClass()
     {
         Action base = new Action("MyAction","description", new ArrayList<>(), null);
-        Weapon w = new Weapon(1, "WeaponOne", base, null, null, Color.Red);
+        Weapon w = new Weapon(1, "WeaponOne", "desc",base, null, null, Color.Red);
 
         assertTrue(w.getName().equals("WeaponOne"));
         assertTrue(w.getAdditional() == null);

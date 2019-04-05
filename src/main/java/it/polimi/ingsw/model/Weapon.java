@@ -8,6 +8,7 @@ import java.util.List;
 public class Weapon extends Card{
     private final int id;
     private final String name;
+    private final String description;
     private boolean loaded;
     private final Action base;
     private final List<Action> additional;
@@ -23,10 +24,11 @@ public class Weapon extends Card{
      * @param alternative alternative action that can be done instead of the base one
      * @param color color of the weapon
      */
-    public Weapon(int id, String name, Action base, List<Action> additional, List<Action> alternative, Color color)
+    public Weapon(int id, String name, String description, Action base, List<Action> additional, List<Action> alternative, Color color)
     {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.base = base;
         this.additional = additional;
         this.alternative = alternative;
@@ -38,6 +40,8 @@ public class Weapon extends Card{
     public int getId() { return id; }
 
     public String getName() { return name; }
+
+    public String getDescription() { return description; }
 
     public boolean isLoaded() { return loaded; }
 
