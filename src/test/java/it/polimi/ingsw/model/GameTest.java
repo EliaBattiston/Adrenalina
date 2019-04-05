@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 import org.junit.Test;
@@ -153,7 +155,7 @@ public class GameTest {
             p = new Point(1, 1);
         }
         catch(WrongPointException e)
-        { assertTrue(false);};
+        { fail();};
 
 
         assertTrue(p.getX() == 1);
@@ -162,7 +164,7 @@ public class GameTest {
         try
         {
             p.set(5, 3);
-            assertTrue(false);
+            fail();
         }
         catch(WrongPointException e)
         {
@@ -176,7 +178,7 @@ public class GameTest {
         try
         {
             p.set(3, -5);
-            assertTrue(false);
+            fail();
         }
         catch(WrongPointException e)
         {
@@ -192,7 +194,7 @@ public class GameTest {
         }
         catch(WrongPointException e)
         {
-            assertTrue(false);
+            fail();
         }
         //it changed the values
         assertTrue(p.getX() == 2);
@@ -264,13 +266,13 @@ public class GameTest {
         }
         catch(UsedNameException e)
         {
-            assertTrue(false);
+            fail();
         }
 
         try
         {
             g.addPlayer(p1_doubledNick);
-            assertTrue(false);
+            fail();
         }
         catch(UsedNameException e)
         {
@@ -289,7 +291,24 @@ public class GameTest {
         }
         catch(UsedNameException e)
         {
-            assertTrue(false);
+            fail();
         }
+    }
+
+    /**
+     * Tests the json serialization using Gson
+     */
+    @Test
+    public void TestJson()
+    {
+        Gson gson = new GsonBuilder().create();
+
+        Game g = new Game(5, new Map("dummy"), new EndlessDeck<>(), new EndlessDeck<>(), new Deck<>() );
+        String json = g.jsonSerialize();
+
+        Game g2 = gson.fromJson(json, Game.class);
+        String json2 = g2.jsonSerialize();
+
+        assertEquals(json, json2);
     }
 }

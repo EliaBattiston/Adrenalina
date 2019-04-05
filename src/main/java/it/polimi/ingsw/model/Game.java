@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.exceptions.UsedNameException;
 
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ public class Game {
         this.powersDeck = powersDeck;
         this.ammoDeck = ammoDeck;
         this.weaponsDeck = weaponsDeck;
+        this.players = new ArrayList<>();
     }
 
     //TODO make this useful
@@ -115,14 +118,13 @@ public class Game {
         return ammoDeck;
     }
 
-    //TODO implement
+    /**
+     * Serializes the content of the class (which contains every important aspect of the match) in json
+     * @return Json serialization of the game
+     */
     public String jsonSerialize()
     {
-        return "";
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(this);
     }
-
-    //TODO implement
-    public void jsonDeserialize(String jsonGame)
-    {}
-
 }
