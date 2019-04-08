@@ -8,7 +8,7 @@ import java.util.List;
 public class Weapon extends Card{
     private final int id;
     private final String name;
-    private final String description;
+    private final String notes; //TODO add to uml
     private boolean loaded;
     private final Action base;
     private final List<Action> additional;
@@ -19,16 +19,17 @@ public class Weapon extends Card{
      *
      * @param id unique id of the card
      * @param name name of the weapon
+     * @param notes notes of the card
      * @param base base action of the card, it's always already fully payed if the card is loaded
      * @param additional additional action that can be added to the base one
      * @param alternative alternative action that can be done instead of the base one
      * @param color color of the weapon
      */
-    public Weapon(int id, String name, String description, Action base, List<Action> additional, List<Action> alternative, Color color)
+    public Weapon(int id, String name, String notes, Action base, List<Action> additional, List<Action> alternative, Color color)
     {
         this.id = id;
         this.name = name;
-        this.description = description;
+        this.notes = notes;
         this.base = base;
         this.additional = additional;
         this.alternative = alternative;
@@ -41,7 +42,7 @@ public class Weapon extends Card{
 
     public String getName() { return name; }
 
-    public String getDescription() { return description; }
+    public String getNotes() { return notes; }
 
     public boolean isLoaded() { return loaded; }
 

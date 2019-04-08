@@ -2,8 +2,11 @@ package it.polimi.ingsw.model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.exceptions.UsedNameException;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +121,8 @@ public class Game {
         return ammoDeck;
     }
 
+    //TODO update uml with static
+    // TODO let it make the file json or handle it in a different way
     /**
      * Serializes the content of the class (which contains every important aspect of the match) in json
      * @return Json serialization of the game
@@ -126,5 +131,19 @@ public class Game {
     {
         Gson gson = new GsonBuilder().create();
         return gson.toJson(this);
+    }
+
+    //TODO add to uml
+    /**
+     * Deserialize a json representing the class
+     * @param jsonFile the file containing the json representation of the class
+     * @return the object made from the json
+     */
+    public static Game jsonDeserialize(String jsonFile) throws FileNotFoundException
+    {
+        JsonReader reader = new JsonReader(new FileReader(jsonFile));
+        Gson gson = new GsonBuilder().create();
+
+        return gson.fromJson(reader, Game.class);
     }
 }
