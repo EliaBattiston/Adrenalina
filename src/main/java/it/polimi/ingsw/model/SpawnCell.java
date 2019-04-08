@@ -69,6 +69,7 @@ public class SpawnCell extends Cell{
         for(int i = 0; i < weapons.length; i++) {
             if(weapons[i] == null) {
                 weapons[i] = refillWeapon;
+                return ;
             }
         }
     }
