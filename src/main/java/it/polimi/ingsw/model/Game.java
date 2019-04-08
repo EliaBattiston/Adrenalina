@@ -136,14 +136,19 @@ public class Game {
     //TODO add to uml
     /**
      * Deserialize a json representing the class
-     * @param jsonFile the file containing the json representation of the class
+     * @param pathJsonFile the file containing the json representation of the class
      * @return the object made from the json
      */
-    public static Game jsonDeserialize(String jsonFile) throws FileNotFoundException
+    public static Game jsonDeserialize(String pathJsonFile) throws FileNotFoundException
     {
-        JsonReader reader = new JsonReader(new FileReader(jsonFile));
+        JsonReader reader = new JsonReader(new FileReader(pathJsonFile));
         Gson gson = new GsonBuilder().create();
 
         return gson.fromJson(reader, Game.class);
+    }
+
+    //TODO decide how to handle this in the best way. Actually I need it for the json
+    public void setMap(Map map) {
+        this.map = map;
     }
 }

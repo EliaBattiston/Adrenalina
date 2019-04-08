@@ -1,5 +1,12 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+
 /**
  * this class represents the map or board of the actual game
  */
@@ -16,16 +23,31 @@ public class Map {
     Map(String filePath)
     {
         cells = new Cell[4][3];
-        loadFromFile(filePath);
+        /*cells[0][0]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 0);
+        cells[0][1]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 1);
+        cells[0][2]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 2);
+        cells[1][0]= new SpawnCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 4, Color.Red);
+        cells[1][1]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 5);
+        cells[1][2]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 6);
+        cells[2][0]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 7);
+        cells[2][1]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 8);
+        cells[2][2]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 9);
+        cells[3][0]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 10);
+        cells[3][1]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 11);
+        cells[3][2]= new RegularCell(new Side[]{Side.Wall, Side.Door, Side.Wall, Side.Nothing}, 12);*/
     }
 
+    //TODO rename in the UML (it was loadFromFile)
     /**
      * the function deserialize the JSON config file and loads the data in the matrix
-     * @param path JSON map config file
+     * @param pathJsonFile JSON map config file
      */
-    private void loadFromFile(String path)
+    public static Map jsonDeserialize(String pathJsonFile) throws FileNotFoundException
     {
-        //TODO: implement JSON deserialization
+        JsonReader reader = new JsonReader(new FileReader(pathJsonFile));
+        Gson gson = new GsonBuilder().create();
+
+        return gson.fromJson(reader, Map.class);
     }
 
     /**
