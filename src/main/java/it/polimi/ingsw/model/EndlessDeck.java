@@ -37,7 +37,7 @@ public class EndlessDeck<T extends Card> extends Deck<T> {
 
     /**
      * Scrap a card when used. It'll be used for the new deck
-     * @param card
+     * @param card Card to be added to the scraps deck
      */
     public void scrapCard(T card){
         scraps.add(card);

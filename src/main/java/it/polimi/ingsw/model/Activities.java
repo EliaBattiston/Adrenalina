@@ -17,25 +17,25 @@ public class Activities {
      */
     private Activities() {
         //TODO: implement actions that can be made during the game
-        base = new ArrayList<Action>();
-        adrenalin3 = new ArrayList<Action>();
-        adrenalin6 = new ArrayList<Action>();
-        frenzyBefore = new ArrayList<Action>();
-        frenzyAfter = new ArrayList<Action>();
+        base = new ArrayList<>();
+        adrenalin3 = new ArrayList<>();
+        adrenalin6 = new ArrayList<>();
+        frenzyBefore = new ArrayList<>();
+        frenzyAfter = new ArrayList<>();
 
         /**
          * Implementation of all the possible actions
          */
-        ArrayList<Color> cost = new ArrayList<Color>();
+        ArrayList<Color> cost = new ArrayList<>();
         cost.add(Color.Blue);
         cost.add(Color.Yellow);
         cost.add((Color.Red));
         playPower = new Action("PlayPower", "Play Power card", null, null);
-        Action act = new Action("SimpleAction", "Simple action", cost, null);
-        Action adr3 = new Action("Simple3", "Simple action", cost, null);
-        Action adr6 = new Action("Simple6", "Simple action", cost, null);
-        Action frA = new Action("SimpleFrenzyA", "Simple action", cost, null);
-        Action frB = new Action("SimpleFrenzyB", "Simple action", cost, null);
+        Action act = new Action("SimpleAction", "Simple action 1", cost, null);
+        Action adr3 = new Action("Simple3", "Simple action 2", cost, null);
+        Action adr6 = new Action("Simple6", "Simple action 3", cost, null);
+        Action frA = new Action("SimpleFrenzyA", "Simple action 4", cost, null);
+        Action frB = new Action("SimpleFrenzyB", "Simple action 5", cost, null);
 
         base.add(act);
         base.add(act);
@@ -69,7 +69,7 @@ public class Activities {
      * @return a list of posslbe actions
      */
     public List<Action> getAvailable(int damage, boolean frenzy, boolean beforeFirst) {
-        ArrayList<Action> returnList = new ArrayList<Action>();
+        ArrayList<Action> returnList = new ArrayList<>();
         if(!frenzy) {
             returnList.addAll(base);
             if(damage >= 3) {

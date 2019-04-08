@@ -89,13 +89,6 @@ public class Kill {
      */
     public boolean isUsed()
     {
-        if(!skull && killer == null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return skull || killer != null;
     }
 }

@@ -21,7 +21,7 @@ public class Deck<T extends Card> {
 
     /**
      * Add a card to the Deck
-     * @param card
+     * @param card Card to be added to the Deck
      */
     public void add(T card){ cards.add(card); }
 

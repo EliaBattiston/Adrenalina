@@ -1,6 +1,5 @@
 package it.polimi.ingsw.exceptions;
 
-//TODO add to UML
 public class UsedNameException extends Exception
 {
     public UsedNameException()
