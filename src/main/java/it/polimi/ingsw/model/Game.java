@@ -129,7 +129,10 @@ public class Game {
      */
     public String jsonSerialize()
     {
-        Gson gson = new GsonBuilder().create();
+        GsonBuilder gsonBilder = new GsonBuilder();
+        gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        Gson gson = gsonBilder.create();
+
         return gson.toJson(this);
     }
 
@@ -142,7 +145,10 @@ public class Game {
     public static Game jsonDeserialize(String pathJsonFile) throws FileNotFoundException
     {
         JsonReader reader = new JsonReader(new FileReader(pathJsonFile));
-        Gson gson = new GsonBuilder().create();
+
+        GsonBuilder gsonBilder = new GsonBuilder();
+        gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        Gson gson = gsonBilder.create();
 
         return gson.fromJson(reader, Game.class);
     }

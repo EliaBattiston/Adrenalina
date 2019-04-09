@@ -245,7 +245,7 @@ public class GameTest {
      */
     public void TestGameClass()
     {
-        Game g = new Game(5, new Map("dummy"), null, null, null);
+        Game g = new Game(5, new Map(), null, null, null);
         Player p1 = new Player("ERap320", "Yay!", Fighter.Dstruttor3);
         Player p1_doubledNick = new Player("ERap320", "Yuy!", Fighter.Dozer);
         Player p2 = new Player("ERap321", "Yay!", Fighter.Dstruttor3);

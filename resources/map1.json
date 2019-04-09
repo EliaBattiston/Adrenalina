@@ -1,0 +1,93 @@
+{
+    "cells": [
+        [{
+            "type": "RegularCell",
+            "properties": {
+                "sides": ["Wall", "Door", "Nothing", "Wall"],
+                "pawns": [],
+                "roomNumber": 0
+            }
+        }, {
+            "type": "SpawnCell",
+            "properties": {
+                "spawn": "Red",
+                "weapons": [null, null, null],
+                "sides": ["Nothing", "Wall", "Door", "Wall"],
+                "pawns": [],
+                "roomNumber": 0
+            }
+        }, {
+            "type": "RegularCell",
+            "properties": {
+                "sides": ["Door", "Nothing", "Wall", "Wall"],
+                "pawns": [],
+                "roomNumber": 1
+            }
+        }],
+        [{
+            "type": "RegularCell",
+            "properties": {
+                "sides": ["Wall", "Nothing", "Door", "Door"],
+                "pawns": [],
+                "roomNumber": 2
+            }
+        }, {
+            "type": "RegularCell",
+            "properties": {
+                "sides": ["Door", "Nothing", "Door", "Wall"],
+                "pawns": [],
+                "roomNumber": 3
+            }
+        }, {
+            "type": "RegularCell",
+            "properties": {
+                "sides": ["Door", "Nothing", "Wall", "Nothing"],
+                "pawns": [],
+                "roomNumber": 1
+            }
+        }],
+        [{
+            "type": "SpawnCell",
+            "properties": {
+                "spawn": "Blue",
+                "weapons": [null, null, null],
+                "sides": ["Wall", "Wall", "Door", "Nothing"],
+                "pawns": [],
+                "roomNumber": 2
+            }
+        }, {
+            "type": "RegularCell",
+            "properties": {
+                "sides": ["Door", "Door", "Wall", "Nothing"],
+                "pawns": [],
+                "roomNumber": 3
+            }
+        }, {
+            "type": "RegularCell",
+            "properties": {
+                "sides": ["Wall", "Door", "Wall", "Nothing"],
+                "pawns": [],
+                "roomNumber": 1
+            }
+        }],
+        [
+            null,
+        {
+            "type": "RegularCell",
+            "properties": {
+                "sides": ["Wall", "Wall", "Nothing", "Door"],
+                "pawns": [],
+                "roomNumber": 5
+            }
+        }, {
+            "type": "SpawnCell",
+            "properties": {
+                "spawn": "Yellow",
+                "weapons": [null, null, null],
+                "sides": ["Nothing", "Wall", "Wall", "Door"],
+                "pawns": [],
+                "roomNumber": 5
+            }
+        }]
+    ]
+}

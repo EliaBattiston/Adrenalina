@@ -33,7 +33,7 @@ public class JsonTest {
             fail();
         }
 
-        Game g = new Game(5, new Map("dummy"), dP, dL, dW );
+        Game g = new Game(5, new Map(), dP, dL, dW );
         String json = g.jsonSerialize();
 
         //TODO fix this with a file
@@ -50,19 +50,32 @@ public class JsonTest {
     @Test
     public void TestJsonBaseGame(){
         String baseGame = "resources/baseGame.json";
-        String baseGameWithMap = "resources/withMap.json";
-        //String baseGameWithMapSingleCell = "resources/withMapSingleCell.json";
-        String mapA = "resources/mapA.json";
+        String map1 = "resources/map1.json";
 
         try {
-            //Game g = Game.jsonDeserialize(baseGame);
-            //g.setMap(new Map(""));
-            //g.setMap(Map.jsonDeserialize(mapA));
-            Game g = Game.jsonDeserialize(baseGameWithMap);
+            Game g = Game.jsonDeserialize(baseGame);
+            g.setMap(Map.jsonDeserialize(map1));
             String j = g.jsonSerialize();
-            g.getAmmoDeck(); //just do something for breakpoint
         }catch(FileNotFoundException e){
             fail();
         }
     }
+
+    /*@Test
+    public void TestJsonMap(){
+        String path = "resources/mapA.json";
+
+        try {
+            Map m = Map.jsonDeserialize(path);
+
+            for(int i=0; i<4; i++){
+                for(int j=0; j<3; j++){
+                    Side []s1 = m.getCell(i,j).getSides();
+                    //if(s1[0])
+                }
+            }
+        }catch(FileNotFoundException e){
+            fail();
+        }
+    }*/
 }

@@ -1,6 +1,27 @@
 {
     "map": {
-        "cells": null
+        "cells": [
+            [
+                null,
+                null,
+                null
+            ],
+            [
+                null,
+                null,
+                null
+            ],
+            [
+                null,
+                null,
+                null
+            ],
+            [
+                null,
+                null,
+                null
+            ]
+        ]
     },
     "players": [],
     "weaponsDeck": {
