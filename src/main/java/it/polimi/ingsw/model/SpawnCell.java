@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,9 +27,6 @@ public class SpawnCell extends Cell{
         super(sides, roomNumber);
         this.spawn = spawn;
         weapons = new Weapon[3];
-        /*for (int i = 0; i < weapons.length; i++) {
-            weapons[i] = null;
-        }*/
     }
     /**
      * returns a list with the weapons inside the cell, without modifying the list itself
@@ -66,19 +62,16 @@ public class SpawnCell extends Cell{
 
     /**
      * add the given weapon to the cell weapon array (if the array length is lower than 3)
-     * @param refillWeapon
-     * @return true in case of success, false otherwise
+     * @param refillWeapon Weapon to be placed in the cell
      */
     public void refillWeapon(Weapon refillWeapon)
     {
         for(int i = 0; i < weapons.length; i++) {
             if(weapons[i] == null) {
                 weapons[i] = refillWeapon;
-                //return true;
-                return;
+                return ;
             }
         }
-        //return false;
     }
 
     /**

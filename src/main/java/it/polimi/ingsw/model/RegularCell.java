@@ -43,14 +43,11 @@ public class RegularCell extends Cell {
     /**
      * Refill the loot of the cell (if empty)
      * @param refillLoot loot for refilling
-     * @return true in case of success, false otherwise
      */
     public void refillLoot(Loot refillLoot)
     {
         if(loot == null) {
             loot = refillLoot;
-            //return true;
         }
-        //return false;
     }
 }

@@ -29,7 +29,7 @@ public abstract class Cell {
     {
         this.sides = sides;
         this.roomNumber = roomNumber;
-        pawns = new ArrayList<Player>();
+        pawns = new ArrayList<>();
     }
 
     /**

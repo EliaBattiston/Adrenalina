@@ -137,7 +137,7 @@ public class Player
      */
     public List<Weapon> getWeapons()
     {
-        List<Weapon> list = new ArrayList<Weapon>(Arrays.asList(weapons));
+        List<Weapon> list = new ArrayList<>(Arrays.asList(weapons));
         while(list.contains(null))
             list.remove(null);
         return list;
@@ -205,7 +205,7 @@ public class Player
      */
     public List<Power> getPowers()
     {
-        List<Power> list = new ArrayList<Power>(Arrays.asList(powers));
+        List<Power> list = new ArrayList<>(Arrays.asList(powers));
         while(list.contains(null))
             list.remove(null);
         return list;

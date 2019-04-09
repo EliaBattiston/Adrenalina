@@ -66,7 +66,6 @@ public class Game {
         return players.get(0);
     }
 
-    //TODO change return type in UML and exception in UML
     //TODO avoid double character?
     /**
      * Add a player to the game
@@ -76,29 +75,25 @@ public class Game {
      */
     public boolean addPlayer(Player pl) throws UsedNameException
     {
-        if(players.size() < 5 )
+        if(players.size() < 5 && !players.contains(pl))
         {
-            if(!players.contains(pl))
+            if(players.stream().map(Player::getNick).noneMatch(nick -> nick == pl.getNick() ))
             {
-                if(players.stream().map(player -> player.getNick()).noneMatch(nick -> nick == pl.getNick() ))
-                {
-                    throw new UsedNameException();
-                }
-                else
-                {
-                    players.add(pl);
-                    return true;
-                }
+                throw new UsedNameException();
+            }
+            else
+            {
+                players.add(pl);
+                return true;
             }
         }
 
         return false;
     }
 
-    //TODO add to UML
     public List<Player> getPlayers()
     {
-        return new ArrayList<Player>(players);
+        return new ArrayList<>(players);
     }
 
     public Map getMap()
