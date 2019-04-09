@@ -16,17 +16,6 @@ public class Map {
      */
     private Cell[][] cells;
 
-    //TODO remove from UML
-    /* * !TODO moved * for javadock
-     * the constructor instantiates a new matrix of cells dimension 4x3 and loads the characteristics of the single cells from a JSON file
-     * @param filePath JSON map config file
-     */
-    /*Map(String filePath)
-    {
-        cells = new Cell[4][3];
-    }*/
-
-    //TODO rename in the UML (it was loadFromFile)
     /**
      * the function deserialize the JSON config file and loads the data in the matrix
      * @param pathJsonFile JSON map config file

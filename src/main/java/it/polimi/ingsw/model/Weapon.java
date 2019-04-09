@@ -8,7 +8,7 @@ import java.util.List;
 public class Weapon extends Card{
     private final int id;
     private final String name;
-    private final String notes; //TODO add to uml
+    private final String notes;
     private boolean loaded;
     private final Action base;
     private final List<Action> additional;

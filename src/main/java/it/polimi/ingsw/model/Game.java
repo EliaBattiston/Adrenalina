@@ -116,8 +116,6 @@ public class Game {
         return ammoDeck;
     }
 
-    //TODO update uml with static
-    // TODO let it make the file json or handle it in a different way
     /**
      * Serializes the content of the class (which contains every important aspect of the match) in json
      * @return Json serialization of the game
@@ -131,11 +129,11 @@ public class Game {
         return gson.toJson(this);
     }
 
-    //TODO add to uml
     /**
      * Deserialize a json representing the class
      * @param pathJsonFile the file containing the json representation of the class
      * @return the object made from the json
+     * @throws FileNotFoundException if the file is not found
      */
     public static Game jsonDeserialize(String pathJsonFile) throws FileNotFoundException
     {
@@ -148,8 +146,12 @@ public class Game {
         return gson.fromJson(reader, Game.class);
     }
 
-    //TODO decide how to handle this in the best way. Actually I need it for the json
-    public void setMap(Map map) {
-        this.map = map;
+    /**
+     * Load the map from a file
+     * @param pathJsonFile path to the json file
+     * @throws FileNotFoundException if the file is not found
+     */
+    public void loadMap(String pathJsonFile) throws FileNotFoundException{
+        this.map = Map.jsonDeserialize(pathJsonFile);
     }
 }

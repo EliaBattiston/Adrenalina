@@ -54,7 +54,7 @@ public class JsonTest {
 
         try {
             Game g = Game.jsonDeserialize(baseGame);
-            g.setMap(Map.jsonDeserialize(map1));
+            g.loadMap(map1);
             String j = g.jsonSerialize();
         }catch(FileNotFoundException e){
             fail();
