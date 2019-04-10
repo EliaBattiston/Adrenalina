@@ -30,7 +30,7 @@ public class Action {
      * @param cost of the action (it can also be an empty list)
      * @param lambda lambda function describing the action's effects
      */
-    Action(String name, String description, List<Color> cost, ActionLambda lambda)
+    public Action(String name, String description, List<Color> cost, ActionLambda lambda)
     {
         this.name = name;
         this.description = description;

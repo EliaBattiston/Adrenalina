@@ -60,10 +60,15 @@ public class Game {
         this.players = new ArrayList<>();
     }
 
-    //TODO make this useful
-    public Player getNextPlayer()
+    //TODO add change to the UML diagram and test
+    public Player getNextPlayer(Player current)
     {
-        return players.get(0);
+        int position = players.indexOf(current);
+
+        if(position == players.size() -1)
+            return players.get(0);
+
+        return players.get( position + 1  );
     }
 
     //TODO avoid double character?

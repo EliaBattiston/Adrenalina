@@ -21,7 +21,7 @@ public class Point {
      * @param y Y coordinate
      * @throws WrongPointException When the given coordinates are outside the map
      */
-    Point(int x, int y) throws WrongPointException
+    public Point(int x, int y) throws WrongPointException
     {
         set(x, y);
     }
