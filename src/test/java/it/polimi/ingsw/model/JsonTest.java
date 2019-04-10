@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.FileNotFoundException;
 
 import static junit.framework.TestCase.fail;
+import static junit.framework.TestCase.assertTrue;
 
 public class JsonTest {
     /**
@@ -55,25 +56,33 @@ public class JsonTest {
         try {
             Game g = Game.jsonDeserialize(baseGame);
             g.loadMap(map1);
+            g.initializeSkullsBoard(6);
+
             String j = g.jsonSerialize();
         }catch(FileNotFoundException e){
             fail();
         }
     }
 
+    // Used when creating the basic json with actions
     /*@Test
-    public void TestJsonMap(){
-        String path = "resources/mapA.json";
+    public void TestJsonWeapon(){
+        //String path = "resources/mapA.json";
 
         try {
-            Map m = Map.jsonDeserialize(path);
+            String baseGame = "resources/baseGame.json";
+            //String actions = "resources/actions.json";
+            Game g = Game.jsonDeserialize(actions);
 
-            for(int i=0; i<4; i++){
-                for(int j=0; j<3; j++){
-                    Side []s1 = m.getCell(i,j).getSides();
-                    //if(s1[0])
-                }
-            }
+            g.setAmmoAction();
+
+            g.initializeSkullsBoard(7);
+
+            String j = g.jsonSerialize();
+
+            Game g2 = Game.jsonDeserialize(actions);
+            //assertTrue(true);
+
         }catch(FileNotFoundException e){
             fail();
         }

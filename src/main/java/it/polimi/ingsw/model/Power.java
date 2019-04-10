@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import java.util.ArrayList;
+
 /**
  * Represent one of the four kind of powers inside the game and show it's values
  */

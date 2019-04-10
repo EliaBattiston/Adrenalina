@@ -154,4 +154,29 @@ public class Game {
     public void loadMap(String pathJsonFile) throws FileNotFoundException{
         this.map = Map.jsonDeserialize(pathJsonFile);
     }
+
+    //TODO generate TESTS
+    /**
+     * Initialize the skulls board when the first player choose the number of skulls of the match
+     * @param skullsNum number of the skulls chosen for the match (between 5 and 8)
+     * @return true if the number of skulls was compatible with the specification
+     */
+    public boolean initializeSkullsBoard(int skullsNum){
+        if(skullsNum>=5 && skullsNum<=8){
+            skullsBoard = new Kill[8];
+            for(int i=0; i<8; i++)
+                skullsBoard[i] = new Kill(i<skullsNum);
+
+            return true;
+        }
+        return false;
+    }
+
+    //TODO write this code and generate tests
+    /**
+     * extends the ammo deck when creating a new match. The json doesn't contain all the ammo cards but just the template of all of them
+     */
+    public void extendAmmoDeck(){
+
+    }
 }

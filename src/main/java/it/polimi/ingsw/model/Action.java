@@ -21,21 +21,21 @@ public class Action {
     /**
      * Lambda function describing the action's effects
      */
-    private ActionLambda lambda;
+    private String lambdaIdentifier;
 
     /**
      * Instantiates an Action object, setting up all the parameters
      * @param name name of the action
      * @param description of the action
      * @param cost of the action (it can also be an empty list)
-     * @param lambda lambda function describing the action's effects
+     * @param lambdaIdentifier id of the lambda function describing the action's effects
      */
-    Action(String name, String description, List<Color> cost, ActionLambda lambda)
+    Action(String name, String description, List<Color> cost, String lambdaIdentifier)
     {
         this.name = name;
         this.description = description;
         this.cost = cost;
-        this.lambda = lambda;
+        this.lambdaIdentifier = lambdaIdentifier;
     }
 
     /**
@@ -46,6 +46,7 @@ public class Action {
      */
     public void execute(Player pl, Map m, List<Player> playersList)
     {
+        ActionLambda lambda = ActionLambdaMap.getActionsLambda().get(lambdaIdentifier);
         lambda.execute(pl, m, playersList);
     }
 
