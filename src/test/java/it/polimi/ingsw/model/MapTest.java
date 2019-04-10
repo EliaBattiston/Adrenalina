@@ -109,7 +109,7 @@ public class MapTest {
         Action base = new Action("BaseAction", "Make a basic action", cost, null);
         ArrayList<Action> acts = new ArrayList<>();
         acts.add(base);
-        Weapon w = new Weapon(1, "Weapon","desc", base, acts, acts, Color.Red);
+        Weapon w = new Weapon(1, "Weapon","desc", base, acts, base, Color.Red);
 
         sc.refillWeapon(w);
 
@@ -120,14 +120,5 @@ public class MapTest {
         assertTrue(sc.getWeapons().contains(w));
         assertTrue(sc.pickWeapon(w) == w);
         assertTrue(sc.getWeapons().isEmpty());
-    }
-
-    /**
-     * Check Map Class for edge cases
-     */
-    @Test
-    public void checkMapClass()
-    {
-        //TODO: insert Map control for cells insertion and cell presence
     }
 }

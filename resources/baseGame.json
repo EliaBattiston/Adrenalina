@@ -423,129 +423,252 @@
     {
         "scraps": [],
         "cards": [
-        {
-            "id": 1,
-            "name": "Mirino",
-            "base": {
-                "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p1"
+            {
+                "id": 1,
+                "name": "Mirino",
+                "base": {
+                    "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p1"
+                },
+                "color": "Blue"
+            }, {
+                "id": 2,
+                "name": "Raggio Cinetico",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p2"
+                },
+                "color": "Blue"
+            }, {
+                "id": 3,
+                "name": "Granata Venom",
+                "base": {
+                    "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p3"
+                },
+                "color": "Blue"
+            }, {
+                "id": 4,
+                "name": "Teletrasporto",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p4"
+                },
+                "color": "Blue"
             },
-            "color": "Blue"
-        }, {
-            "id": 2,
-            "name": "Raggio Cinetico",
-            "base": {
-                "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p2"
+            {
+                "id": 5,
+                "name": "Mirino",
+                "base": {
+                    "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p1"
+                },
+                "color": "Yellow"
+            }, {
+                "id": 6,
+                "name": "Raggio Cinetico",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p2"
+                },
+                "color": "Yellow"
+            }, {
+                "id": 7,
+                "name": "Granata Venom",
+                "base": {
+                    "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p3"
+                },
+                "color": "Yellow"
+            }, {
+                "id": 8,
+                "name": "Teletrasporto",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p4"
+                },
+                "color": "Yellow"
             },
-            "color": "Blue"
-        }, {
-            "id": 3,
-            "name": "Granata Venom",
-            "base": {
-                "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p3"
+            {
+                "id": 9,
+                "name": "Mirino",
+                "base": {
+                    "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p1"
+                },
+                "color": "Red"
+            }, {
+                "id": 10,
+                "name": "Raggio Cinetico",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p2"
+                },
+                "color": "Red"
+            }, {
+                "id": 11,
+                "name": "Granata Venom",
+                "base": {
+                    "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p3"
+                },
+                "color": "Red"
+            }, {
+                "id": 12,
+                "name": "Teletrasporto",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p4"
+                },
+                "color": "Red"
             },
-            "color": "Blue"
-        }, {
-            "id": 4,
-            "name": "Teletrasporto",
-            "base": {
-                "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p4"
+            {
+                "id": 13,
+                "name": "Mirino",
+                "base": {
+                    "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p1"
+                },
+                "color": "Blue"
+            }, {
+                "id": 14,
+                "name": "Raggio Cinetico",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p2"
+                },
+                "color": "Blue"
+            }, {
+                "id": 15,
+                "name": "Granata Venom",
+                "base": {
+                    "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p3"
+                },
+                "color": "Blue"
+            }, {
+                "id": 16,
+                "name": "Teletrasporto",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p4"
+                },
+                "color": "Blue"
             },
-            "color": "Blue"
-        },
-        {
-            "id": 5,
-            "name": "Mirino",
-            "base": {
-                "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p1"
+            {
+                "id": 17,
+                "name": "Mirino",
+                "base": {
+                    "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p1"
+                },
+                "color": "Yellow"
+            }, {
+                "id": 18,
+                "name": "Raggio Cinetico",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p2"
+                },
+                "color": "Yellow"
+            }, {
+                "id": 19,
+                "name": "Granata Venom",
+                "base": {
+                    "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p3"
+                },
+                "color": "Yellow"
+            }, {
+                "id": 20,
+                "name": "Teletrasporto",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p4"
+                },
+                "color": "Yellow"
             },
-            "color": "Yellow"
-        }, {
-            "id": 6,
-            "name": "Raggio Cinetico",
-            "base": {
-                "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p2"
-            },
-            "color": "Yellow"
-        }, {
-            "id": 7,
-            "name": "Granata Venom",
-            "base": {
-                "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p3"
-            },
-            "color": "Yellow"
-        }, {
-            "id": 8,
-            "name": "Teletrasporto",
-            "base": {
-                "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p4"
-            },
-            "color": "Yellow"
-        },
-        {
-            "id": 9,
-            "name": "Mirino",
-            "base": {
-                "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p1"
-            },
-            "color": "Red"
-        }, {
-            "id": 10,
-            "name": "Raggio Cinetico",
-            "base": {
-                "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p2"
-            },
-            "color": "Red"
-        }, {
-            "id": 11,
-            "name": "Granata Venom",
-            "base": {
-                "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p3"
-            },
-            "color": "Red"
-        }, {
-            "id": 12,
-            "name": "Teletrasporto",
-            "base": {
-                "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
-                "name": "Effetto",
-                "cost": [],
-                "lambdaIdentifier": "p4"
-            },
-            "color": "Red"
-        }]
+            {
+                "id": 21,
+                "name": "Mirino",
+                "base": {
+                    "description": "Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p1"
+                },
+                "color": "Red"
+            }, {
+                "id": 22,
+                "name": "Raggio Cinetico",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2 quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p2"
+                },
+                "color": "Red"
+            }, {
+                "id": 23,
+                "name": "Granata Venom",
+                "base": {
+                    "description": "Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p3"
+                },
+                "color": "Red"
+            }, {
+                "id": 24,
+                "name": "Teletrasporto",
+                "base": {
+                    "description": "Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia. (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)",
+                    "name": "Effetto",
+                    "cost": [],
+                    "lambdaIdentifier": "p4"
+                },
+                "color": "Red"
+            }]
     },
     "ammoDeck": {
         "scraps": [],

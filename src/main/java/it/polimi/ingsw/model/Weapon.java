@@ -12,7 +12,7 @@ public class Weapon extends Card{
     private boolean loaded;
     private final Action base;
     private final List<Action> additional;
-    private final List<Action> alternative;
+    private final Action alternative;
     private final Color color;
 
     /**
@@ -25,7 +25,7 @@ public class Weapon extends Card{
      * @param alternative alternative action that can be done instead of the base one
      * @param color color of the weapon
      */
-    public Weapon(int id, String name, String notes, Action base, List<Action> additional, List<Action> alternative, Color color)
+    public Weapon(int id, String name, String notes, Action base, List<Action> additional, Action alternative, Color color)
     {
         this.id = id;
         this.name = name;
@@ -52,7 +52,7 @@ public class Weapon extends Card{
 
     public List<Action> getAdditional() { return additional; }
 
-    public List<Action> getAlternative() { return alternative; }
+    public Action getAlternative() { return alternative; }
 
     public Color getColor() { return color; }
 }

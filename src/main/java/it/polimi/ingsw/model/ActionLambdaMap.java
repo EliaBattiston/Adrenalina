@@ -9,7 +9,7 @@ public class ActionLambdaMap {
     private ActionLambdaMap(){
         data = new HashMap<>();
 
-        //TODO write here all the lambdas
+        //TODO write here all the lambdas, this is just an example
         data.put("w0", (pl, m, playerList)->{
             pl.getAmmo(Color.Red);
         });

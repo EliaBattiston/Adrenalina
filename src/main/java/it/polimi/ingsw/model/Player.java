@@ -181,21 +181,13 @@ public class Player
         switch(c)
         {
             case Red:
-            {
                 return ammo.getRed();
-            }
             case Blue:
-            {
                 return ammo.getBlue();
-            }
             case Yellow:
-            {
                 return ammo.getYellow();
-            }
             default:
-            {
                 return 0;
-            }
         }
     }
 
