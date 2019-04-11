@@ -1,6 +1,10 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.SInteraction;
+
 import java.util.HashMap;
+import java.util.List;
+import java.util.Collections;
 
 public class ActionLambdaMap {
     private java.util.Map<String, ActionLambda> data;
@@ -10,8 +14,12 @@ public class ActionLambdaMap {
         data = new HashMap<>();
 
         //TODO write here all the lambdas, this is just an example
-        data.put("w0", (pl, m, playerList)->{
-            pl.getAmmo(Color.RED);
+        data.put("w1-b", (pl, m, playerList)->{
+            //Dai 2 danni e un marchio a un bersaglio che puoi vedere
+
+            List<Player> targets = null; ///*Funzione che ritorna i giocatori visibili da un certo punto*/visibile( pl.getPosition() );
+            Player chosen = SInteraction.chooseTarget(pl.conn, targets);
+            chosen.applyEffects(EffectsLambda.damage(2, pl));
         });
     }
 
