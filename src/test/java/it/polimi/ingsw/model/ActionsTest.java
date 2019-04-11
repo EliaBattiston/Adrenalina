@@ -16,9 +16,9 @@ public class ActionsTest {
     public void checkActionClass()
     {
         ArrayList<Color> cost = new ArrayList<Color>();
-        cost.add(Color.Blue);
-        cost.add(Color.Yellow);
-        cost.add((Color.Red));
+        cost.add(Color.BLUE);
+        cost.add(Color.YELLOW);
+        cost.add((Color.RED));
         Action act = new Action("SimpleAction", "Simple action", cost, null);
 
         /**

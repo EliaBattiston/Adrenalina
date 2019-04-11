@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.Connection;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.util.ArrayList;
@@ -49,13 +50,17 @@ public class Player
      */
     private Ammunitions ammo;
     /**
-     * Power cards the player has in his hand
+     * POWER cards the player has in his hand
      */
     private Power[] powers;
     /**
      * Position of the player's pawn in the map
      */
     private Point position;
+    /**
+     * Connection of the player
+     */
+    private Connection conn;
 
     /**
      * Creates a new user, in a suitable configuration to start the game
@@ -83,6 +88,8 @@ public class Player
         {
             this.position = null;
         }
+
+        this.conn = null;
 
     }
 
@@ -180,11 +187,11 @@ public class Player
     {
         switch(c)
         {
-            case Red:
+            case RED:
                 return ammo.getRed();
-            case Blue:
+            case BLUE:
                 return ammo.getBlue();
-            case Yellow:
+            case YELLOW:
                 return ammo.getYellow();
             default:
                 return 0;
@@ -210,5 +217,21 @@ public class Player
     public int getPoints()
     {
         return points;
+    }
+
+    /**
+     * Return the player connection
+     * @return the connection
+     */
+    public Connection getConn() {
+        return conn;
+    }
+
+    /**
+     * Set the connection
+     * @param conn the player connection
+     */
+    public void setConn(Connection conn) {
+        this.conn = conn;
     }
 }

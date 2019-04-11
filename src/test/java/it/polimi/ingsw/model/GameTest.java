@@ -1,12 +1,10 @@
 package it.polimi.ingsw.model;
 
 
-import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -41,7 +39,7 @@ public class GameTest {
         assertFalse(a.useYellow(1));
         assertFalse(a.useBlue(1));
 
-        //test add Blue
+        //test add BLUE
         a.addBlue(1);
         assertTrue(a.getBlue()==1);
         a.addBlue(1);
@@ -51,7 +49,7 @@ public class GameTest {
 
         assertTrue(a.getBlue()==3); //no more than 3 ammos per type
 
-        //test add Red
+        //test add RED
         a.addRed(1);
         assertTrue(a.getRed()==1);
         a.addRed(1);
@@ -61,7 +59,7 @@ public class GameTest {
 
         assertTrue(a.getRed()==3); //no more than 3 ammos per type
 
-        //test add Yellow
+        //test add YELLOW
         a.addYellow(1);
         assertTrue(a.getYellow()==1);
         a.addYellow(1);
@@ -88,17 +86,17 @@ public class GameTest {
     @Test
     public void checkPlayerClass()
     {
-        Player p = new Player("Nick", "Phrase", Fighter.Dozer);
+        Player p = new Player("Nick", "Phrase", Fighter.DOZER);
 
-        Player b = new Player("DamageGiver", "Phrase2", Fighter.Dozer);
+        Player b = new Player("DamageGiver", "Phrase2", Fighter.DOZER);
         Action doNothing = new Action("Do nothing", "Does nothing", new ArrayList<Color>(), null);
-        Weapon weapon = new Weapon(0, "Gun","desc", doNothing, null, null, Color.Red);
-        Power power = new Power(1, "Power", doNothing, Color.Blue);
+        Weapon weapon = new Weapon(0, "Gun","desc", doNothing, null, null, Color.RED);
+        Power power = new Power(1, "POWER", doNothing, Color.BLUE);
 
         //check constructor
         assertEquals(p.getNick(), "Nick");
         assertEquals(p.getActionPhrase(), "Phrase");
-        assertEquals(p.getCharacter(), Fighter.Dozer);
+        assertEquals(p.getCharacter(), Fighter.DOZER);
 
         //check that arrays are initially empty
         assertEquals(p.getWeapons().size(), 0);
@@ -138,8 +136,8 @@ public class GameTest {
         assertEquals(p.getPosition().getY(), 3);
         assertTrue(p.getWeapons().contains(weapon));
         assertTrue(p.getPowers().contains(power));
-        assertEquals(p.getAmmo(Color.Red), 3);
-        assertEquals(p.getAmmo(Color.Blue), 2);
+        assertEquals(p.getAmmo(Color.RED), 3);
+        assertEquals(p.getAmmo(Color.BLUE), 2);
     }
 
     /**
@@ -207,7 +205,7 @@ public class GameTest {
     @Test
     public void TreuKillClass()
     {
-        Player p = new Player("ERap320", "Yay!", Fighter.Dstruttor3);
+        Player p = new Player("ERap320", "Yay!", Fighter.DSTRUTTOR3);
 
         //Usable Kill
         Kill k = new Kill(true);
@@ -226,7 +224,7 @@ public class GameTest {
     @Test
     public void FalseKillClass()
     {
-        Player p = new Player("ERap320", "Yay!", Fighter.Dstruttor3);
+        Player p = new Player("ERap320", "Yay!", Fighter.DSTRUTTOR3);
 
         //Usable Kill
         Kill k = new Kill(false);
@@ -246,13 +244,13 @@ public class GameTest {
     public void TestGameClass()
     {
         Game g = new Game(5, new Map(), null, null, null);
-        Player p1 = new Player("ERap320", "Yay!", Fighter.Dstruttor3);
-        Player p1_doubledNick = new Player("ERap320", "Yuy!", Fighter.Dozer);
-        Player p2 = new Player("ERap321", "Yay!", Fighter.Dstruttor3);
-        Player p3 = new Player("ERap322", "Yay!", Fighter.Dstruttor3);
-        Player p4 = new Player("ERap323", "Yay!", Fighter.Dstruttor3);
-        Player p5 = new Player("ERap324", "Yay!", Fighter.Dstruttor3);
-        Player p6 = new Player("ERap325", "Yay!", Fighter.Dstruttor3);
+        Player p1 = new Player("ERap320", "Yay!", Fighter.DSTRUTTOR3);
+        Player p1_doubledNick = new Player("ERap320", "Yuy!", Fighter.DOZER);
+        Player p2 = new Player("ERap321", "Yay!", Fighter.DSTRUTTOR3);
+        Player p3 = new Player("ERap322", "Yay!", Fighter.DSTRUTTOR3);
+        Player p4 = new Player("ERap323", "Yay!", Fighter.DSTRUTTOR3);
+        Player p5 = new Player("ERap324", "Yay!", Fighter.DSTRUTTOR3);
+        Player p6 = new Player("ERap325", "Yay!", Fighter.DSTRUTTOR3);
 
         //Check if there are no players at creation
         assertEquals(g.getPlayers().size(), 0);

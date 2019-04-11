@@ -1,9 +1,9 @@
 package it.polimi.ingsw.model;
 
 public enum Fighter {
-    Dstruttor3,
-    Banshee,
-    Dozer,
-    Violetta,
-    Sprog
+    DSTRUTTOR3,
+    BANSHEE,
+    DOZER,
+    VIOLETTA,
+    SPROG
 }

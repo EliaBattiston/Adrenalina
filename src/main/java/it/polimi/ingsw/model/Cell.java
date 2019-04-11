@@ -8,7 +8,7 @@ import java.util.List;
  */
 public abstract class Cell {
     /**
-     * The attribute represents the sides of the cell (wall, door or nothing), ordered North-East-South-West
+     * The attribute represents the sides of the cell (wall, door or nothing), ordered NORTH-EAST-SOUTH-WEST
      */
     private Side[] sides;
     /**

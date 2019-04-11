@@ -41,7 +41,7 @@ public class Game {
      * Creates a new game
      * @param skullsNum Number of skulls to use in the killshot track
      * @param gameMap Map to be used in the match
-     * @param powersDeck Power cards deck
+     * @param powersDeck POWER cards deck
      * @param ammoDeck Loot cards deck
      * @param weaponsDeck Weapon cards deck
      */
@@ -71,7 +71,7 @@ public class Game {
         return players.get( position + 1  );
     }
 
-    //TODO avoid double character?
+    //TODO avoid double character
     /**
      * Add a player to the game
      * @param pl Added player
@@ -175,13 +175,5 @@ public class Game {
             return true;
         }
         return false;
-    }
-
-    //TODO write this code and generate tests
-    /**
-     * extends the ammo deck when creating a new match. The json doesn't contain all the ammo cards but just the template of all of them
-     */
-    public void extendAmmoDeck(){
-
     }
 }

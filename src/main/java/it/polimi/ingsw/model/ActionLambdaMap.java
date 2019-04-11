@@ -11,7 +11,7 @@ public class ActionLambdaMap {
 
         //TODO write here all the lambdas, this is just an example
         data.put("w0", (pl, m, playerList)->{
-            pl.getAmmo(Color.Red);
+            pl.getAmmo(Color.RED);
         });
     }
 

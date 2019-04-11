@@ -12,18 +12,18 @@ import org.junit.Test;
 
 public class CardsTest {
     /**
-     * Check Power Class: check the functionality of the constructor
+     * Check POWER Class: check the functionality of the constructor
      */
     @Test
     public void checkPowerClass()
     {
         Action base = new Action("MyAction","description", new ArrayList<>(), null);
-        Power p = new Power(1, "One", base, Color.Red);
+        Power p = new Power(1, "One", base, Color.RED);
 
         assertTrue(p.getId() == 1);
         assertTrue(p.getName().equals("One"));
         assertTrue(p.getBase() == base);
-        assertTrue(p.getColor() == Color.Red );
+        assertTrue(p.getColor() == Color.RED);
     }
 
     /**
@@ -32,7 +32,7 @@ public class CardsTest {
     @Test
     public void checkLootClass()
     {
-        Color[] c = new Color[]{Color.Red, Color.Blue, Color.Power};
+        Color[] c = new Color[]{Color.RED, Color.BLUE, Color.POWER};
         try {
             Loot l = new Loot(c);
             assertTrue(l.getContent() == c);
@@ -40,7 +40,7 @@ public class CardsTest {
             fail();
         }
 
-        Color[] c2 = new Color[]{Color.Red, Color.Blue};
+        Color[] c2 = new Color[]{Color.RED, Color.BLUE};
         try {
             Loot l = new Loot(c2);
             fail();
@@ -56,13 +56,13 @@ public class CardsTest {
     public void checkWeaponClass()
     {
         Action base = new Action("MyAction","description", new ArrayList<>(), null);
-        Weapon w = new Weapon(1, "WeaponOne", "desc",base, null, null, Color.Red);
+        Weapon w = new Weapon(1, "WeaponOne", "desc",base, null, null, Color.RED);
 
         assertTrue(w.getName().equals("WeaponOne"));
         assertTrue(w.getAdditional() == null);
         assertTrue(w.getAlternative() == null);
         assertTrue(w.getBase() == base);
-        assertTrue(w.getColor() == Color.Red);
+        assertTrue(w.getColor() == Color.RED);
         assertTrue(w.getId() == 1);
         assertTrue(w.isLoaded()); //at true from the constructor
 
@@ -84,9 +84,9 @@ public class CardsTest {
         Deck<Power> dP = new Deck<>();
         Power p1, p2, p3;
 
-        p1 = new Power(1, "Pow1", null, Color.Red);
-        p2 = new Power(2, "Pow2", null, Color.Blue);
-        p3 = new Power(3, "Pow3", null, Color.Yellow);
+        p1 = new Power(1, "Pow1", null, Color.RED);
+        p2 = new Power(2, "Pow2", null, Color.BLUE);
+        p3 = new Power(3, "Pow3", null, Color.YELLOW);
         dP.add(p1);
         dP.add(p2);
         dP.add(p3);
@@ -147,9 +147,9 @@ public class CardsTest {
 
         Loot l1, l2, l3;
         try {
-            l1 = new Loot(new Color[]{Color.Red, Color.Blue, Color.Power});
-            l2 = new Loot(new Color[]{Color.Red, Color.Yellow, Color.Power});
-            l3 = new Loot(new Color[]{Color.Blue, Color.Blue, Color.Power});
+            l1 = new Loot(new Color[]{Color.RED, Color.BLUE, Color.POWER});
+            l2 = new Loot(new Color[]{Color.RED, Color.YELLOW, Color.POWER});
+            l3 = new Loot(new Color[]{Color.BLUE, Color.BLUE, Color.POWER});
 
             dL.add(l1);
             dL.add(l2);

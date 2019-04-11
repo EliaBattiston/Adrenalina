@@ -15,12 +15,12 @@ public class MapTest {
     public void checkCellClass()
     {
         Side[] sides = new Side[4];
-        sides[Direction.North.ordinal()] = Side.Wall;
-        sides[Direction.East.ordinal()] = Side.Wall;
-        sides[Direction.South.ordinal()] = Side.Nothing;
-        sides[Direction.West.ordinal()] = Side.Door;
+        sides[Direction.NORTH.ordinal()] = Side.WALL;
+        sides[Direction.EAST.ordinal()] = Side.WALL;
+        sides[Direction.SOUTH.ordinal()] = Side.NOTHING;
+        sides[Direction.WEST.ordinal()] = Side.DOOR;
         RegularCell rc = new RegularCell( sides, 3);
-        SpawnCell sc = new SpawnCell(sides, 3, Color.Blue);
+        SpawnCell sc = new SpawnCell(sides, 3, Color.BLUE);
 
         /**
          * Check the correct instantiation of both Cell child classes
@@ -37,7 +37,7 @@ public class MapTest {
         /**
          * Check the correct player insertion and deletion procedure in the cell
          */
-        Player pl = new Player("nickname", "whoaaaa", Fighter.Dstruttor3);
+        Player pl = new Player("nickname", "whoaaaa", Fighter.DSTRUTTOR3);
         rc.addPawn(pl);
         sc.addPawn(pl);
 
@@ -58,15 +58,15 @@ public class MapTest {
     public void checkRegularCellClass()
     {
         Side[] sides = new Side[4];
-        sides[Direction.North.ordinal()] = Side.Wall;
-        sides[Direction.East.ordinal()] = Side.Wall;
-        sides[Direction.South.ordinal()] = Side.Nothing;
-        sides[Direction.West.ordinal()] = Side.Door;
+        sides[Direction.NORTH.ordinal()] = Side.WALL;
+        sides[Direction.EAST.ordinal()] = Side.WALL;
+        sides[Direction.SOUTH.ordinal()] = Side.NOTHING;
+        sides[Direction.WEST.ordinal()] = Side.DOOR;
         RegularCell rc = new RegularCell( sides, 3);
         Loot l = null;
         try
         {
-            l = new Loot(new Color[]{Color.Blue, Color.Yellow, Color.Red});
+            l = new Loot(new Color[]{Color.BLUE, Color.YELLOW, Color.RED});
         }
         catch(ArrayDimensionException e)
         {
@@ -91,25 +91,25 @@ public class MapTest {
     public void checkSpawnCellClass()
     {
         Side[] sides = new Side[4];
-        sides[Direction.North.ordinal()] = Side.Wall;
-        sides[Direction.East.ordinal()] = Side.Wall;
-        sides[Direction.South.ordinal()] = Side.Nothing;
-        sides[Direction.West.ordinal()] = Side.Door;
-        SpawnCell sc = new SpawnCell( sides, 3, Color.Blue);
+        sides[Direction.NORTH.ordinal()] = Side.WALL;
+        sides[Direction.EAST.ordinal()] = Side.WALL;
+        sides[Direction.SOUTH.ordinal()] = Side.NOTHING;
+        sides[Direction.WEST.ordinal()] = Side.DOOR;
+        SpawnCell sc = new SpawnCell( sides, 3, Color.BLUE);
 
         /**
          * Check the correct configuration of the spawn color
          */
-        assertTrue(sc.getSpawn() == Color.Blue);
+        assertTrue(sc.getSpawn() == Color.BLUE);
         assertTrue(sc.getWeapons().isEmpty());
 
         ArrayList<Color> cost = new ArrayList<>();
-        cost.add(Color.Blue);
-        cost.add(Color.Yellow);
+        cost.add(Color.BLUE);
+        cost.add(Color.YELLOW);
         Action base = new Action("BaseAction", "Make a basic action", cost, null);
         ArrayList<Action> acts = new ArrayList<>();
         acts.add(base);
-        Weapon w = new Weapon(1, "Weapon","desc", base, acts, base, Color.Red);
+        Weapon w = new Weapon(1, "Weapon","desc", base, acts, base, Color.RED);
 
         sc.refillWeapon(w);
 

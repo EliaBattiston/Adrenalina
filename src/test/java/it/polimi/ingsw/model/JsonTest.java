@@ -16,20 +16,20 @@ public class JsonTest {
     public void TestJsonGenerate()
     {
         Deck<Weapon> dW = new Deck<>();
-        dW.add(new Weapon(1, "WeaponOne", "desc",null, null, null, Color.Blue));
-        dW.add(new Weapon(2, "WeaponOQwo", "desc",null, null, null, Color.Red));
-        dW.add(new Weapon(3, "WeaponTree", "desc",null, null, null, Color.Yellow));
+        dW.add(new Weapon(1, "WeaponOne", "desc",null, null, null, Color.BLUE));
+        dW.add(new Weapon(2, "WeaponOQwo", "desc",null, null, null, Color.RED));
+        dW.add(new Weapon(3, "WeaponTree", "desc",null, null, null, Color.YELLOW));
 
         EndlessDeck<Power> dP = new EndlessDeck<>();
-        dP.add(new Power(1, "Pow1", null, Color.Red));
-        dP.add(new Power(2, "Pow2", null, Color.Blue));
-        dP.add(new Power(3, "Pow3", null, Color.Yellow));
+        dP.add(new Power(1, "Pow1", null, Color.RED));
+        dP.add(new Power(2, "Pow2", null, Color.BLUE));
+        dP.add(new Power(3, "Pow3", null, Color.YELLOW));
 
         EndlessDeck<Loot> dL = new EndlessDeck<>();
         try {
-            dL.add(new Loot(new Color[]{Color.Red, Color.Blue, Color.Power}));
-            dL.add(new Loot(new Color[]{Color.Red, Color.Yellow, Color.Power}));
-            dL.add(new Loot(new Color[]{Color.Blue, Color.Blue, Color.Power}));
+            dL.add(new Loot(new Color[]{Color.RED, Color.BLUE, Color.POWER}));
+            dL.add(new Loot(new Color[]{Color.RED, Color.YELLOW, Color.POWER}));
+            dL.add(new Loot(new Color[]{Color.BLUE, Color.BLUE, Color.POWER}));
         }catch(ArrayDimensionException e){
             fail();
         }
