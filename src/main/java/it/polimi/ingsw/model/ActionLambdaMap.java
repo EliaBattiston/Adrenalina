@@ -13,11 +13,10 @@ public class ActionLambdaMap {
     private ActionLambdaMap(){
         data = new HashMap<>();
 
-        //TODO write here all the lambdas, this is just an example
+        //TODO write here all the lambdas
         data.put("w1-b", (pl, m, playerList)->{
             //Dai 2 danni e un marchio a un bersaglio che puoi vedere
-
-            List<Player> targets = null; ///*Funzione che ritorna i giocatori visibili da un certo punto*/visibile( pl.getPosition() );
+            List<Player> targets = Map.visibles(pl);
             Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
             chosen.applyEffects(EffectsLambda.marks(1, pl));
