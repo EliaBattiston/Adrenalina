@@ -1,26 +1,74 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.WrongPointException;
+
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Class containing the static methods that are used to change the status of a player when they are targeted by an enemy action
+ */
 public class EffectsLambda {
-    public static PlayerLambda damage(int d, Player damageGiver){
-        //TODO implement the real number of damages, check it and add marks
+    private static final Logger LOGGER = Logger.getLogger( EffectsLambda.class.getName() );
+
+    private EffectsLambda(){}
+
+    /**
+     * Set the damage
+     * @param damageReceived qtn of damage
+     * @param damageGiver player who gave it
+     * @return the lambda that has to be run from the player who receive the action
+     */
+    public static PlayerLambda damage(int damageReceived, Player damageGiver){
         return (damage, marks, position, weapons, powers, ammo)->{
-            //Trova il primo posto vuoto nei damage e metti due segnalini di pl
-            int i;
-            for(i =0; i<12 && damage[i]!=null ;i++)
-                ;
-            if(i<12)
-            {
+            int i=0;
+            int d = damageReceived;
+            while(i<12 && damage[i]!=null)
+                i++;
+            while(i<12 && d>0){
                 damage[i] = damageGiver;
+                d--;
+                i++;
             }
-            i++;
-            if(i<12)
-            {
+            while(i<12 && marks.contains(damageGiver)){
                 damage[i] = damageGiver;
+                marks.remove(damageGiver);
+                i++;
             }
         };
     }
 
-    //TODO method for movement
+    /**
+     * Move the player
+     * @param newPosition position where to move
+     * @return the lambda that has to be run from the player who receive the action
+     */
+    public static PlayerLambda move(Point newPosition){
+        return (damage, marks, position, weapons, powers, ammo)->{
+            try {
+                position.set(newPosition.getX(), newPosition.getY());
+            }catch(WrongPointException ex){
+                LOGGER.log( Level.SEVERE, ex.toString(), ex );
+            }
+        };
+    }
 
-    //TODO method for marks
+    /**
+     * give marks
+     * @param marksReceived qtn of marks
+     * @param damageGiver player who gave them
+     * @return the lambda that has to be run from the player who receive the action
+     */
+    public static PlayerLambda marks(int marksReceived, Player damageGiver){
+        return (damage, marks, position, weapons, powers, ammo)->{
+            int actualMarks = Collections.frequency(marks, damageGiver);
+            int recMarks = marksReceived;
+            while(actualMarks < 3 && recMarks> 0){
+                marks.add(damageGiver);
+                recMarks--;
+                actualMarks++;
+            }
+        };
+    }
 }

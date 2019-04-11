@@ -80,12 +80,9 @@ public class Player
         this.skulls = 0;
         this.ammo = new Ammunitions();
         this.powers = new Power[3];
-        try
-        {
+        try{
             this.position = new Point(0, 0);
-        }
-        catch(WrongPointException e)
-        {
+        }catch(WrongPointException e){
             this.position = null;
         }
 

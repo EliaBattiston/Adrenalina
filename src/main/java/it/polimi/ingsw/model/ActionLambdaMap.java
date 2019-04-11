@@ -18,8 +18,9 @@ public class ActionLambdaMap {
             //Dai 2 danni e un marchio a un bersaglio che puoi vedere
 
             List<Player> targets = null; ///*Funzione che ritorna i giocatori visibili da un certo punto*/visibile( pl.getPosition() );
-            Player chosen = SInteraction.chooseTarget(pl.conn, targets);
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
+            chosen.applyEffects(EffectsLambda.marks(1, pl));
         });
     }
 

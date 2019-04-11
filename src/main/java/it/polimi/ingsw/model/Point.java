@@ -17,8 +17,8 @@ public class Point {
 
     /**
      *
-     * @param x X coordinate
-     * @param y Y coordinate
+     * @param x 0<=X<=2 coordinate
+     * @param y 0<=Y<=3 coordinate
      * @throws WrongPointException When the given coordinates are outside the map
      */
     public Point(int x, int y) throws WrongPointException
