@@ -6,7 +6,8 @@ import it.polimi.ingsw.model.*;
 import java.util.List;
 
 /**
- * Methodes that can be used to talk with a client instance, by asking how to complete different actions. The corresponding class on the client is CInteraction
+ * Methods that can be used to talk with a client instance, by asking how to complete different actions. The corresponding class on the client is CInteraction.
+ * The methods are designed so that everything the user has to choose between is provided, and already validated as a correct move by the caller.
  */
 public class SInteraction
 {
@@ -40,10 +41,10 @@ public class SInteraction
     /**
      * Asks the user to choose which weapon he wants to buy from the SpawnCell
      * @param conn Connection of the current user
-     * @param cell SpawnCell from which the user can pick up the weapon
+     * @param grabbable List of weapons that can be picked up by the player
      * @return Chosen weapon
      */
-    public static Weapon grabWeapn(Connection conn, SpawnCell cell)
+    public static Weapon grabWeapon(Connection conn, List<Weapon> grabbable)
     {
         Weapon tempWeapon = new Weapon(0, "name", "notes", null, null, null, null);
         return tempWeapon;
@@ -52,9 +53,10 @@ public class SInteraction
     /**
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param conn Connection of the current user
+     * @param reloadable Weapons that are currently not loaded
      * @return Weapons to be reloaded
      */
-    public static List<Weapon> reload(Connection conn)
+    public static List<Weapon> reload(Connection conn, List<Weapon> reloadable)
     {
         return null;
     }
@@ -62,10 +64,10 @@ public class SInteraction
     /**
      * Asks the user where he wants to move
      * @param conn Connection of the current user
-     * @param maxDistance Maximum number of steps the player is allowed to move
+     * @param destinations Possible destinations for the user
      * @return Point where the player will be when he's done moving
      */
-    public static Point move(Connection conn, int maxDistance)
+    public static Point move(Connection conn, List<Point> destinations)
     {
         try
         {
@@ -92,10 +94,10 @@ public class SInteraction
      * Asks the user where to move an enemy
      * @param conn Connection of the current user
      * @param enemy Enemy to be moved by the player
-     * @param maxDistance Maximum number of steps the enemy can by moved by the current effect
+     * @param destinations Possible destinations for the enemy
      * @return Point where the enemy will be after being moved
      */
-    public static Point displace(Connection conn, Player enemy, int maxDistance)
+    public static Point displace(Connection conn, Player enemy, List<Point> destinations)
     {
         try
         {
