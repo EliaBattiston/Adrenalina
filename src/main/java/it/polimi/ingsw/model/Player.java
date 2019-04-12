@@ -68,7 +68,7 @@ public class Player
      * @param phrase Action phrase
      * @param f Chosen Character
      */
-    Player(String nick, String phrase, Fighter f)
+    public Player(String nick, String phrase, Fighter f)
     {
         this.nick = nick;
         this.actionPhrase = phrase;
