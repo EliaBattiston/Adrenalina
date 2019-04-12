@@ -80,14 +80,7 @@ public class Player
         this.skulls = 0;
         this.ammo = new Ammunitions();
         this.powers = new Power[3];
-        try
-        {
-            this.position = new Point(0, 0);
-        }
-        catch(WrongPointException e)
-        {
-            this.position = null;
-        }
+        this.position = null;
 
         this.conn = null;
 
@@ -217,6 +210,26 @@ public class Player
     public int getPoints()
     {
         return points;
+    }
+
+    /**
+     * Adds points when killing an enemy
+     * @param num Number of points to add
+     */
+    public void addPoints(int num)
+    {
+        if(num > 0)
+        {
+            points += num;
+        }
+    }
+
+    /**
+     * Adds a skull, used when the user gets killed
+     */
+    public void addSkull()
+    {
+        skulls++;
     }
 
     /**

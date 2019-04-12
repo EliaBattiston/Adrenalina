@@ -3,7 +3,7 @@ package it.polimi.ingsw.model;
 /**
  * Represent one of the four kind of powers inside the game and show it's values
  */
-class Power extends Card{
+public class Power extends Card{
     private final int id;
     private final String name;
     private final Action base;
