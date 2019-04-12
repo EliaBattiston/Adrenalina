@@ -48,45 +48,38 @@ public class Map {
         return gson.fromJson(reader, Map.class);
     }
 
-    //TODO add to the
+    //TODO add to the UML
+    //TODo add the max distance from me, add the minimum distance, add the same cell
     /**
      * Return the viewer players
      * @param viewer the one who is looking
      * @return the list of visible players
      */
-    public static List<Player> visibles(Player viewer){
+    public static List<Player> visibles(Player viewer, Map map){
         ArrayList<Player> visibles = new ArrayList<>();
         int x,y;
         x = viewer.getPosition().getX();
         y = viewer.getPosition().getY();
 
-        //TODO find a way to get the map from the game and delete this try-catch that's just for development
-        Map m = null;
-        try {
-            m = Map.jsonDeserialize("resources/map1.json");
-        }catch (FileNotFoundException e){
-            ;
-        }
-
         //TODO check that we are looking in the right direction
         //First get all the rooms visible
         List<Integer> roomsN = new ArrayList<>();
-        roomsN.add(m.getCell(x, y).getRoomNumber());
-        Side[] sides = m.getCell(x,y).getSides();
+        roomsN.add(map.getCell(x, y).getRoomNumber());
+        Side[] sides = map.getCell(x,y).getSides();
         if(sides[0] == Side.DOOR)
-            roomsN.add(m.getCell(x,y-1).getRoomNumber());
+            roomsN.add(map.getCell(x,y-1).getRoomNumber());
         if(sides[1] == Side.DOOR)
-            roomsN.add(m.getCell(x+1,y).getRoomNumber());
+            roomsN.add(map.getCell(x+1,y).getRoomNumber());
         if(sides[2] == Side.DOOR)
-            roomsN.add(m.getCell(x,y+1).getRoomNumber());
+            roomsN.add(map.getCell(x,y+1).getRoomNumber());
         if(sides[3] == Side.DOOR)
-            roomsN.add(m.getCell(x-1,y).getRoomNumber());
+            roomsN.add(map.getCell(x-1,y).getRoomNumber());
 
         //Get all the people in those rooms
         for(int i=0; i<3;i++)
             for(int j=0; j<2; j++)
-                if(roomsN.contains(m.getCell(i,j).getRoomNumber()))
-                    visibles.addAll(m.getCell(i, j).getPawns());
+                if(roomsN.contains(map.getCell(i,j).getRoomNumber()))
+                    visibles.addAll(map.getCell(i, j).getPawns());
 
                 //remove the player itself
         visibles.remove(viewer);
