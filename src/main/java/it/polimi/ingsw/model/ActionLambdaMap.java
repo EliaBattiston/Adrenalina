@@ -14,6 +14,7 @@ public class ActionLambdaMap {
     private ActionLambdaMap(){
         data = new HashMap<>();
 
+    //Base lambdas
         data.put("w1-b", (pl, map, playerList)->{
             //Dai 2 danni e un marchio a un bersaglio che puoi vedere
 
@@ -250,6 +251,127 @@ public class ActionLambdaMap {
             for(Player p:visibles)
                 if(Map.distance(pl, p)==0)
                     targets.add(p);
+
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
+            chosen.applyEffects(EffectsLambda.damage(2, pl));
+        });
+
+    //Additional lambdas
+        data.put("w1-ad1", (pl, map, playerList)->{
+            //Dai 1 marchio a un altro bersaglio che puoi vedere.
+
+            List<Player> targets = Map.visibles(pl, map);
+            targets.removeAll(playerList);
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
+            chosen.applyEffects(EffectsLambda.marks(1, pl));
+        });
+
+        data.put("w2-ad1", (pl, map, playerList)->{
+            //Dai 1 danno aggiuntivo a uno dei due bersagli.
+
+            List<Player> targets = playerList;
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
+            chosen.applyEffects(EffectsLambda.marks(1, pl));
+        });
+
+        //TODO
+        data.put("w2-ad2", (pl, map, playerList)->{
+            //Dai 1 danno aggiuntivo all'altro dei bersagli e/o dai 1 danno a un bersaglio differente che puoi vedere.
+
+            /*List<Player> targets = Map.visibles(pl, map);
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
+            chosen.applyEffects(EffectsLambda.damage(1, pl));*/
+        });
+
+        data.put("w3-ad1", (pl, map, playerList)->{
+            //Dai 1 danno a un secondo bersaglio che il tuo primo bersaglio può vedere.
+
+            List<Player> targets = Map.visibles(playerList.get(0), map);
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
+            chosen.applyEffects(EffectsLambda.damage(1, pl));
+        });
+
+        //TODO somewhere say that this method requests as a playerlist the first and the second enemy targetted becouse
+        // it works only if w3-ad1 has been used
+        //TODO check if it's possible to hit the same target and test this a little bit
+        data.put("w3-ad2", (pl, map, playerList)->{
+            //Dai 2 danni a un terzo bersaglio che il tuo secondo bersaglio può vedere. Non puoi usare questo effetto se prima non hai usato reazione a catena.
+
+            List<Player> targets = Map.visibles(playerList.get(1), map);
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
+            chosen.applyEffects(EffectsLambda.damage(1, pl));
+        });
+
+        data.put("w4-ad1", (pl, map, playerList)->{
+            //Muovi di 1 o 2 quadrati. Questo effetto può essere usato prima o dopo l'effetto base.
+
+            List<Point> points = Map.possibleMovements(pl.getPosition(), 2, map);
+            Point chosenPoint = SInteraction.move(pl.getConn(), points);
+            pl.applyEffects(EffectsLambda.move(chosenPoint));
+        });
+
+        data.put("w4-ad2", (pl, map, playerList)->{
+            //Dai 1 danno aggiuntivo al tuo bersaglio.
+
+            playerList.get(0).applyEffects(EffectsLambda.damage(1, pl));
+        });
+
+        //TODO
+        data.put("w8-ad1", (pl, map, playerList)->{
+            //Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.
+
+            /*List<Player> targets = Map.visibles(pl, map);
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
+            chosen.applyEffects(EffectsLambda.damage(, pl));
+            chosen.applyEffects(EffectsLambda.marks(, pl));*/
+        });
+
+        //TODO
+        data.put("w13-ad1", (pl, map, playerList)->{
+            //Dai 1 danno a ogni giocatore in quadrato che puoi vedere. Puoi usare questo effetto prima o dopo il movimento dell'effetto base.
+
+            /*List<Player> targets = Map.visibles(pl, map);
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);//TODO say that you're going to give damage to all the ones in that square
+            chosen.applyEffects(EffectsLambda.damage(, pl));
+            chosen.applyEffects(EffectsLambda.marks(, pl));*/
+        });
+
+        data.put("w14-ad1", (pl, map, playerList)->{
+            //Muovi di 1 o 2 quadrati. Questo effetto può essere usato prima o dopo l'effetto base.
+
+            List<Point> points = Map.possibleMovements(pl.getPosition(), 2, map);
+            Point chosenPoint = SInteraction.move(pl.getConn(), points);
+            pl.applyEffects(EffectsLambda.move(chosenPoint));
+        });
+
+        //TODO
+        data.put("w14-ad2", (pl, map, playerList)->{
+            //Durante l'effetto base, dai 1 danno a ogni giocatore presente nel quadrato in cui si trovava originariamente il bersaglio, incluso il bersaglio, anche se lo hai mosso.
+
+            /*List<Player> targets = Map.visibles(pl, map);
+            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
+            chosen.applyEffects(EffectsLambda.damage(, pl));
+            chosen.applyEffects(EffectsLambda.marks(, pl));*/
+        });
+
+        data.put("w16-ad1", (pl, map, playerList)->{
+            //Muovi di 1 quadrato prima o dopo l'effetto base.
+
+            List<Point> points = Map.possibleMovements(pl.getPosition(), 1, map);
+            Point chosenPoint = SInteraction.move(pl.getConn(), points);
+            pl.applyEffects(EffectsLambda.move(chosenPoint));
+        });
+
+        data.put("w16-ad2", (pl, map, playerList)->{
+            //Dai 2 danni a un bersaglio differente nel quadrato in cui ti trovi. Il passo d'ombra può essere usato prima o dopo questo effetto.
+
+            List<Player> visibles = Map.visibles(pl, map);
+            List<Player> targets = new ArrayList<>();
+            for(Player p:visibles)
+                if(Map.distance(pl, p)==0)
+                    targets.add(p);
+
+            targets.removeAll(playerList); //not to the same player
 
             Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
