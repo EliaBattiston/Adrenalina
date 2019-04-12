@@ -3,14 +3,8 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * The class implements the Server for establishing the client-server connection.
@@ -26,35 +20,27 @@ public class SocketServer implements Server {
     private ServerSocket serverSocket;
 
     /**
-     * Thread handler
-     */
-    ExecutorService executor;
-
-    /**
      * Create a new SocketServer instance starting a server socket at the given port
      * @param port port on which the server is started
      */
-    public SocketServer(int port)
+    public SocketServer(int port) throws IOException
     {
         this.port = port;
-        try {
-            startServer();
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        startServer();
     }
 
+    /**
+     * Starts the Socket server instance
+     * @throws IOException in case of connection errors
+     */
     private void startServer() throws IOException {
-        try {
-            serverSocket = new ServerSocket(port);
-        } catch (IOException e) {
-            System.err.println(e.getMessage()); // Porta non disponibile
-            return;
-        }
-        System.out.println("Server socket ready on port: " + port);
-
+        serverSocket = new ServerSocket(port);
     }
 
+    /**
+     * Accepts the first incoming Socket connection, then creates a new SocketConn object and returns it
+     * @return SocketConn object refering the new incoming socket connection
+     */
     public Connection getConnection()
     {
         try {
@@ -67,13 +53,11 @@ public class SocketServer implements Server {
 
     }
 
-    public void StopServer() {
-        executor.shutdown();
-        try {
-            serverSocket.close();
-        }
-        catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+    /**
+     * Stops the Socket server
+     * @throws IOException in case of connection errors
+     */
+    public void stopServer() throws IOException {
+        serverSocket.close();
     }
 }

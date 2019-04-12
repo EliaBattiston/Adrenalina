@@ -6,8 +6,17 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class SocketClient implements Client {
+    /**
+     * Socket connection instance to the game server
+     */
     private Socket serverSocket;
+    /**
+     * SocketStream input scanner
+     */
     private Scanner in;
+    /**
+     * SocketStream output printer
+     */
     private PrintWriter out;
 
     /**

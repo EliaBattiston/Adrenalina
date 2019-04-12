@@ -6,8 +6,17 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class SocketConn implements Connection {
+    /**
+     * Socket connection instance to referred player
+     */
     private Socket playerSocket;
+    /**
+     * SocketStream input scanner
+     */
     private Scanner in;
+    /**
+     * SocketStream output printer
+     */
     private PrintWriter out;
 
     /**
