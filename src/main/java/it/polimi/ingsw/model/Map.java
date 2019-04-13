@@ -113,6 +113,25 @@ public class Map {
     }
 
     /**
+     * Return the list of players in distance (calculated by the MapDistanceStrategy) already removing the player who you start looking from
+     * @param pl Player from where you start looking
+     * @param map Map
+     * @param strategy strategy that accept/refuse an enemy
+     * @return The list of visible players accepted from the strategy
+     */
+    public static List<Player> distanceStrategy(Player pl, Map map, MapDistanceStrategy strategy){
+        List<Player> visibles = Map.visibles(pl, map);
+        List<Player> targets = new ArrayList<>();
+        for(Player p:visibles)
+            if(strategy.calculate(pl, p))
+                targets.add(p);
+
+        targets.remove(pl);
+        return targets;
+    }
+
+
+    /**
      * Check if two players are in the same room
      * @param p1
      * @param p2
