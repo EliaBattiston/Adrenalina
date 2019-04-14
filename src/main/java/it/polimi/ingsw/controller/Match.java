@@ -1,7 +1,9 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.EmptyDeckException;
+import it.polimi.ingsw.exceptions.WrongPointException;
 import it.polimi.ingsw.model.*;
+import org.omg.CORBA.WrongTransaction;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -47,6 +49,7 @@ public class Match implements Runnable
     Match()
     {
         //TODO initialize the game using the json
+        initialize();
 
         this.activities = Activities.getInstance();
         this.active = null;
@@ -77,8 +80,6 @@ public class Match implements Runnable
         int nextSkull; //Index of the first usable skull on the board
         List<Entry<Player, Integer>> inflictedDamages = new ArrayList<>(); //Used to count how many damages every player inflicted
 
-        initialize();
-
         //The first turn is played by the player in the first position of the list
         active = game.getPlayers().get(0);
         actionsNumber = 2;
@@ -88,7 +89,14 @@ public class Match implements Runnable
             //Check if spawning is needed
             if(active.getPosition() == null)
             {
-                spawnPlayer(active);
+                try
+                {
+                    spawnPlayer(active);
+                }
+                catch(WrongPointException e)
+                {
+                    /*Impossible to land here with correct game logic*/ ;
+                }
             }
 
             //Let players use their actions
@@ -149,8 +157,6 @@ public class Match implements Runnable
                     //Forger about damage givers of the last turn
                     inflictedDamages.clear();
 
-                    //TODO Remove the player from the map?
-
                     //Calculate max points
                     maxPoints = 8 - (current.getSkulls() * 2);
                     //Count damages
@@ -178,7 +184,7 @@ public class Match implements Runnable
                                     if(p == e1.getKey())
                                         return -1;
 
-                                    if(p==e2.getKey())
+                                    if(p == e2.getKey())
                                         return 1;
                                 }
                             }
@@ -201,7 +207,7 @@ public class Match implements Runnable
                     }
 
                     //Register the kill on the board
-                    for(nextSkull = 8; nextSkull >= 0 && !game.getSkulls()[nextSkull].isUsed(); nextSkull--)
+                    for(nextSkull = 8; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
                         ;
                     if(nextSkull > -1)
                     {
@@ -216,7 +222,14 @@ public class Match implements Runnable
                     }
 
                     //Respawn
-                    spawnPlayer(current);
+                    try
+                    {
+                        spawnPlayer(current);
+                    }
+                    catch(WrongPointException e)
+                    {
+                        /*Impossible to land here with correct game logic*/ ;
+                    }
 
                     //Check if it's time for frenzy mode
                     if(nextSkull == 0)
@@ -254,7 +267,63 @@ public class Match implements Runnable
             //If the game ended give make the last points calculation
             if(phase == GamePhase.ENDED)
             {
-                //TODO implement final calculation
+                inflictedDamages.clear();
+                maxPoints = 8;
+
+                for(Player p : game.getPlayers())
+                {
+                    damageNum = 0;
+
+                    for(int k = 8; k >= 0; k--)
+                    {
+                        if(game.getSkulls()[k].isUsed() && game.getSkulls()[k].getKiller() == p)
+                        {
+                            damageNum++;
+
+                            if(game.getSkulls()[k].getOverkill())
+                                damageNum++;
+                        }
+                    }
+
+                    inflictedDamages.add( new AbstractMap.SimpleEntry<Player, Integer>(p, damageNum) );
+                }
+
+                //Sort the damages
+                inflictedDamages.sort( (e1, e2) -> {
+                    if (e1.getValue() > e2.getValue())
+                        return -1;
+                    else if(e1.getValue() < e2.getValue())
+                        return 1;
+                    else
+                    {
+                        //Check who inflicted damage first
+                        for(int k = 8; k >= 0; k--)
+                        {
+                            if(game.getSkulls()[k].isUsed())
+                            {
+                                if (game.getSkulls()[k].getKiller() == e1.getKey())
+                                    return -1;
+
+                                if (game.getSkulls()[k].getKiller() == e2.getKey())
+                                    return 1;
+                            }
+                        }
+                    }
+
+                    //If implemented correctly, it's impossible to land here
+                    return 0;
+                });
+
+                //Give points
+                for(Entry<Player, Integer> entry : inflictedDamages)
+                {
+                    entry.getKey().addPoints(maxPoints);
+
+                    if(maxPoints > 2)
+                        maxPoints -= 2;
+                    else
+                        maxPoints = 1;
+                }
             }
         }
     }
@@ -263,9 +332,111 @@ public class Match implements Runnable
      * Does every step needed to spawn a player
      * @param pl Player who needs to be spawned
      */
-    private void spawnPlayer(Player pl)
+    private void spawnPlayer(Player pl) throws WrongPointException
     {
-        //TODO add SInteraction to choose spawning point
+        //Draw powers if not enough to choose
+        switch(pl.getPowers().size())
+        {
+            case 0:
+            {
+                pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                    try
+                    {
+                        powers[0] = game.getPowersDeck().draw();
+                        powers[1] = game.getPowersDeck().draw();
+                    }
+                    catch (EmptyDeckException e)
+                    {
+                        /*Impossible to land here with correct game logic*/ ;
+                    }
+                }));
+                break;
+            }
+            case 1:
+            {
+                pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                    try
+                    {
+                        int i;
+                        for(i = 0; i < 3 && powers[i] == null; i++)
+                            ;
+                        powers[i] = game.getPowersDeck().draw();
+                    }
+                    catch (EmptyDeckException e)
+                    {
+                        /*Impossible to land here with correct game logic*/ ;
+                    }
+                }));
+                break;
+            }
+            default:
+                break;
+        }
+
+
+        //Choose power
+        Power chosen = SInteraction.discardPower(pl.getConn(), pl.getPowers());
+        Color spawnColor = chosen.getColor();
+        //Discard the power
+        pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+            for(int i = 0; i < 3; i++)
+            {
+                if(powers[i] == chosen)
+                {
+                    game.getPowersDeck().scrapCard(powers[i]);
+                    powers[i] = null;
+                }
+            }
+        }));
+
+        boolean found = false;
+        int spawnX = 0;
+        int spawnY = 0;
+
+        //Move in the correct position
+        for(int x = 0; x < 4 && !found; x++)
+        {
+            for(int y = 0; y < 3 && !found; y++)
+            {
+                //TODO avoid instanceof statements
+                if(game.getMap().getCell(x, y) instanceof  SpawnCell && ((SpawnCell) game.getMap().getCell(x, y)).getSpawn() == spawnColor)
+                {
+                    spawnX = x;
+                    spawnY = y;
+                    found = true;
+                }
+            }
+        }
+
+        final Point spawnPoint = new Point(spawnX, spawnY);
+
+        if(found)
+        {
+            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                try
+                {
+                    position.set(spawnPoint.getX(), spawnPoint.getY());
+                }
+                catch(WrongPointException e)
+                {
+                    /*Impossible to land here with correct game logic*/;
+                }
+            }));
+        }
+        else
+        {
+            //If case of incorrect map
+            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                try
+                {
+                    position.set(0, 0);
+                }
+                catch(WrongPointException e)
+                {
+                    /*Impossible to land here with correct game logic*/;
+                }
+            }));
+        }
     }
 
     /**

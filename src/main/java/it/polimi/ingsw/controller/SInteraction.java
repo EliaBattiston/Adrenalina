@@ -108,4 +108,15 @@ public class SInteraction
             return null;
         }
     }
+
+    /**
+     * Ask the user which power card to discard
+     * @param conn Connection of the current user
+     * @param powers List of power cards the user has in his hand
+     * @return Chosen power card
+     */
+    public static Power discardPower(Connection conn, List<Power> powers)
+    {
+        return null;
+    }
 }
