@@ -82,32 +82,55 @@ public class ActionLambdaMap {
                 p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
-        //TODO
         data.put("w7-b", (pl, map, memory)->{
             //Muovi un bersaglio di 0, 1 o 2 quadrati fino a un quadrato che puoi vedere e dagli 1 danno.
-            //calcolo chi può essere visto coi movimenti e dove, poi chiedo chi vuole essere spostato e poi lo sposto e colpisco
 
-            List<Point> points = Map.pointsAround(pl.getPosition(), map, 2);
+            List<Point> pointsAll = Map.pointsAround(pl.getPosition(), map, 2);
+            List<Point> pointsVisible = Map.pointsAround(pl.getPosition(), map, 0);
+            List<Point> pointsNotVisible = new ArrayList<>(pointsAll);
+            pointsNotVisible.removeAll(pointsVisible);
+            List<Player> targets = new ArrayList<>();
 
-            List<Player> targets;
+            for(Player p:Map.playersInTheMap(map))
+                if(pointsAll.contains(p.getPosition()))
+                    targets.add(p);
 
-            /*List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
-            chosen.applyEffects(EffectsLambda.damage(, pl));
-            chosen.applyEffects(EffectsLambda.marks(, pl));*/
+
+            if(pointsNotVisible.contains(chosen.getPosition())){
+                List<Point> movableTo = Map.possibleMovements(chosen.getPosition(), 2, map);
+                movableTo.removeAll(pointsNotVisible);
+                Point newPos = SInteraction.displace(pl.getConn(), chosen, movableTo);
+
+                chosen.applyEffects(EffectsLambda.move(newPos));
+            }
+
+            chosen.applyEffects(EffectsLambda.damage(1, pl));
         });
 
-        //TODO
+        //(Point) memory
         data.put("w8-b", (pl, map, memory)->{
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
-            List<Point> visiblePoints = Map.possibleMovements(pl.getPosition(), 1, map);
+            List<Point> points = Map.pointsAround(pl.getPosition(), map, 0);
+            points.remove(pl.getPosition());
 
-            //Point p = SInteraction.chooseCell(); TODO
+            //Point vortexPoint = SInteraction.chooseCell();
+            Point vortexPoint = null;
 
-            /*List<Player> targets = Map.visiblePlayers(pl, map);
+            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA); //TODO check there's no problem if someone has that name
+            fakePlayer.applyEffects(EffectsLambda.move(vortexPoint));
+            List<Player> targets = Map.distanceStrategy(fakePlayer, map, (p1,p2)->Map.distance(p1,p2)<=1);
             Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));*/
+
+            chosen.applyEffects(EffectsLambda.move(vortexPoint));
+            chosen.applyEffects(EffectsLambda.damage(2, pl));
+
+            try {
+                ((Point) memory).set(vortexPoint.getX(), vortexPoint.getY());
+            }catch (WrongPointException e){
+                ;
+            }
         });
 
         data.put("w9-b", (pl, map, memory)->{
@@ -357,24 +380,34 @@ public class ActionLambdaMap {
             ((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl));
         });
 
-        //TODO
+        //(Point) memory
         data.put("w8-ad1", (pl, map, memory)->{
             //Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.
+            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA); //TODO check there's no problem if someone has that name
+            fakePlayer.applyEffects(EffectsLambda.move((Point)memory));
+            List<Player> targets = Map.distanceStrategy(fakePlayer, map, ((p1, p2) -> Map.distance(p1,p2)<=1));
+            List<Player> chosen = new ArrayList<>();
 
-            /*List<Player> targets = Map.visiblePlayers(pl, map);
-            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
-            chosen.applyEffects(EffectsLambda.damage(, pl));
-            chosen.applyEffects(EffectsLambda.marks(, pl));*/
+            chosen.add(SInteraction.chooseTarget(pl.getConn(), targets));
+            targets.removeAll(chosen);
+            chosen.add(SInteraction.chooseTarget(pl.getConn(), targets));
+
+            for(Player p:chosen){
+                p.applyEffects(EffectsLambda.move((Point)memory));
+                p.applyEffects(EffectsLambda.damage(1, pl));
+            }
         });
 
         data.put("w13-ad1", (pl, map, memory)->{
             //Dai 1 danno a ogni giocatore in quadrato che puoi vedere. Puoi usare questo effetto prima o dopo il movimento dell'effetto base.
 
-            List<Player> targets = Map.visiblePlayers(pl, map);
-            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);//TODO say that you're going to give damage to all the ones in that square
-            //Mark him and the others in that square
-            for(Player p:map.getCell(chosen.getPosition()).getPawns())
-                p.applyEffects(EffectsLambda.damage(1, pl));
+            List<Point> visiblePoints = Map.pointsAround(pl.getPosition(), map, 0);
+            //Point chosenPoint = SInteraction.chooseCell(); TODO
+            Point chosenPoint = null;
+
+            for(Player p:map.getCell(chosenPoint).getPawns())
+                if(p!=pl)
+                    p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("w14-ad1", (pl, map, memory)->{
@@ -437,14 +470,20 @@ public class ActionLambdaMap {
         data.put("w9-al", (pl, map, memory)->{
             //Scegli un quadrato distante esattamente 1 movimento. Dai 1 danno e 1 marchio a ognuno in quel quadrato.
 
-            List<Player> targets = Map.distanceStrategy(pl, map, (p1, p2)-> Map.distance(p1, p2)==1);
-            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets); //TODO say you're going to give damage to all the players in that square
+            List<Player> targets = Map.distanceStrategy(pl, map, (p1,p2)->Map.distance(p1,p2)==1);
+            List<Point> visiblePoints = new ArrayList<>();
 
-            //Mark him and the others in that square
-            for(Player p:map.getCell(chosen.getPosition()).getPawns()){
-                p.applyEffects(EffectsLambda.damage(1, pl));
-                p.applyEffects(EffectsLambda.marks(1, pl));
-            }
+            for(Player p:targets)
+                visiblePoints.add(p.getPosition());
+
+            //Point chosenPoint = SInteraction.chooseCell(); TODO
+            Point chosenPoint = null;
+
+            for(Player p:map.getCell(chosenPoint).getPawns())
+                if(p!=pl){
+                    p.applyEffects(EffectsLambda.damage(1, pl));
+                    p.applyEffects(EffectsLambda.marks(1, pl));
+                }
         });
 
         data.put("w11-al", (pl, map, memory)->{

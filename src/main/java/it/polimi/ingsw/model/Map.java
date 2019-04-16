@@ -222,7 +222,6 @@ public class Map {
         return targets;
     }
 
-
     /**
      * Check if two players are in the same room
      * @param p1 player 1
