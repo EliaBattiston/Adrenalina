@@ -6,6 +6,8 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ActionLambdaMap {
     private HashMap<String, ActionLambda> data;
@@ -128,8 +130,8 @@ public class ActionLambdaMap {
 
             try {
                 ((Point) memory).set(vortexPoint.getX(), vortexPoint.getY());
-            }catch (WrongPointException e){
-                ;
+            }catch (WrongPointException ex){
+                Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
             }
         });
 
@@ -321,11 +323,8 @@ public class ActionLambdaMap {
         });
 
         //((Player[])memory)[0]
-        data.put("w2-ad1", (pl, map, memory)->{
-            //Dai 1 danno aggiuntivo a uno dei due bersagli.
-
-            ((Player[])memory)[0].applyEffects(EffectsLambda.marks(1, pl));
-        });
+        //Dai 1 danno aggiuntivo a uno dei due bersagli.
+        data.put("w2-ad1", (pl, map, memory)-> ((Player[])memory)[0].applyEffects(EffectsLambda.marks(1, pl)));
 
         //((Player[])memory)[0]
         data.put("w2-ad2", (pl, map, memory)->{
@@ -374,11 +373,8 @@ public class ActionLambdaMap {
         });
 
         //((Player[])memory)[0]
-        data.put("w4-ad2", (pl, map, memory)->{
-            //Dai 1 danno aggiuntivo al tuo bersaglio.
-
-            ((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl));
-        });
+        //Dai 1 danno aggiuntivo al tuo bersaglio.
+        data.put("w4-ad2", (pl, map, memory)->((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl)));
 
         //(Point) memory
         data.put("w8-ad1", (pl, map, memory)->{
@@ -605,11 +601,9 @@ public class ActionLambdaMap {
 
                     chosen = SInteraction.chooseTarget(pl.getConn(), targets);
                     chosen.applyEffects(EffectsLambda.damage(2, pl));
-                }catch(WrongPointException e){
-
+                }catch(WrongPointException ex){
+                    Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
                 }
-
-
             }
         });
 

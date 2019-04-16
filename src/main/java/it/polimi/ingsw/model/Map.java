@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * this class represents the map or board of the actual game
@@ -27,8 +29,7 @@ public class Map {
      * @param y Y-coordinate of the cell
      * @return cell reference (or null in case of out of bound coordinates or missing cell
      */
-    public Cell getCell(int x, int y)
-    {
+    public Cell getCell(int x, int y) {
         if(x >= 0 && x < 4 && y >= 0 && y < 3)
             return cells[x][y];
         return null;
@@ -48,8 +49,7 @@ public class Map {
      * the function deserialize the JSON config file and loads the data in the matrix
      * @param pathJsonFile JSON map config file
      */
-    public static Map jsonDeserialize(String pathJsonFile) throws FileNotFoundException
-    {
+    public static Map jsonDeserialize(String pathJsonFile) throws FileNotFoundException {
         JsonReader reader = new JsonReader(new FileReader(pathJsonFile));
 
         GsonBuilder gsonBilder = new GsonBuilder();
@@ -121,8 +121,8 @@ public class Map {
                 if(visRooms.contains(map.getCell(i,j).getRoomNumber())) {
                     try {
                         points.add(new Point(j, i));
-                    } catch (WrongPointException e) {
-
+                    } catch (WrongPointException ex) {
+                        Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
                     }
                 }
 
@@ -223,16 +223,6 @@ public class Map {
     }
 
     /**
-     * Check if two players are in the same room
-     * @param p1 player 1
-     * @param p2 player 2
-     * @return true if they are in the same room
-     */
-    public static boolean sameRoom(Player p1, Player p2, Map m){
-        return m.getCell(p1.getPosition()).getRoomNumber() == m.getCell(p2.getPosition()).getRoomNumber();
-    }
-
-    /**
      * Find the list of the points reachable at a maximum given distance
      * @param startPoint start position
      * @param dist max dist to look for
@@ -278,7 +268,7 @@ public class Map {
                 points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
             }
         }catch (WrongPointException ex){
-            ;
+            Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
         }
 
         return points;
