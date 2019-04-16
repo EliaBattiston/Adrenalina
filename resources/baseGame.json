@@ -271,13 +271,13 @@
                 "name": "Razzi portatili",
                 "cost": ["Blue"],
                 "lambdaIdentifier": "w14-ad1"
-            }, {
-                "description": "Durante l'effetto base, dai 1 danno a ogni giocatore presente nel quadrato in cui si trovava originariamente il bersaglio, incluso il bersaglio, anche se lo hai mosso.",
+            }],
+            "alternative": {
+                "description": "Oltre l'effetto base, dai 1 danno a ogni giocatore presente nel quadrato in cui si trovava originariamente il bersaglio, incluso il bersaglio, anche se lo hai mosso.",
                 "name": "Testata a frammentazione",
                 "cost": ["Yellow"],
-                "lambdaIdentifier": "w14-ad2"
-            }],
-            "alternative": null,
+                "lambdaIdentifier": "w14-al"
+            },
             "color": "Red"
         }, {
             "id": 15,
