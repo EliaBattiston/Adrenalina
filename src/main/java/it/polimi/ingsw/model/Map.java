@@ -8,7 +8,9 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * this class represents the map or board of the actual game
@@ -99,9 +101,15 @@ public class Map {
         return rooms;
     }
 
+    //TODO make method visibleSquares -> usefull for the lambdas
+    public static List<Point> pointsAround(Point p, Map m, int dist, boolean mustVisible){
+        return null;
+    }
+
     /**
      * Return the visible players from the viewer players
      * @param viewer the one who is looking
+     * @param map the map on wich we are looking for
      * @return the list of visible players
      */
     public static List<Player> visiblePlayers(Player viewer, Map map){
@@ -121,6 +129,13 @@ public class Map {
         return visibles;
     }
 
+    /**
+     * Return the visible players from the viewer players
+     * @param viewer the one who is looking
+     * @param map the map on wich we are looking for
+     * @param dir the cardinal direction where you want to lo
+     * @return the list of visible players
+     */
     public static List<Player> visiblePlayers(Player viewer, Map map, Direction dir){
         ArrayList<Player> visible = new ArrayList<>();
 
@@ -148,8 +163,8 @@ public class Map {
 
     /**
      * Return the manhattan distance between two players
-     * @param p1
-     * @param p2
+     * @param p1 player 1
+     * @param p2 player 2
      * @return the distance
      */
     public static int distance(Player p1, Player p2){
@@ -177,8 +192,8 @@ public class Map {
 
     /**
      * Check if two players are in the same room
-     * @param p1
-     * @param p2
+     * @param p1 player 1
+     * @param p2 player 2
      * @return true if they are in the same room
      */
     public static boolean sameRoom(Player p1, Player p2, Map m){
@@ -192,8 +207,20 @@ public class Map {
      * @param map the map
      * @return the list of points reachable with that amount of movements
      */
-    public static List<Point> possibleMovements(Point startPoint, int dist, Map map){//TODO the recursion and the presence of duplicates
-        List<Point> points = new ArrayList<>();
+    public static List<Point> possibleMovements(Point startPoint, int dist, Map map) {
+        Set<Point> points = new HashSet<>();
+        possibleMovements(startPoint, dist, map, points);
+        return new ArrayList<>(points);
+    }
+
+    /**
+     * Find the list of the points reachable at a maximum given distance
+     * @param startPoint start position
+     * @param dist max dist to look for
+     * @param map the map
+     * @param points the Set of points
+     */
+    private static Set<Point> possibleMovements(Point startPoint, int dist, Map map, Set<Point> points){
         Cell s = map.getCell(startPoint);
         Point tempP = null; //temp var for new points found
 
@@ -201,22 +228,22 @@ public class Map {
             if (s.getSides()[Direction.NORTH.ordinal()] == Side.DOOR || s.getSides()[Direction.NORTH.ordinal()] == Side.NOTHING){
                 tempP = new Point(startPoint.getX(), startPoint.getY() + 1);
                 points.add(tempP);
-                points.addAll(Map.possibleMovements(tempP, dist-1, map));
+                points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
             }
             if (s.getSides()[Direction.EAST.ordinal()] == Side.DOOR || s.getSides()[Direction.EAST.ordinal()] == Side.NOTHING){
                 tempP = new Point(startPoint.getX()+1, startPoint.getY());
                 points.add(tempP);
-                points.addAll(Map.possibleMovements(tempP, dist-1, map));
+                points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
             }
             if (s.getSides()[Direction.SOUTH.ordinal()] == Side.DOOR || s.getSides()[Direction.SOUTH.ordinal()] == Side.NOTHING){
                 tempP = new Point(startPoint.getX(), startPoint.getY() - 1);
                 points.add(tempP);
-                points.addAll(Map.possibleMovements(tempP, dist-1, map));
+                points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
             }
             if (s.getSides()[Direction.WEST.ordinal()] == Side.DOOR || s.getSides()[Direction.WEST.ordinal()] == Side.NOTHING){
                 tempP = new Point(startPoint.getX()-1, startPoint.getY());
                 points.add(tempP);
-                points.addAll(Map.possibleMovements(tempP, dist-1, map));
+                points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
             }
         }catch (WrongPointException ex){
             ;

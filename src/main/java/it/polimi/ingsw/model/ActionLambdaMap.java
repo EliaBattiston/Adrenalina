@@ -98,11 +98,11 @@ public class ActionLambdaMap {
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
             List<Point> visiblePoints = null;
 
-            //Point p = SInteraction.chooseCell();
+            //Point p = SInteraction.chooseCell(); TODO
 
-            List<Player> targets = Map.visiblePlayers(pl, map);//TODO min distance
+            /*List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            chosen.applyEffects(EffectsLambda.damage(2, pl));*/
         });
 
         data.put("w9-b", (pl, map, memory)->{
@@ -145,29 +145,39 @@ public class ActionLambdaMap {
         data.put("w12-b", (pl, map, memory)->{
             //Scegli un quadrato distante 1 movimento e possibilmente un secondo quadrato distante ancora 1 movimento nella stessa direzione. In ogni quadrato puoi scegliere 1 bersaglio e dargli 1 danno.
 
-            List<Player> targets = Map.distanceStrategy(pl, map, (p1, p2)-> Map.distance(p1, p2)==1);
-            Player chosen1 = SInteraction.chooseTarget(pl.getConn(), targets);//TODO change as in w12-al to the new SInteraction
+            List<Point> squares = Map.possibleMovements(pl.getPosition(), 1, map);
 
-            //First find the next X&Y in the same direction, it's needed for the second part of the effect
+            Point chosen = null;
+            //Point chosen = SInteraction.chooseCell(squares); TODO
+
+            //Find the next X&Y in the same direction, it's needed for the second part of the effect
             int nX, nY;
             nX = pl.getPosition().getX();
             nY = pl.getPosition().getY();
-            if(pl.getPosition().getY()-1 == chosen1.getPosition().getY())
+            if(pl.getPosition().getY()-1 == chosen.getY())
                 nY--;
-            else if(pl.getPosition().getX()+1 == chosen1.getPosition().getX())
+            else if(pl.getPosition().getX()+1 == chosen.getX())
                 nX++;
-            else if(pl.getPosition().getY()+1 == chosen1.getPosition().getY())
+            else if(pl.getPosition().getY()+1 == chosen.getY())
                 nY++;
-            else if(pl.getPosition().getX()-1 == chosen1.getPosition().getX())
+            else if(pl.getPosition().getX()-1 == chosen.getX())
                 nX--;
+
+            for(Player p:map.getCell(chosen).getPawns())
+                p.applyEffects(EffectsLambda.damage(2, pl));
+
+            for(Player p:map.getCell(nX, nY).getPawns())
+                p.applyEffects(EffectsLambda.damage(1, pl));
+
+
+            List<Player> targets = map.getCell(chosen).getPawns();
+            Player chosen1 = SInteraction.chooseTarget(pl.getConn(), targets);
 
             targets = map.getCell(nX,nY).getPawns();
             Player chosen2 = SInteraction.chooseTarget(pl.getConn(), targets);
 
             //Give damage
-
             chosen1.applyEffects(EffectsLambda.damage(1, pl));
-
             if(chosen2 != null)
                 chosen2.applyEffects(EffectsLambda.damage(1, pl));
         });
@@ -228,9 +238,10 @@ public class ActionLambdaMap {
             List<Player> targets = Map.distanceStrategy(pl, map, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
-            Point where = SInteraction.displace(pl.getConn(), chosen, dest); //TODO make sure this method return the initial point if the user doesn't want to move the enemy
+            Point where = SInteraction.displace(pl.getConn(), chosen, dest);
             chosen.applyEffects(EffectsLambda.damage(3, pl));
-            chosen.applyEffects(EffectsLambda.move(where));
+            if(where != null)
+                chosen.applyEffects(EffectsLambda.move(where));
         });
 
         data.put("w19-b", (pl, map, memory)->{
@@ -243,14 +254,24 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.marks(2, pl));
         });
 
-        //TODO
         data.put("w20-b", (pl, map, memory)->{
-            //Scegli fino a 3 bersagli su quadrati differenti, ognuno distante esattamente 1 movimento. Dai 1 danno a ogni bersaglio.
-            /*
-            List<Player> targets = Map.visiblePlayers(pl, map);
-            Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
-            chosen.applyEffects(EffectsLambda.damage(, pl));
-            chosen.applyEffects(EffectsLambda.marks(, pl));*/
+            //Scegli fino a 3 bersagli su quadrati differenti, ognuno distante esattamente 1 movimento da me. Dai 1 danno a ogni bersaglio.
+
+            List<Player> targets = Map.distanceStrategy(pl, map, (p1,p2)->Map.distance(p1,p2)==1);
+            List<Player> chosen = new ArrayList<>();
+
+            chosen.add(SInteraction.chooseTarget(pl.getConn(), targets));
+            for(Player p: map.getCell(chosen.get(0).getPosition()).getPawns())
+                targets.remove(p);
+            chosen.add(SInteraction.chooseTarget(pl.getConn(), targets));
+            if(chosen.size() > 1){
+                for(Player p: map.getCell(chosen.get(1).getPosition()).getPawns())
+                    targets.remove(p);
+                chosen.add(SInteraction.chooseTarget(pl.getConn(), targets));
+            }
+
+            for(Player p: chosen)
+                p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("w21-b", (pl, map, memory)->{
@@ -436,27 +457,14 @@ public class ActionLambdaMap {
         data.put("w12-al", (pl, map, memory)->{
             //Scegli 2 quadrati come prima. (come w12-b) Dai 2 danni a chiunque sia nel primo quadrato e 1 danno a chiunque si trovi nel secondo quadrato.
 
-            List<Point> squares = new ArrayList<>();
-
-            //find the squares around
-            try {
-                if (map.getCell(pl.getPosition()).getSides()[Direction.NORTH.ordinal()] != Side.WALL)
-                    squares.add(new Point(pl.getPosition().getX(), pl.getPosition().getY()-1));
-                if (map.getCell(pl.getPosition()).getSides()[Direction.EAST.ordinal()] != Side.WALL)
-                    squares.add(new Point(pl.getPosition().getX()+1, pl.getPosition().getY()));
-                if (map.getCell(pl.getPosition()).getSides()[Direction.SOUTH.ordinal()] != Side.WALL)
-                    squares.add(new Point(pl.getPosition().getX(), pl.getPosition().getY()+1));
-                if (map.getCell(pl.getPosition()).getSides()[Direction.WEST.ordinal()] != Side.WALL)
-                    squares.add(new Point(pl.getPosition().getX()-1, pl.getPosition().getY()));
-            }catch(WrongPointException e){
-                ;
-            }
+            List<Point> squares = Map.possibleMovements(pl.getPosition(), 1, map);
 
             Point chosen = null;
             //Point chosen = SInteraction.chooseCell(squares); TODO
 
             //Find the next X&Y in the same direction, it's needed for the second part of the effect
-            int nX, nY;
+            int nX;
+            int nY;
             nX = pl.getPosition().getX();
             nY = pl.getPosition().getY();
             if(pl.getPosition().getY()-1 == chosen.getY())
@@ -493,12 +501,14 @@ public class ActionLambdaMap {
             //Scegli fino a 3 bersagli che puoi vedere e dai 1 marchio a ciascuno.
 
             List<Player> targets = Map.visiblePlayers(pl, map);
-            List<Player> chosens = new ArrayList<>();
-            //TODO check that user doesn't choose the same player
-            chosens.add(SInteraction.chooseTarget(pl.getConn(), targets));
-            chosens.add(SInteraction.chooseTarget(pl.getConn(), targets));
-            chosens.add(SInteraction.chooseTarget(pl.getConn(), targets));
-            for(Player p:chosens)
+            List<Player> chosen = new ArrayList<>();
+
+            chosen.add(SInteraction.chooseTarget(pl.getConn(), targets));
+            targets.remove(chosen.get(0));
+            chosen.add(SInteraction.chooseTarget(pl.getConn(), targets));
+            targets.remove(chosen.get(1));
+            chosen.add(SInteraction.chooseTarget(pl.getConn(), targets));
+            for(Player p:chosen)
                 if(p!=null)
                     p.applyEffects(EffectsLambda.marks(1, pl));
         });
@@ -518,8 +528,9 @@ public class ActionLambdaMap {
             //Movement
             List<Point> positions = Map.possibleMovements(pl.getPosition(), 1, map);
             Point posChosen = SInteraction.move(pl.getConn(), positions);
-            //First find the next X&Y inthe same direction, it's needed for the second part of the effect
-            int nX, nY;
+            //First find the next X&Y in the same direction, it's needed for the second part of the effect
+            int nX;
+            int nY;
             nX = pl.getPosition().getX();
             nY = pl.getPosition().getY();
             if(pl.getPosition().getY()-1 == posChosen.getY())
@@ -551,7 +562,7 @@ public class ActionLambdaMap {
                     chosen = SInteraction.chooseTarget(pl.getConn(), targets);
                     chosen.applyEffects(EffectsLambda.damage(2, pl));
                 }catch(WrongPointException e){
-                    ;
+
                 }
 
 
@@ -573,7 +584,7 @@ public class ActionLambdaMap {
             Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
             chosen.applyEffects(EffectsLambda.damage(3, pl));
 
-            List<Point> possiblePos = null; //TODO calculate the possible positions
+            List<Point> possiblePos = Map.possibleMovements(chosen.getPosition(), 2, map);
             Point newPos = SInteraction.displace(pl.getConn(), chosen, possiblePos);
             chosen.applyEffects(EffectsLambda.move(newPos));
         });
