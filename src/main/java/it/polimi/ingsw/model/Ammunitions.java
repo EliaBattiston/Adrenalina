@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serializable;
+
 /**
  * This class represents the management of ammunitions that a player already has on his board, and can be used to pay for effects
  */
-public class Ammunitions {
+public class Ammunitions implements Serializable {
     /**
      * Number of red ammo
      */

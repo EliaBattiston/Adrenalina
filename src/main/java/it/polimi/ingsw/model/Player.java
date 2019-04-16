@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.controller.Connection;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * Contains all the info about a Player, from his nick to the current status of his boards
  *
  */
-public class Player
+public class Player implements Serializable
 {
     /**
      * Nickname used to log in
