@@ -46,7 +46,7 @@ public class Action {
      */
     public void execute(Player pl, Map m, List<Player> playersList)
     {
-        ActionLambda lambda = ActionLambdaMap.getActionsLambda().get(lambdaIdentifier);
+        ActionLambda lambda = ActionLambdaMap.getLambda(lambdaIdentifier);
         lambda.execute(pl, m, playersList);
     }
 
