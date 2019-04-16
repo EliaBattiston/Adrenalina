@@ -25,9 +25,14 @@ public class RMIConn implements Connection
      * @param available List of available actions
      * @return Chosen action
      */
-    public Action chooseAction(List<Action> available) throws RemoteException
+    public Action chooseAction(List<Action> available)
     {
-        return client.chooseAction(available);
+        try {
+            return client.chooseAction(available);
+        }
+        catch (RemoteException e) {
+            return null;
+        }
     }
 
     /**
@@ -35,9 +40,14 @@ public class RMIConn implements Connection
      * @param available List of available weapons
      * @return Chosen weapon
      */
-    public Weapon chooseWeapon(List<Weapon> available) throws RemoteException
+    public Weapon chooseWeapon(List<Weapon> available)
     {
-        return client.chooseWeapon(available);
+        try {
+            return client.chooseWeapon(available);
+        }
+        catch (RemoteException e) {
+            return null;
+        }
     }
 
     /**
@@ -45,9 +55,14 @@ public class RMIConn implements Connection
      * @param grabbable List of weapons that can be picked up by the player
      * @return Chosen weapon
      */
-    public Weapon grabWeapon(List<Weapon> grabbable) throws RemoteException
+    public Weapon grabWeapon(List<Weapon> grabbable)
     {
-        return client.grabWeapon(grabbable);
+        try {
+            return client.grabWeapon(grabbable);
+        }
+        catch (RemoteException e) {
+            return null;
+        }
     }
 
     /**
@@ -55,9 +70,14 @@ public class RMIConn implements Connection
      * @param reloadable Weapons that are currently not loaded
      * @return Weapons to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable) throws RemoteException
+    public List<Weapon> reload(List<Weapon> reloadable)
     {
-        return client.reload(reloadable);
+        try {
+            return client.reload(reloadable);
+        }
+        catch (RemoteException e) {
+            return null;
+        }
     }
 
     /**
@@ -65,9 +85,14 @@ public class RMIConn implements Connection
      * @param destinations Possible destinations for the user
      * @return Point where the player will be when he's done moving
      */
-    public Point move(List<Point> destinations) throws RemoteException
+    public Point move(List<Point> destinations)
     {
-        return client.move(destinations);
+        try {
+            return client.move(destinations);
+        }
+        catch (RemoteException e) {
+            return null;
+        }
     }
 
     /**
@@ -75,9 +100,14 @@ public class RMIConn implements Connection
      * @param targets List of player that can be targeted
      * @return Chosen target
      */
-    public Player chooseTarget(List<Player> targets) throws RemoteException
+    public Player chooseTarget(List<Player> targets)
     {
-        return client.chooseTarget(targets);
+        try {
+            return client.chooseTarget(targets);
+        }
+        catch (RemoteException e) {
+            return null;
+        }
     }
 
     /**
@@ -87,8 +117,13 @@ public class RMIConn implements Connection
      * @return Point where the enemy will be after being moved
      */
 
-    public Point displace(Player enemy, List<Point> destinations) throws RemoteException
+    public Point displace(Player enemy, List<Point> destinations)
     {
-        return client.displace(enemy, destinations);
+        try {
+            return client.displace(enemy, destinations);
+        }
+        catch (RemoteException e) {
+            return null;
+        }
     }
 }

@@ -15,13 +15,17 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
 {
     Registry registry;
 
-    public RMIClient(String host, String username) throws RemoteException, NotBoundException, AlreadyBoundException
+    public RMIClient(String host, String username) throws RemoteException
     {
-        registry = LocateRegistry.getRegistry(host);
-        RMIConnHandler RMIServer = (RMIConnHandler) registry.lookup("AM06");
-        String bindName = "AM06-" + username;
-        registry.bind(bindName, this);
-        RMIServer.newConnection(bindName);
+        try {
+            registry = LocateRegistry.getRegistry(host);
+            RMIConnHandler RMIServer = (RMIConnHandler) registry.lookup("AM06");
+            String bindName = "AM06-" + username;
+            registry.bind(bindName, this);
+            RMIServer.newConnection(bindName);
+        }
+        catch(NotBoundException e) { }
+        catch(AlreadyBoundException e) { }
     }
 
     /**

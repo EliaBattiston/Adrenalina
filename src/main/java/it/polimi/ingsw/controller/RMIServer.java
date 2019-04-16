@@ -28,9 +28,12 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
      * @throws RemoteException in case of binding errors
      * @throws AlreadyBoundException in case of already existing server binding name
      */
-    RMIServer() throws RemoteException, AlreadyBoundException {
-        registry = LocateRegistry.createRegistry(1099);
-        registry.bind("AM06", this);
+    RMIServer() throws RemoteException {
+        try {
+            registry = LocateRegistry.createRegistry(1099);
+            registry.bind("AM06", this);
+        }
+        catch(AlreadyBoundException e) { }
     }
 
     /**
