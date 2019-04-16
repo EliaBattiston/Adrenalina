@@ -76,18 +76,19 @@ public class Map {
     }
 
     /**
-     * Return the list of visible rooms
-     * @param viewer
+     * Return the list of visible rooms from a point
+     * @param pos
      * @param map
      * @return
      */
-    public static List<Integer> visibleRooms(Player viewer, Map map){
+    public static List<Integer> visibleRooms(Point pos, Map map){
         List<Integer> rooms = new ArrayList<>();
         int x,y;
-        x = viewer.getPosition().getX();
-        y = viewer.getPosition().getY();
+        x = pos.getX();
+        y = pos.getY();
 
         rooms.add(map.getCell(x, y).getRoomNumber());
+
         Side[] sides = map.getCell(x,y).getSides();
         if(sides[Direction.NORTH.ordinal()] == Side.DOOR)
             rooms.add(map.getCell(x,y-1).getRoomNumber());
@@ -101,9 +102,41 @@ public class Map {
         return rooms;
     }
 
-    //TODO make method visibleSquares -> usefull for the lambdas
-    public static List<Point> pointsAround(Point p, Map m, int dist, boolean mustVisible){
-        return null;
+    /**
+     * Return the list of points visible from the startPoint plus all the ones at a maximum distance from a visible one
+     * that is less than notVisDist
+     * @param startPoint starting point
+     * @param map map where you need to look
+     * @param notVisDist if 0 the method returns only visible points, otherwise it returns also points that has a
+     *                   notVisDist as max dist from a visible point
+     * @return
+     */
+    public static List<Point> pointsAround(Point startPoint, Map map, int notVisDist){
+        List<Integer> visRooms = Map.visibleRooms(startPoint, map);
+        List<Point> points = new ArrayList<>();
+
+        //Get all the visible points
+        for(int i=0; i<3;i++)
+            for(int j=0; j<2; j++)
+                if(visRooms.contains(map.getCell(i,j).getRoomNumber())) {
+                    try {
+                        points.add(new Point(j, i));
+                    } catch (WrongPointException e) {
+
+                    }
+                }
+
+        if(notVisDist > 0){
+            HashSet<Point> notVisible = new HashSet<>();
+            for(Point p:points)
+                notVisible.addAll(Map.possibleMovements(p, notVisDist, map));
+
+            notVisible.addAll(points);
+
+            return new ArrayList<>(notVisible);
+        }
+
+        return points;
     }
 
     /**
@@ -115,12 +148,12 @@ public class Map {
     public static List<Player> visiblePlayers(Player viewer, Map map){
         ArrayList<Player> visibles = new ArrayList<>();
 
-        List<Integer> roomsN = Map.visibleRooms(viewer, map);
+        List<Integer> visRooms = Map.visibleRooms(viewer.getPosition(), map);
 
         //Get all the people in those rooms
         for(int i=0; i<3;i++)
             for(int j=0; j<2; j++)
-                if(roomsN.contains(map.getCell(i,j).getRoomNumber()))
+                if(visRooms.contains(map.getCell(i,j).getRoomNumber()))
                     visibles.addAll(map.getCell(i, j).getPawns());
 
         //remove the player itself
@@ -130,9 +163,9 @@ public class Map {
     }
 
     /**
-     * Return the visible players from the viewer players
+     * Return the visible players from the viewer players in a cardinal direction, it doesn't care about walls
      * @param viewer the one who is looking
-     * @param map the map on wich we are looking for
+     * @param map the map on which we are looking for
      * @param dir the cardinal direction where you want to lo
      * @return the list of visible players
      */
@@ -179,9 +212,9 @@ public class Map {
      * @return The list of visible players accepted from the strategy
      */
     public static List<Player> distanceStrategy(Player pl, Map map, MapDistanceStrategy strategy){
-        List<Player> visibles = Map.visiblePlayers(pl, map);
+        List<Player> visible = Map.visiblePlayers(pl, map);
         List<Player> targets = new ArrayList<>();
-        for(Player p:visibles)
+        for(Player p:visible)
             if(strategy.calculate(pl, p))
                 targets.add(p);
 

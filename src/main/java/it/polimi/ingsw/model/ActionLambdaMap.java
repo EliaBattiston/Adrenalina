@@ -86,6 +86,11 @@ public class ActionLambdaMap {
         data.put("w7-b", (pl, map, memory)->{
             //Muovi un bersaglio di 0, 1 o 2 quadrati fino a un quadrato che puoi vedere e dagli 1 danno.
             //calcolo chi può essere visto coi movimenti e dove, poi chiedo chi vuole essere spostato e poi lo sposto e colpisco
+
+            List<Point> points = Map.pointsAround(pl.getPosition(), map, 2);
+
+            List<Player> targets;
+
             /*List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen = SInteraction.chooseTarget(pl.getConn(), targets);
             chosen.applyEffects(EffectsLambda.damage(, pl));
@@ -96,7 +101,7 @@ public class ActionLambdaMap {
         data.put("w8-b", (pl, map, memory)->{
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
-            List<Point> visiblePoints = null;
+            List<Point> visiblePoints = Map.possibleMovements(pl.getPosition(), 1, map);
 
             //Point p = SInteraction.chooseCell(); TODO
 
@@ -108,7 +113,7 @@ public class ActionLambdaMap {
         data.put("w9-b", (pl, map, memory)->{
             //Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.
 
-            List<Integer> visibleRooms = Map.visibleRooms(pl, map);
+            List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
             visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber());
 
             List<Player> allInMap = Map.playersInTheMap(map);
