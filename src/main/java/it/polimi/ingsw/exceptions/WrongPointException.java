@@ -3,7 +3,7 @@ package it.polimi.ingsw.exceptions;
 /**
  * This exception is thrown when trying to set a point outside the map
  */
-public class WrongPointException extends Exception
+public class WrongPointException extends RuntimeException
 {
     public WrongPointException()
     {
