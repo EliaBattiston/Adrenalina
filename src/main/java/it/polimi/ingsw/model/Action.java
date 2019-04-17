@@ -1,11 +1,12 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * The class describes a single action a weapon or a power can make
  */
-public class Action {
+public class Action implements Serializable {
     /**
      * description of the action and its effects
      */

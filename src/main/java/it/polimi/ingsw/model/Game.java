@@ -121,6 +121,8 @@ public class Game {
         return ammoDeck;
     }
 
+    public Kill[] getSkulls() { return skullsBoard; };
+
     /**
      * Serializes the content of the class (which contains every important aspect of the match) in json
      * @return Json serialization of the game

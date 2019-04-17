@@ -1,11 +1,12 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Class representing a weapon that give access to it's final attributes and let set the loaded property
  */
-public class Weapon extends Card{
+public class Weapon extends Card implements Serializable {
     private final int id;
     private final String name;
     private final String notes;

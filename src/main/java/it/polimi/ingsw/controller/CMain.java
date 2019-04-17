@@ -18,10 +18,6 @@ public class CMain
      */
     Client connection;
 
-    /**
-     * Interaction requests executor
-     */
-    CInteraction interaction;
 
     /**
      * Endpoint for interface control
