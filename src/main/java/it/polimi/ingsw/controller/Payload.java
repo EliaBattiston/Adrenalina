@@ -9,5 +9,5 @@ class Payload {
     public Interaction type;
     public String parameters;
     public Player enemy;
-
+    public boolean mustChoose;
 }
