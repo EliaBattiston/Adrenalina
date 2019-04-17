@@ -83,7 +83,8 @@ public class Map {
      */
     public static List<Integer> visibleRooms(Point pos, Map map){
         List<Integer> rooms = new ArrayList<>();
-        int x,y;
+        int x;
+        int y;
         x = pos.getX();
         y = pos.getY();
 
