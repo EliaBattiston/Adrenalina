@@ -111,7 +111,7 @@ public class Match implements Runnable
                         firstFrenzy != null && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy)
                 );
 
-                SInteraction.chooseAction(active.getConn(), availableActions).execute(active, game.getMap(), game.getPlayers());
+                active.getConn().chooseAction(availableActions).execute(active, game.getMap(), game.getPlayers());
             }
 
             //Check if some cell's loot or weapons need to be refilled
@@ -194,7 +194,7 @@ public class Match implements Runnable
 
 
         //Choose power
-        Power chosen = SInteraction.discardPower(pl.getConn(), pl.getPowers());
+        Power chosen = pl.getConn().discardPower(pl.getPowers());
         Color spawnColor = chosen.getColor();
         //Discard the power
         pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {

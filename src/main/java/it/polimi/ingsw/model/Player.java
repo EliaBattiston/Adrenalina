@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.controller.Connection;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * Contains all the info about a Player, from his nick to the current status of his boards
  *
  */
-public class Player
+public class Player implements Serializable
 {
     /**
      * Nickname used to log in
@@ -68,7 +69,7 @@ public class Player
      * @param phrase Action phrase
      * @param f Chosen Character
      */
-    Player(String nick, String phrase, Fighter f)
+    public Player(String nick, String phrase, Fighter f)
     {
         this.nick = nick;
         this.actionPhrase = phrase;
@@ -80,7 +81,7 @@ public class Player
         this.skulls = 0;
         this.ammo = new Ammunitions();
         this.powers = new Power[3];
-        this.position = null;
+        this.position = new Point(0, 0);
 
         this.conn = null;
 

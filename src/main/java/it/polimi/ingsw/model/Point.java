@@ -2,10 +2,12 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.io.Serializable;
+
 /**
  * Coordinates of a Player in the Map. Because of its use X values have to be between 0 and 2, Y values between 0 and 3
  */
-public class Point {
+public class Point implements Serializable {
     /**
      * X coordinate
      */

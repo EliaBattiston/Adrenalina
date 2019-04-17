@@ -115,7 +115,7 @@ public class GameTest {
             }
             catch(WrongPointException e)
             {
-                ;
+                fail();
             }
 
             weapons[0] = weapon;
