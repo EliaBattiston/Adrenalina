@@ -77,9 +77,9 @@ public class Map {
 
     /**
      * Return the list of visible rooms from a point
-     * @param pos
-     * @param map
-     * @return
+     * @param pos pos
+     * @param map map
+     * @return list of isible rooms
      */
     public static List<Integer> visibleRooms(Point pos, Map map){
         List<Integer> rooms = new ArrayList<>();
@@ -100,43 +100,6 @@ public class Map {
             rooms.add(map.getCell(x-1,y).getRoomNumber());
 
         return rooms;
-    }
-
-    /**
-     * Return the list of points visible from the startPoint plus all the ones at a maximum distance from a visible one
-     * that is less than notVisDist
-     * @param startPoint starting point
-     * @param map map where you need to look
-     * @param notVisDist if 0 the method returns only visible points, otherwise it returns also points that has a
-     *                   notVisDist as max dist from a visible point
-     * @return
-     */
-    public static List<Point> pointsAround(Point startPoint, Map map, int notVisDist){
-        List<Integer> visRooms = Map.visibleRooms(startPoint, map);
-        List<Point> points = new ArrayList<>();
-
-        //Get all the visible points
-        for(int i=0; i<3;i++)
-            for(int j=0; j<2; j++)
-                if(visRooms.contains(map.getCell(i,j).getRoomNumber())) {
-                    try {
-                        points.add(new Point(j, i));
-                    } catch (WrongPointException ex) {
-                        Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
-                    }
-                }
-
-        if(notVisDist > 0){
-            HashSet<Point> notVisible = new HashSet<>();
-            for(Point p:points)
-                notVisible.addAll(Map.possibleMovements(p, notVisDist, map));
-
-            notVisible.addAll(points);
-
-            return new ArrayList<>(notVisible);
-        }
-
-        return points;
     }
 
     /**
@@ -211,7 +174,7 @@ public class Map {
      * @param strategy strategy that accept/refuse an enemy
      * @return The list of visible players accepted from the strategy
      */
-    public static List<Player> distanceStrategy(Player pl, Map map, MapDistanceStrategy strategy){
+    public static List<Player> playersAtGivenDistance(Player pl, Map map, MapDistanceStrategy strategy){
         List<Player> visible = Map.visiblePlayers(pl, map);
         List<Player> targets = new ArrayList<>();
         for(Player p:visible)
@@ -273,4 +236,42 @@ public class Map {
 
         return points;
     }
+
+    /**
+     * Return the list of points visible from the startPoint plus all the ones at a maximum distance from a visible one
+     * that is less than notVisDist
+     * @param startPoint starting point
+     * @param map map where you need to look
+     * @param notVisDist if 0 the method returns only visible points, otherwise it returns also points that has a
+     *                   notVisDist as max dist from a visible point
+     * @return
+     */
+    public static List<Point> visiblePoints(Point startPoint, Map map, int notVisDist){
+        List<Integer> visRooms = Map.visibleRooms(startPoint, map);
+        List<Point> points = new ArrayList<>();
+
+        //Get all the visible points
+        for(int i=0; i<3;i++)
+            for(int j=0; j<2; j++)
+                if(visRooms.contains(map.getCell(i,j).getRoomNumber())) {
+                    try {
+                        points.add(new Point(j, i));
+                    } catch (WrongPointException ex) {
+                        Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
+                    }
+                }
+
+        if(notVisDist > 0){
+            HashSet<Point> notVisible = new HashSet<>();
+            for(Point p:points)
+                notVisible.addAll(Map.possibleMovements(p, notVisDist, map));
+
+            notVisible.addAll(points);
+
+            return new ArrayList<>(notVisible);
+        }
+
+        return points;
+    }
+
 }

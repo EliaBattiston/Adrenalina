@@ -36,6 +36,8 @@ public class EffectsLambda {
                 marks.remove(damageGiver);
                 i++;
             }
+
+            //TODO ceck the power up "granata venom"
         };
     }
 
