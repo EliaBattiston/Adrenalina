@@ -34,6 +34,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
+            targets.remove(chosen1);
             Player chosen2 = pl.getConn().chooseTarget(targets, false);
             chosen1.applyEffects(EffectsLambda.damage(1, pl));
             if(chosen2 != null)
@@ -211,7 +212,8 @@ public class ActionLambdaMap {
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
             chosen.applyEffects(EffectsLambda.damage(1, pl));
-            chosen.applyEffects(EffectsLambda.move(where));
+            if(where != null)
+                chosen.applyEffects(EffectsLambda.move(where));
         });
 
         data.put("w14-b", (pl, map, memory)->{
@@ -222,7 +224,8 @@ public class ActionLambdaMap {
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
-            chosen.applyEffects(EffectsLambda.move(where));
+            if(where!=null)
+                chosen.applyEffects(EffectsLambda.move(where));
         });
 
         data.put("w15-b", (pl, map, memory)->{
@@ -612,7 +615,7 @@ public class ActionLambdaMap {
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(3, pl));
 
-            List<Point> possiblePos = Map.possibleMovements(chosen.getPosition(), 2, map);
+            List<Point> possiblePos = Map.possibleMovementsAllSingleDirection(chosen.getPosition(), 2, map);
             Point newPos = pl.getConn().moveEnemy(chosen, possiblePos, true);
             chosen.applyEffects(EffectsLambda.move(newPos));
         });
@@ -634,7 +637,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersInTheMap(map);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            List<Point> newPos = Map.possibleMovements(chosen.getPosition(), 2, map);
+            List<Point> newPos = Map.possibleMovementsAllSingleDirection(chosen.getPosition(), 2, map);
             newPos.remove(chosen.getPosition());
             Point chosenPos = pl.getConn().moveEnemy(chosen, newPos, true);
             chosen.applyEffects(EffectsLambda.move(chosenPos));

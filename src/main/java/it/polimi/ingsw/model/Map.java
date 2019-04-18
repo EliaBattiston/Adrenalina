@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -43,6 +44,30 @@ public class Map {
     public Cell getCell(Point p)
     {
         return cells[p.getX()][p.getY()];
+    }
+
+    /**
+     * Deserialize one of the four maps
+     * @param mapNumber 1 to 4, the number of the map
+     * @return the deserialized map or null if mapNumber it's not in the range
+     */
+    public static Map jsonDeserialize(int mapNumber) {
+        try{
+            switch (mapNumber){
+                case 1:
+                    return Map.jsonDeserialize("resources/map1.json");
+                case 2:
+                    return Map.jsonDeserialize("resources/map2.json");
+                case 3:
+                    return Map.jsonDeserialize("resources/map3.json");
+                case 4:
+                    return Map.jsonDeserialize("resources/map4.json");
+                default:
+                    return null;
+            }
+        }catch(FileNotFoundException ex){
+            return null;
+        }
     }
 
     /**
@@ -236,6 +261,65 @@ public class Map {
         }
 
         return points;
+    }
+
+    /**
+     * Return the list of possible movements that are in a single direction, it looks for all the directions
+     * @param startPoint
+     * @param dist
+     * @param map
+     * @return
+     */
+    public static List<Point> possibleMovementsAllSingleDirection(Point startPoint, int dist, Map map){
+        List<Point> visible = new ArrayList<>();
+
+        visible.addAll(Map.possibleMovementsSpecificDirection(startPoint, dist, map, Direction.NORTH));
+        visible.addAll(Map.possibleMovementsSpecificDirection(startPoint, dist, map, Direction.EAST));
+        visible.addAll(Map.possibleMovementsSpecificDirection(startPoint, dist, map, Direction.SOUTH));
+        visible.addAll(Map.possibleMovementsSpecificDirection(startPoint, dist, map, Direction.WEST));
+
+        return visible;
+    }
+
+    /**
+     * Return the list of possible movements that are in a single direction, it looks for a specific direction
+     * @param startPoint
+     * @param dist
+     * @param map
+     * @param dir the direction where you want to look for
+     * @return
+     */
+    private static List<Point> possibleMovementsSpecificDirection(Point startPoint, int dist, Map map, Direction dir){
+        List<Point> visible = new ArrayList<>();
+
+        switch (dir){
+            case NORTH:
+                if(map.getCell(startPoint).getSides()[Direction.NORTH.ordinal()] != Side.WALL)
+                    visible.add(new Point(startPoint.getX(), startPoint.getY()-1));
+                if(map.getCell(startPoint.getX(), startPoint.getY()-1).getSides()[Direction.NORTH.ordinal()] != Side.WALL)
+                    visible.add(new Point(startPoint.getX(), startPoint.getY()-2));
+                break;
+            case EAST:
+                if(map.getCell(startPoint).getSides()[Direction.EAST.ordinal()] != Side.WALL)
+                    visible.add(new Point(startPoint.getX()+1, startPoint.getY()));
+                if(map.getCell(startPoint.getX()+1, startPoint.getY()).getSides()[Direction.EAST.ordinal()] != Side.WALL)
+                    visible.add(new Point(startPoint.getX()+2, startPoint.getY()));
+                break;
+            case SOUTH:
+                if(map.getCell(startPoint).getSides()[Direction.SOUTH.ordinal()] != Side.WALL)
+                    visible.add(new Point(startPoint.getX(), startPoint.getY()+1));
+                if(map.getCell(startPoint.getX(), startPoint.getY()+1).getSides()[Direction.SOUTH.ordinal()] != Side.WALL)
+                    visible.add(new Point(startPoint.getX(), startPoint.getY()+2));
+                break;
+            case WEST:
+                if(map.getCell(startPoint).getSides()[Direction.WEST.ordinal()] != Side.WALL)
+                    visible.add(new Point(startPoint.getX()-1, startPoint.getY()));
+                if(map.getCell(startPoint.getX()-1, startPoint.getY()).getSides()[Direction.WEST.ordinal()] != Side.WALL)
+                    visible.add(new Point(startPoint.getX()-2, startPoint.getY()));
+                break;
+        }
+
+        return visible;
     }
 
     /**

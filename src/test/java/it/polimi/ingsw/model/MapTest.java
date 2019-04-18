@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -120,5 +121,15 @@ public class MapTest {
         assertTrue(sc.getWeapons().contains(w));
         assertTrue(sc.pickWeapon(w) == w);
         assertTrue(sc.getWeapons().isEmpty());
+    }
+
+    @Test
+    public void checkVisibleRooms()
+    {
+        Map m = Map.jsonDeserialize(1);
+        Point pos1 = new Point(1,1);
+        List<Integer> visible1 = new ArrayList<>()
+
+        assertTrue(visible1.containsAll(Map.visibleRooms(pos1, m)) && visible1.size() == Map.visibleRooms(pos1, m).size());
     }
 }
