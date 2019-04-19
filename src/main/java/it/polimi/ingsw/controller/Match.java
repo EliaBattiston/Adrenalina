@@ -44,11 +44,11 @@ public class Match implements Runnable
 
     /**
      * Creates a new empty match
+     * @param skullsNum Number of skulls to be used in the game
      */
-    public Match() throws FileNotFoundException
+    public Match(int skullsNum) throws FileNotFoundException
     {
-        //TODO initialize the game using the json
-        initialize();
+        initialize(skullsNum);
 
         this.activities = Activities.getInstance();
         this.active = null;
@@ -59,13 +59,15 @@ public class Match implements Runnable
 
     /**
      *  Executes the operations needed before the start of the game
+     * @param skullsNum Number of skulls to be used in the game
      */
-    private void initialize() throws FileNotFoundException
+    private void initialize(int skullsNum) throws FileNotFoundException
     {
         game = Game.jsonDeserialize("resources/baseGame.json");
         game.getPowersDeck().shuffle();
         game.getWeaponsDeck().shuffle();
         game.getAmmoDeck().shuffle();
+        game.initializeSkullsBoard(skullsNum);
 
         //TODO let the user choose
         game.loadMap("resources/map1.json");
@@ -123,6 +125,7 @@ public class Match implements Runnable
                 if( Arrays.stream(current.getReceivedDamage()).filter(Objects::nonNull).count() > 10 )
                 {
                     registerKill(current);
+                    spawnPlayer(current);
                 }
             }
 
@@ -257,7 +260,7 @@ public class Match implements Runnable
                         ((RegularCell) selectedCell).refillLoot(game.getAmmoDeck().draw());
                     } else if (selectedCell instanceof SpawnCell)
                     {
-                        while (((SpawnCell) selectedCell).getWeapons().contains(null))
+                        while (((SpawnCell) selectedCell).getWeapons().size() < 3)
                         {
                             ((SpawnCell) selectedCell).refillWeapon(game.getWeaponsDeck().draw());
                         }
@@ -271,7 +274,7 @@ public class Match implements Runnable
      * Do the necessary operations when a player is killed
      * @param killed The player who was killed
      */
-    public void registerKill(Player killed)
+    protected void registerKill(Player killed)
     {
         int nextSkull; //Index of the first usable skull on the board
         int maxPoints; //Number of points the player that inflicted the most damage gets when killing
@@ -332,7 +335,7 @@ public class Match implements Runnable
         }
 
         //Register the kill on the board
-        for(nextSkull = 8; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
+        for(nextSkull = 7; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
             ;
         if(nextSkull > -1)
         {
@@ -346,9 +349,6 @@ public class Match implements Runnable
             killed.getReceivedDamage()[i] = null;
         }
 
-        //Respawn
-        spawnPlayer(killed);
-
         //Check if it's time for frenzy mode
         if(nextSkull == 0)
         {
@@ -359,7 +359,7 @@ public class Match implements Runnable
     /**
      * Makes necessary operations at the end of the game
      */
-    public void endGame()
+    protected void endGame()
     {
         int maxPoints; //Number of points the player that inflicted the most damage gets when killing
         int damageNum; //Number of damages inflicted by a user

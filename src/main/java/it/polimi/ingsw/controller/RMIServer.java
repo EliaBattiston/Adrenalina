@@ -26,7 +26,6 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
     /**
      * Instantiates the RMI server object, creating the main bind needed by clients to connect to the server
      * @throws RemoteException in case of binding errors
-     * @throws AlreadyBoundException in case of already existing server binding name
      */
     RMIServer() throws RemoteException {
         try {
@@ -41,7 +40,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
      * @param registryBind registry name of the client remote interface
      * @throws RemoteException in case of binding error
      * @throws AlreadyBoundException in case of already existing binding name
-     * @throws NotBoundException
+     * @throws NotBoundException If the RMI binding has been unsuccessful
      */
     public void newConnection(String registryBind) throws RemoteException, AlreadyBoundException, NotBoundException
     {
@@ -52,10 +51,11 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
 
     /**
      * Pops the first object of the waiting connections list, to be retrieved to the main thread
-     * @return
+     * @return First available connection
      */
     public Connection getConnection()
     {
+        //TODO remove busy waiting
         while(newConn.isEmpty());
         return newConn.remove(0);
     }

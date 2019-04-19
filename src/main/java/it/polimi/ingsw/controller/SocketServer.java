@@ -1,15 +1,8 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.exceptions.WrongPointException;
-import it.polimi.ingsw.model.*;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.rmi.AlreadyBoundException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The class implements the Server for establishing the client-server connection.
@@ -27,6 +20,7 @@ public class SocketServer implements Server {
     /**
      * Create a new SocketServer instance starting a server socket at the given port
      * @param port port on which the server is started
+     * @throws IOException If the program is not able to bind itself to the chosen port
      */
     public SocketServer(int port) throws IOException
     {

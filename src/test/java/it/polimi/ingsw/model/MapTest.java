@@ -222,8 +222,11 @@ public class MapTest {
 
         List<Point> possible = Map.possibleMovements(viewer.getPosition(), 2, m);
 
-        //TODO it works, it's just that the reference of the points are different. What should we do? For now we check just the number of possible movements
-        assertTrue(possible.size() == 9);
+        assertEquals(possible.size(),9);
+        for(Point e : expected)
+        {
+            assertEquals( possible.stream().filter(point -> point.getX() == e.getX() && point.getY() == e.getY()).count(), 1 );
+        }
     }
 
     @Test

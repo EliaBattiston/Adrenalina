@@ -20,15 +20,15 @@ import java.util.logging.Logger;
  */
 public class Map {
     /**
-     * matrix of cells representing the map
+     * Matrix of cells representing the map
      */
     private Cell[][] cells;
 
     /**
-     * returns the reference of a selected cell
+     * Returns the reference of a selected cell
      * @param x X-coordinate of the cell
      * @param y Y-coordinate of the cell
-     * @return cell reference (or null in case of out of bound coordinates or missing cell
+     * @return cell reference (or null in case of out of bound coordinates or missing cell)
      */
     public Cell getCell(int x, int y) {
         if(x >= 0 && x < 4 && y >= 0 && y < 3)
@@ -37,15 +37,20 @@ public class Map {
     }
 
     /**
-     * returns the reference of a selected cell
-     * @param p
-     * @return
+     * Returns the reference of a selected cell
+     * @param p Point with X and Y coordinates of the cell
+     * @return Cell in the correct position, or null in case of out of bound coordinates or missing cell
      */
     public Cell getCell(Point p)
     {
         return cells[p.getX()][p.getY()];
     }
 
+    /**
+     * Gives a point containing the coordinates of a cell
+     * @param c Requested cell
+     * @return Point with X and Y coordinates of the cell in the map
+     */
     public Point getCellPosition(Cell c){
         for(int i=0; i<=3;i++)
             for(int j=0; j<=2; j++)
@@ -80,8 +85,10 @@ public class Map {
     }
 
     /**
-     * the function deserialize the JSON config file and loads the data in the matrix
+     * Deserializes the JSON config file and loads the data in the matrix
      * @param pathJsonFile JSON map config file
+     * @return Map class with its matrix correctly initialized according to the json file's content
+     * @throws FileNotFoundException If there is a problem accessing the file
      */
     public static Map jsonDeserialize(String pathJsonFile) throws FileNotFoundException {
         JsonReader reader = new JsonReader(new FileReader(pathJsonFile));
@@ -251,6 +258,7 @@ public class Map {
      * @param dist max dist to look for
      * @param map the map
      * @param points the Set of points
+     * @return Set of cells to which the movement is possible
      */
     private static Set<Cell> possibleMovements(Point startPoint, int dist, Map map, Set<Cell> points){
         Cell s = map.getCell(startPoint);
@@ -290,10 +298,10 @@ public class Map {
 
     /**
      * Return the list of possible movements that are in a single direction, it looks for all the directions
-     * @param startPoint
-     * @param dist
-     * @param map
-     * @return
+     * @param startPoint Point from which the movement starts
+     * @param dist Maximum distance in number of steps
+     * @param map Map on which the steps will be calculated
+     * @return List of possible destinations
      */
     public static List<Point> possibleMovementsAllSingleDirection(Point startPoint, int dist, Map map){
         List<Point> visible = new ArrayList<>();
@@ -308,11 +316,11 @@ public class Map {
 
     /**
      * Return the list of possible movements that are in a single direction, it looks for a specific direction
-     * @param startPoint
-     * @param dist
-     * @param map
+     * @param startPoint Point from which the movement starts
+     * @param dist Maximum distance in number of steps
+     * @param map Map on which the steps will be calculated
      * @param dir the direction where you want to look for
-     * @return
+     * @return List of possible destinations
      */
     private static List<Point> possibleMovementsSpecificDirection(Point startPoint, int dist, Map map, Direction dir){
         List<Point> visible = new ArrayList<>();
@@ -352,9 +360,8 @@ public class Map {
      * that is less than notVisDist
      * @param startPoint starting point
      * @param map map where you need to look
-     * @param notVisDist if 0 the method returns only visible points, otherwise it returns also points that has a
-     *                   notVisDist as max dist from a visible point
-     * @return
+     * @param notVisDist if 0 the method returns only visible points, otherwise it returns also points that has a notVisDist as max dist from a visible point
+     * @return List of possible destinations
      */
     public static List<Point> visiblePoints(Point startPoint, Map map, int notVisDist){
         List<Integer> visRooms = Map.visibleRooms(startPoint, map);

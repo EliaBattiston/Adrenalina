@@ -18,9 +18,9 @@ public class Point implements Serializable {
     private int y;
 
     /**
-     *
-     * @param x 0<=X<=2 coordinate
-     * @param y 0<=Y<=3 coordinate
+     * Creates a new point
+     * @param x Has to be between 0 and 2
+     * @param y Has to be between 0 and 3
      * @throws WrongPointException When the given coordinates are outside the map
      */
     public Point(int x, int y) throws WrongPointException

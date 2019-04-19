@@ -18,6 +18,7 @@ public class SocketConn implements Connection {
 
     /**
      * Open socket reference to the player
+     * @param socket Player's socket
      */
     SocketConn(Socket socket)
     {
@@ -241,6 +242,7 @@ public class SocketConn implements Connection {
     /**
      * Opens the writer and sends the message, then closes the writer
      * @param payload Content to be delivered to the client
+     * @return If true, the payload was correctly sent
      */
     private boolean send(String payload) {
         boolean success;

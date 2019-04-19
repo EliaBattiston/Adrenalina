@@ -19,6 +19,8 @@ public class SocketClient implements Client {
 
     /**
      * Open socket reference to the server
+     * @param ipAddr IP address of the server
+     * @param port TCP port of the Server's socket
      */
     SocketClient(String ipAddr, int port) {
         try {
@@ -275,6 +277,7 @@ public class SocketClient implements Client {
 
     /**
      * Serializes the content of the class in json
+     * @param payload Payload to serialize
      * @return Json serialization of the class
      */
     public String jsonSerialize(Payload payload)

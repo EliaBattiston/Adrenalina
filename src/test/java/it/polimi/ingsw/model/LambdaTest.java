@@ -30,7 +30,7 @@ public class LambdaTest {
         p.applyEffects(EffectsLambda.marks(2, att));
         assertTrue(Collections.frequency(p.getReceivedMarks(), att) == 2);
 
-        //Give damage (+ the old marks becomes damage
+        //Give damage (+ the old marks becomes damage)
         p.applyEffects(EffectsLambda.damage(2, att));
         d=0;
         for(int i=0; i<12; i++)

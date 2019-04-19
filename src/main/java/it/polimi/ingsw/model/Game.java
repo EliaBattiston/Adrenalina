@@ -82,7 +82,7 @@ public class Game {
     {
         if(players.size() < 5 && !players.contains(pl))
         {
-            if(players.stream().map(Player::getNick).noneMatch(nick -> nick == pl.getNick() ))
+            if(players.stream().anyMatch(player -> player.getNick().equals(pl.getNick()) ))
             {
                 throw new UsedNameException();
             }
