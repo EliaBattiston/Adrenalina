@@ -70,7 +70,7 @@ public class ActionLambdaMap {
         data.put("w5-b", (pl, map, memory)->{
             //Dai 3 danni e 1 marchio a 1 bersaglio che puoi vedere. Il bersaglio deve essere ad almeno 2 movimenti da te.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)>=2);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)>=2);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(3, pl));
             chosen.applyEffects(EffectsLambda.marks(1, pl));
@@ -79,7 +79,7 @@ public class ActionLambdaMap {
         data.put("w6-b", (pl, map, memory)->{
             //Dai 1 danno a ogni altro giocatore presente nel quadrato in cui ti trovi.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             targets.remove(pl);
             for(Player p: targets)
                 p.applyEffects(EffectsLambda.damage(1, pl));
@@ -122,7 +122,7 @@ public class ActionLambdaMap {
 
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
             fakePlayer.applyEffects(EffectsLambda.move(vortexPoint));
-            List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, (p1, p2)->Map.distance(p1,p2)<=1);
+            List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1,p2)<=1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
 
             chosen.applyEffects(EffectsLambda.move(vortexPoint));
@@ -162,7 +162,7 @@ public class ActionLambdaMap {
         data.put("w11-b", (pl, map, memory)->{
             //Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai un marchio a quel bersaglio e a chiunque altro in quel quadrato.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)>=1);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)>=1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(1, pl));
 
@@ -219,7 +219,7 @@ public class ActionLambdaMap {
         data.put("w14-b", (pl, map, memory)->{
             //Dai 2 danni a 1 bersaglio che puoi vedere e che non si trova nel tuo quadrato. Poi puoi muovere il bersaglio di 1 quadrato.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)!=0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)!=0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
@@ -240,7 +240,7 @@ public class ActionLambdaMap {
         data.put("w16-b", (pl, map, memory)->{
             //Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
         });
@@ -257,7 +257,7 @@ public class ActionLambdaMap {
         data.put("w18-b", (pl, map, memory)->{
             //Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi. Se vuoi puoi muovere quel bersaglio di 1 quadrato.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
@@ -269,7 +269,7 @@ public class ActionLambdaMap {
         data.put("w19-b", (pl, map, memory)->{
             //Scegli 1 bersaglio in un quadrato distante esattamente 1 movimento. Muovi in quel quadrato e dai al bersaglio 1 danno e 2 marchi.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==1);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             pl.applyEffects(EffectsLambda.move(chosen.getPosition()));
             chosen.applyEffects(EffectsLambda.damage(1, pl));
@@ -279,7 +279,7 @@ public class ActionLambdaMap {
         data.put("w20-b", (pl, map, memory)->{
             //Scegli fino a 3 bersagli su quadrati differenti, ognuno distante esattamente 1 movimento da me. Dai 1 danno a ogni bersaglio.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)->Map.distance(p1,p2)==1);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==1);
             List<Player> chosen = new ArrayList<>();
 
             chosen.add(pl.getConn().chooseTarget(targets, true));
@@ -300,7 +300,7 @@ public class ActionLambdaMap {
         data.put("w21-b", (pl, map, memory)->{
             //Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
         });
@@ -317,7 +317,7 @@ public class ActionLambdaMap {
 
         //((Player[])memory)[0]
         //Dai 1 danno aggiuntivo a uno dei due bersagli.
-        data.put("w2-ad1", (pl, map, memory)-> ((Player[])memory)[0].applyEffects(EffectsLambda.marks(1, pl)));
+        data.put("w2-ad1", (pl, map, memory)-> ((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl)));
 
         //((Player[])memory)[0]
         data.put("w2-ad2", (pl, map, memory)->{
@@ -375,7 +375,7 @@ public class ActionLambdaMap {
 
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
             fakePlayer.applyEffects(EffectsLambda.move((Point)memory));
-            List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, ((p1, p2) -> Map.distance(p1,p2)<=1));
+            List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, ((p1, p2) -> Map.distance(p1,p2)<=1));
             List<Player> chosen = new ArrayList<>();
 
             chosen.add(pl.getConn().chooseTarget(targets, true));
@@ -414,7 +414,7 @@ public class ActionLambdaMap {
             //Dai 2 danni a 1 bersaglio che puoi vedere e che non si trova nel tuo quadrato. Poi puoi muovere il bersaglio di 1 quadrato.
             //Durante l'effetto base, dai 1 danno a ogni giocatore presente nel quadrato in cui si trovava originariamente il bersaglio, incluso il bersaglio, anche se lo hai mosso.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)!=0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)!=0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
@@ -437,7 +437,7 @@ public class ActionLambdaMap {
         data.put("w16-ad2", (pl, map, memory)->{
             //Dai 2 danni a un bersaglio differente nel quadrato in cui ti trovi. Il passo d'ombra può essere usato prima o dopo questo effetto.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
         });
@@ -446,7 +446,7 @@ public class ActionLambdaMap {
         data.put("w6-al", (pl, map, memory)->{
             //Dai 2 danni a ogni altro giocatore presente nel quadrato in cui ti trovi.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             for(Player p:targets)
                 p.applyEffects(EffectsLambda.damage(2, pl));
         });
@@ -454,7 +454,7 @@ public class ActionLambdaMap {
         data.put("w7-al", (pl, map, memory)->{
             //Scegli un bersaglio 0, 1, o 2 movimenti da te. Muovi quel bersaglio nel quadrato in cui ti trovi e dagli 3 danni.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)<=2);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, false, (p1, p2)-> Map.distance(p1, p2)<=2);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.move(pl.getPosition()));
             chosen.applyEffects(EffectsLambda.damage(3, pl));
@@ -463,7 +463,7 @@ public class ActionLambdaMap {
         data.put("w9-al", (pl, map, memory)->{
             //Scegli un quadrato distante esattamente 1 movimento. Dai 1 danno e 1 marchio a ognuno in quel quadrato.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)->Map.distance(p1,p2)==1);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==1);
             List<Point> visiblePoints = new ArrayList<>();
 
             for(Player p:targets)
@@ -471,17 +471,16 @@ public class ActionLambdaMap {
 
             Point chosenPoint = pl.getConn().choosePosition(visiblePoints, true);
 
-            for(Player p:map.getCell(chosenPoint).getPawns())
-                if(p!=pl){
-                    p.applyEffects(EffectsLambda.damage(1, pl));
-                    p.applyEffects(EffectsLambda.marks(1, pl));
-                }
+            for(Player p:map.getCell(chosenPoint).getPawns()){
+                p.applyEffects(EffectsLambda.damage(1, pl));
+                p.applyEffects(EffectsLambda.marks(1, pl));
+            }
         });
 
         data.put("w11-al", (pl, map, memory)->{
             //Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai 2 marchi a quel bersaglio e a chiunque altro in quel quadrato.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)>=1);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)>=1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(1, pl));
 
@@ -524,6 +523,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.visiblePlayers(pl, map, dir);
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
+            targets.remove(chosen1);
             Player chosen2 = pl.getConn().chooseTarget(targets, false);
             chosen1.applyEffects(EffectsLambda.damage(2, pl));
             if(chosen2 != null)
@@ -549,7 +549,7 @@ public class ActionLambdaMap {
         data.put("w18-al", (pl, map, memory)->{
             //Dai 2 danni a 1 bersaglio in un quadrato distante esattamente 1 movimento.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==1);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
         });
@@ -578,7 +578,7 @@ public class ActionLambdaMap {
             pl.applyEffects(EffectsLambda.move(posChosen));
 
             //Give damage
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)->Map.distance(p1,p2)==0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
 
@@ -590,7 +590,7 @@ public class ActionLambdaMap {
                     posChosen = pl.getConn().movePlayer(nextPoints, true);
                     pl.applyEffects(EffectsLambda.move(posChosen));
 
-                    targets = Map.playersAtGivenDistance(pl, map, (p1, p2)->Map.distance(p1,p2)==0);
+                    targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
 
                     chosen = pl.getConn().chooseTarget(targets, true);
                     chosen.applyEffects(EffectsLambda.damage(2, pl));
@@ -603,7 +603,7 @@ public class ActionLambdaMap {
         data.put("w20-al", (pl, map, memory)->{
             //Dai 1 danno a tutti i bersagli che sono distanti esattamente 1 movimento.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==1);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
             for(Player p:targets)
                 p.applyEffects(EffectsLambda.damage(1, pl));
         });
@@ -611,7 +611,7 @@ public class ActionLambdaMap {
         data.put("w21-al", (pl, map, memory)->{
             //Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi, poi muovi quel bersaglio di 0, 1 o 2 quadrati in una direzione.
 
-            List<Player> targets = Map.playersAtGivenDistance(pl, map, (p1, p2)-> Map.distance(p1, p2)==0);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(3, pl));
 
@@ -628,7 +628,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = (List<Player>)memory;
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.marks(1, pl));
+            chosen.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("p2", (pl, map, memory)->{
@@ -644,11 +644,14 @@ public class ActionLambdaMap {
         });
 
         //memory = player that game damage
-        data.put("p3", (pl, map, memory)->
+        data.put("p3", (pl, map, memory)-> {
             //Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.
 
-            ((Player)memory).applyEffects(EffectsLambda.marks(1, pl))
-        );
+            List<Player> visibles = Map.visiblePlayers(pl, map);
+
+            if(visibles.contains((Player) memory))//redundant check
+                ((Player) memory).applyEffects(EffectsLambda.marks(1, pl));
+        });
 
         data.put("p4", (pl, map, memory)->{
             //Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia.

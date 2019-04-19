@@ -46,6 +46,15 @@ public class Map {
         return cells[p.getX()][p.getY()];
     }
 
+    public Point getCellPosition(Cell c){
+        for(int i=0; i<=3;i++)
+            for(int j=0; j<=2; j++)
+                if(cells[i][j] == c)
+                    return new Point(i,j);
+
+        return null;
+    }
+
     /**
      * Deserialize one of the four maps
      * @param mapNumber 1 to 4, the number of the map
@@ -94,7 +103,8 @@ public class Map {
 
         for(Cell[] row:m.cells){
             for(Cell c:row)
-                p.addAll(c.getPawns());
+                if(c!=null)
+                    p.addAll(c.getPawns());
         }
 
         return p;
@@ -140,10 +150,11 @@ public class Map {
         List<Integer> visRooms = Map.visibleRooms(viewer.getPosition(), map);
 
         //Get all the people in those rooms
-        for(int i=0; i<3;i++)
-            for(int j=0; j<2; j++)
-                if(visRooms.contains(map.getCell(i,j).getRoomNumber()))
-                    visibles.addAll(map.getCell(i, j).getPawns());
+        for(int i=0; i<=3;i++)
+            for(int j=0; j<=2; j++)
+                if(map.getCell(i,j) != null)
+                    if(visRooms.contains(map.getCell(i,j).getRoomNumber()))
+                        visibles.addAll(map.getCell(i, j).getPawns());
 
         //remove the player itself
         visibles.remove(viewer);
@@ -197,11 +208,16 @@ public class Map {
      * Return the list of players in distance (calculated by the MapDistanceStrategy) already removing the player who you start looking from
      * @param pl Player from where you start looking
      * @param map Map
+     * @param mustVisible true if the player needs to be visible
      * @param strategy strategy that accept/refuse an enemy
      * @return The list of visible players accepted from the strategy
      */
-    public static List<Player> playersAtGivenDistance(Player pl, Map map, MapDistanceStrategy strategy){
-        List<Player> visible = Map.visiblePlayers(pl, map);
+    public static List<Player> playersAtGivenDistance(Player pl, Map map, boolean mustVisible, MapDistanceStrategy strategy){
+        List<Player> visible;
+        if(mustVisible)
+            visible = Map.visiblePlayers(pl, map);
+        else
+            visible = Map.playersInTheMap(map);
         List<Player> targets = new ArrayList<>();
         for(Player p:visible)
             if(strategy.calculate(pl, p))
@@ -219,9 +235,14 @@ public class Map {
      * @return the list of points reachable with that amount of movements
      */
     public static List<Point> possibleMovements(Point startPoint, int dist, Map map) {
-        Set<Point> points = new HashSet<>();
-        possibleMovements(startPoint, dist, map, points);
-        return new ArrayList<>(points);
+        Set<Cell> cells = new HashSet<>();
+        possibleMovements(startPoint, dist, map, cells);
+
+        List<Point> points = new ArrayList<>();
+        for(Cell c:cells)
+            points.add(map.getCellPosition(c));
+
+        return points;
     }
 
     /**
@@ -231,30 +252,34 @@ public class Map {
      * @param map the map
      * @param points the Set of points
      */
-    private static Set<Point> possibleMovements(Point startPoint, int dist, Map map, Set<Point> points){
+    private static Set<Cell> possibleMovements(Point startPoint, int dist, Map map, Set<Cell> points){
         Cell s = map.getCell(startPoint);
         Point tempP = null; //temp var for new points found
 
         try {
-            if (s.getSides()[Direction.NORTH.ordinal()] == Side.DOOR || s.getSides()[Direction.NORTH.ordinal()] == Side.NOTHING){
-                tempP = new Point(startPoint.getX(), startPoint.getY() + 1);
-                points.add(tempP);
-                points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
+            if (s.getSides()[Direction.NORTH.ordinal()] != Side.WALL){
+                tempP = new Point(startPoint.getX(), startPoint.getY()-1);
+                points.add(map.getCell(tempP));
+                if(dist-1 > 0)
+                    Map.possibleMovements(tempP, dist-1, map, points);
             }
-            if (s.getSides()[Direction.EAST.ordinal()] == Side.DOOR || s.getSides()[Direction.EAST.ordinal()] == Side.NOTHING){
+            if (s.getSides()[Direction.EAST.ordinal()] != Side.WALL){
                 tempP = new Point(startPoint.getX()+1, startPoint.getY());
-                points.add(tempP);
-                points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
+                points.add(map.getCell(tempP));
+                if(dist-1 > 0)
+                    Map.possibleMovements(tempP, dist-1, map, points);
             }
-            if (s.getSides()[Direction.SOUTH.ordinal()] == Side.DOOR || s.getSides()[Direction.SOUTH.ordinal()] == Side.NOTHING){
-                tempP = new Point(startPoint.getX(), startPoint.getY() - 1);
-                points.add(tempP);
-                points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
+            if (s.getSides()[Direction.SOUTH.ordinal()] != Side.WALL){
+                tempP = new Point(startPoint.getX(), startPoint.getY() + 1);
+                points.add(map.getCell(tempP));
+                if(dist-1 > 0)
+                    Map.possibleMovements(tempP, dist-1, map, points);
             }
-            if (s.getSides()[Direction.WEST.ordinal()] == Side.DOOR || s.getSides()[Direction.WEST.ordinal()] == Side.NOTHING){
+            if (s.getSides()[Direction.WEST.ordinal()] != Side.WALL){
                 tempP = new Point(startPoint.getX()-1, startPoint.getY());
-                points.add(tempP);
-                points.addAll(Map.possibleMovements(tempP, dist-1, map, points));
+                points.add(map.getCell(tempP));
+                if(dist-1 > 0)
+                    Map.possibleMovements(tempP, dist-1, map, points);
             }
         }catch (WrongPointException ex){
             Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
@@ -336,15 +361,11 @@ public class Map {
         List<Point> points = new ArrayList<>();
 
         //Get all the visible points
-        for(int i=0; i<3;i++)
-            for(int j=0; j<2; j++)
-                if(visRooms.contains(map.getCell(i,j).getRoomNumber())) {
-                    try {
-                        points.add(new Point(j, i));
-                    } catch (WrongPointException ex) {
-                        Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
-                    }
-                }
+        for(int i=0; i<=3;i++)
+            for(int j=0; j<=2; j++)
+                if(map.getCell(i,j) != null)
+                    if(visRooms.contains(map.getCell(i,j).getRoomNumber()))
+                        points.add(new Point(i,j));
 
         if(notVisDist > 0){
             HashSet<Point> notVisible = new HashSet<>();

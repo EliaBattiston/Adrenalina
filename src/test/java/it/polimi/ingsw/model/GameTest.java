@@ -111,7 +111,7 @@ public class GameTest {
 
             try
             {
-                position.set(2, 3);
+                position.set(3,2);
             }
             catch(WrongPointException e)
             {
@@ -132,8 +132,8 @@ public class GameTest {
         assertEquals(p.getReceivedMarks().size(), 2);
         assertTrue(p.getReceivedMarks().contains(b));
         assertEquals(Collections.frequency(p.getReceivedMarks(), b), 2);
-        assertEquals(p.getPosition().getX(), 2);
-        assertEquals(p.getPosition().getY(), 3);
+        assertEquals(p.getPosition().getX(), 3);
+        assertEquals(p.getPosition().getY(), 2);
         assertTrue(p.getWeapons().contains(weapon));
         assertTrue(p.getPowers().contains(power));
         assertEquals(p.getAmmo(Color.RED), 3);
@@ -188,15 +188,15 @@ public class GameTest {
 
         try
         {
-            p.set(2, 3);
+            p.set(3,2);
         }
         catch(WrongPointException e)
         {
             fail();
         }
         //it changed the values
-        assertTrue(p.getX() == 2);
-        assertTrue(p.getY() == 3);
+        assertTrue(p.getX() == 3);
+        assertTrue(p.getY() == 2);
     }
 
     /**

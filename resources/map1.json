@@ -3,7 +3,7 @@
         [{
             "type": "RegularCell",
             "properties": {
-                "sides": ["Wall", "Door", "Nothing", "Wall"],
+                "sides": ["WALL", "DOOR", "NOTHING", "WALL"],
                 "pawns": [],
                 "roomNumber": 0
             }
@@ -12,14 +12,14 @@
             "properties": {
                 "spawn": "Red",
                 "weapons": [null, null, null],
-                "sides": ["Nothing", "Wall", "Door", "Wall"],
+                "sides": ["NOTHING", "WALL", "DOOR", "WALL"],
                 "pawns": [],
                 "roomNumber": 0
             }
         }, {
             "type": "RegularCell",
             "properties": {
-                "sides": ["Door", "Nothing", "Wall", "Wall"],
+                "sides": ["DOOR", "NOTHING", "WALL", "WALL"],
                 "pawns": [],
                 "roomNumber": 1
             }
@@ -27,21 +27,21 @@
         [{
             "type": "RegularCell",
             "properties": {
-                "sides": ["Wall", "Nothing", "Door", "Door"],
+                "sides": ["WALL", "NOTHING", "DOOR", "DOOR"],
                 "pawns": [],
                 "roomNumber": 2
             }
         }, {
             "type": "RegularCell",
             "properties": {
-                "sides": ["Door", "Nothing", "Door", "Wall"],
+                "sides": ["DOOR", "NOTHING", "DOOR", "WALL"],
                 "pawns": [],
                 "roomNumber": 3
             }
         }, {
             "type": "RegularCell",
             "properties": {
-                "sides": ["Door", "Nothing", "Wall", "Nothing"],
+                "sides": ["DOOR", "NOTHING", "WALL", "NOTHING"],
                 "pawns": [],
                 "roomNumber": 1
             }
@@ -51,21 +51,21 @@
             "properties": {
                 "spawn": "Blue",
                 "weapons": [null, null, null],
-                "sides": ["Wall", "Wall", "Door", "Nothing"],
+                "sides": ["WALL", "WALL", "DOOR", "NOTHING"],
                 "pawns": [],
                 "roomNumber": 2
             }
         }, {
             "type": "RegularCell",
             "properties": {
-                "sides": ["Door", "Door", "Wall", "Nothing"],
+                "sides": ["DOOR", "DOOR", "WALL", "NOTHING"],
                 "pawns": [],
                 "roomNumber": 3
             }
         }, {
             "type": "RegularCell",
             "properties": {
-                "sides": ["Wall", "Door", "Wall", "Nothing"],
+                "sides": ["WALL", "DOOR", "WALL", "NOTHING"],
                 "pawns": [],
                 "roomNumber": 1
             }
@@ -75,7 +75,7 @@
         {
             "type": "RegularCell",
             "properties": {
-                "sides": ["Wall", "Wall", "Nothing", "Door"],
+                "sides": ["WALL", "WALL", "NOTHING", "DOOR"],
                 "pawns": [],
                 "roomNumber": 5
             }
@@ -84,7 +84,7 @@
             "properties": {
                 "spawn": "Yellow",
                 "weapons": [null, null, null],
-                "sides": ["Nothing", "Wall", "Wall", "Door"],
+                "sides": ["NOTHING", "WALL", "WALL", "DOOR"],
                 "pawns": [],
                 "roomNumber": 5
             }
