@@ -21,11 +21,9 @@ public class ActionsTest {
         cost.add((Color.RED));
         Action act = new Action("SimpleAction", "Simple action", cost, null);
 
-        /**
-         * Check of the correct instantiation of the class
-         */
-        assertTrue(act.getName() == "SimpleAction");
-        assertTrue(act.getDescription() == "Simple action");
+        //Check of the correct instantiation of the class
+        assertTrue(act.getName().equals("SimpleAction"));
+        assertTrue(act.getDescription().equals("Simple action"));
         assertTrue(act.getCost() == cost);
 
         //TODO: assertTrue for lambda execution?

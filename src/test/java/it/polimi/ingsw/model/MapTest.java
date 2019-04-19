@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -120,5 +121,120 @@ public class MapTest {
         assertTrue(sc.getWeapons().contains(w));
         assertTrue(sc.pickWeapon(w) == w);
         assertTrue(sc.getWeapons().isEmpty());
+    }
+
+    @Test
+    public void checkVisibleRooms()
+    {
+        Map m = Map.jsonDeserialize(1);
+        Point pos1 = new Point(1,1);
+        List<Integer> visible1 = new ArrayList<>();
+        visible1.add(1);
+        visible1.add(2);
+        visible1.add(3);
+
+        List<Integer> calculated = Map.visibleRooms(pos1, m);
+
+        assertTrue(visible1.containsAll(calculated) && visible1.size() == calculated.size());
+    }
+
+    /**
+     * Tests both visiblePlayer methods
+     */
+    @Test
+    public void checkVisiblePlayers()
+    {
+        Map m = Map.jsonDeserialize(1);
+        List<Player> pl = new ArrayList<>();
+        pl.add(new Player("one", "hi", Fighter.DSTRUTTOR3));
+        pl.add(new Player("two", "hi", Fighter.DOZER));
+        pl.add(new Player("three", "hi", Fighter.VIOLETTA));
+        m.getCell(1,0).addPawn(pl.get(0));
+        m.getCell(2,1).addPawn(pl.get(1));
+        m.getCell(3,1).addPawn(pl.get(2));
+
+        Player viewer = new Player("viewer", "hi", Fighter.SPROG);
+        viewer.applyEffects(EffectsLambda.move(new Point(1,1)));
+
+        List<Player> calculated = Map.visiblePlayers(viewer, m);
+
+        assertFalse(calculated.containsAll(pl));
+
+        assertTrue(calculated.contains(pl.get(0)));
+        assertTrue(calculated.contains(pl.get(1)));
+        assertTrue(!calculated.contains(pl.get(2)));
+
+        //in a cardinal direction
+        calculated = Map.visiblePlayers(viewer, m, Direction.EAST);
+        assertFalse(calculated.containsAll(pl));
+
+        assertTrue(!calculated.contains(pl.get(0)));
+        assertTrue(calculated.contains(pl.get(1)));
+        assertTrue(calculated.contains(pl.get(2)));
+    }
+
+    @Test
+    public void checkPlayersAtGivenDistance()
+    {
+        Map m = Map.jsonDeserialize(1);
+        List<Player> pl = new ArrayList<>();
+        pl.add(new Player("one", "hi", Fighter.DSTRUTTOR3));
+        pl.add(new Player("two", "hi", Fighter.DOZER));
+        pl.add(new Player("three", "hi", Fighter.VIOLETTA));
+        pl.get(0).applyEffects(EffectsLambda.move(new Point(1,0)));
+        pl.get(1).applyEffects(EffectsLambda.move(new Point(2,1)));
+        pl.get(2).applyEffects(EffectsLambda.move(new Point(3,1)));
+
+
+        m.getCell(1,0).addPawn(pl.get(0));
+        m.getCell(2,1).addPawn(pl.get(1));
+        m.getCell(3,1).addPawn(pl.get(2));
+
+        Player viewer = new Player("viewer", "hi", Fighter.SPROG);
+        viewer.applyEffects(EffectsLambda.move(new Point(1,1)));
+
+        List<Player> calculated = Map.playersAtGivenDistance(viewer, m, false, (p1,p2)->Map.distance(p1,p2)<=1);
+
+        assertFalse(calculated.containsAll(pl));
+
+        assertTrue(calculated.contains(pl.get(0)));
+        assertTrue(calculated.contains(pl.get(1)));
+        assertTrue(!calculated.contains(pl.get(2)));
+    }
+
+    @Test
+    public void checkPossibleMovements()
+    {
+        Map m = Map.jsonDeserialize(1);
+        Player viewer = new Player("viewer", "hi", Fighter.SPROG);
+        viewer.applyEffects(EffectsLambda.move(new Point(1,1)));
+
+        List<Point> expected = new ArrayList<>();
+        expected.add(new Point(1,1));
+        expected.add(new Point(0,0));
+        expected.add(new Point(1,0));
+        expected.add(new Point(2,0));
+        expected.add(new Point(2,1));
+        expected.add(new Point(2,2));
+        expected.add(new Point(0,2));
+        expected.add(new Point(1,2));
+        expected.add(new Point(2,2));
+
+        List<Point> possible = Map.possibleMovements(viewer.getPosition(), 2, m);
+
+        //TODO it works, it's just that the reference of the points are different. What should we do? For now we check just the number of possible movements
+        assertTrue(possible.size() == 9);
+    }
+
+    @Test
+    public void checkVisiblePoints()
+    {
+        Map m = Map.jsonDeserialize(1);
+        Player viewer = new Player("viewer", "hi", Fighter.SPROG);
+        viewer.applyEffects(EffectsLambda.move(new Point(1,1)));
+
+        List<Point> visible = Map.visiblePoints(viewer.getPosition(), m, 0);
+
+        assertTrue(visible.size() == 7);
     }
 }

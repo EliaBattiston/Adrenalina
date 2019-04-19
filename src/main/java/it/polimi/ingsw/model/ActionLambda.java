@@ -11,7 +11,7 @@ public interface ActionLambda {
      * action to be executed by the player
      * @param pl player who makes the action
      * @param m map representing the actual game board
-     * @param playersList list of players who take the effect(s) of the action
+     * @param memory additional parameter used by some lambdas for additional actions
      */
-    public void execute(Player pl, Map m, List<Player> playersList);
+    void execute(Player pl, Map m, Object memory);
 }

@@ -11,17 +11,17 @@
             "base": {
                 "description": "Dai 2 danni e 1 marchio a 1 bersaglio che puoi vedere.",
                 "name": "Effetto base",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w1-b"
             },
             "additional": [{
                 "description": "Dai 1 marchio a un altro bersaglio che puoi vedere.",
                 "name": "Secondo aggancio",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w1-ad1"
             }],
             "alternative": null,
-            "color": "Blue"
+            "color": "BLUE"
         }, {
             "id": 2,
             "name": "Mitragliatrice",
@@ -30,22 +30,22 @@
             "base": {
                 "description": "Scegli 1 o 2 bersagli che puoi vedere e dai 1 danno a entrambi.",
                 "name": "Effetto base",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w2-b"
             },
             "additional": [{
                 "description": "Dai 1 danno aggiuntivo a uno dei due bersagli.",
                 "name": "Colpo focalizzato",
-                "cost": ["Yellow"],
+                "cost": ["YELLOW"],
                 "lambdaIdentifier": "w2-ad1"
             }, {
                 "description": "Dai 1 danno aggiuntivo all'altro dei bersagli e/o dai 1 danno a un bersaglio differente che puoi vedere.",
                 "name": "Tripode di supporto",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w2-ad2"
             }],
             "alternative": null,
-            "color": "Blue"
+            "color": "BLUE"
         }, {
             "id": 3,
             "name": "Torpedine",
@@ -54,22 +54,22 @@
             "base": {
                 "description": "Dai 2 danni a 1 bersaglio che puoi vedere.",
                 "name": "Effetto base",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w3-b"
             },
             "additional": [{
                 "description": "Dai 1 danno a un secondo bersaglio che il tuo primo bersaglio può vedere.",
                 "name": "Reazione a catena",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w3-ad1"
             }, {
                 "description": "Dai 2 danni a un terzo bersaglio che il tuo secondo bersaglio può vedere. Non puoi usare questo effetto se prima non hai usato reazione a catena.",
                 "name": "Alta tensione",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w3-ad2"
             }],
             "alternative": null,
-            "color": "Blue"
+            "color": "BLUE"
         }, {
             "id": 4,
             "name": "Fucile al plasma",
@@ -78,7 +78,7 @@
             "base": {
                 "description": "Dai 2 danni a 1 bersaglio che puoi vedere.",
                 "name": "Effetto base",
-                "cost": ["Yellow"],
+                "cost": ["YELLOW"],
                 "lambdaIdentifier": "w4-b"
             },
             "additional": [{
@@ -89,11 +89,11 @@
             }, {
                 "description": "Dai 1 danno aggiuntivo al tuo bersaglio.",
                 "name": "Colpo sovraccarico",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w4-ad2"
             }],
             "alternative": null,
-            "color": "Blue"
+            "color": "BLUE"
         }, {
             "id": 5,
             "name": "Fucile di precisione",
@@ -102,12 +102,12 @@
             "base": {
                 "description": "Dai 3 danni e 1 marchio a 1 bersaglio che puoi vedere. Il bersaglio deve essere ad almeno 2 movimenti da te.",
                 "name": "Effetto base",
-                "cost": ["Blue", "Yellow"],
+                "cost": ["BLUE", "YELLOW"],
                 "lambdaIdentifier": "w5-b"
             },
             "additional": null,
             "alternative": null,
-            "color": "Blue"
+            "color": "BLUE"
         }, {
             "id": 6,
             "name": "Falce protonica",
@@ -123,10 +123,10 @@
             "alternative": {
                 "description": "Dai 2 danni a ogni altro giocatore presente nel quadrato in cui ti trovi.",
                 "name": "Modalità mietitore",
-                "cost": ["Blue", "Red"],
+                "cost": ["BLUE", "RED"],
                 "lambdaIdentifier": "w6-al"
             },
-            "color": "Blue"
+            "color": "BLUE"
         }, {
             "id": 7,
             "name": "Raggio traente",
@@ -142,10 +142,10 @@
             "alternative": {
                 "description": "Scegli un bersaglio 0, 1, o 2 movimenti da te. Muovi quel bersaglio nel quadrato in cui ti trovi e dagli 3 danni.",
                 "name": "Modalità punitore",
-                "cost": ["Red", "Yellow"],
+                "cost": ["RED", "YELLOW"],
                 "lambdaIdentifier": "w7-al"
             },
-            "color": "Blue"
+            "color": "BLUE"
         }, {
             "id": 8,
             "name": "Cannone vortex",
@@ -154,17 +154,17 @@
             "base": {
                 "description": "Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.",
                 "name": "Effetto base",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w8-b"
             },
             "additional": [{
                 "description": "Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.",
                 "name": "Buco nero",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w8-ad1"
             }],
             "alternative": null,
-            "color": "Red"
+            "color": "RED"
         }, {
             "id": 9,
             "name": "Vulcanizzatore",
@@ -173,7 +173,7 @@
             "base": {
                 "description": "Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.",
                 "name": "Modalità base",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w9-b"
             },
             "additional": null,
@@ -183,7 +183,7 @@
                 "cost": [],
                 "lambdaIdentifier": "w9-al"
             },
-            "color": "Red"
+            "color": "RED"
         }, {
             "id": 10,
             "name": "Razzo termico",
@@ -192,12 +192,12 @@
             "base": {
                 "description": "Scegli 1 bersaglio che non puoi vedere e dagli 3 danni.",
                 "name": "Effetto base",
-                "cost": ["Red", "Yellow"],
+                "cost": ["RED", "YELLOW"],
                 "lambdaIdentifier": "w10-b"
             },
             "additional": null,
             "alternative": null,
-            "color": "Red"
+            "color": "RED"
         }, {
             "id": 11,
             "name": "Raggio solare",
@@ -206,17 +206,17 @@
             "base": {
                 "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai un marchio a quel bersaglio e a chiunque altro in quel quadrato.",
                 "name": "Modalità base",
-                "cost": ["Yellow"],
+                "cost": ["YELLOW"],
                 "lambdaIdentifier": "w11-b"
             },
             "additional": null,
             "alternative": {
                 "description": "Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai 2 marchi a quel bersaglio e a chiunque altro in quel quadrato.",
                 "name": "Modalità nano-traccianti",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w11-al"
             },
-            "color": "Red"
+            "color": "RED"
         }, {
             "id": 12,
             "name": "Lanciafiamme",
@@ -232,10 +232,10 @@
             "alternative": {
                 "description": "Scegli 2 quadrati come prima. Dai 2 danni a chiunque sia nel primo quadrato e 1 danno a chiunque si trovi nel secondo quadrato.",
                 "name": "Modalità barbecue",
-                "cost": ["Yellow", "Yellow"],
+                "cost": ["YELLOW", "YELLOW"],
                 "lambdaIdentifier": "w12-al"
             },
-            "color": "Red"
+            "color": "RED"
         }, {
             "id": 13,
             "name": "Lanciagranate",
@@ -250,11 +250,11 @@
             "additional": [{
                 "description": "Dai 1 danno a ogni giocatore in quadrato che puoi vedere. Puoi usare questo effetto prima o dopo il movimento dell'effetto base.",
                 "name": "Granata extra",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w13-ad1"
             }],
             "alternative": null,
-            "color": "Red"
+            "color": "RED"
         }, {
             "id": 14,
             "name": "Lanciarazzi",
@@ -263,22 +263,22 @@
             "base": {
                 "description": "Dai 2 danni a 1 bersaglio che puoi vedere e che non si trova nel tuo quadrato. Poi puoi muovere il bersaglio di 1 quadrato.",
                 "name": "Effetto base",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w14-b"
             },
             "additional": [{
                 "description": "Muovi di 1 o 2 quadrati. Questo effetto può essere usato prima o dopo l'effetto base.",
                 "name": "Razzi portatili",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w14-ad1"
-            }, {
-                "description": "Durante l'effetto base, dai 1 danno a ogni giocatore presente nel quadrato in cui si trovava originariamente il bersaglio, incluso il bersaglio, anche se lo hai mosso.",
-                "name": "Testata a frammentazione",
-                "cost": ["Yellow"],
-                "lambdaIdentifier": "w14-ad2"
             }],
-            "alternative": null,
-            "color": "Red"
+            "alternative": {
+                "description": "Oltre l'effetto base, dai 1 danno a ogni giocatore presente nel quadrato in cui si trovava originariamente il bersaglio, incluso il bersaglio, anche se lo hai mosso.",
+                "name": "Testata a frammentazione",
+                "cost": ["YELLOW"],
+                "lambdaIdentifier": "w14-al"
+            },
+            "color": "RED"
         }, {
             "id": 15,
             "name": "Fucile laser",
@@ -287,7 +287,7 @@
             "base": {
                 "description": "Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.",
                 "name": "Modalità base",
-                "cost": ["Yellow", "Blue"],
+                "cost": ["YELLOW", "BLUE"],
                 "lambdaIdentifier": "w15-b"
             },
             "additional": null,
@@ -297,7 +297,7 @@
                 "cost": [],
                 "lambdaIdentifier": "w15-al"
             },
-            "color": "Yellow"
+            "color": "YELLOW"
         }, {
             "id": 16,
             "name": "Spada fotonica",
@@ -306,7 +306,7 @@
             "base": {
                 "description": "Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.",
                 "name": "Effetto base",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w16-b"
             },
             "additional": [{
@@ -317,11 +317,11 @@
             }, {
                 "description": "Dai 2 danni a un bersaglio differente nel quadrato in cui ti trovi. Il passo d'ombra può essere usato prima o dopo questo effetto.",
                 "name": "Modalità sminuzzare",
-                "cost": ["Yellow"],
+                "cost": ["YELLOW"],
                 "lambdaIdentifier": "w16-ad2"
             }],
             "alternative": null,
-            "color": "Yellow"
+            "color": "YELLOW"
         }, {
             "id": 17,
             "name": "ZX-2",
@@ -330,7 +330,7 @@
             "base": {
                 "description": "Dai 1 danno e 2 marchi a 1 bersaglio che puoi vedere.",
                 "name": "Modalità base",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w17-b"
             },
             "additional": null,
@@ -340,7 +340,7 @@
                 "cost": [],
                 "lambdaIdentifier": "w17-al"
             },
-            "color": "Yellow"
+            "color": "YELLOW"
         }, {
             "id": 18,
             "name": "Fucile a pompa",
@@ -349,7 +349,7 @@
             "base": {
                 "description": "Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi. Se vuoi puoi muovere quel bersaglio di 1 quadrato.",
                 "name": "Modalità base",
-                "cost": ["Yellow"],
+                "cost": ["YELLOW"],
                 "lambdaIdentifier": "w18-b"
             },
             "additional": null,
@@ -359,7 +359,7 @@
                 "cost": [],
                 "lambdaIdentifier": "w18-al"
             },
-            "color": "Yellow"
+            "color": "YELLOW"
         }, {
             "id": 19,
             "name": "Cyberguanto",
@@ -368,17 +368,17 @@
             "base": {
                 "description": "Scegli 1 bersaglio in un quadrato distante esattamente 1 movimento. Muovi in quel quadrato e dai al bersaglio 1 danno e 2 marchi.",
                 "name": "Modalità base",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w19-b"
             },
             "additional": null,
             "alternative": {
                 "description": "Scegli un quadrato distante esattamente 1 movimento. Muovi in quel quadrato. Puoi dare 2 danni a 1 bersaglio in quel quadrato. Se vuoi puoi muovere ancora di 1 quadrato nella stessa direzione (ma solo se è un movimento valido). Puoi dare 2 danni a un bersaglio anche in quel quadrato.",
                 "name": "Modalità cento pugni",
-                "cost": ["Blue"],
+                "cost": ["BLUE"],
                 "lambdaIdentifier": "w19-al"
             },
-            "color": "Yellow"
+            "color": "YELLOW"
         }, {
             "id": 20,
             "name": "Onda d\u0027urto",
@@ -394,10 +394,10 @@
             "alternative": {
                 "description": "Dai 1 danno a tutti i bersagli che sono distanti esattamente 1 movimento.",
                 "name": "Modalità tsunami",
-                "cost": ["Yellow"],
+                "cost": ["YELLOW"],
                 "lambdaIdentifier": "w20-al"
             },
-            "color": "Yellow"
+            "color": "YELLOW"
         }, {
             "id": 21,
             "name": "Martello ionico",
@@ -413,10 +413,10 @@
             "alternative": {
                 "description": "Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi, poi muovi quel bersaglio di 0, 1 o 2 quadrati in una direzione.",
                 "name": "Modalità polverizzare",
-                "cost": ["Red"],
+                "cost": ["RED"],
                 "lambdaIdentifier": "w21-al"
             },
-            "color": "Yellow"
+            "color": "YELLOW"
         }]
     },
     "powersDeck": 
@@ -432,7 +432,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p1"
                 },
-                "color": "Blue"
+                "color": "BLUE"
             }, {
                 "id": 2,
                 "name": "Raggio Cinetico",
@@ -442,7 +442,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p2"
                 },
-                "color": "Blue"
+                "color": "BLUE"
             }, {
                 "id": 3,
                 "name": "Granata Venom",
@@ -452,7 +452,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p3"
                 },
-                "color": "Blue"
+                "color": "BLUE"
             }, {
                 "id": 4,
                 "name": "Teletrasporto",
@@ -462,7 +462,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p4"
                 },
-                "color": "Blue"
+                "color": "BLUE"
             },
             {
                 "id": 5,
@@ -473,7 +473,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p1"
                 },
-                "color": "Yellow"
+                "color": "YELLOW"
             }, {
                 "id": 6,
                 "name": "Raggio Cinetico",
@@ -483,7 +483,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p2"
                 },
-                "color": "Yellow"
+                "color": "YELLOW"
             }, {
                 "id": 7,
                 "name": "Granata Venom",
@@ -493,7 +493,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p3"
                 },
-                "color": "Yellow"
+                "color": "YELLOW"
             }, {
                 "id": 8,
                 "name": "Teletrasporto",
@@ -503,7 +503,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p4"
                 },
-                "color": "Yellow"
+                "color": "YELLOW"
             },
             {
                 "id": 9,
@@ -514,7 +514,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p1"
                 },
-                "color": "Red"
+                "color": "RED"
             }, {
                 "id": 10,
                 "name": "Raggio Cinetico",
@@ -524,7 +524,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p2"
                 },
-                "color": "Red"
+                "color": "RED"
             }, {
                 "id": 11,
                 "name": "Granata Venom",
@@ -534,7 +534,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p3"
                 },
-                "color": "Red"
+                "color": "RED"
             }, {
                 "id": 12,
                 "name": "Teletrasporto",
@@ -544,7 +544,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p4"
                 },
-                "color": "Red"
+                "color": "RED"
             },
             {
                 "id": 13,
@@ -555,7 +555,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p1"
                 },
-                "color": "Blue"
+                "color": "BLUE"
             }, {
                 "id": 14,
                 "name": "Raggio Cinetico",
@@ -565,7 +565,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p2"
                 },
-                "color": "Blue"
+                "color": "BLUE"
             }, {
                 "id": 15,
                 "name": "Granata Venom",
@@ -575,7 +575,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p3"
                 },
-                "color": "Blue"
+                "color": "BLUE"
             }, {
                 "id": 16,
                 "name": "Teletrasporto",
@@ -585,7 +585,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p4"
                 },
-                "color": "Blue"
+                "color": "BLUE"
             },
             {
                 "id": 17,
@@ -596,7 +596,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p1"
                 },
-                "color": "Yellow"
+                "color": "YELLOW"
             }, {
                 "id": 18,
                 "name": "Raggio Cinetico",
@@ -606,7 +606,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p2"
                 },
-                "color": "Yellow"
+                "color": "YELLOW"
             }, {
                 "id": 19,
                 "name": "Granata Venom",
@@ -616,7 +616,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p3"
                 },
-                "color": "Yellow"
+                "color": "YELLOW"
             }, {
                 "id": 20,
                 "name": "Teletrasporto",
@@ -626,7 +626,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p4"
                 },
-                "color": "Yellow"
+                "color": "YELLOW"
             },
             {
                 "id": 21,
@@ -637,7 +637,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p1"
                 },
-                "color": "Red"
+                "color": "RED"
             }, {
                 "id": 22,
                 "name": "Raggio Cinetico",
@@ -647,7 +647,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p2"
                 },
-                "color": "Red"
+                "color": "RED"
             }, {
                 "id": 23,
                 "name": "Granata Venom",
@@ -657,7 +657,7 @@
                     "cost": [],
                     "lambdaIdentifier": "p3"
                 },
-                "color": "Red"
+                "color": "RED"
             }, {
                 "id": 24,
                 "name": "Teletrasporto",
@@ -667,60 +667,60 @@
                     "cost": [],
                     "lambdaIdentifier": "p4"
                 },
-                "color": "Red"
+                "color": "RED"
             }]
     },
     "ammoDeck": {
         "scraps": [],
         "cards": [
 
-            {"content": ["Blue", "Red", "Red"]},
-            {"content": ["Blue", "Red", "Red"]},
-            {"content": ["Blue", "Red", "Red"]},
+            {"content": ["BLUE", "RED", "RED"]},
+            {"content": ["BLUE", "RED", "RED"]},
+            {"content": ["BLUE", "RED", "RED"]},
 
-            {"content": ["Blue", "Yellow", "Yellow"]},
-            {"content": ["Blue", "Yellow", "Yellow"]},
-            {"content": ["Blue", "Yellow", "Yellow"]},
+            {"content": ["BLUE", "YELLOW", "YELLOW"]},
+            {"content": ["BLUE", "YELLOW", "YELLOW"]},
+            {"content": ["BLUE", "YELLOW", "YELLOW"]},
 
-            {"content": ["Power", "Blue", "Blue"]},
-            {"content": ["Power", "Blue", "Blue"]},
+            {"content": ["POWER", "BLUE", "BLUE"]},
+            {"content": ["POWER", "BLUE", "BLUE"]},
 
-            {"content": ["Power", "Red", "Blue"]},
-            {"content": ["Power", "Red", "Blue"]},
-            {"content": ["Power", "Red", "Blue"]},
-            {"content": ["Power", "Red", "Blue"]},
+            {"content": ["POWER", "RED", "BLUE"]},
+            {"content": ["POWER", "RED", "BLUE"]},
+            {"content": ["POWER", "RED", "BLUE"]},
+            {"content": ["POWER", "RED", "BLUE"]},
 
-            {"content": ["Power", "Red", "Red"]},
-            {"content": ["Power", "Red", "Red"]},
+            {"content": ["POWER", "RED", "RED"]},
+            {"content": ["POWER", "RED", "RED"]},
 
-            {"content": ["Power", "Yellow", "Blue"]},
-            {"content": ["Power", "Yellow", "Blue"]},
-            {"content": ["Power", "Yellow", "Blue"]},
-            {"content": ["Power", "Yellow", "Blue"]},
+            {"content": ["POWER", "YELLOW", "BLUE"]},
+            {"content": ["POWER", "YELLOW", "BLUE"]},
+            {"content": ["POWER", "YELLOW", "BLUE"]},
+            {"content": ["POWER", "YELLOW", "BLUE"]},
 
-            {"content": ["Power", "Yellow", "Red"]},
-            {"content": ["Power", "Yellow", "Red"]},
-            {"content": ["Power", "Yellow", "Red"]},
-            {"content": ["Power", "Yellow", "Red"]},
+            {"content": ["POWER", "YELLOW", "RED"]},
+            {"content": ["POWER", "YELLOW", "RED"]},
+            {"content": ["POWER", "YELLOW", "RED"]},
+            {"content": ["POWER", "YELLOW", "RED"]},
 
-            {"content": ["Power", "Yellow", "Yellow"]},
-            {"content": ["Power", "Yellow", "Yellow"]},
+            {"content": ["POWER", "YELLOW", "YELLOW"]},
+            {"content": ["POWER", "YELLOW", "YELLOW"]},
 
-            {"content": ["Red", "Blue", "Blue"]},
-            {"content": ["Red", "Blue", "Blue"]},
-            {"content": ["Red", "Blue", "Blue"]},
+            {"content": ["RED", "BLUE", "BLUE"]},
+            {"content": ["RED", "BLUE", "BLUE"]},
+            {"content": ["RED", "BLUE", "BLUE"]},
 
-            {"content": ["Red", "Yellow", "Yellow"]},
-            {"content": ["Red", "Yellow", "Yellow"]},
-            {"content": ["Red", "Yellow", "Yellow"]},
+            {"content": ["RED", "YELLOW", "YELLOW"]},
+            {"content": ["RED", "YELLOW", "YELLOW"]},
+            {"content": ["RED", "YELLOW", "YELLOW"]},
 
-            {"content": ["Yellow", "Blue", "Blue"]},
-            {"content": ["Yellow", "Blue", "Blue"]},
-            {"content": ["Yellow", "Blue", "Blue"]},
+            {"content": ["YELLOW", "BLUE", "BLUE"]},
+            {"content": ["YELLOW", "BLUE", "BLUE"]},
+            {"content": ["YELLOW", "BLUE", "BLUE"]},
 
-            {"content": ["Yellow", "Red", "Red"]},
-            {"content": ["Yellow", "Red", "Red"]},
-            {"content": ["Yellow", "Red", "Red"]}
+            {"content": ["YELLOW", "RED", "RED"]},
+            {"content": ["YELLOW", "RED", "RED"]},
+            {"content": ["YELLOW", "RED", "RED"]}
         ]
     }
 }
