@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SocketConn implements Connection {
     /**
@@ -253,6 +255,7 @@ public class SocketConn implements Connection {
             success = true;
         }
         catch (IOException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             success = false;
         }
         return success;
@@ -269,6 +272,7 @@ public class SocketConn implements Connection {
             response = in.nextLine();
         }
         catch (IOException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             response = null;
         }
         return response;

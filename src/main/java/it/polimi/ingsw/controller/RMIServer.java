@@ -8,6 +8,8 @@ import java.rmi.registry.*;
 import java.rmi.server.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * RMI implementation of the server interface, it handles the RMI connections of all the game
@@ -32,7 +34,9 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
             registry = LocateRegistry.createRegistry(1099);
             registry.bind("AM06", this);
         }
-        catch(AlreadyBoundException e) { }
+        catch(AlreadyBoundException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        }
     }
 
     /**
@@ -47,6 +51,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
         Client clientInterface = (Client)registry.lookup(registryBind);
         RMIConn clientConn = new RMIConn(clientInterface, registryBind);
         newConn.add(clientConn);
+        notifyAll();
     }
 
     /**
@@ -55,8 +60,14 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
      */
     public Connection getConnection()
     {
-        //TODO remove busy waiting
-        while(newConn.isEmpty());
-        return newConn.remove(0);
+        try {
+            while (newConn.isEmpty()) wait();
+            return newConn.remove(0);
+        }
+        catch (InterruptedException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+
     }
 }

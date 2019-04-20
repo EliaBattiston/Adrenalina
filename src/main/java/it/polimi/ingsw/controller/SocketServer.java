@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The class implements the Server for establishing the client-server connection.
@@ -47,6 +49,7 @@ public class SocketServer implements Server {
             return new SocketConn(connSocket);
         }
         catch (IOException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             return null;
         }
 

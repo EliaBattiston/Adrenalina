@@ -7,6 +7,8 @@ import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RMIClient extends UnicastRemoteObject implements Client, Serializable
 {
@@ -21,8 +23,12 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
             registry.bind(bindName, this);
             RMIServer.newConnection(bindName);
         }
-        catch(NotBoundException e) { }
-        catch(AlreadyBoundException e) { }
+        catch(NotBoundException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        }
+        catch(AlreadyBoundException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        }
     }
 
     /**

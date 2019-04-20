@@ -10,6 +10,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SocketClient implements Client {
     /**
@@ -26,7 +28,9 @@ public class SocketClient implements Client {
         try {
             serverSocket = new Socket(ipAddr, port);
         }
-        catch (IOException e) { }
+        catch (IOException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        }
     }
 
     /**
@@ -153,6 +157,7 @@ public class SocketClient implements Client {
             success = true;
         }
         catch (IOException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             success = false;
         }
         return success;
@@ -272,7 +277,9 @@ public class SocketClient implements Client {
             }
             send(jsonSerialize(answer));
         }
-        catch (IOException e) { }
+        catch (IOException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        }
     }
 
     /**
