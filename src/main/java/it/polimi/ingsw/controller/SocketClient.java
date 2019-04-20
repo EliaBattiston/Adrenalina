@@ -137,8 +137,23 @@ public class SocketClient implements Client {
     public Point choosePosition(List<Point> positions, boolean mustChoose) {return positions.get(0); }
 
 
+    /**
+     * Asks the user for the nickname
+     * @return user's nickname
+     */
+    public String getNickname() {return "pippo"; }
 
+    /**
+     * Asks the user for the effect phrase
+     * @return user's effect phrase
+     */
+    public String getPhrase() {return "Yodellah-iihh-oohh!"; }
 
+    /**
+     * Asks the user fot the fighter
+     * @return user's fighter
+     */
+    public Fighter getFighter() {return Fighter.DSTRUTTOR3; }
 
 
 
@@ -269,6 +284,27 @@ public class SocketClient implements Client {
                     answer.type = Interaction.CHOOSEPOSITION;
                     ArrayList<Point> ansParam = new ArrayList<>();
                     ansParam.add(choosePosition(param, message.mustChoose));
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case GETNICKNAME: {
+                    answer.type = Interaction.GETNICKNAME;
+                    ArrayList<String> ansParam = new ArrayList<>();
+                    ansParam.add(getNickname());
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case GETPHRASE: {
+                    answer.type = Interaction.GETPHRASE;
+                    ArrayList<String> ansParam = new ArrayList<>();
+                    ansParam.add(getPhrase());
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case GETFIGHTER: {
+                    answer.type = Interaction.GETFIGHTER;
+                    ArrayList<Fighter> ansParam = new ArrayList<>();
+                    ansParam.add(getFighter());
                     answer.parameters = gson.toJson(ansParam);
                     break;
                 }

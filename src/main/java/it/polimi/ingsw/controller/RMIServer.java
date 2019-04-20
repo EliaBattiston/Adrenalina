@@ -51,7 +51,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
         Client clientInterface = (Client)registry.lookup(registryBind);
         RMIConn clientConn = new RMIConn(clientInterface, registryBind);
         newConn.add(clientConn);
-        notifyAll();
+        notify();
     }
 
     /**

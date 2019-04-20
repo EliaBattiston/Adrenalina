@@ -132,5 +132,23 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @return chosen position
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose) { return positions.get(0); }
+
+    /**
+     * Asks the user for the nickname
+     * @return user's nickname
+     */
+    public String getNickname() {return "pippo"; }
+
+    /**
+     * Asks the user for the effect phrase
+     * @return user's effect phrase
+     */
+    public String getPhrase() {return "Yodellah-iihh-oohh!"; }
+
+    /**
+     * Asks the user fot the fighter
+     * @return user's fighter
+     */
+    public Fighter getFighter() {return Fighter.DSTRUTTOR3; }
 }
 

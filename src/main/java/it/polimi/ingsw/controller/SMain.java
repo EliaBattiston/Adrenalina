@@ -1,6 +1,12 @@
 package it.polimi.ingsw.controller;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main class for the server's executable
@@ -30,7 +36,22 @@ public class SMain
      * Creates a new SMain
      */
     public SMain()
-    {}
+    {
+        try {
+            socket = new SocketServer(1906);
+            rmi = new RMIServer();
+            matches = new ArrayList<>();
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            System.out.println("Errore nell'avvio del server RMI");
+        }
+        catch (IOException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            System.out.println("Errore nell'avvio del server Socket");
+        }
+        listen();
+    }
 
     public static void main(String[] args)
     {

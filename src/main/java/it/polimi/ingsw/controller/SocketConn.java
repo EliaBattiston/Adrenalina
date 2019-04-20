@@ -237,7 +237,47 @@ public class SocketConn implements Connection {
         return ansParam.get(0);
     }
 
+    /**
+     * Asks the user for the nickname
+     * @return user's nickname
+     */
+    public String getNickname() {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.GETNICKNAME;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<String> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<String>>(){}.getType());
+        return ansParam.get(0);
+    }
 
+    /**
+     * Asks the user for the effect phrase
+     * @return user's effect phrase
+     */
+    public String getPhrase() {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.GETPHRASE;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<String> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<String>>(){}.getType());
+        return ansParam.get(0);
+    }
+
+    /**
+     * Asks the user fot the fighter
+     * @return user's fighter
+     */
+    public Fighter getFighter() {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.GETFIGHTER;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<Fighter> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Fighter>>(){}.getType());
+        return ansParam.get(0);
+    }
 
 
 

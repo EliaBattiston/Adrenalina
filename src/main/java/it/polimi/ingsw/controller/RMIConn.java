@@ -200,4 +200,46 @@ public class RMIConn implements Connection
             return null;
         }
     }
+
+    /**
+     * Asks the user for the nickname
+     * @return user's nickname
+     */
+    public String getNickname() {
+        try {
+            return client.getNickname();
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+    }
+
+    /**
+     * Asks the user for the effect phrase
+     * @return user's effect phrase
+     */
+    public String getPhrase() {
+        try {
+            return client.getPhrase();
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+    }
+
+    /**
+     * Asks the user fot the fighter
+     * @return user's fighter
+     */
+    public Fighter getFighter() {
+        try {
+            return client.getFighter();
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+    }
 }

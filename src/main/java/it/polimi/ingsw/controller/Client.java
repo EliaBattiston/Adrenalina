@@ -110,4 +110,25 @@ public interface Client extends Remote
      * @return chosen position
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose) throws RemoteException;
+
+    /**
+     * Asks the user for the nickname
+     * @throws RemoteException If something goes wrong with the connection
+     * @return user's nickname
+     */
+    public String getNickname() throws RemoteException;
+
+    /**
+     * Asks the user for the effect phrase
+     * @throws RemoteException If something goes wrong with the connection
+     * @return user's effect phrase
+     */
+    public String getPhrase() throws RemoteException;
+
+    /**
+     * Asks the user fot the fighter
+     * @throws RemoteException If something goes wrong with the connection
+     * @return user's fighter
+     */
+    public Fighter getFighter() throws RemoteException;
 }

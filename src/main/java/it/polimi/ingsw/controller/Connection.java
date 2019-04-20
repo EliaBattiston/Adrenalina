@@ -97,4 +97,22 @@ public interface Connection extends Remote
      * @return chosen position
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose);
+
+    /**
+     * Asks the user for the nickname
+     * @return user's nickname
+     */
+    public String getNickname();
+
+    /**
+     * Asks the user for the effect phrase
+     * @return user's effect phrase
+     */
+    public String getPhrase();
+
+    /**
+     * Asks the user fot the fighter
+     * @return user's fighter
+     */
+    public Fighter getFighter();
 }
