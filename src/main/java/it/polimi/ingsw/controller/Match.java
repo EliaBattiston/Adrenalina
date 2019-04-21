@@ -234,7 +234,7 @@ public class Match implements Runnable
 
         if(found)
         {
-            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> position.set(spawnPoint.getX(), spawnPoint.getY()) ));
+            pl.applyEffects(EffectsLambda.move(spawnPoint));
         }
         //If not found the map is incorrect
     }
@@ -341,6 +341,12 @@ public class Match implements Runnable
         {
             game.getSkulls()[nextSkull].setKiller(killed.getReceivedDamage()[10], killed.getReceivedDamage()[11] != null);
             killed.addSkull();
+        }
+
+        //Give a mark to the overkiller
+        if(killed.getReceivedDamage()[11] != null)
+        {
+            killed.getReceivedDamage()[11].applyEffects(EffectsLambda.marks(1, killed));
         }
 
         //Reset damages
