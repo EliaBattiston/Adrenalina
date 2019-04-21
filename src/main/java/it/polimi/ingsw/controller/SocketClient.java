@@ -136,6 +136,14 @@ public class SocketClient implements Client {
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose) {return positions.get(0); }
 
+    /**
+     * Asks the user to choose which weapon to discard
+     * @param inHand List of weapons in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen weapon
+     */
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) { return inHand.get(0); }
+
 
 
 
@@ -269,6 +277,15 @@ public class SocketClient implements Client {
                     answer.type = Interaction.CHOOSEPOSITION;
                     ArrayList<Point> ansParam = new ArrayList<>();
                     ansParam.add(choosePosition(param, message.mustChoose));
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case DISCARDWEAPON: {
+                    ArrayList<Weapon> param = gson.fromJson(message.parameters, new TypeToken<List<Weapon>>() {
+                    }.getType());
+                    answer.type = Interaction.DISCARDWEAPON;
+                    ArrayList<Weapon> ansParam = new ArrayList<>();
+                    ansParam.add(discardWeapon(param, message.mustChoose));
                     answer.parameters = gson.toJson(ansParam);
                     break;
                 }

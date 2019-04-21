@@ -200,4 +200,21 @@ public class RMIConn implements Connection
             return null;
         }
     }
+
+    /**
+     * Asks the user to choose which weapon to discard
+     * @param inHand List of weapons in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen weapon
+     */
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose)
+    {
+        try {
+            return client.discardWeapon(inHand, mustChoose);
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+    }
 }
