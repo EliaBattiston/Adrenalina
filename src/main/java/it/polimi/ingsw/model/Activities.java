@@ -26,21 +26,82 @@ public class Activities {
         /**
          * Implementation of all the possible actions
          */
+        playPower = new Action(
+                "Potenziamento",
+                "Usa una delle carte potenziamento dalla mano",
+                new ArrayList<>(),
+                "a-p"
+        );
+
         base.add(new Action(
                 "Correre",
-                "",
+                "Muovi fino a 3 quadrati",
                 new ArrayList<>(),
                 "a-b1"
         ));
 
         base.add(new Action(
                 "Raccogliere",
-                "",
+                "Muovi fino a 1 quadrato e raccogli il contenuto della cella",
                 new ArrayList<>(),
                 "a-b2"
         ));
 
+        base.add(new Action(
+                "Sparare",
+                "Spara con una delle tue armi",
+                new ArrayList<>(),
+                "a-b3"
+        ));
 
+        adrenalin3.add(new Action(
+                "Raccolta adrenalinica",
+                "Muovi fino a 1 quadrato e raccogli il contenuto della cella",
+                new ArrayList<>(),
+                "a-a1"
+        ));
+
+        adrenalin6.add(new Action(
+                "Sparo adrenalinica",
+                "Muovi fino a 2 quadrati e spara con una delle tue armi",
+                new ArrayList<>(),
+                "a-a2"
+        ));
+
+        frenzyBefore.add(new Action(
+                "Sparo frenetico",
+                "Muovi fino a 1 quadrato, ricarica se vuoi e poi spara",
+                new ArrayList<>(),
+                "a-f1"
+        ));
+
+        frenzyBefore.add(new Action(
+                "Corsa frenetica",
+                "Muovi fino a 4 quadrati",
+                new ArrayList<>(),
+                "a-f2"
+        ));
+
+        frenzyBefore.add(new Action(
+                "Raccolta frenetica",
+                "Muovi fino a 2 quadrati e raccogli qualcosa",
+                new ArrayList<>(),
+                "a-f3"
+        ));
+
+        frenzyAfter.add(new Action(
+                "Sparo frenetico",
+                "Muovi fino a 2 quadrati, ricarica se vuoi e poi spara",
+                new ArrayList<>(),
+                "a-f4"
+        ));
+
+        frenzyAfter.add(new Action(
+                "Corsa frenetica",
+                "Muovi fino a 3 quadrati e raccogli qualcosa",
+                new ArrayList<>(),
+                "a-f5"
+        ));
     }
 
     /**

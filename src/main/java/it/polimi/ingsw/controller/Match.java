@@ -116,6 +116,9 @@ public class Match implements Runnable
                 active.getConn().chooseAction(availableActions, true).execute(active, game.getMap(), game.getPlayers());
             }
 
+            //Reload weapons
+            //TODO implement reloading
+
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
 
@@ -276,6 +279,7 @@ public class Match implements Runnable
      */
     protected void registerKill(Player killed)
     {
+        //TODO change rules for frenzy
         int nextSkull; //Index of the first usable skull on the board
         int maxPoints; //Number of points the player that inflicted the most damage gets when killing
         int damageNum; //Number of damages inflicted by a user
