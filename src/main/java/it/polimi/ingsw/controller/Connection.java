@@ -77,16 +77,16 @@ public interface Connection extends Remote
 
     /**
      * Asks the user to choose a room
-     * @param rooms list of possible rooms
+     * @param rooms List of possible rooms
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
-     * @return chosen room
+     * @return Chosen room
      */
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose);
 
     /**
      * Asks the player to choose a direction
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
-     * @return chosen direction
+     * @return Chosen direction
      */
     public Direction chooseDirection(boolean mustChoose);
 
@@ -94,7 +94,15 @@ public interface Connection extends Remote
      * Asks the user to choose a precise position on the map
      * @param positions list of possible positions
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
-     * @return chosen position
+     * @return Chosen position
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose);
+
+    /**
+     * Asks the user to choose which weapon to discard
+     * @param inHand List of weapons in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen weapon
+     */
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose);
 }

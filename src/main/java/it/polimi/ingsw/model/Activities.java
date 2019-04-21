@@ -26,27 +26,20 @@ public class Activities {
         /**
          * Implementation of all the possible actions
          */
-        ArrayList<Color> cost = new ArrayList<>();
-        cost.add(Color.BLUE);
-        cost.add(Color.YELLOW);
-        cost.add((Color.RED));
-        playPower = new Action("PlayPower", "Play POWER card", null, null);
-        Action act = new Action("SimpleAction", "Simple action 1", cost, null);
-        Action adr3 = new Action("Simple3", "Simple action 2", cost, null);
-        Action adr6 = new Action("Simple6", "Simple action 3", cost, null);
-        Action frA = new Action("SimpleFrenzyA", "Simple action 4", cost, null);
-        Action frB = new Action("SimpleFrenzyB", "Simple action 5", cost, null);
+        base.add(new Action(
+                "Correre",
+                "",
+                new ArrayList<>(),
+                "a-b1"
+        ));
 
-        base.add(act);
-        base.add(act);
-        base.add(act);
-        adrenalin3.add(adr3);
-        adrenalin6.add(adr6);
+        base.add(new Action(
+                "Raccogliere",
+                "",
+                new ArrayList<>(),
+                "a-b2"
+        ));
 
-        frenzyBefore.add(frB);
-        frenzyBefore.add(frB);
-
-        frenzyAfter.add(frA);
 
     }
 

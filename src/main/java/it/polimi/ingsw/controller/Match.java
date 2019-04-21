@@ -234,7 +234,7 @@ public class Match implements Runnable
 
         if(found)
         {
-            pl.applyEffects(EffectsLambda.move(spawnPoint));
+            pl.applyEffects(EffectsLambda.move(pl, spawnPoint, game.getMap()));
         }
         //If not found the map is incorrect
     }

@@ -67,17 +67,13 @@ public class Map {
      */
     public static Map jsonDeserialize(int mapNumber) {
         try{
-            switch (mapNumber){
-                case 1:
-                    return Map.jsonDeserialize("resources/map1.json");
-                case 2:
-                    return Map.jsonDeserialize("resources/map2.json");
-                case 3:
-                    return Map.jsonDeserialize("resources/map3.json");
-                case 4:
-                    return Map.jsonDeserialize("resources/map4.json");
-                default:
-                    return null;
+            if(mapNumber >= 1 && mapNumber <= 4)
+            {
+                return Map.jsonDeserialize("resources/map" + mapNumber + ".json");
+            }
+            else
+            {
+                return null;
             }
         }catch(FileNotFoundException ex){
             return null;
@@ -121,7 +117,7 @@ public class Map {
      * Return the list of visible rooms from a point
      * @param pos pos
      * @param map map
-     * @return list of isible rooms
+     * @return list of visible rooms
      */
     public static List<Integer> visibleRooms(Point pos, Map map){
         List<Integer> rooms = new ArrayList<>();
