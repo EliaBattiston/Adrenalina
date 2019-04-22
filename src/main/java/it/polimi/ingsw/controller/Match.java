@@ -113,11 +113,11 @@ public class Match implements Runnable
                         firstFrenzy != null && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy)
                 );
 
-                active.getConn().chooseAction(availableActions, true).execute(active, game.getMap(), game.getPlayers());
+                active.getConn().chooseAction(availableActions, true).execute(active, game.getMap(), game);
             }
 
             //Reload weapons
-            //TODO implement reloading
+            ActionLambdaMap.reload(active);
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();

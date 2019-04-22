@@ -56,14 +56,14 @@ public class Activities {
 
         adrenalin3.add(new Action(
                 "Raccolta adrenalinica",
-                "Muovi fino a 1 quadrato e raccogli il contenuto della cella",
+                "Muovi fino a 2 quadrati e raccogli il contenuto della cella",
                 new ArrayList<>(),
                 "a-a1"
         ));
 
         adrenalin6.add(new Action(
-                "Sparo adrenalinica",
-                "Muovi fino a 2 quadrati e spara con una delle tue armi",
+                "Sparo adrenalinico",
+                "Muovi fino a 1 quadrato e spara con una delle tue armi",
                 new ArrayList<>(),
                 "a-a2"
         ));

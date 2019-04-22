@@ -40,15 +40,15 @@ public class Action implements Serializable {
     }
 
     /**
-     * executes the action's lambda function
-     * @param pl player who executes the action
-     * @param m map of the active board
-     * @param playersList list of targeted player(s) (if present)
+     * Executes the action's lambda function
+     * @param pl Player who executes the action
+     * @param map Map of the active board
+     * @param memory Used by some actions with side effects
      */
-    public void execute(Player pl, Map m, List<Player> playersList)
+    public void execute(Player pl, Map map, Object memory)
     {
         ActionLambda lambda = ActionLambdaMap.getLambda(lambdaIdentifier);
-        lambda.execute(pl, m, playersList);
+        lambda.execute(pl, map, memory);
     }
 
     /**
@@ -74,4 +74,10 @@ public class Action implements Serializable {
     public List<Color> getCost() {
         return cost;
     }
+
+    /**
+     * Returns the identifier of the lambda, useful for type identification
+     * @return Lambda identifier
+     */
+    public String getLambdaID() { return lambdaIdentifier; }
 }

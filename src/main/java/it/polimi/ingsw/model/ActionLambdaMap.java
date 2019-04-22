@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import com.sun.org.apache.regexp.internal.RE;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ActionLambdaMap {
     private HashMap<String, ActionLambda> data;
@@ -676,77 +678,47 @@ public class ActionLambdaMap {
         });
 
     //Activities lambdas
-        data.put("a-b1", (pl, map, memory)->{
-            List<Point> destinations = Map.possibleMovements(pl.getPosition(), 3, map);
-            Point chosen = pl.getConn().movePlayer(destinations, true);
-
-            pl.applyEffects(EffectsLambda.move(pl, chosen, map));
-        });
+        data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true) );
 
         data.put("a-b2", (pl, map, memory)->{
-            List<Point> destinations = Map.possibleMovements(pl.getPosition(), 1, map);
-            Point chosen = pl.getConn().movePlayer(destinations, false);
+            run(pl, map,1,false);
+            pick(pl, map, ((Game)memory).getAmmoDeck());
+        });
 
-            if(chosen != null)
-                pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+        data.put("a-b3",(pl, map, memory) -> shoot(pl, map) );
 
-            Cell current = map.getCell(pl.getPosition());
-            //Ask something only if the player is in a spawn cell
-            if(current instanceof SpawnCell)
-            {
-                Weapon picked = pl.getConn().chooseWeapon(((SpawnCell) current).getWeapons(), true);
-                ((SpawnCell)current).pickWeapon(picked);
+        data.put("a-a1", (pl, map, memory)->{
+            run(pl, map,2,false);
+            pick(pl, map,((Game)memory).getAmmoDeck());
+        });
 
-                //If the player already has 3 weapons he has to discard one
-                if(pl.getWeapons().size() >= 3)
-                {
-                    Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
+        data.put("a-a2", (pl, map, memory)->{
+            run(pl, map,1,false);
+            shoot(pl, map);
+        });
 
-                    pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                        int pos = Arrays.asList(weapons).indexOf(discard);
-                        if(pos>-1 && pos<=3)
-                        {
-                            weapons[pos].setLoaded(false);
-                            ((SpawnCell)current).refillWeapon(weapons[pos]);
-                            weapons[pos] = null;
-                        }
-                        else
-                        {
-                            Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player's hand", pl);
-                        }
-                    }));
-                }
+        data.put("a-f1", (pl, map, memory)->{
+            run(pl, map,1,false);
+            reload(pl);
+            shoot(pl, map);
+        });
 
-                //Give the new weapon to the player
-                pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                    int pos;
-                    for(pos=0; pos<3 && weapons[pos] != null; pos++)
-                        ;
-                    if(pos<=3 && weapons[pos] == null)
-                    {
-                        weapons[pos] = picked;
-                    }
-                    else
-                    {
-                        Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player's hand", pl);
-                    }
-                }));
-            }
-            else if(current instanceof RegularCell)
-            {
-                Loot picked = ((RegularCell) current).pickLoot();
-                pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                    for(Color c : picked.getContent())
-                    {
-                        ammo.add(c, 1);
-                    }
-                }));
-                //TODO add to scraps
-            }
-            else
-            {
-                Logger.getGlobal().log(Level.SEVERE, "Unkown type of Cell", current);
-            }
+        data.put("a-f2", (pl, map, memory)-> run(pl, map,4,true) );
+
+        data.put("a-f3", (pl, map, memory)->{
+            run(pl, map,2,false);
+            pick(pl, map,((Game)memory).getAmmoDeck());
+        });
+
+        data.put("a-f4", (pl, map, memory)->{
+            run(pl, map,2,false);
+            reload(pl);
+            shoot(pl, map);
+        });
+
+        data.put("a-f5", (pl, map, memory)->{
+            run(pl, map,3,false);
+            pick(pl, map, ((Game)memory).getAmmoDeck());
         });
     }
 
@@ -760,5 +732,195 @@ public class ActionLambdaMap {
             instance = new ActionLambdaMap();
 
         return instance.data.get(lambdaName);
+    }
+
+    /**
+     * Basic run action
+     * @param pl Lambda's player
+     * @param map Lambda's map
+     * @param steps number of allowed steps
+     * @param mustChoose False if the player doesn't have to run
+     */
+    private static void run(Player pl, Map map, int steps, boolean mustChoose)
+    {
+        List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
+        Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
+
+        if(chosen != null)
+            pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+    }
+
+    /**
+     * Basic pick item action
+     * @param pl Lambda's player
+     * @param map Lambda's map
+     */
+    private static void pick(Player pl, Map map, EndlessDeck lootDeck)
+    {
+        Cell current = map.getCell(pl.getPosition());
+        //Ask something only if the player is in a spawn cell
+        if(current instanceof SpawnCell)
+        {
+            Weapon picked = pl.getConn().chooseWeapon(((SpawnCell) current).getWeapons(), true);
+            ((SpawnCell)current).pickWeapon(picked);
+
+            //If the player already has 3 weapons he has to discard one
+            if(pl.getWeapons().size() >= 3)
+            {
+                Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
+
+                pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                    int pos = Arrays.asList(weapons).indexOf(discard);
+                    if(pos>-1 && pos<=3)
+                    {
+                        weapons[pos].setLoaded(false);
+                        ((SpawnCell)current).refillWeapon(weapons[pos]);
+                        weapons[pos] = null;
+                    }
+                    else
+                    {
+                        Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player's hand", pl);
+                    }
+                }));
+            }
+
+            //Give the new weapon to the player
+            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                int pos;
+                for(pos=0; pos<3 && weapons[pos] != null; pos++)
+                    ;
+                if(pos<=3 && weapons[pos] == null)
+                {
+                    weapons[pos] = picked;
+                }
+                else
+                {
+                    Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player's hand", pl);
+                }
+            }));
+        }
+        else if(current instanceof RegularCell)
+        {
+            Loot picked = ((RegularCell) current).pickLoot();
+            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                for(Color c : picked.getContent())
+                {
+                    ammo.add(c, 1);
+                }
+            }));
+            lootDeck.scrapCard(picked);
+        }
+        else
+        {
+            Logger.getGlobal().log(Level.SEVERE, "Unkown type of Cell", current);
+        }
+    }
+
+    /**
+     * Basic shoot action
+     * @param pl Lambda's player
+     * @param map Lambda's map
+     */
+    private static void shoot(Player pl, Map map)
+    {
+        //Only loaded weapons
+        List<Weapon> loaded = pl.getWeapons().stream().filter(Weapon::isLoaded).collect(Collectors.toList());
+        Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
+
+        //TODO only propose sensible ones
+        //Take list of available "base" actions for the chosen weapon
+        List<Action> weaponActions = new ArrayList<>();
+        if(chosen.getBase() != null)
+            weaponActions.add(chosen.getBase());
+        if(chosen.getAlternative() != null)
+            weaponActions.add(chosen.getAlternative());
+
+        //TODO add memory management for relevant actions
+        //Ask the user which one he wants to use
+        Action toExecute = pl.getConn().chooseAction(weaponActions, true);
+        toExecute.execute(pl, map, null);
+
+        if(toExecute.getLambdaID().contains("-b")) //Base action
+        {
+            //Additional actions management
+            weaponActions.clear();
+            if(chosen.getAdditional() != null)
+                weaponActions.addAll(chosen.getAdditional());
+
+            do
+            {
+                toExecute = pl.getConn().chooseAction(weaponActions, false);
+
+                if (toExecute != null)
+                {
+                    toExecute.execute(pl, map, null);
+                    weaponActions.remove(toExecute);
+                }
+            } while(!weaponActions.isEmpty() && toExecute != null);
+        }
+
+        //Unload the used weapon
+        pl.applyEffects((damage, marks, position, weapons, powers, ammo) -> {
+            weapons[Arrays.asList(weapons).indexOf(chosen)].setLoaded(false);
+        });
+    }
+
+    /**
+     * Basic reload action
+     * @param pl Lambda's player
+     */
+    public static void reload(Player pl)
+    {
+        List<Weapon> unloaded = pl.getWeapons().stream().filter(weapon -> !weapon.isLoaded()).collect(Collectors.toList());
+        List<Weapon> reloadable =  new ArrayList<>(unloaded); //Only the weapons the player can currently reload
+        List<Color> cost = new ArrayList<>();
+        Weapon chosen = null;
+
+        for(Weapon w : unloaded)
+        {
+            cost.clear();
+            cost.add(w.getColor());
+            if(w.getBase().getCost() != null)
+                cost.addAll(w.getBase().getCost());
+
+            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
+                    || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
+                    || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            {
+                reloadable.remove(w);
+            }
+        }
+
+        if(!reloadable.isEmpty())
+            chosen = reloadable.get(0);
+
+        while(!reloadable.isEmpty() && chosen != null)
+        {
+            chosen = pl.getConn().chooseWeapon(reloadable, false);
+
+            if(chosen != null)
+            {
+                chosen.setLoaded(true);
+                unloaded.remove(chosen);
+            }
+
+            reloadable.clear();
+            reloadable.addAll(unloaded);
+
+            for(Weapon w : unloaded)
+            {
+                cost.clear();
+                cost.add(w.getColor());
+                if(w.getBase().getCost() != null)
+                    cost.addAll(w.getBase().getCost());
+
+                if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
+                        || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
+                        || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+                {
+                    reloadable.remove(w);
+                }
+            }
+        }
     }
 }
