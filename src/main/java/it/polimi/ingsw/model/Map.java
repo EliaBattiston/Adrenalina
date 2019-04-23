@@ -144,7 +144,7 @@ public class Map {
     /**
      * Return the visible players from the viewer players
      * @param viewer the one who is looking
-     * @param map the map on wich we are looking for
+     * @param map the map on which we are looking for
      * @return the list of visible players
      */
     public static List<Player> visiblePlayers(Player viewer, Map map){
@@ -161,6 +161,27 @@ public class Map {
 
         //remove the player itself
         visibles.remove(viewer);
+
+        return visibles;
+    }
+
+    /**
+     * Return the visible players from a position
+     * @param position The position of the one who's looking
+     * @param map The map on which we are looking for
+     * @return the list of visible players
+     */
+    public static List<Player> visiblePlayers(Point position, Map map){
+        ArrayList<Player> visibles = new ArrayList<>();
+
+        List<Integer> visRooms = Map.visibleRooms(position, map);
+
+        //Get all the people in those rooms
+        for(int i=0; i<=3;i++)
+            for(int j=0; j<=2; j++)
+                if(map.getCell(i,j) != null)
+                    if(visRooms.contains(map.getCell(i,j).getRoomNumber()))
+                        visibles.addAll(map.getCell(i, j).getPawns());
 
         return visibles;
     }

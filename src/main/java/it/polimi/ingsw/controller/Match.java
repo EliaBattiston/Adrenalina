@@ -90,6 +90,7 @@ public class Match implements Runnable
     {
         //Defining needed variables
         List<Action> availableActions; //Actions the user can currently do
+        List<Action> feasible = new ArrayList<>();
 
         //The first turn is played by the player in the first position of the list
         active = game.getPlayers().get(0);
@@ -113,7 +114,17 @@ public class Match implements Runnable
                         firstFrenzy != null && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy)
                 );
 
-                active.getConn().chooseAction(availableActions, true).execute(active, game.getMap(), game);
+                //Determine which are feasible
+                feasible.clear();
+                for(Action a : availableActions)
+                {
+                    if(FeasibleLambdaMap.isFeasible(a.getLambdaID(), active, game.getMap(), game))
+                    {
+                        feasible.add(a);
+                    }
+                }
+
+                active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
             }
 
             //Reload weapons

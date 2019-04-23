@@ -11,6 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Contains implementations of every lambda for weapons, powers and base actions
+ */
 public class ActionLambdaMap {
     private HashMap<String, ActionLambda> data;
     private static ActionLambdaMap instance = null;
@@ -38,7 +41,9 @@ public class ActionLambdaMap {
             List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
             targets.remove(chosen1);
-            Player chosen2 = pl.getConn().chooseTarget(targets, false);
+            Player chosen2 = null;
+            if(!targets.isEmpty())
+                chosen2 = pl.getConn().chooseTarget(targets, false);
             chosen1.applyEffects(EffectsLambda.damage(1, pl));
             if(chosen2 != null)
                 chosen2.applyEffects(EffectsLambda.damage(1, pl));
@@ -146,16 +151,23 @@ public class ActionLambdaMap {
 
         data.put("w9-b", (pl, map, memory)->{
             //Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.
-
-            List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
-            visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber());
-
             List<Player> allInMap = Map.playersInTheMap(map);
 
-            int roomChosen = pl.getConn().chooseRoom(visibleRooms, true);
+            List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
+            List<Integer> playersRooms = new ArrayList<>();
+
+            for(Player p : allInMap)
+            {
+                if( visibleRooms.contains( map.getCell(p.getPosition()).getRoomNumber() ) )
+                    playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
+            }
+
+            visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber());
+
+            int roomChosen = pl.getConn().chooseRoom(playersRooms, true);
 
             for(Player p:allInMap)
-                if(roomChosen == map.getCell(pl.getPosition()).getRoomNumber())
+                if(roomChosen == map.getCell(p.getPosition()).getRoomNumber() && p != pl)
                     p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
@@ -678,17 +690,25 @@ public class ActionLambdaMap {
         });
 
     //Activities lambdas
+        data.put("a-p", (pl, map, memory)->{
+            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).collect(Collectors.toList());
+            if(!inHand.isEmpty())
+            {
+                //TODO add choosepower interaction
+            }
+        });
+
         data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true) );
 
         data.put("a-b2", (pl, map, memory)->{
-            run(pl, map,1,false);
+            runToLoot(pl, map,1,false);
             pick(pl, map, ((Game)memory).getAmmoDeck());
         });
 
         data.put("a-b3",(pl, map, memory) -> shoot(pl, map) );
 
         data.put("a-a1", (pl, map, memory)->{
-            run(pl, map,2,false);
+            runToLoot(pl, map,2,false);
             pick(pl, map,((Game)memory).getAmmoDeck());
         });
 
@@ -706,7 +726,7 @@ public class ActionLambdaMap {
         data.put("a-f2", (pl, map, memory)-> run(pl, map,4,true) );
 
         data.put("a-f3", (pl, map, memory)->{
-            run(pl, map,2,false);
+            runToLoot(pl, map,2,false);
             pick(pl, map,((Game)memory).getAmmoDeck());
         });
 
@@ -717,7 +737,7 @@ public class ActionLambdaMap {
         });
 
         data.put("a-f5", (pl, map, memory)->{
-            run(pl, map,3,false);
+            runToLoot(pl, map,3,false);
             pick(pl, map, ((Game)memory).getAmmoDeck());
         });
     }
@@ -744,6 +764,32 @@ public class ActionLambdaMap {
     private static void run(Player pl, Map map, int steps, boolean mustChoose)
     {
         List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
+        Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
+
+        if(chosen != null)
+            pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+    }
+
+    /**
+     * Basic run action that only brings the player to cells with loot
+     * @param pl Lambda's player
+     * @param map Lambda's map
+     * @param steps number of allowed steps
+     * @param mustChoose False if the player doesn't have to run
+     */
+    private static void runToLoot(Player pl, Map map, int steps, boolean mustChoose)
+    {
+        List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
+        List<Point> destinations = new ArrayList<>(possible);
+
+        for(Point p : possible)
+        {
+            if(map.getCell(p) instanceof RegularCell && ((RegularCell) map.getCell(p)).getLoot() == null)
+            {
+                destinations.remove(p);
+            }
+        }
+
         Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
 
         if(chosen != null)
@@ -805,7 +851,12 @@ public class ActionLambdaMap {
             pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 for(Color c : picked.getContent())
                 {
-                    ammo.add(c, 1);
+                    if(c == Color.POWER)
+                    {
+                        //TODO implement getting the power card
+                    }
+                    else
+                        ammo.add(c, 1);
                 }
             }));
             lootDeck.scrapCard(picked);
@@ -827,12 +878,11 @@ public class ActionLambdaMap {
         List<Weapon> loaded = pl.getWeapons().stream().filter(Weapon::isLoaded).collect(Collectors.toList());
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
 
-        //TODO only propose sensible ones
         //Take list of available "base" actions for the chosen weapon
         List<Action> weaponActions = new ArrayList<>();
-        if(chosen.getBase() != null)
+        if(chosen.getBase() != null && FeasibleLambdaMap.isFeasible(chosen.getBase().getLambdaID(), pl, map, null))
             weaponActions.add(chosen.getBase());
-        if(chosen.getAlternative() != null)
+        if(chosen.getAlternative() != null && FeasibleLambdaMap.isFeasible(chosen.getAlternative().getLambdaID(), pl, map, null))
             weaponActions.add(chosen.getAlternative());
 
         //TODO add memory management for relevant actions
@@ -842,6 +892,7 @@ public class ActionLambdaMap {
 
         if(toExecute.getLambdaID().contains("-b")) //Base action
         {
+            //TODO only feasible ones
             //Additional actions management
             weaponActions.clear();
             if(chosen.getAdditional() != null)
