@@ -38,6 +38,11 @@ public class Match implements Runnable
     private Player firstFrenzy;
 
     /**
+     * Tracks the number of kills done in frenzy mode, because there is no space left on the skull track
+     */
+    private List<Player> frenzyKills;
+
+    /**
      * Reference to the definition of all the actions that can be used in the game
      */
     private Activities activities;
@@ -55,6 +60,7 @@ public class Match implements Runnable
         this.actionsNumber = 0;
         this.phase = GamePhase.REGULAR;
         this.firstFrenzy = null;
+        this.frenzyKills = new ArrayList<>();
     }
 
     /**
@@ -69,7 +75,7 @@ public class Match implements Runnable
         game.getAmmoDeck().shuffle();
         game.initializeSkullsBoard(skullsNum);
 
-        //TODO let the user choose
+        //TODO let the user choose (mage an interaction)
         game.loadMap("resources/map1.json");
         refillMap();
     }
@@ -290,18 +296,20 @@ public class Match implements Runnable
      */
     protected void registerKill(Player killed)
     {
-        //TODO change rules for frenzy
         int nextSkull; //Index of the first usable skull on the board
         int maxPoints; //Number of points the player that inflicted the most damage gets when killing
         int damageNum; //Number of damages inflicted by a user
         List<Entry<Player, Integer>> inflictedDamages = new ArrayList<>(); //Used to count how many damages every player inflicted
 
-        //The player was killed
-        //Forget about damage givers of the last turn
-        inflictedDamages.clear();
-
         //Calculate max points
-        maxPoints = 8 - (killed.getSkulls() * 2);
+        if(phase == GamePhase.FRENZY)
+            maxPoints = 2 - (killed.getSkulls() * 2);
+        else
+            maxPoints = 8 - (killed.getSkulls() * 2);
+
+        if(maxPoints < 1)
+            maxPoints = 1;
+
         //Count damages
         for(Player enemy : game.getPlayers())
         {
@@ -337,7 +345,8 @@ public class Match implements Runnable
         });
 
         //First blood
-        killed.getReceivedDamage()[0].addPoints(1);
+        if(phase != GamePhase.FRENZY)
+            killed.getReceivedDamage()[0].addPoints(1);
         //Give points
         for(Entry<Player, Integer> entry : inflictedDamages)
         {
@@ -349,31 +358,40 @@ public class Match implements Runnable
                 maxPoints = 1;
         }
 
-        //Register the kill on the board
-        for(nextSkull = 7; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
-            ;
-        if(nextSkull > -1)
+        if(phase != GamePhase.FRENZY)
         {
-            game.getSkulls()[nextSkull].setKiller(killed.getReceivedDamage()[10], killed.getReceivedDamage()[11] != null);
-            killed.addSkull();
-        }
+            //Register the kill on the board
+            for (nextSkull = 7; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
+                ;
+            if (nextSkull > -1)
+            {
+                game.getSkulls()[nextSkull].setKiller(killed.getReceivedDamage()[10], killed.getReceivedDamage()[11] != null);
+                killed.addSkull();
+            }
 
-        //Give a mark to the overkiller
-        if(killed.getReceivedDamage()[11] != null)
-        {
-            killed.getReceivedDamage()[11].applyEffects(EffectsLambda.marks(1, killed));
-        }
+            //Give a mark to the overkiller
+            if (killed.getReceivedDamage()[11] != null)
+            {
+                killed.getReceivedDamage()[11].applyEffects(EffectsLambda.marks(1, killed));
+            }
 
-        //Reset damages
-        for(int i = 0; i < 12; i++)
-        {
-            killed.getReceivedDamage()[i] = null;
-        }
+            //Reset damages
+            for (int i = 0; i < 12; i++)
+            {
+                killed.getReceivedDamage()[i] = null;
+            }
 
-        //Check if it's time for frenzy mode
-        if(nextSkull == 0)
+            //Check if it's time for frenzy mode
+            if(nextSkull == 0)
+            {
+                phase = GamePhase.FRENZY;
+            }
+        }
+        else
         {
-            phase = GamePhase.FRENZY;
+            frenzyKills.add(killed.getReceivedDamage()[10]);
+            if(killed.getReceivedDamage()[11] != null);
+                frenzyKills.add(killed.getReceivedDamage()[10]);
         }
     }
 
@@ -400,6 +418,12 @@ public class Match implements Runnable
                     damageNum++;
 
                     if(game.getSkulls()[k].getOverkill())
+                        damageNum++;
+                }
+
+                for(Player f : frenzyKills)
+                {
+                    if(f == p)
                         damageNum++;
                 }
             }
@@ -442,6 +466,69 @@ public class Match implements Runnable
                 maxPoints -= 2;
             else
                 maxPoints = 1;
+        }
+
+        //Give points for damages to every player
+        for(Player damaged : game.getPlayers())
+        {
+            inflictedDamages.clear();
+
+            //Calculate max points
+            if(phase == GamePhase.FRENZY)
+                maxPoints = 2 - (damaged.getSkulls() * 2);
+            else
+                maxPoints = 8 - (damaged.getSkulls() * 2);
+
+            if(maxPoints < 1)
+                maxPoints = 1;
+
+            //Count damages
+            for(Player enemy : game.getPlayers())
+            {
+                if(enemy != damaged)
+                {
+                    damageNum = (int)Arrays.stream(damaged.getReceivedDamage()).filter(player -> player == enemy ).count();
+                    if(damageNum > 0)
+                        inflictedDamages.add( new AbstractMap.SimpleEntry<Player, Integer>(enemy, damageNum));
+                }
+            }
+
+            //Sorting the inflicted damages in descending order, by damage number
+            inflictedDamages.sort( (e1, e2) -> {
+                if (e1.getValue() > e2.getValue())
+                    return -1;
+                else if(e1.getValue() < e2.getValue())
+                    return 1;
+                else
+                {
+                    //Check who inflicted damage first
+                    for(Player p : damaged.getReceivedDamage())
+                    {
+                        if(p == e1.getKey())
+                            return -1;
+
+                        if(p == e2.getKey())
+                            return 1;
+                    }
+                }
+
+                //If implemented correctly, it's impossible to land here
+                return 0;
+            });
+
+            //First blood
+            if(phase != GamePhase.FRENZY)
+                damaged.getReceivedDamage()[0].addPoints(1);
+            //Give points
+            for(Entry<Player, Integer> entry : inflictedDamages)
+            {
+                entry.getKey().addPoints(maxPoints);
+
+                if(maxPoints > 2)
+                    maxPoints -= 2;
+                else
+                    maxPoints = 1;
+            }
         }
     }
 }
