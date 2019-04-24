@@ -71,7 +71,6 @@ public class Game {
         return players.get( position + 1  );
     }
 
-    //TODO avoid double character
     /**
      * Add a player to the game
      * @param pl Added player
@@ -94,6 +93,18 @@ public class Game {
         }
 
         return false;
+    }
+
+    public void removePlayer(String nickname) {
+        for(Player p: players) {
+            if(p.getNick().equals(nickname)) {
+                removePlayer(p);
+            }
+        }
+    }
+
+    public void removePlayer(Player pl) {
+        players.remove(pl);
     }
 
     public List<Player> getPlayers()

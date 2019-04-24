@@ -279,6 +279,20 @@ public class SocketConn implements Connection {
         return ansParam.get(0);
     }
 
+    /**
+     * Asks the user how many skulls he wants in the play
+     * @return skulls number
+     */
+    public Integer getSkullNum() {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.GETSKULLSNUM;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<Integer> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Integer>>(){}.getType());
+        return ansParam.get(0);
+    }
+
 
 
     /**

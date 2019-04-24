@@ -155,6 +155,12 @@ public class SocketClient implements Client {
      */
     public Fighter getFighter() {return Fighter.DSTRUTTOR3; }
 
+    /**
+     * Asks the user how many skulls he wants in the play
+     * @return skulls number
+     */
+    public Integer getSkullNum() { return 5; }
+
 
 
 
@@ -305,6 +311,13 @@ public class SocketClient implements Client {
                     answer.type = Interaction.GETFIGHTER;
                     ArrayList<Fighter> ansParam = new ArrayList<>();
                     ansParam.add(getFighter());
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case GETSKULLSNUM: {
+                    answer.type = Interaction.GETSKULLSNUM;
+                    ArrayList<Integer> ansParam = new ArrayList<>();
+                    ansParam.add(getSkullNum());
                     answer.parameters = gson.toJson(ansParam);
                     break;
                 }

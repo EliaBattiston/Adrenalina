@@ -14,5 +14,6 @@ public enum Interaction {
     CHOOSEPOSITION,
     GETNICKNAME,
     GETPHRASE,
-    GETFIGHTER
+    GETFIGHTER,
+    GETSKULLSNUM
 }

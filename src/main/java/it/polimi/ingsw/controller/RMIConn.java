@@ -242,4 +242,18 @@ public class RMIConn implements Connection
             return null;
         }
     }
+
+    /**
+     * Asks the user how many skulls he wants in the play
+     * @return skulls number
+     */
+    public Integer getSkullNum() {
+        try {
+            return client.getSkullNum();
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+    }
 }

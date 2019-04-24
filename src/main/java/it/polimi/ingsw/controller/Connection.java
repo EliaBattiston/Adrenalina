@@ -115,4 +115,10 @@ public interface Connection extends Remote
      * @return user's fighter
      */
     public Fighter getFighter();
+
+    /**
+     * Asks the user how many skulls he wants in the play
+     * @return skulls number
+     */
+    public Integer getSkullNum();
 }

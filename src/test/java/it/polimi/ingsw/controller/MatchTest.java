@@ -65,16 +65,9 @@ public class MatchTest
 
         assertSame(test.getGame().getPlayers().size(), 0);
 
-        try
-        {
-            test.getGame().addPlayer(pl1);
-            test.getGame().addPlayer(pl2);
-            test.getGame().addPlayer(pl3);
-        }
-        catch(UsedNameException e)
-        {
-            fail();
-        }
+        test.getGame().addPlayer(pl1);
+        test.getGame().addPlayer(pl2);
+        test.getGame().addPlayer(pl3);
 
         pl1.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
             for(int i=0; i<11; i++)

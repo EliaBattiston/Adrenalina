@@ -150,5 +150,11 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @return user's fighter
      */
     public Fighter getFighter() {return Fighter.DSTRUTTOR3; }
+
+    /**
+     * Asks the user how many skulls he wants in the play
+     * @return skulls number
+     */
+    public Integer getSkullNum() {return 5; }
 }
 

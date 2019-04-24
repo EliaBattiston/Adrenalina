@@ -1,6 +1,6 @@
 package it.polimi.ingsw.exceptions;
 
-public class UsedNameException extends Exception
+public class UsedNameException extends RuntimeException
 {
     public UsedNameException()
     {

@@ -46,7 +46,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
      * @throws AlreadyBoundException in case of already existing binding name
      * @throws NotBoundException If the RMI binding has been unsuccessful
      */
-    public void newConnection(String registryBind) throws RemoteException, AlreadyBoundException, NotBoundException
+    public synchronized void newConnection(String registryBind) throws RemoteException, AlreadyBoundException, NotBoundException
     {
         Client clientInterface = (Client)registry.lookup(registryBind);
         RMIConn clientConn = new RMIConn(clientInterface, registryBind);
@@ -58,7 +58,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
      * Pops the first object of the waiting connections list, to be retrieved to the main thread
      * @return First available connection
      */
-    public Connection getConnection()
+    public synchronized Connection getConnection()
     {
         try {
             while (newConn.isEmpty()) wait();
@@ -69,5 +69,17 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
             return null;
         }
 
+    }
+
+    public void removeBinding(String nickname) {
+        try {
+            registry.unbind("AM06-"+nickname);
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        }
+        catch (NotBoundException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        }
     }
 }
