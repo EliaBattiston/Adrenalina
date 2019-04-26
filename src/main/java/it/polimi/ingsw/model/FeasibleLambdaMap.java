@@ -125,6 +125,74 @@ public class FeasibleLambdaMap
             return !targets.isEmpty();
         });
 
+        //TODO w12-b
+
+        data.put("w13-b", (pl, map, memory)->{
+            //Dai 1 danno a 1 bersaglio che puoi vedere. Poi puoi muovere il bersaglio di 1 quadrato.
+
+            List<Player> targets = Map.visiblePlayers(pl, map);
+            return !targets.isEmpty();
+        });
+
+        data.put("w14-b", (pl, map, memory)->{
+            //Dai 2 danni a 1 bersaglio che puoi vedere e che non si trova nel tuo quadrato. Poi puoi muovere il bersaglio di 1 quadrato.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)!=0);
+            return !targets.isEmpty();
+        });
+
+        data.put("w15-b", (pl, map, memory)->{
+            //Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.
+
+            List<Player> targets = Map.visiblePlayers(pl, map, Direction.NORTH);
+            targets.addAll(Map.visiblePlayers(pl, map, Direction.EAST));
+            targets.addAll(Map.visiblePlayers(pl, map, Direction.SOUTH));
+            targets.addAll(Map.visiblePlayers(pl, map, Direction.WEST));
+            return !targets.isEmpty();
+        });
+
+        data.put("w16-b", (pl, map, memory)->{
+            //Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
+            return !targets.isEmpty();
+        });
+
+        data.put("w17-b", (pl, map, memory)->{
+            //Dai 1 danno e 2 marchi a 1 bersaglio che puoi vedere.
+
+            List<Player> targets = Map.visiblePlayers(pl, map);
+            return !targets.isEmpty();
+        });
+
+        data.put("w18-b", (pl, map, memory)->{
+            //Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi. Se vuoi puoi muovere quel bersaglio di 1 quadrato.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
+            return !targets.isEmpty();
+        });
+
+        data.put("w19-b", (pl, map, memory)->{
+            //Scegli 1 bersaglio in un quadrato distante esattamente 1 movimento. Muovi in quel quadrato e dai al bersaglio 1 danno e 2 marchi.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
+            return !targets.isEmpty();
+        });
+
+        data.put("w20-b", (pl, map, memory)->{
+            //Scegli fino a 3 bersagli su quadrati differenti, ognuno distante esattamente 1 movimento da me. Dai 1 danno a ogni bersaglio.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==1);
+            return !targets.isEmpty();
+        });
+
+        data.put("w21-b", (pl, map, memory)->{
+            //Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
+            return !targets.isEmpty();
+        });
+
     //Activities lambdas
         data.put("a-p", (pl, map, memory)->{
             return pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).count() > 0;
