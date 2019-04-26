@@ -199,24 +199,12 @@ public class ActionLambdaMap {
 
             Point chosen = pl.getConn().choosePosition(squares, true);
 
-            //Find the next X&Y in the same direction, it's needed for the second part of the effect
-            int nX;
-            int nY;
-            nX = pl.getPosition().getX();
-            nY = pl.getPosition().getY();
-            if(pl.getPosition().getY()-1 == chosen.getY())
-                nY--;
-            else if(pl.getPosition().getX()+1 == chosen.getX())
-                nX++;
-            else if(pl.getPosition().getY()+1 == chosen.getY())
-                nY++;
-            else if(pl.getPosition().getX()-1 == chosen.getX())
-                nX--;
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen);
 
             List<Player> targets = map.getCell(chosen).getPawns();
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
 
-            targets = map.getCell(nX,nY).getPawns();
+            targets = map.getCell(secondPoint).getPawns();
             Player chosen2 = pl.getConn().chooseTarget(targets, false);
 
             //Give damage
@@ -523,24 +511,12 @@ public class ActionLambdaMap {
 
             Point chosen = pl.getConn().choosePosition(squares, true);
 
-            //Find the next X&Y in the same direction, it's needed for the second part of the effect
-            int nX;
-            int nY;
-            nX = pl.getPosition().getX();
-            nY = pl.getPosition().getY();
-            if(pl.getPosition().getY()-1 == chosen.getY())
-                nY--;
-            else if(pl.getPosition().getX()+1 == chosen.getX())
-                nX++;
-            else if(pl.getPosition().getY()+1 == chosen.getY())
-                nY++;
-            else if(pl.getPosition().getX()-1 == chosen.getX())
-                nX--;
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen);
 
             for(Player p:map.getCell(chosen).getPawns())
                 p.applyEffects(EffectsLambda.damage(2, pl));
 
-            for(Player p:map.getCell(nX, nY).getPawns())
+            for(Player p:map.getCell(secondPoint).getPawns())
                 p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
@@ -588,19 +564,7 @@ public class ActionLambdaMap {
             //Movement
             List<Point> positions = Map.possibleMovements(pl.getPosition(), 1, map);
             Point posChosen = pl.getConn().movePlayer(positions, true);
-            //First find the next X&Y in the same direction, it's needed for the second part of the effect
-            int nX;
-            int nY;
-            nX = pl.getPosition().getX();
-            nY = pl.getPosition().getY();
-            if(pl.getPosition().getY()-1 == posChosen.getY())
-                nY--;
-            else if(pl.getPosition().getX()+1 == posChosen.getX())
-                nX++;
-            else if(pl.getPosition().getY()+1 == posChosen.getY())
-                nY++;
-            else if(pl.getPosition().getX()-1 == posChosen.getX())
-                nX--;
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), posChosen);
 
             pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
 
@@ -610,10 +574,10 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.damage(2, pl));
 
             //Next move (just if there is a next cell)
-            if(map.getCell(nX, nY) != null){
+            if(map.getCell(secondPoint) != null){
                 try{
                     List<Point> nextPoints = new ArrayList<>();
-                    nextPoints.add(new Point(nX,nY));
+                    nextPoints.add(secondPoint);
                     posChosen = pl.getConn().movePlayer(nextPoints, true);
                     pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
 

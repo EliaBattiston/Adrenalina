@@ -373,6 +373,28 @@ public class Map {
     }
 
     /**
+     * Find the second point in the same direction the first has been found from the start
+     * @param start start point
+     * @param first first point found
+     * @return the second point in the same direction as the first
+     */
+    public static Point nextPointSameDirection(Point start, Point first){
+        //Find the next X&Y in the same direction, it's needed for the second part of the effect
+        int nX = first.getX();
+        int nY = first.getY();
+        if(start.getY()-1 == first.getY())
+            nY--;
+        else if(start.getX()+1 == first.getX())
+            nX++;
+        else if(start.getY()+1 == first.getY())
+            nY++;
+        else if(start.getX()-1 == first.getX())
+            nX--;
+
+        return new Point(nX, nY);
+    }
+
+    /**
      * Return the list of points visible from the startPoint plus all the ones at a maximum distance from a visible one
      * that is less than notVisDist
      * @param startPoint starting point
