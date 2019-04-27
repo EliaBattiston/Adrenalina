@@ -121,7 +121,12 @@ public class FeasibleLambdaMap
             return !targets.isEmpty();
         });
 
-        //TODO w12-b
+        data.put("w12-b", (pl, map, memory)->{
+            //Scegli un quadrato distante 1 movimento e possibilmente un secondo quadrato distante ancora 1 movimento nella stessa direzione. In ogni quadrato puoi scegliere 1 bersaglio e dargli 1 danno.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
+            return !targets.isEmpty();
+        });
 
         data.put("w13-b", (pl, map, memory)->{
             //Dai 1 danno a 1 bersaglio che puoi vedere. Poi puoi muovere il bersaglio di 1 quadrato.
@@ -189,113 +194,205 @@ public class FeasibleLambdaMap
             return !targets.isEmpty();
         });
 
-    //Activities lambdas
-        data.put("a-p", (pl, map, memory)->{
-            return pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).count() > 0;
+    //Additional weapon lambdas
+        data.put("w1-ad1", (pl, map, memory)->{
+            //Dai 1 marchio a un altro bersaglio che puoi vedere.
+
+            List<Player> targets = Map.visiblePlayers(pl, map);
+            return !targets.isEmpty();
         });
 
-        data.put("a-b1", (pl, map, memory)->{
-            return true;
+        //((Player[])memory)[0]
+        //Dai 1 danno aggiuntivo a uno dei due bersagli.
+        data.put("w2-ad1", (pl, map, memory)-> ((Player[])memory).length>0);
+
+        //((Player[])memory)[0]
+        //Dai 1 danno aggiuntivo all'altro dei bersagli e/o dai 1 danno a un bersaglio differente che puoi vedere.
+        data.put("w2-ad2", (pl, map, memory)-> ((Player[])memory).length>0);
+
+        //((Player[])memory)[0]
+        data.put("w3-ad1", (pl, map, memory)->{
+            //Dai 1 danno a un secondo bersaglio che il tuo primo bersaglio può vedere.
+
+            List<Player> targets = Map.visiblePlayers(((Player[])memory)[0], map);
+            return !targets.isEmpty();
         });
 
-        data.put("a-b2", (pl, map, memory)->{
-            return true;
-        });
+        //((Player[])memory)[1]
+        data.put("w3-ad2", (pl, map, memory)->{
+            //Dai 2 danni a un terzo bersaglio che il tuo secondo bersaglio può vedere. Non puoi usare questo effetto se prima non hai usato reazione a catena.
 
-        data.put("a-b3",(pl, map, memory) ->{
-            return pl.getWeapons().stream().anyMatch(Weapon::isLoaded);
-        });
-
-        data.put("a-a1", (pl, map, memory)->{
-            return true;
-        });
-
-        data.put("a-a2", (pl, map, memory)->{
-            List<Point> possible = Map.possibleMovements(pl.getPosition(), 1, map);
-            List<Point> destinations = new ArrayList<>(possible);
-
-            Point initialPosition = pl.getPosition();
-
-            for(Point p : possible)
-            {
-                //Put the player in the simulated future position
-                pl.applyEffects(EffectsLambda.move(pl, p, map));
-
-                //If no weapon has suitable action, we can't propose to move to this position
-                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
-                    if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
-                    {
-                        destinations.remove(p);
-                    }
+            if(((Player[])memory).length > 1 && ((Player[])memory)[1] != null) {
+                List<Player> targets = Map.visiblePlayers(((Player[]) memory)[1], map);
+                return !targets.isEmpty();
             }
-
-            //Return the player to its real position
-            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
-
-            return !destinations.isEmpty();
+            return false;
         });
 
-        data.put("a-f1", (pl, map, memory)->{
-            List<Point> possible = Map.possibleMovements(pl.getPosition(), 1, map);
-            List<Point> destinations = new ArrayList<>(possible);
+        //Muovi di 1 o 2 quadrati. Questo effetto può essere usato prima o dopo l'effetto base.
+        data.put("w4-ad1", (pl, map, memory)-> true);
 
-            Point initialPosition = pl.getPosition();
+        //((Player[])memory)[0]
+        //Dai 1 danno aggiuntivo al tuo bersaglio.
+        data.put("w4-ad2", (pl, map, memory)-> ((Player[])memory).length > 0 && ((Player[])memory)[0] != null);
 
-            for(Point p : possible)
-            {
-                //Put the player in the simulated future position
-                pl.applyEffects(EffectsLambda.move(pl, p, map));
+        //(Point) memory
+        data.put("w8-ad1", (pl, map, memory)->{
+            //Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.
 
-                //If no weapon has suitable action, we can't propose to move to this position
-                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
-                    if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
-                    {
-                        destinations.remove(p);
-                    }
-            }
+            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
+            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) ->  position.set((Point)memory) );
+            List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, ((p1, p2) -> Map.distance(p1,p2)<=1));
 
-            //Return the player to its real position
-            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
-
-            return !destinations.isEmpty();
+            return !targets.isEmpty();
         });
 
-        data.put("a-f2", (pl, map, memory)->{
-            return true;
+        //Dai 1 danno a ogni giocatore in quadrato che puoi vedere. Puoi usare questo effetto prima o dopo il movimento dell'effetto base.
+        data.put("w13-ad1", (pl, map, memory)-> !Map.visiblePlayers(pl, map).isEmpty());
+
+        //Muovi di 1 o 2 quadrati. Questo effetto può essere usato prima o dopo l'effetto base.
+        data.put("w14-ad1", (pl, map, memory)-> true);
+
+        //From additional (w14-ad2) it becomes alternative (w14-al)
+        data.put("w14-al", (pl, map, memory)->{
+            //Dai 2 danni a 1 bersaglio che puoi vedere e che non si trova nel tuo quadrato. Poi puoi muovere il bersaglio di 1 quadrato.
+            //Durante l'effetto base, dai 1 danno a ogni giocatore presente nel quadrato in cui si trovava originariamente il bersaglio, incluso il bersaglio, anche se lo hai mosso.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)!=0);
+            return !targets.isEmpty();
         });
 
-        data.put("a-f3", (pl, map, memory)->{
-            return true;
+        //Muovi di 1 quadrato prima o dopo l'effetto base.
+        data.put("w16-ad1", (pl, map, memory)-> true);
+
+        //Dai 2 danni a un bersaglio differente nel quadrato in cui ti trovi. Il passo d'ombra può essere usato prima o dopo questo effetto.
+        data.put("w16-ad2", (pl, map, memory)->{
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
+            targets.remove(((Player[])memory)[0]);
+            return !targets.isEmpty();
         });
 
-        data.put("a-f4", (pl, map, memory)->{
-            List<Point> possible = Map.possibleMovements(pl.getPosition(), 2, map);
-            List<Point> destinations = new ArrayList<>(possible);
+        //Alternative effects
+        data.put("w6-al", (pl, map, memory)->{
+            //Dai 2 danni a ogni altro giocatore presente nel quadrato in cui ti trovi.
 
-            Point initialPosition = pl.getPosition();
-
-            for(Point p : possible)
-            {
-                //Put the player in the simulated future position
-                pl.applyEffects(EffectsLambda.move(pl, p, map));
-
-                //If no weapon has suitable action, we can't propose to move to this position
-                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
-                    if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
-                    {
-                        destinations.remove(p);
-                    }
-            }
-
-            //Return the player to its real position
-            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
-
-            return !destinations.isEmpty();
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
+            return !targets.isEmpty();
         });
 
-        data.put("a-f5", (pl, map, memory)->{
-            return true;
+        data.put("w7-al", (pl, map, memory)->{
+            //Scegli un bersaglio 0, 1, o 2 movimenti da te. Muovi quel bersaglio nel quadrato in cui ti trovi e dagli 3 danni.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, false, (p1, p2)-> Map.distance(p1, p2)<=2);
+            return !targets.isEmpty();
         });
+
+        data.put("w9-al", (pl, map, memory)->{
+            //Scegli un quadrato distante esattamente 1 movimento. Dai 1 danno e 1 marchio a ognuno in quel quadrato.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==1);
+            return !targets.isEmpty();
+        });
+
+        data.put("w11-al", (pl, map, memory)->{
+            //Dai 1 danno a 1 bersaglio che puoi vedere e distante almeno 1 movimento. Poi dai 2 marchi a quel bersaglio e a chiunque altro in quel quadrato.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)>=1);
+            return !targets.isEmpty();
+        });
+
+        data.put("w12-al", (pl, map, memory)-> {
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2) -> Map.distance(p1, p2) == 1);
+            return !targets.isEmpty();
+        });
+
+        data.put("w15-al", (pl, map, memory)->{
+            //Scegli una direzione cardinale e 1 o 2 bersagli in quella direzione. Dai 2 danni a ciascuno.
+
+            List<Player> targets = Map.visiblePlayers(pl, map, Direction.NORTH);
+            targets.addAll(Map.visiblePlayers(pl, map, Direction.EAST));
+            targets.addAll(Map.visiblePlayers(pl, map, Direction.SOUTH));
+            targets.addAll(Map.visiblePlayers(pl, map, Direction.WEST));
+            return !targets.isEmpty();
+        });
+
+        data.put("w17-al", (pl, map, memory)->{
+            //Scegli fino a 3 bersagli che puoi vedere e dai 1 marchio a ciascuno.
+
+            List<Player> targets = Map.visiblePlayers(pl, map);
+            return !targets.isEmpty();
+        });
+
+        data.put("w18-al", (pl, map, memory)->{
+            //Dai 2 danni a 1 bersaglio in un quadrato distante esattamente 1 movimento.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
+            return !targets.isEmpty();
+        });
+
+        data.put("w19-al", (pl, map, memory)->{
+            //Scegli un quadrato distante esattamente 1 movimento. Muovi in quel quadrato. Puoi dare 2 danni a 1 bersaglio in quel quadrato. Se vuoi puoi muovere
+            // ancora di 1 quadrato nella stessa direzione (ma solo se è un movimento valido). Puoi dare 2 danni a un bersaglio anche in quel quadrato.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
+            return !targets.isEmpty();
+        });
+
+        data.put("w20-al", (pl, map, memory)->{
+            //Dai 1 danno a tutti i bersagli che sono distanti esattamente 1 movimento.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
+            return !targets.isEmpty();
+        });
+
+        data.put("w21-al", (pl, map, memory)->{
+            //Dai 3 danni a 1 bersaglio nel quadrato in cui ti trovi, poi muovi quel bersaglio di 0, 1 o 2 quadrati in una direzione.
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
+            return !targets.isEmpty();
+        });
+
+    //Powers lambdas
+        //memory = List<Player>
+        //Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli
+        // e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.
+        data.put("p1", (pl, map, memory)-> !((List<Player>)memory).isEmpty());
+
+        //Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2
+        // quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)
+        data.put("p2", (pl, map, memory)-> !Map.playersInTheMap(map).isEmpty());
+
+        //memory = player that gave damage
+        data.put("p3", (pl, map, memory)-> Map.visiblePlayers(pl, map).contains((Player) memory));//someone you don't see can attack you
+
+        //Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia.
+        // (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)
+        //TODO When played the game, the ones who respowned did it after somehone finished his turn. Be sure it doesn't need a check
+        data.put("p4", (pl, map, memory)-> true);
+
+        //Activities lambdas
+        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).count() > 0 );
+
+        data.put("a-b1", (pl, map, memory)-> true );
+
+        data.put("a-b2", (pl, map, memory)->  true);
+
+        data.put("a-b3",(pl, map, memory) ->  pl.getWeapons().stream().anyMatch(Weapon::isLoaded) );
+
+        data.put("a-a1", (pl, map, memory)-> true);
+
+        data.put("a-a2", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 1, map)) );
+
+        data.put("a-f1", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 1, map)) );
+
+        data.put("a-f2", (pl, map, memory)-> true);
+
+        data.put("a-f3", (pl, map, memory)-> true);
+
+        data.put("a-f4", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 2, map)) );
+
+        data.put("a-f5", (pl, map, memory)-> true);
     }
 
     /**
@@ -311,5 +408,27 @@ public class FeasibleLambdaMap
             instance = new FeasibleLambdaMap();
 
         return instance.data.get(lambdaName).execute(pl, map, memory);
+    }
+
+    private static boolean possibleRun(Player pl, Map map, List<Point> possible){
+        List<Point> destinations = new ArrayList<>(possible);
+
+        Point initialPosition = pl.getPosition();
+
+        for(Point p : possible)
+        {
+            //Put the player in the simulated future position
+            pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+            //If no weapon has suitable action, we can't propose to move to this position
+            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null))
+                    && ( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) ))
+                        destinations.remove(p);
+        }
+
+        //Return the player to its real position
+        pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+        return !destinations.isEmpty();
     }
 }

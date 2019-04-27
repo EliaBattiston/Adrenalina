@@ -22,7 +22,7 @@ public class ActionLambdaMap {
         data = new HashMap<>();
 
     //Base weapon lambdas
-        //(List<Player>)memory
+        //((Player[])memory)[0]
         data.put("w1-b", (pl, map, memory)->{
             //Dai 2 danni e un marchio a un bersaglio che puoi vedere
 
@@ -31,10 +31,10 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.damage(2, pl));
             chosen.applyEffects(EffectsLambda.marks(1, pl));
 
-            ((List<Player>)memory).add(chosen);
+            ((Player[])memory)[0] = chosen;
         });
 
-        //memory = Player[2]
+        //((Player[])memory)[0]
         data.put("w2-b", (pl, map, memory)->{
             //Scegli 1 o 2 bersagli che puoi vedere e dai 1 danno a entrambi.
 
@@ -50,6 +50,7 @@ public class ActionLambdaMap {
 
             ((Player[])memory)[0] = chosen1;
             ((Player[])memory)[1] = chosen2;
+
         });
 
         //((Player[])memory)[0]
@@ -129,13 +130,7 @@ public class ActionLambdaMap {
             Point vortexPoint = pl.getConn().choosePosition(points, true);
 
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
-            fakePlayer.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                try {
-                    position.set(vortexPoint.getX(), vortexPoint.getY());
-                }catch(WrongPointException ex){
-                    Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
-                }
-            }));
+            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(vortexPoint));
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1,p2)<=1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
 
@@ -246,12 +241,15 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.damage(3, pl));
         });
 
+        //((Player[])memory)[0] = chosen;
         data.put("w16-b", (pl, map, memory)->{
             //Dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
+
+            ((Player[])memory)[0] = chosen;
         });
 
         data.put("w17-b", (pl, map, memory)->{
@@ -385,7 +383,7 @@ public class ActionLambdaMap {
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
             fakePlayer.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 try {
-                    position.set(((Point)memory).getX(), ((Point)memory).getY());
+                    position.set((Point)memory);
                 }catch(WrongPointException ex){
                     Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
                 }
@@ -449,10 +447,12 @@ public class ActionLambdaMap {
             pl.applyEffects(EffectsLambda.move(pl, chosenPoint, map));
         });
 
+        //((Player[])memory)[0] = chosen;
         data.put("w16-ad2", (pl, map, memory)->{
             //Dai 2 danni a un bersaglio differente nel quadrato in cui ti trovi. Il passo d'ombra può essere usato prima o dopo questo effetto.
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
+            targets.remove(((Player[])memory)[0]);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
         });
@@ -634,13 +634,13 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.move(chosen, chosenPos, map));
         });
 
-        //memory = player that game damage
+        //memory = player that gave damage
         data.put("p3", (pl, map, memory)-> {
             //Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.
 
             List<Player> visibles = Map.visiblePlayers(pl, map);
 
-            if(visibles.contains((Player) memory))//redundant check
+            if(visibles.contains((Player) memory))//someone you don't see can attack you
                 ((Player) memory).applyEffects(EffectsLambda.marks(1, pl));
         });
 
