@@ -52,6 +52,17 @@ public class Action implements Serializable {
     }
 
     /**
+     * Determines whether the lambda is currently feasible
+     * @param pl Lambda's player
+     * @param map Lambda's map
+     * @param memory Lambda's memory
+     * @return True if feasible, false otherwise
+     */
+    public boolean isFeasible(Player pl, Map map, Object memory){
+        return FeasibleLambdaMap.isFeasible(lambdaIdentifier, pl, map, memory);
+    }
+
+    /**
      * returns the description of the action
      * @return action description
      */

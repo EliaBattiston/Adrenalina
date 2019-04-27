@@ -1,12 +1,8 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.exceptions.WrongPointException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class FeasibleLambdaMap
 {
@@ -207,8 +203,7 @@ public class FeasibleLambdaMap
         });
 
         data.put("a-b3",(pl, map, memory) ->{
-            /*shoot()*/
-            return false;
+            return pl.getWeapons().stream().anyMatch(Weapon::isLoaded);
         });
 
         data.put("a-a1", (pl, map, memory)->{
@@ -216,16 +211,53 @@ public class FeasibleLambdaMap
         });
 
         data.put("a-a2", (pl, map, memory)->{
-            /*run(pl, map,1,false);
-            shoot(pl, map);*/
-            return false;
+            List<Point> possible = Map.possibleMovements(pl.getPosition(), 1, map);
+            List<Point> destinations = new ArrayList<>(possible);
+
+            Point initialPosition = pl.getPosition();
+
+            for(Point p : possible)
+            {
+                //Put the player in the simulated future position
+                pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+                //If no weapon has suitable action, we can't propose to move to this position
+                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
+                    if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
+                    {
+                        destinations.remove(p);
+                    }
+            }
+
+            //Return the player to its real position
+            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+            return !destinations.isEmpty();
         });
 
         data.put("a-f1", (pl, map, memory)->{
-            /*run(pl, map,1,false);
-            reload(pl);
-            shoot(pl, map);*/
-            return false;
+            List<Point> possible = Map.possibleMovements(pl.getPosition(), 1, map);
+            List<Point> destinations = new ArrayList<>(possible);
+
+            Point initialPosition = pl.getPosition();
+
+            for(Point p : possible)
+            {
+                //Put the player in the simulated future position
+                pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+                //If no weapon has suitable action, we can't propose to move to this position
+                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
+                    if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
+                    {
+                        destinations.remove(p);
+                    }
+            }
+
+            //Return the player to its real position
+            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+            return !destinations.isEmpty();
         });
 
         data.put("a-f2", (pl, map, memory)->{
@@ -237,10 +269,28 @@ public class FeasibleLambdaMap
         });
 
         data.put("a-f4", (pl, map, memory)->{
-            /*run(pl, map,2,false);
-            reload(pl);
-            shoot(pl, map);*/
-            return false;
+            List<Point> possible = Map.possibleMovements(pl.getPosition(), 2, map);
+            List<Point> destinations = new ArrayList<>(possible);
+
+            Point initialPosition = pl.getPosition();
+
+            for(Point p : possible)
+            {
+                //Put the player in the simulated future position
+                pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+                //If no weapon has suitable action, we can't propose to move to this position
+                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
+                    if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
+                    {
+                        destinations.remove(p);
+                    }
+            }
+
+            //Return the player to its real position
+            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+            return !destinations.isEmpty();
         });
 
         data.put("a-f5", (pl, map, memory)->{
@@ -248,6 +298,14 @@ public class FeasibleLambdaMap
         });
     }
 
+    /**
+     * Determines whether the lambda is currently feasible
+     * @param lambdaName Relevant lambda identifier
+     * @param pl Lambda's player
+     * @param map Lambda's map
+     * @param memory Lambda's memory
+     * @return True if feasible, false otherwise
+     */
     public static boolean isFeasible(String lambdaName, Player pl, Map map, Object memory){
         if(instance == null)
             instance = new FeasibleLambdaMap();

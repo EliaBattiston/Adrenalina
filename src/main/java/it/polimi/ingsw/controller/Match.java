@@ -124,7 +124,7 @@ public class Match implements Runnable
                 feasible.clear();
                 for(Action a : availableActions)
                 {
-                    if(FeasibleLambdaMap.isFeasible(a.getLambdaID(), active, game.getMap(), game))
+                    if(a.isFeasible(active, game.getMap(), game))
                     {
                         feasible.add(a);
                     }

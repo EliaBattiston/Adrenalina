@@ -665,24 +665,24 @@ public class ActionLambdaMap {
         data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true) );
 
         data.put("a-b2", (pl, map, memory)->{
-            runToLoot(pl, map,1,false);
+            runToLoot(pl, map,1);
             pick(pl, map, ((Game)memory).getAmmoDeck());
         });
 
         data.put("a-b3",(pl, map, memory) -> shoot(pl, map) );
 
         data.put("a-a1", (pl, map, memory)->{
-            runToLoot(pl, map,2,false);
+            runToLoot(pl, map,2);
             pick(pl, map,((Game)memory).getAmmoDeck());
         });
 
         data.put("a-a2", (pl, map, memory)->{
-            run(pl, map,1,false);
+            runToShoot(pl, map,1);
             shoot(pl, map);
         });
 
         data.put("a-f1", (pl, map, memory)->{
-            run(pl, map,1,false);
+            runToShoot(pl, map,1);
             reload(pl);
             shoot(pl, map);
         });
@@ -690,18 +690,18 @@ public class ActionLambdaMap {
         data.put("a-f2", (pl, map, memory)-> run(pl, map,4,true) );
 
         data.put("a-f3", (pl, map, memory)->{
-            runToLoot(pl, map,2,false);
+            runToLoot(pl, map,2);
             pick(pl, map,((Game)memory).getAmmoDeck());
         });
 
         data.put("a-f4", (pl, map, memory)->{
-            run(pl, map,2,false);
+            runToShoot(pl, map,2);
             reload(pl);
             shoot(pl, map);
         });
 
         data.put("a-f5", (pl, map, memory)->{
-            runToLoot(pl, map,3,false);
+            runToLoot(pl, map,3);
             pick(pl, map, ((Game)memory).getAmmoDeck());
         });
     }
@@ -739,9 +739,8 @@ public class ActionLambdaMap {
      * @param pl Lambda's player
      * @param map Lambda's map
      * @param steps number of allowed steps
-     * @param mustChoose False if the player doesn't have to run
      */
-    private static void runToLoot(Player pl, Map map, int steps, boolean mustChoose)
+    private static void runToLoot(Player pl, Map map, int steps)
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
@@ -754,7 +753,43 @@ public class ActionLambdaMap {
             }
         }
 
-        Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
+        Point chosen = pl.getConn().movePlayer(destinations, false);
+
+        if(chosen != null)
+            pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+    }
+
+    /**
+     * Basic run action that only brings the player to cells where he can shoot
+     * @param pl Lambda's player
+     * @param map Lambda's map
+     * @param steps number of allowed steps
+     */
+    private static void runToShoot(Player pl, Map map, int steps)
+    {
+        List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
+        List<Point> destinations = new ArrayList<>(possible);
+
+        Point initialPosition = pl.getPosition();
+
+        for(Point p : possible)
+        {
+            //Put the player in the simulated future position
+            pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+            //If no weapon has suitable action, we can't propose to move to this position
+            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
+                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
+                {
+                    destinations.remove(p);
+                }
+        }
+
+        //Return the player to its real position
+        pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+
+        Point chosen = pl.getConn().movePlayer(destinations, false);
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
@@ -844,9 +879,9 @@ public class ActionLambdaMap {
 
         //Take list of available "base" actions for the chosen weapon
         List<Action> weaponActions = new ArrayList<>();
-        if(chosen.getBase() != null && FeasibleLambdaMap.isFeasible(chosen.getBase().getLambdaID(), pl, map, null))
+        if(chosen.getBase() != null && chosen.getBase().isFeasible(pl, map, null))
             weaponActions.add(chosen.getBase());
-        if(chosen.getAlternative() != null && FeasibleLambdaMap.isFeasible(chosen.getAlternative().getLambdaID(), pl, map, null))
+        if(chosen.getAlternative() != null && chosen.getAlternative().isFeasible(pl, map, null))
             weaponActions.add(chosen.getAlternative());
 
         //TODO add memory management for relevant actions
