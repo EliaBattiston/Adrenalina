@@ -242,8 +242,7 @@ public class Match implements Runnable
         {
             for(int y = 0; y < 3 && !found; y++)
             {
-                //TODO avoid instanceof statements
-                if(game.getMap().getCell(x, y) instanceof  SpawnCell && ((SpawnCell) game.getMap().getCell(x, y)).getSpawn() == spawnColor)
+                if(game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor))
                 {
                     spawnX = x;
                     spawnY = y;
@@ -275,19 +274,7 @@ public class Match implements Runnable
                 //Don't check if the cell is unused
                 selectedCell = game.getMap().getCell(x, y);
                 if(selectedCell != null)
-                {
-                    //TODO avoid instanceof statements
-                    if (selectedCell instanceof RegularCell && ((RegularCell) selectedCell).getLoot() == null)
-                    {
-                        ((RegularCell) selectedCell).refillLoot(game.getAmmoDeck().draw());
-                    } else if (selectedCell instanceof SpawnCell)
-                    {
-                        while (((SpawnCell) selectedCell).getWeapons().size() < 3)
-                        {
-                            ((SpawnCell) selectedCell).refillWeapon(game.getWeaponsDeck().draw());
-                        }
-                    }
-                }
+                    selectedCell.refill(game);
             }
         }
     }
