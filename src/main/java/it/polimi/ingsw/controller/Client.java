@@ -135,6 +135,16 @@ public interface Client extends Remote
     /**
      * Asks the user how many skulls he wants in the play
      * @return skulls number
+     * @throws RemoteException If something goes wrong with the connection
      */
     public Integer getSkullNum() throws RemoteException;
+
+    /**
+     * Asks the user to choose which weapon to discard
+     * @param inHand List of weapons in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen weapon
+     * @throws RemoteException If something goes wrong with the connection
+     */
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) throws RemoteException;
 }

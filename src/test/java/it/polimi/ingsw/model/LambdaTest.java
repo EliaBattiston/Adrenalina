@@ -4,15 +4,14 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.List;
 
-import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class LambdaTest {
     @Test
     public void TestEffectsLambda()
     {
+        Map m = Map.jsonDeserialize(1);
         Player p = new Player("Andre", "Ciao ragazzi!", Fighter.BANSHEE);
         Player att = new Player("Ale", "Vi distrugg0o0o0o0o0o0o0o0!", Fighter.VIOLETTA);
 
@@ -40,9 +39,20 @@ public class LambdaTest {
 
         //Move the player
         try {
-            p.applyEffects(EffectsLambda.move(new Point(2, 1)));
-            assertTrue(p.getPosition().getX() == 2);
-            assertTrue(p.getPosition().getY() == 1);
+            p.applyEffects(EffectsLambda.move(p, new Point(2, 1), m));
+            assertEquals(p.getPosition().getX(), 2);
+            assertEquals(p.getPosition().getY(), 1);
+            assertTrue(m.getCell(2, 1).getPawns().contains(p));
+        }catch (WrongPointException ex){
+            fail();
+        }
+
+        try {
+            p.applyEffects(EffectsLambda.move(p, new Point(3, 2), m));
+            assertEquals(p.getPosition().getX(),3);
+            assertEquals(p.getPosition().getY(),2);
+            assertFalse(m.getCell(2, 1).getPawns().contains(p));
+            assertTrue(m.getCell(3,2).getPawns().contains(p));
         }catch (WrongPointException ex){
             fail();
         }

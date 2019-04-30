@@ -15,5 +15,6 @@ public enum Interaction {
     GETNICKNAME,
     GETPHRASE,
     GETFIGHTER,
-    GETSKULLSNUM
+    GETSKULLSNUM,
+    DISCARDWEAPON
 }

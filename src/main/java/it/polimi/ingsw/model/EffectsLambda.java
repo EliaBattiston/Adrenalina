@@ -42,17 +42,26 @@ public class EffectsLambda {
     }
 
     /**
-     * Move the player
-     * @param newPosition position where to move
+     * Move the player by changing its position and the position of its pawn in the map
+     * @param pl Player that has to be moved
+     * @param newPosition Position where to move
+     * @param map Map in which the reference of the player has to be moved
      * @return the lambda that has to be run from the player who receive the action
      */
-    public static PlayerLambda move(Point newPosition){
+    public static PlayerLambda move(Player pl, Point newPosition, Map map){
         return (damage, marks, position, weapons, powers, ammo)->{
+            if(map.getCell(position) != null)
+            {
+                map.getCell(position).removePawn(pl);
+            }
+
             try {
                 position.set(newPosition.getX(), newPosition.getY());
             }catch(WrongPointException ex){
                 LOGGER.log( Level.SEVERE, ex.toString(), ex );
             }
+
+            map.getCell(newPosition).addPawn(pl);
         };
     }
 

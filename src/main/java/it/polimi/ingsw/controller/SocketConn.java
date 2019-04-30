@@ -266,6 +266,26 @@ public class SocketConn implements Connection {
     }
 
     /**
+     * Asks the user to choose which weapon to discard
+     * @param inHand List of weapons in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen weapon
+     */
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose)
+    {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.DISCARDWEAPON;
+        load.parameters = gson.toJson(inHand);
+        load.mustChoose = mustChoose;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
+        return ansParam.get(0);
+    }
+
+
+    /**
      * Asks the user fot the fighter
      * @return user's fighter
      */
@@ -342,4 +362,5 @@ public class SocketConn implements Connection {
         Gson gson = new Gson();
         return gson.fromJson(response, Payload.class);
     }
+
 }

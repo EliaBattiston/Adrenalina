@@ -49,20 +49,20 @@ public class ActionsTest {
         for(int i = 0; i < 3; i++) {
             assertTrue(singleton.getAvailable(i, false, true).size() == 4);
             assertTrue(singleton.getAvailable(i, false, false).size() == 4);
-            assertTrue(singleton.getAvailable(i, true, true).size() == 3);
-            assertTrue(singleton.getAvailable(i, true, false).size() == 2);
+            assertTrue(singleton.getAvailable(i, true, true).size() == 4);
+            assertTrue(singleton.getAvailable(i, true, false).size() == 3);
         }
         for(int i = 3; i < 6; i++) {
             assertTrue(singleton.getAvailable(i, false, true).size() == 5);
             assertTrue(singleton.getAvailable(i, false, false).size() == 5);
-            assertTrue(singleton.getAvailable(i, true, true).size() == 3);
-            assertTrue(singleton.getAvailable(i, true, false).size() == 2);
+            assertTrue(singleton.getAvailable(i, true, true).size() == 4);
+            assertTrue(singleton.getAvailable(i, true, false).size() == 3);
         }
         for(int i = 6; i < 11; i++) {
             assertTrue(singleton.getAvailable(i, false, true).size() == 6);
             assertTrue(singleton.getAvailable(i, false, false).size() == 6);
-            assertTrue(singleton.getAvailable(i, true, true).size() == 3);
-            assertTrue(singleton.getAvailable(i, true, false).size() == 2);
+            assertTrue(singleton.getAvailable(i, true, true).size() == 4);
+            assertTrue(singleton.getAvailable(i, true, false).size() == 3);
         }
 
         /**

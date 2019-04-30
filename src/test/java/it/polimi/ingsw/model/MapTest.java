@@ -154,7 +154,7 @@ public class MapTest {
         m.getCell(3,1).addPawn(pl.get(2));
 
         Player viewer = new Player("viewer", "hi", Fighter.SPROG);
-        viewer.applyEffects(EffectsLambda.move(new Point(1,1)));
+        viewer.applyEffects(EffectsLambda.move(viewer, new Point(1,1), m));
 
         List<Player> calculated = Map.visiblePlayers(viewer, m);
 
@@ -181,9 +181,9 @@ public class MapTest {
         pl.add(new Player("one", "hi", Fighter.DSTRUTTOR3));
         pl.add(new Player("two", "hi", Fighter.DOZER));
         pl.add(new Player("three", "hi", Fighter.VIOLETTA));
-        pl.get(0).applyEffects(EffectsLambda.move(new Point(1,0)));
-        pl.get(1).applyEffects(EffectsLambda.move(new Point(2,1)));
-        pl.get(2).applyEffects(EffectsLambda.move(new Point(3,1)));
+        pl.get(0).applyEffects(EffectsLambda.move(pl.get(0), new Point(1,0), m));
+        pl.get(1).applyEffects(EffectsLambda.move(pl.get(1), new Point(2,1), m));
+        pl.get(2).applyEffects(EffectsLambda.move(pl.get(2), new Point(3,1), m));
 
 
         m.getCell(1,0).addPawn(pl.get(0));
@@ -191,7 +191,7 @@ public class MapTest {
         m.getCell(3,1).addPawn(pl.get(2));
 
         Player viewer = new Player("viewer", "hi", Fighter.SPROG);
-        viewer.applyEffects(EffectsLambda.move(new Point(1,1)));
+        viewer.applyEffects(EffectsLambda.move(viewer, new Point(1,1), m));
 
         List<Player> calculated = Map.playersAtGivenDistance(viewer, m, false, (p1,p2)->Map.distance(p1,p2)<=1);
 
@@ -207,7 +207,7 @@ public class MapTest {
     {
         Map m = Map.jsonDeserialize(1);
         Player viewer = new Player("viewer", "hi", Fighter.SPROG);
-        viewer.applyEffects(EffectsLambda.move(new Point(1,1)));
+        viewer.applyEffects(EffectsLambda.move(viewer, new Point(1,1), m));
 
         List<Point> expected = new ArrayList<>();
         expected.add(new Point(1,1));
@@ -234,7 +234,7 @@ public class MapTest {
     {
         Map m = Map.jsonDeserialize(1);
         Player viewer = new Player("viewer", "hi", Fighter.SPROG);
-        viewer.applyEffects(EffectsLambda.move(new Point(1,1)));
+        viewer.applyEffects(EffectsLambda.move(viewer, new Point(1,1), m));
 
         List<Point> visible = Map.visiblePoints(viewer.getPosition(), m, 0);
 

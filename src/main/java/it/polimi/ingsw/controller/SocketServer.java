@@ -22,6 +22,7 @@ public class SocketServer implements Server {
     /**
      * Create a new SocketServer instance starting a server socket at the given port
      * @param port port on which the server is started
+     * @throws IOException If there is a problem with the TCP connection
      */
     public SocketServer(int port) throws IOException
     {
@@ -57,7 +58,6 @@ public class SocketServer implements Server {
 
     /**
      * Stops the Socket server
-     * @throws IOException in case of connection errors
      */
     public void stopServer() {
         try {

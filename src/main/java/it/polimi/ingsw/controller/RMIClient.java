@@ -156,5 +156,16 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @return skulls number
      */
     public Integer getSkullNum() {return 5; }
+
+    /**
+     * Asks the user to choose which weapon to discard
+     * @param inHand List of weapons in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen weapon
+     */
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose)
+    {
+        return inHand.get(0);
+    }
 }
 

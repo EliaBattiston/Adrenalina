@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.util.Scanner;
+
 /**
  * Main class for the client's executable
  */
