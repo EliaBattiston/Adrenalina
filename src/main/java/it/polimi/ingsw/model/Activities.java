@@ -16,7 +16,6 @@ public class Activities {
      * instantiates the singleton object with the default game actions
      */
     private Activities() {
-        //TODO: implement actions that can be made during the game
         base = new ArrayList<>();
         adrenalin3 = new ArrayList<>();
         adrenalin6 = new ArrayList<>();

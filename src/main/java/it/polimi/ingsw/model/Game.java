@@ -60,7 +60,6 @@ public class Game {
         this.players = new ArrayList<>();
     }
 
-    //TODO add change to the UML diagram and test
     public Player getNextPlayer(Player current)
     {
         int position = players.indexOf(current);
@@ -173,7 +172,6 @@ public class Game {
         this.map = Map.jsonDeserialize(pathJsonFile);
     }
 
-    //TODO generate TESTS
     /**
      * Initialize the skulls board when the first player choose the number of skulls of the match
      * @param skullsNum number of the skulls chosen for the match (between 5 and 8)

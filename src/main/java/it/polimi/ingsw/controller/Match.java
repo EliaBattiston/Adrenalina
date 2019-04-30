@@ -77,7 +77,7 @@ public class Match implements Runnable
         game.getAmmoDeck().shuffle();
         game.initializeSkullsBoard(skullsNum);
 
-        //TODO let the user choose (mage an interaction)
+        //TODO let the user choose (make an interaction)
         game.loadMap("resources/map1.json");
         refillMap();
     }

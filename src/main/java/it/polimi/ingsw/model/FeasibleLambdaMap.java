@@ -1,8 +1,12 @@
 package it.polimi.ingsw.model;
 
+import javax.print.attribute.standard.Severity;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FeasibleLambdaMap
 {
@@ -14,7 +18,6 @@ public class FeasibleLambdaMap
         data = new HashMap<>();
 
         //Base weapon lambdas
-        //(List<Player>)memory
         data.put("w1-b", (pl, map, memory)->{
             //Dai 2 danni e un marchio a un bersaglio che puoi vedere
 
@@ -22,7 +25,6 @@ public class FeasibleLambdaMap
             return !targets.isEmpty();
         });
 
-        //memory = Player[2]
         data.put("w2-b", (pl, map, memory)->{
             //Scegli 1 o 2 bersagli che puoi vedere e dai 1 danno a entrambi.
 
@@ -30,7 +32,6 @@ public class FeasibleLambdaMap
             return !targets.isEmpty();
         });
 
-        //((Player[])memory)[0]
         data.put("w3-b", (pl, map, memory)->{
             //Dai 2 danni a 1 bersaglio che puoi vedere.
 
@@ -39,7 +40,6 @@ public class FeasibleLambdaMap
         });
 
         //CLONE
-        //((Player[])memory)[0]
         data.put("w4-b", (pl, map, memory)->{
             //Dai 2 danni a 1 bersaglio che puoi vedere.
 
@@ -78,7 +78,6 @@ public class FeasibleLambdaMap
             return !targets.isEmpty();
         });
 
-        //(Point) memory
         data.put("w8-b", (pl, map, memory)->{
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
@@ -195,26 +194,29 @@ public class FeasibleLambdaMap
         });
 
     //Additional weapon lambdas
+        //Player[] memory
         data.put("w1-ad1", (pl, map, memory)->{
             //Dai 1 marchio a un altro bersaglio che puoi vedere.
 
             List<Player> targets = Map.visiblePlayers(pl, map);
+            targets.removeAll(Arrays.asList((Player[])memory));
             return !targets.isEmpty();
         });
 
         //((Player[])memory)[0]
         //Dai 1 danno aggiuntivo a uno dei due bersagli.
-        data.put("w2-ad1", (pl, map, memory)-> ((Player[])memory).length>0);
+        data.put("w2-ad1", (pl, map, memory)-> memory!=null);
 
         //((Player[])memory)[0]
         //Dai 1 danno aggiuntivo all'altro dei bersagli e/o dai 1 danno a un bersaglio differente che puoi vedere.
-        data.put("w2-ad2", (pl, map, memory)-> ((Player[])memory).length>0);
+        data.put("w2-ad2", (pl, map, memory)-> memory!=null);
 
         //((Player[])memory)[0]
         data.put("w3-ad1", (pl, map, memory)->{
             //Dai 1 danno a un secondo bersaglio che il tuo primo bersaglio può vedere.
 
             List<Player> targets = Map.visiblePlayers(((Player[])memory)[0], map);
+            targets.remove(pl);
             return !targets.isEmpty();
         });
 
@@ -222,10 +224,12 @@ public class FeasibleLambdaMap
         data.put("w3-ad2", (pl, map, memory)->{
             //Dai 2 danni a un terzo bersaglio che il tuo secondo bersaglio può vedere. Non puoi usare questo effetto se prima non hai usato reazione a catena.
 
-            if(((Player[])memory).length > 1 && ((Player[])memory)[1] != null) {
-                List<Player> targets = Map.visiblePlayers(((Player[]) memory)[1], map);
-                return !targets.isEmpty();
-            }
+            if(memory != null)
+                if(((Player[])memory).length > 1 && ((Player[])memory)[1] != null) {
+                    List<Player> targets = Map.visiblePlayers(((Player[]) memory)[1], map);
+                    return !targets.isEmpty();
+                }
+            Logger.getGlobal().log(Level.SEVERE, "Wrong memory");
             return false;
         });
 
@@ -234,9 +238,9 @@ public class FeasibleLambdaMap
 
         //((Player[])memory)[0]
         //Dai 1 danno aggiuntivo al tuo bersaglio.
-        data.put("w4-ad2", (pl, map, memory)-> ((Player[])memory).length > 0 && ((Player[])memory)[0] != null);
+        data.put("w4-ad2", (pl, map, memory)-> memory != null && ((Player[])memory).length > 0 && ((Player[])memory)[0] != null);
 
-        //(Point) memory
+        //Point memory
         data.put("w8-ad1", (pl, map, memory)->{
             //Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.
 
@@ -244,7 +248,7 @@ public class FeasibleLambdaMap
             fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) ->  position.set((Point)memory) );
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, ((p1, p2) -> Map.distance(p1,p2)<=1));
 
-            return !targets.isEmpty();
+            return !targets.isEmpty() && memory != null;
         });
 
         //Dai 1 danno a ogni giocatore in quadrato che puoi vedere. Puoi usare questo effetto prima o dopo il movimento dell'effetto base.
@@ -368,11 +372,10 @@ public class FeasibleLambdaMap
 
         //Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Prendi la tua miniatura e piazzala in un qualsiasi quadrato sulla plancia.
         // (Non puoi usare questo potenziamento dopo che hai visto dove un altro giocatore si rigenera alla fine del tuo turno, è troppo tardi.)
-        //TODO When played the game, the ones who respowned did it after somehone finished his turn. Be sure it doesn't need a check
         data.put("p4", (pl, map, memory)-> true);
 
         //Activities lambdas
-        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).count() > 0 );
+        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> power.getId() == 6 || power.getId() == 8));
 
         data.put("a-b1", (pl, map, memory)-> true );
 

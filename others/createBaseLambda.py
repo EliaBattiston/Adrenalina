@@ -1,6 +1,6 @@
 import json
 
-with open('armi.json') as json_file:  
+with open('weapons.json') as json_file:
     data = json.load(json_file)
     for p in data:
         b = p["base"]

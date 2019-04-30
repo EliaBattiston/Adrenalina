@@ -37,7 +37,8 @@ public class EffectsLambda {
                 i++;
             }
 
-            //TODO ceck the power up "granata venom"
+            //TODO check the power up "mirino"
+            //TODO check the power up "granata venom"
         };
     }
 

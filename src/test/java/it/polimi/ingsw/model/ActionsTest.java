@@ -15,7 +15,7 @@ public class ActionsTest {
     @Test
     public void checkActionClass()
     {
-        ArrayList<Color> cost = new ArrayList<Color>();
+        ArrayList<Color> cost = new ArrayList<>();
         cost.add(Color.BLUE);
         cost.add(Color.YELLOW);
         cost.add((Color.RED));
@@ -26,7 +26,6 @@ public class ActionsTest {
         assertTrue(act.getDescription().equals("Simple action"));
         assertTrue(act.getCost() == cost);
 
-        //TODO: assertTrue for lambda execution?
     }
 
     /**

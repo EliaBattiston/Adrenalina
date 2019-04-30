@@ -3,10 +3,7 @@ package it.polimi.ingsw.model;
 import com.sun.org.apache.regexp.internal.RE;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -137,11 +134,7 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.move(chosen, vortexPoint, map));
             chosen.applyEffects(EffectsLambda.damage(2, pl));
 
-            try {
-                ((Point) memory).set(vortexPoint.getX(), vortexPoint.getY());
-            }catch (WrongPointException ex){
-                Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
-            }
+            ((Point) memory).set(vortexPoint);
         });
 
         data.put("w9-b", (pl, map, memory)->{
@@ -313,6 +306,7 @@ public class ActionLambdaMap {
         });
 
     //Additional weapon lambdas
+        //((Player[])memory)[0]
         data.put("w1-ad1", (pl, map, memory)->{
             //Dai 1 marchio a un altro bersaglio che puoi vedere.
 
@@ -617,7 +611,7 @@ public class ActionLambdaMap {
             //Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli
             // e dagli 1 segnalino danno aggiuntivo. Nota: non puoi usare questo potenziamento per dare 1 danno a un bersaglio che sta solo ricevendo marchi.
 
-            List<Player> targets = (List<Player>)memory;
+            List<Player> targets = new ArrayList(Arrays.asList((Player[]) memory));
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(1, pl));
         });
@@ -634,14 +628,14 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.move(chosen, chosenPos, map));
         });
 
-        //memory = player that gave damage
+        //((Player[]) memory)[0]
         data.put("p3", (pl, map, memory)-> {
             //Puoi giocare questa carta quando ricevi un danno da un giocatore che puoi vedere. Dai 1 marchio a quel giocatore.
 
             List<Player> visibles = Map.visiblePlayers(pl, map);
 
-            if(visibles.contains((Player) memory))//someone you don't see can attack you
-                ((Player) memory).applyEffects(EffectsLambda.marks(1, pl));
+            if(visibles.contains(((Player[]) memory)[0]))//someone you don't see can attack you
+                (((Player[]) memory)[0]).applyEffects(EffectsLambda.marks(1, pl));
         });
 
         data.put("p4", (pl, map, memory)->{
@@ -666,14 +660,14 @@ public class ActionLambdaMap {
 
         data.put("a-b2", (pl, map, memory)->{
             runToLoot(pl, map,1);
-            pick(pl, map, ((Game)memory).getAmmoDeck());
+            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
         });
 
         data.put("a-b3",(pl, map, memory) -> shoot(pl, map) );
 
         data.put("a-a1", (pl, map, memory)->{
             runToLoot(pl, map,2);
-            pick(pl, map,((Game)memory).getAmmoDeck());
+            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
         });
 
         data.put("a-a2", (pl, map, memory)->{
@@ -691,7 +685,7 @@ public class ActionLambdaMap {
 
         data.put("a-f3", (pl, map, memory)->{
             runToLoot(pl, map,2);
-            pick(pl, map,((Game)memory).getAmmoDeck());
+            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
         });
 
         data.put("a-f4", (pl, map, memory)->{
@@ -702,7 +696,7 @@ public class ActionLambdaMap {
 
         data.put("a-f5", (pl, map, memory)->{
             runToLoot(pl, map,3);
-            pick(pl, map, ((Game)memory).getAmmoDeck());
+            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
         });
     }
 
@@ -800,8 +794,9 @@ public class ActionLambdaMap {
      * @param pl Lambda's player
      * @param map Lambda's map
      * @param lootDeck Deck where to scrap the picked loot card
+     * @param powersDeck Deck for picking a power card
      */
-    private static void pick(Player pl, Map map, EndlessDeck lootDeck)
+    private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
     {
         Cell current = map.getCell(pl.getPosition());
         //Ask something only if the player is in a spawn cell
@@ -848,12 +843,35 @@ public class ActionLambdaMap {
         else if(current instanceof RegularCell)
         {
             Loot picked = ((RegularCell) current).pickLoot();
+
             pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 for(Color c : picked.getContent())
                 {
                     if(c == Color.POWER)
                     {
-                        //TODO implement getting the power card
+                        Power newPower = powersDeck.draw();
+                        Power discarded = null;
+
+                        if(Arrays.stream(powers).noneMatch(Objects::isNull))
+                        {
+                            List<Power> inHand = new ArrayList<>(Arrays.asList(powers));
+                            inHand.add(newPower);
+                            discarded = pl.getConn().discardPower(inHand, true);
+
+                            if(discarded == newPower)
+                                discarded = null;
+                            else
+                                powersDeck.scrapCard(discarded);
+                        }
+
+                        int empty = Arrays.asList(powers).indexOf(discarded);
+
+                        if(empty != -1)
+                            powers[empty] = newPower;
+                        else{
+                            Logger.getGlobal().log(Level.WARNING, "Scrapped new card");
+                            powersDeck.scrapCard(newPower);
+                        }
                     }
                     else
                         ammo.add(c, 1);
@@ -885,29 +903,48 @@ public class ActionLambdaMap {
         if(chosen.getAlternative() != null && chosen.getAlternative().isFeasible(pl, map, null))
             weaponActions.add(chosen.getAlternative());
 
-        //TODO add memory management for relevant actions
         //Ask the user which one he wants to use
         Action toExecute = pl.getConn().chooseAction(weaponActions, true);
-        toExecute.execute(pl, map, null);
+        Object mem;
+        switch (toExecute.getLambdaID())
+        {
+            case "w1-b":
+            case "w2-b":
+            case "w3-b":
+            case "w4-b":
+            case "w16-b":
+                mem = new Player[2];
+                break;
+
+            case "w8-b":
+                mem = new Point(0, 0);
+                break;
+
+            default:
+                mem = null;
+                break;
+        }
+        toExecute.execute(pl, map, mem);
 
         if(toExecute.getLambdaID().contains("-b")) //Base action
         {
-            //TODO only feasible ones
             //Additional actions management
             weaponActions.clear();
             if(chosen.getAdditional() != null)
-                weaponActions.addAll(chosen.getAdditional());
+                weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
 
-            do
-            {
+            if(!weaponActions.isEmpty()){
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
+                toExecute.execute(pl, map, mem);
 
-                if (toExecute != null)
+                weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
+                weaponActions.remove(toExecute);
+                if(!weaponActions.isEmpty())
                 {
-                    toExecute.execute(pl, map, null);
-                    weaponActions.remove(toExecute);
+                    toExecute = pl.getConn().chooseAction(weaponActions, false);
+                    toExecute.execute(pl, map, mem);
                 }
-            } while(!weaponActions.isEmpty() && toExecute != null);
+            }
         }
 
         //Unload the used weapon
