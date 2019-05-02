@@ -11,6 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
+import javafx.stage.StageStyle;
 
 public class Gui extends Application {
 
@@ -42,8 +43,10 @@ public class Gui extends Application {
 */
 
         Group root = new Group();
-        Scene theScene = new Scene( root );
+        Scene theScene = new Scene( root, width, height );
         primaryStage.setScene( theScene );
+        primaryStage.setResizable(false);
+        //primaryStage.initStyle(StageStyle.UNDECORATED);
 
         Canvas canvas = new Canvas( width, height);
         root.getChildren().add( canvas );
@@ -58,7 +61,7 @@ public class Gui extends Application {
         //gc.fillText( "Hello, World!", 60, 50 );
         //gc.strokeText( "Hello, World!", 60, 50 );
 
-        Image earth = new Image( "file:images/map1.png" );
+        Image earth = new Image( "file:images/map/map1.png" );
         gc.drawImage( earth, 0, 0, width,height );
 
         primaryStage.show();
