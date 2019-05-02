@@ -150,11 +150,10 @@ public interface Client extends Remote
 
     /**
      * Asks the user to choose which map he wants to use
-     * @param mapList List of possible maps
-     * @return Chosen map
+     * @return Number of the chosen map
      * @throws RemoteException If something goes wrong with the connection
      */
-    public Map chooseMap(List<Map> mapList) throws RemoteException;
+    public Integer chooseMap() throws RemoteException;
 
     /**
      * Asks the user about the Frenzy mode for the starting match

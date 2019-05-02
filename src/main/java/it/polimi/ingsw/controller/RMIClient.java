@@ -170,11 +170,10 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
 
     /**
      * Asks the user to choose which map he wants to use
-     * @param mapList List of possible maps
-     * @return Chosen map
+     * @return Number of the chosen map
      */
-    public Map chooseMap(List<Map> mapList) {
-        return mapList.get(0);
+    public Integer chooseMap() {
+        return 1;
     }
 
     /**

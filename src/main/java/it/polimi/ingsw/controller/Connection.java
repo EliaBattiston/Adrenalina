@@ -132,10 +132,9 @@ public interface Connection extends Remote
 
     /**
      * Asks the user to choose which map he wants to use
-     * @param mapList List of possible maps
-     * @return Chosen map
+     * @return Number of the chosen map
      */
-    public Map chooseMap(List<Map> mapList);
+    public Integer chooseMap();
 
     /**
      * Asks the user about the Frenzy mode for the starting match

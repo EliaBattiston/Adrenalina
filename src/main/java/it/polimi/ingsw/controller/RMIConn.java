@@ -276,12 +276,11 @@ public class RMIConn implements Connection
 
     /**
      * Asks the user to choose which map he wants to use
-     * @param mapList List of possible maps
-     * @return Chosen map
+     * @return Number of the chosen map
      */
-    public Map chooseMap(List<Map> mapList) {
+    public Integer chooseMap() {
         try {
-            return client.chooseMap(mapList);
+            return client.chooseMap();
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );

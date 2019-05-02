@@ -649,10 +649,20 @@ public class ActionLambdaMap {
 
     //Activities lambdas
         data.put("a-p", (pl, map, memory)->{
-            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).collect(Collectors.toList());
+            Power chosen;
+
+            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
             if(!inHand.isEmpty())
             {
-                //TODO add choosepower interaction
+                chosen = pl.getConn().choosePower(inHand, false);
+                while (!inHand.isEmpty() && chosen != null)
+                {
+                    chosen.getBase().execute(pl, map, null);
+                    pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
+
+                    inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+                    chosen = pl.getConn().choosePower(inHand, false);
+                }
             }
         });
 

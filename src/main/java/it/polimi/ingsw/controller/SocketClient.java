@@ -171,11 +171,10 @@ public class SocketClient implements Client {
 
     /**
      * Asks the user to choose which map he wants to use
-     * @param mapList List of possible maps
-     * @return Chosen map
+     * @return Number of the chosen map
      */
-    public Map chooseMap(List<Map> mapList) {
-        return mapList.get(0);
+    public Integer chooseMap() {
+        return 1;
     }
 
     /**
@@ -364,11 +363,9 @@ public class SocketClient implements Client {
                     break;
                 }
                 case CHOOSEMAP: {
-                    ArrayList<Map> param = gson.fromJson(message.parameters, new TypeToken<List<Map>>() {
-                    }.getType());
                     answer.type = Interaction.CHOOSEMAP;
-                    ArrayList<Map> ansParam = new ArrayList<>();
-                    ansParam.add(chooseMap(param));
+                    ArrayList<Integer> ansParam = new ArrayList<>();
+                    ansParam.add(chooseMap());
                     answer.parameters = gson.toJson(ansParam);
                     break;
                 }

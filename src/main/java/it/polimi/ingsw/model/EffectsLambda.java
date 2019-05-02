@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,5 +83,15 @@ public class EffectsLambda {
                 actualMarks++;
             }
         };
+    }
+
+    public static PlayerLambda removePower(Power toRemove, EndlessDeck<Power> powersDeck)
+    {
+        return ((damage, marks, position, weapons, powers, ammo) -> {
+            int index = Arrays.asList(powers).indexOf(toRemove);
+            powersDeck.scrapCard(powers[index]);
+
+            powers[index] = null;
+        });
     }
 }

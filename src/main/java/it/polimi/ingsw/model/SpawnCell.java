@@ -101,6 +101,7 @@ public class SpawnCell extends Cell{
      */
     public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
     {
+        //TODO make the player pay the weapon's price
         Weapon picked = pl.getConn().chooseWeapon(this.getWeapons(), true);
         pickWeapon(picked);
 

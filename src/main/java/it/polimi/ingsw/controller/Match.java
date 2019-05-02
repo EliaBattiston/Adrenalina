@@ -33,6 +33,11 @@ public class Match implements Runnable
     private GamePhase phase;
 
     /**
+     * True if there will be a frenzy turn at the end of the game
+     */
+    private boolean useFrenzy;
+
+    /**
      * The first player to play his turn in frenzy mode
      */
     private Player firstFrenzy;
@@ -77,8 +82,10 @@ public class Match implements Runnable
         game.getAmmoDeck().shuffle();
         game.initializeSkullsBoard(skullsNum);
 
-        //TODO let the user choose (make an interaction)
-        game.loadMap("resources/map1.json");
+        //Ask the user which maps he wants to use and if he wants to use frenzy mode
+        game.loadMap(game.getPlayers().get(0).getConn().chooseMap());
+        useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
+
         refillMap();
     }
 
@@ -373,7 +380,10 @@ public class Match implements Runnable
             //Check if it's time for frenzy mode
             if(nextSkull == 0)
             {
-                phase = GamePhase.FRENZY;
+                if(useFrenzy)
+                    phase = GamePhase.FRENZY;
+                else
+                    phase = GamePhase.ENDED;
             }
         }
         else

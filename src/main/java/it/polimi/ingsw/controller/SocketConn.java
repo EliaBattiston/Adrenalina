@@ -315,17 +315,15 @@ public class SocketConn implements Connection {
 
     /**
      * Asks the user to choose which map he wants to use
-     * @param mapList List of possible maps
-     * @return Chosen map
+     * @return Number of the chosen map
      */
-    public Map chooseMap(List<Map> mapList) {
+    public Integer chooseMap() {
         Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEMAP;
-        load.parameters = gson.toJson(mapList);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Map> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Map>>(){}.getType());
+        List<Integer> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Integer>>(){}.getType());
         return ansParam.get(0);
     }
 
