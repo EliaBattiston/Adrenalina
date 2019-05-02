@@ -36,6 +36,8 @@ public class CardsTest {
         try {
             Loot l = new Loot(c);
             assertTrue(l.getContent() == c);
+
+            assertTrue(l.getContentAsString().equals("RBP"));
         }catch (ArrayDimensionException e){
             fail();
         }
@@ -47,6 +49,7 @@ public class CardsTest {
         }catch (ArrayDimensionException e){
             assertTrue(true);
         }
+
     }
 
     /**

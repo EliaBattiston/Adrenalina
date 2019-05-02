@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.Weapon;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -15,55 +17,88 @@ import javafx.stage.StageStyle;
 
 public class Gui extends Application {
 
+    Game game;
+
+    private double width;
+    private double height;
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        width = 1000;
+        height = 750;
+
+        primaryStage.setTitle("Adrenalina");
+
+        game = Game.jsonDeserialize("resources/baseGame.json");
+
+        primaryStage.setScene(createBoard());
+        //primaryStage.setResizable(false);
+        primaryStage.show();
+
+        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+            // Do whatever you want
+            width = newVal.doubleValue();
+            rearrangeItems();
+        });
+
+        primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> {
+            // Do whatever you want
+            height = newVal.doubleValue();
+            rearrangeItems();
+        });
+    }
+
+    private Scene createBoard(){
+        Group weaponG = new Group();
+        Group lootG = new Group();
+        Group powerG = new Group();
+
+        Pane root = new Pane();
+        root.setPrefSize(width, height);
+        root.getChildren().add(loadMap());
+        root.getChildren().addAll(weaponG, lootG, powerG);
+
+        //ex
+        CardGui c = new CardGui(game.getWeaponsDeck().draw(), this);
+        CardGui l = new CardGui(game.getAmmoDeck().draw(), this);
+        CardGui p = new CardGui(game.getPowersDeck().draw(), this);
+
+        weaponG.getChildren().add(c);
+        lootG.getChildren().add(l);
+        powerG.getChildren().add(p);
+
+        p.relocate(300,200);
+
+        return new Scene(root);
+    }
+
+    private void rearrangeItems(){
+        ;//TODO rearrange to new width and height
+    }
+
+    private StackPane loadMap(){
+        StackPane s = new StackPane();
+
+        Canvas canvas = new Canvas(width,height);
+        s.getChildren().add( canvas );
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        gc.drawImage( new Image("file:images/map/map1.png"), 0, 0, width,height); //TODO print the right map
+
+        return s;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        double width, height;
-        width = 800;
-        height = 600;
-
-        primaryStage.setTitle("Adrenalina");
-/*
-        StackPane layout = new StackPane();
-
-        BackgroundImage myBI= new BackgroundImage(new Image("file:images/map1.png",width,height,true,true),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-
-//then you set to your node
-        layout.setBackground(new Background(myBI));
-
-        Scene sc = new Scene(layout, width, height);
-
-        // primaryStage.setScene(s);
-        //primaryStage.show();
-*/
-
-        Group root = new Group();
-        Scene theScene = new Scene( root, width, height );
-        primaryStage.setScene( theScene );
-        primaryStage.setResizable(false);
-        //primaryStage.initStyle(StageStyle.UNDECORATED);
-
-        Canvas canvas = new Canvas( width, height);
-        root.getChildren().add( canvas );
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        //gc.setFill( Color.RED );
-        //gc.setStroke( Color.BLACK );
-        //gc.setLineWidth(2);
-        //Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
-        //gc.setFont( theFont );
-        //gc.fillText( "Hello, World!", 60, 50 );
-        //gc.strokeText( "Hello, World!", 60, 50 );
-
-        Image earth = new Image( "file:images/map/map1.png" );
-        gc.drawImage( earth, 0, 0, width,height );
-
-        primaryStage.show();
-    }
 }

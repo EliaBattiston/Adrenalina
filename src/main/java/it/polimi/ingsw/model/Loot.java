@@ -2,6 +2,9 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /**
  * Represent a loot made of tree colors (or two plus a 'pick a power')
  */
@@ -27,5 +30,9 @@ public class Loot extends Card {
     public Color[] getContent()
     {
         return content;
+    }
+
+    public String getContentAsString(){
+        return content[0].toString().substring(0,1)+content[1].toString().substring(0,1)+content[2].toString().substring(0,1);
     }
 }
