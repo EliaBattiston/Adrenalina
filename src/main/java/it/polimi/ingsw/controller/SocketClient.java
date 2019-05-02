@@ -169,7 +169,32 @@ public class SocketClient implements Client {
      */
     public Integer getSkullNum() { return 5; }
 
+    /**
+     * Asks the user to choose which map he wants to use
+     * @param mapList List of possible maps
+     * @return Chosen map
+     */
+    public Map chooseMap(List<Map> mapList) {
+        return mapList.get(0);
+    }
 
+    /**
+     * Asks the user about the Frenzy mode for the starting match
+     * @return True for final Frenzy mode, false elsewhere
+     */
+    public Boolean chooseFrenzy() {
+        return true;
+    }
+
+    /**
+     * Asks the user to choose a power to use
+     * @param inHand List of powers in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen power
+     */
+    public Power choosePower(List<Power> inHand, boolean mustChoose) {
+        return inHand.get(0);
+    }
 
 
     /**
@@ -335,6 +360,31 @@ public class SocketClient implements Client {
                     answer.type = Interaction.DISCARDWEAPON;
                     ArrayList<Weapon> ansParam = new ArrayList<>();
                     ansParam.add(discardWeapon(param, message.mustChoose));
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case CHOOSEMAP: {
+                    ArrayList<Map> param = gson.fromJson(message.parameters, new TypeToken<List<Map>>() {
+                    }.getType());
+                    answer.type = Interaction.CHOOSEMAP;
+                    ArrayList<Map> ansParam = new ArrayList<>();
+                    ansParam.add(chooseMap(param));
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case CHOOSEFRENZY: {
+                    answer.type = Interaction.CHOOSEFRENZY;
+                    ArrayList<Boolean> ansParam = new ArrayList<>();
+                    ansParam.add(chooseFrenzy());
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case CHOOSEPOWER: {
+                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {
+                    }.getType());
+                    answer.type = Interaction.CHOOSEPOWER;
+                    ArrayList<Power> ansParam = new ArrayList<>();
+                    ansParam.add(choosePower(param, message.mustChoose));
                     answer.parameters = gson.toJson(ansParam);
                     break;
                 }
