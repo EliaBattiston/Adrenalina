@@ -751,7 +751,7 @@ public class ActionLambdaMap {
 
         for(Point p : possible)
         {
-            if(!map.getCell(p).hasItems())
+            if(!map.getCell(p).hasItems(pl))
             {
                 destinations.remove(p);
             }
@@ -916,6 +916,14 @@ public class ActionLambdaMap {
             if(chosen != null)
             {
                 chosen.setLoaded(true);
+
+                //Pay the price
+                cost.clear();
+                cost.add(chosen.getColor());
+                if(chosen.getBase().getCost() != null)
+                    cost.addAll(chosen.getBase().getCost());
+                pl.applyEffects(EffectsLambda.payAmmo(cost));
+
                 unloaded.remove(chosen);
             }
 

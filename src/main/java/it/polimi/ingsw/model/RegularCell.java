@@ -60,9 +60,10 @@ public class RegularCell extends Cell {
 
     /**
      * The function tells whether it is worth to move in this cell for picking up items
+     * @param pl Player who would like to pick an item
      * @return True if the cell has items, false otherwise
      */
-    public boolean hasItems(){
+    public boolean hasItems(Player pl){
         return this.loot == null;
     }
 

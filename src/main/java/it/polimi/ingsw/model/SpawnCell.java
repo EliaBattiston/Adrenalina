@@ -87,10 +87,29 @@ public class SpawnCell extends Cell{
 
     /**
      * The function tells whether it is worth to move in this cell for picking up items
+     * @param pl Player who would like to pick an item
      * @return True if the cell has items, false otherwise
      */
-    public boolean hasItems(){
-        return true;
+    public boolean hasItems(Player pl){
+        List<Weapon> available = getWeapons();
+        List<Weapon> purchasable = new ArrayList<>(available);
+        List<Color> cost = new ArrayList<>();
+
+        for (Weapon w : available)
+        {
+            cost.clear();
+            if(w.getBase().getCost() != null)
+                cost.addAll(w.getBase().getCost());
+
+            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
+                || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
+                || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            {
+                purchasable.remove(w);
+            }
+        }
+
+        return !purchasable.isEmpty();
     }
 
     /**
@@ -101,8 +120,26 @@ public class SpawnCell extends Cell{
      */
     public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
     {
-        //TODO make the player pay the weapon's price
-        Weapon picked = pl.getConn().chooseWeapon(this.getWeapons(), true);
+        List<Weapon> available = getWeapons();
+        List<Weapon> purchasable = new ArrayList<>(available);
+        List<Color> cost = new ArrayList<>();
+
+        for (Weapon w : available)
+        {
+            cost.clear();
+            cost.add(w.getColor());
+            if(w.getBase().getCost() != null)
+                cost.addAll(w.getBase().getCost());
+
+            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
+                    || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
+                    || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            {
+                purchasable.remove(w);
+            }
+        }
+
+        Weapon picked = pl.getConn().chooseWeapon(purchasable, true);
         pickWeapon(picked);
 
         //If the player already has 3 weapons he has to discard one
@@ -124,6 +161,12 @@ public class SpawnCell extends Cell{
                 }
             }));
         }
+
+        //Pay for the weapon's price
+        cost.clear();
+        if(picked.getBase().getCost() != null)
+            cost.addAll(picked.getBase().getCost());
+        pl.applyEffects(EffectsLambda.payAmmo(cost));
 
         //Give the new weapon to the player
         pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {

@@ -78,9 +78,10 @@ public abstract class Cell {
 
     /**
      * The function tells whether it is worth to move in this cell for picking up items
+     * @param pl Player who would like to pick an item
      * @return True if the cell has items, false otherwise
      */
-    public abstract boolean hasItems();
+    public abstract boolean hasItems(Player pl);
 
     /**
      * Executes the acquisition of an item from the cell
