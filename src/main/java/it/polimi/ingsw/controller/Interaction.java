@@ -19,5 +19,6 @@ public enum Interaction {
     DISCARDWEAPON,
     CHOOSEMAP,
     CHOOSEFRENZY,
-    CHOOSEPOWER
+    CHOOSEPOWER,
+    UPDATEVIEW
 }

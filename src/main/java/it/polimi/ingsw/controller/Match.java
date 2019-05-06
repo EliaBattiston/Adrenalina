@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.WrongPointException;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.MatchView;
 
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -28,7 +29,7 @@ public class Match implements Runnable
     private int actionsNumber;
 
     /**
-     * True if the game is in frenzy mode
+     * Phase of the game
      */
     private GamePhase phase;
 
@@ -547,5 +548,9 @@ public class Match implements Runnable
                     maxPoints = 1;
             }
         }
+    }
+
+    public MatchView getMatchView(Player viewer){
+        return new MatchView(game.getGameView(viewer), active, viewer, actionsNumber, phase, useFrenzy, firstFrenzy);
     }
 }

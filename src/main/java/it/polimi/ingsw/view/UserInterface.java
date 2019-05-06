@@ -7,6 +7,12 @@ import java.util.List;
 public interface UserInterface
 {
     /**
+     * Update the actual gameView to the client
+     * @param gameView current game view
+     */
+    public void updateGame(GameView gameView);
+
+    /**
      * Asks the user to choose between a set of actions he can use
      * @param available List of available actions
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null

@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.GameView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,9 +34,16 @@ public class SocketClient implements Client {
         }
 
         while(true)
-        {
             receive();
-        }
+    }
+
+    /**
+     * Receive the actual gameView to the client
+     * @param gameView current game view
+     */
+    @Override
+    public void updateGame(GameView gameView){
+        ;
     }
 
     /**
@@ -410,12 +418,16 @@ public class SocketClient implements Client {
                     break;
                 }
                 case CHOOSEPOWER: {
-                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {
-                    }.getType());
+                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {}.getType());
                     answer.type = Interaction.CHOOSEPOWER;
                     ArrayList<Power> ansParam = new ArrayList<>();
                     ansParam.add(choosePower(param, message.mustChoose));
                     answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case UPDATEVIEW: {
+                    GameView param = gson.fromJson(message.parameters, GameView.class);
+                    updateGame(param);
                     break;
                 }
                 default:

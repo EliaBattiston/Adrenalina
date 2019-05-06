@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.GameView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,6 +26,19 @@ public class SocketConn implements Connection {
     SocketConn(Socket socket)
     {
         playerSocket = socket;
+    }
+
+    /**
+     * Send the actual gameView to the client
+     * @param gameView current game view
+     */
+    @Override
+    public void updateGame(GameView gameView) {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.UPDATEVIEW;
+        load.parameters = gson.toJson(gameView);
+        send(gson.toJson(load));
     }
 
     /**

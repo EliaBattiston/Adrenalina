@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.GameView;
 
 import java.io.Serializable;
 import java.net.NetworkInterface;
@@ -32,6 +33,15 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
         catch(AlreadyBoundException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
         }
+    }
+
+    /**
+     * Receive the actual gameView to the client
+     * @param gameView current game view
+     */
+    @Override
+    public void updateGame(GameView gameView){
+        ;
     }
 
     /**
