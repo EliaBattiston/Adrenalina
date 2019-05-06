@@ -1,7 +1,10 @@
 package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The class represents a spawning cell
@@ -80,5 +83,122 @@ public class SpawnCell extends Cell{
      */
     public Color getSpawn() {
         return spawn;
+    }
+
+    /**
+     * The function tells whether it is worth to move in this cell for picking up items
+     * @param pl Player who would like to pick an item
+     * @return True if the cell has items, false otherwise
+     */
+    public boolean hasItems(Player pl){
+        List<Weapon> available = getWeapons();
+        List<Weapon> purchasable = new ArrayList<>(available);
+        List<Color> cost = new ArrayList<>();
+
+        for (Weapon w : available)
+        {
+            cost.clear();
+            if(w.getBase().getCost() != null)
+                cost.addAll(w.getBase().getCost());
+
+            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
+                || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
+                || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            {
+                purchasable.remove(w);
+            }
+        }
+
+        return !purchasable.isEmpty();
+    }
+
+    /**
+     * Executes the acquisition of an item from the cell
+     * @param pl Player who picks
+     * @param lootDeck Loot cards' deck
+     * @param powersDeck Power cards' deck
+     */
+    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
+    {
+        List<Weapon> available = getWeapons();
+        List<Weapon> purchasable = new ArrayList<>(available);
+        List<Color> cost = new ArrayList<>();
+
+        for (Weapon w : available)
+        {
+            cost.clear();
+            cost.add(w.getColor());
+            if(w.getBase().getCost() != null)
+                cost.addAll(w.getBase().getCost());
+
+            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
+                    || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
+                    || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            {
+                purchasable.remove(w);
+            }
+        }
+
+        Weapon picked = pl.getConn().chooseWeapon(purchasable, true);
+        pickWeapon(picked);
+
+        //If the player already has 3 weapons he has to discard one
+        if(pl.getWeapons().size() >= 3)
+        {
+            Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
+
+            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                int pos = Arrays.asList(weapons).indexOf(discard);
+                if(pos>-1 && pos<=3)
+                {
+                    weapons[pos].setLoaded(false);
+                    refillWeapon(weapons[pos]);
+                    weapons[pos] = null;
+                }
+                else
+                {
+                    Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player's hand", pl);
+                }
+            }));
+        }
+
+        //Pay for the weapon's price
+        cost.clear();
+        if(picked.getBase().getCost() != null)
+            cost.addAll(picked.getBase().getCost());
+        pl.applyEffects(EffectsLambda.payAmmo(cost));
+
+        //Give the new weapon to the player
+        pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+            int pos;
+            for(pos=0; pos<3 && weapons[pos] != null; pos++)
+                ;
+            if(pos<=3 && weapons[pos] == null)
+            {
+                weapons[pos] = picked;
+            }
+            else
+            {
+                Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player's hand", pl);
+            }
+        }));
+    }
+
+    /**
+     * Refill the cell's items if needed
+     * @param game Game which contains needed decks
+     */
+    public void refill(Game game){
+        while (getWeapons().size() < 3)
+            refillWeapon(game.getWeaponsDeck().draw());
+    }
+
+    /**
+     * Tells if the cell has a spawn point of color c
+     * @param c Desired spawn color
+     * @return True if the cell has the desired spawn point
+     */
+    public boolean hasSpawn(Color c){
+        return getSpawn() == c;
     }
 }

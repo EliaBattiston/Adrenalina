@@ -33,6 +33,11 @@ public class Match implements Runnable
     private GamePhase phase;
 
     /**
+     * True if there will be a frenzy turn at the end of the game
+     */
+    private boolean useFrenzy;
+
+    /**
      * The first player to play his turn in frenzy mode
      */
     private Player firstFrenzy;
@@ -48,20 +53,30 @@ public class Match implements Runnable
     private Activities activities;
 
     /**
+     * Number of skulls
+     */
+    private int skullsNum;
+
+    /**
      * Creates a new empty match
      * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
      */
     public Match(int skullsNum) throws FileNotFoundException
     {
-        initialize(skullsNum);
-
         this.activities = Activities.getInstance();
         this.active = null;
         this.actionsNumber = 0;
         this.phase = GamePhase.REGULAR;
         this.firstFrenzy = null;
         this.frenzyKills = new ArrayList<>();
+        this.skullsNum = skullsNum;
+
+        game = Game.jsonDeserialize("resources/baseGame.json");
+        game.getPowersDeck().shuffle();
+        game.getWeaponsDeck().shuffle();
+        game.getAmmoDeck().shuffle();
+        game.initializeSkullsBoard(skullsNum);
     }
 
     /**
@@ -71,14 +86,10 @@ public class Match implements Runnable
      */
     private void initialize(int skullsNum) throws FileNotFoundException
     {
-        game = Game.jsonDeserialize("resources/baseGame.json");
-        game.getPowersDeck().shuffle();
-        game.getWeaponsDeck().shuffle();
-        game.getAmmoDeck().shuffle();
-        game.initializeSkullsBoard(skullsNum);
+        //Ask the user which maps he wants to use and if he wants to use frenzy mode
+        game.loadMap(game.getPlayers().get(0).getConn().chooseMap());
+        useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
 
-        //TODO let the user choose (make an interaction)
-        game.loadMap("resources/map1.json");
         refillMap();
     }
 
@@ -96,6 +107,17 @@ public class Match implements Runnable
      */
     public void run()
     {
+        int turnNum = 0;
+
+        try
+        {
+            initialize(skullsNum);
+        }
+        catch(FileNotFoundException e)
+        {
+            ;
+        }
+
         //Defining needed variables
         List<Action> availableActions; //Actions the user can currently do
         List<Action> feasible = new ArrayList<>();
@@ -182,6 +204,9 @@ public class Match implements Runnable
             {
                 endGame();
             }
+
+            System.out.println("Fine turno " + turnNum);
+            turnNum++;
         }
     }
 
@@ -242,8 +267,7 @@ public class Match implements Runnable
         {
             for(int y = 0; y < 3 && !found; y++)
             {
-                //TODO avoid instanceof statements
-                if(game.getMap().getCell(x, y) instanceof  SpawnCell && ((SpawnCell) game.getMap().getCell(x, y)).getSpawn() == spawnColor)
+                if(game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor))
                 {
                     spawnX = x;
                     spawnY = y;
@@ -275,19 +299,7 @@ public class Match implements Runnable
                 //Don't check if the cell is unused
                 selectedCell = game.getMap().getCell(x, y);
                 if(selectedCell != null)
-                {
-                    //TODO avoid instanceof statements
-                    if (selectedCell instanceof RegularCell && ((RegularCell) selectedCell).getLoot() == null)
-                    {
-                        ((RegularCell) selectedCell).refillLoot(game.getAmmoDeck().draw());
-                    } else if (selectedCell instanceof SpawnCell)
-                    {
-                        while (((SpawnCell) selectedCell).getWeapons().size() < 3)
-                        {
-                            ((SpawnCell) selectedCell).refillWeapon(game.getWeaponsDeck().draw());
-                        }
-                    }
-                }
+                    selectedCell.refill(game);
             }
         }
     }
@@ -386,7 +398,10 @@ public class Match implements Runnable
             //Check if it's time for frenzy mode
             if(nextSkull == 0)
             {
-                phase = GamePhase.FRENZY;
+                if(useFrenzy)
+                    phase = GamePhase.FRENZY;
+                else
+                    phase = GamePhase.ENDED;
             }
         }
         else

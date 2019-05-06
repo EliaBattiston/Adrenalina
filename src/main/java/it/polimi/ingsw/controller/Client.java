@@ -147,4 +147,27 @@ public interface Client extends Remote
      * @throws RemoteException If something goes wrong with the connection
      */
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) throws RemoteException;
+
+    /**
+     * Asks the user to choose which map he wants to use
+     * @return Number of the chosen map
+     * @throws RemoteException If something goes wrong with the connection
+     */
+    public Integer chooseMap() throws RemoteException;
+
+    /**
+     * Asks the user about the Frenzy mode for the starting match
+     * @return True for final Frenzy mode, false elsewhere
+     * @throws RemoteException If something goes wrong with the connection
+     */
+    public Boolean chooseFrenzy() throws RemoteException;
+
+    /**
+     * Asks the user to choose a power to use
+     * @param inHand List of powers in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen power
+     * @throws RemoteException If something goes wrong with the connection
+     */
+    public Power choosePower(List<Power> inHand, boolean mustChoose) throws RemoteException;
 }

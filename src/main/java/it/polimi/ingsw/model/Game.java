@@ -165,11 +165,11 @@ public class Game {
 
     /**
      * Load the map from a file
-     * @param pathJsonFile path to the json file
+     * @param mapID number of the json file
      * @throws FileNotFoundException if the file is not found
      */
-    public void loadMap(String pathJsonFile) throws FileNotFoundException{
-        this.map = Map.jsonDeserialize(pathJsonFile);
+    public void loadMap(int mapID) throws FileNotFoundException{
+        this.map = Map.jsonDeserialize(mapID);
     }
 
     /**

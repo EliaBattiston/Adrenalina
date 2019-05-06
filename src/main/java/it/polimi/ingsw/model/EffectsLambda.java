@@ -2,7 +2,9 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,5 +84,30 @@ public class EffectsLambda {
                 actualMarks++;
             }
         };
+    }
+
+    /**
+     * Remove power card from the player's hand
+     * @param toRemove Card to remove
+     * @param powersDeck Deck to scrap the card to
+     * @return Desired lambda function
+     */
+    public static PlayerLambda removePower(Power toRemove, EndlessDeck<Power> powersDeck)
+    {
+        return ((damage, marks, position, weapons, powers, ammo) -> {
+            int index = Arrays.asList(powers).indexOf(toRemove);
+            powersDeck.scrapCard(powers[index]);
+
+            powers[index] = null;
+        });
+    }
+
+    public static PlayerLambda payAmmo(List<Color> cost)
+    {
+        return ((damage, marks, position, weapons, powers, ammo) -> {
+            ammo.useRed( (int)cost.stream().filter(c -> c == Color.RED).count() );
+            ammo.useBlue( (int)cost.stream().filter(c -> c == Color.BLUE).count() );
+            ammo.useYellow( (int)cost.stream().filter(c -> c == Color.YELLOW).count() );
+        });
     }
 }

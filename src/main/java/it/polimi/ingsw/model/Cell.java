@@ -75,4 +75,33 @@ public abstract class Cell {
             pawns.remove(pl);
         }
     }
+
+    /**
+     * The function tells whether it is worth to move in this cell for picking up items
+     * @param pl Player who would like to pick an item
+     * @return True if the cell has items, false otherwise
+     */
+    public abstract boolean hasItems(Player pl);
+
+    /**
+     * Executes the acquisition of an item from the cell
+     * @param pl Player who picks
+     * @param lootDeck Loot cards' deck
+     * @param powersDeck Power cards' deck
+     */
+    public abstract void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck);
+
+    /**
+     * Refill the cell's items if needed
+     * @param game Game which contains needed decks
+     */
+    public abstract void refill(Game game);
+
+    /**
+     * Tells if the cell has a spawn point of color c
+     * @param c Desired spawn color
+     * @return True if the cell has the desired spawn point
+     */
+    public abstract boolean hasSpawn(Color c);
+
 }

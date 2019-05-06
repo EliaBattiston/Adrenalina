@@ -375,9 +375,9 @@ public class FeasibleLambdaMap
         data.put("p4", (pl, map, memory)-> true);
 
         //Activities lambdas
-        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> power.getId() == 6 || power.getId() == 8));
+        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> (power.getId() == 6 || power.getId() == 8) && power.getBase().isFeasible(pl, map, null) ));
 
-        data.put("a-b1", (pl, map, memory)-> true );
+        data.put("a-b1", (pl, map, memory)-> true);
 
         data.put("a-b2", (pl, map, memory)->  true);
 

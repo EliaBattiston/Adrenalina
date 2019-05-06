@@ -45,7 +45,7 @@ public class JsonTest {
 
         try {
             Game g = Game.jsonDeserialize(baseGame);
-            g.loadMap(map1);
+            g.loadMap(1);
             g.initializeSkullsBoard(6);
 
             g.getAmmoDeck().draw();

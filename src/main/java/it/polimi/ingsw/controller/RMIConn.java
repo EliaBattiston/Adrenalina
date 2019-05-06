@@ -273,4 +273,48 @@ public class RMIConn implements Connection
             return null;
         }
     }
+
+    /**
+     * Asks the user to choose which map he wants to use
+     * @return Number of the chosen map
+     */
+    public Integer chooseMap() {
+        try {
+            return client.chooseMap();
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+    }
+
+    /**
+     * Asks the user about the Frenzy mode for the starting match
+     * @return True for final Frenzy mode, false elsewhere
+     */
+    public Boolean chooseFrenzy() {
+        try {
+            return client.chooseFrenzy();
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+    }
+
+    /**
+     * Asks the user to choose a power to use
+     * @param inHand List of powers in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen power
+     */
+    public Power choosePower(List<Power> inHand, boolean mustChoose) {
+        try {
+            return client.choosePower(inHand, mustChoose);
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            return null;
+        }
+    }
 }

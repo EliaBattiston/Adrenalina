@@ -129,4 +129,24 @@ public interface Connection extends Remote
      * @return Chosen weapon
      */
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose);
+
+    /**
+     * Asks the user to choose which map he wants to use
+     * @return Number of the chosen map
+     */
+    public Integer chooseMap();
+
+    /**
+     * Asks the user about the Frenzy mode for the starting match
+     * @return True for final Frenzy mode, false elsewhere
+     */
+    public Boolean chooseFrenzy();
+
+    /**
+     * Asks the user to choose a power to use
+     * @param inHand List of powers in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen power
+     */
+    public Power choosePower(List<Power> inHand, boolean mustChoose);
 }

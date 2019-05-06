@@ -313,6 +313,52 @@ public class SocketConn implements Connection {
         return ansParam.get(0);
     }
 
+    /**
+     * Asks the user to choose which map he wants to use
+     * @return Number of the chosen map
+     */
+    public Integer chooseMap() {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.CHOOSEMAP;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<Integer> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Integer>>(){}.getType());
+        return ansParam.get(0);
+    }
+
+    /**
+     * Asks the user about the Frenzy mode for the starting match
+     * @return True for final Frenzy mode, false elsewhere
+     */
+    public Boolean chooseFrenzy() {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.CHOOSEFRENZY;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<Boolean> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Boolean>>(){}.getType());
+        return ansParam.get(0);
+    }
+
+    /**
+     * Asks the user to choose a power to use
+     * @param inHand List of powers in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen power
+     */
+    public Power choosePower(List<Power> inHand, boolean mustChoose) {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.CHOOSEPOWER;
+        load.parameters = gson.toJson(inHand);
+        load.mustChoose = mustChoose;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<Power> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Power>>(){}.getType());
+        return ansParam.get(0);
+    }
+
 
 
     /**

@@ -31,6 +31,11 @@ public class SocketClient implements Client {
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
         }
+
+        while(true)
+        {
+            receive();
+        }
     }
 
     /**
@@ -149,19 +154,47 @@ public class SocketClient implements Client {
      * Asks the user for the nickname
      * @return user's nickname
      */
-    public String getNickname() {return "pippo"; }
+    public String getNickname() {
+        Scanner stdin = new Scanner(System.in);
+        String nick;
+
+        System.out.print("Il tuo nickname: ");
+        nick = stdin.nextLine();
+        return nick;
+    }
 
     /**
      * Asks the user for the effect phrase
      * @return user's effect phrase
      */
-    public String getPhrase() {return "Yodellah-iihh-oohh!"; }
+    public String getPhrase() {
+        Scanner stdin = new Scanner(System.in);
+
+        System.out.print("La tua esclamazione: ");
+        return stdin.nextLine();
+    }
 
     /**
      * Asks the user fot the fighter
      * @return user's fighter
      */
-    public Fighter getFighter() {return Fighter.DSTRUTTOR3; }
+    public Fighter getFighter() {
+        System.out.println("[1] Dstruttor3");
+        System.out.println("[2] Banshee");
+        System.out.println("[3] Dozer");
+        System.out.println("[4] Violetta");
+        System.out.println("[5] Sprog");
+
+        Scanner stdin = new Scanner(System.in);
+        int chosen = 0;
+        while(chosen < 1 || chosen > 5)
+        {
+            System.out.println("Scegli il tuo personaggio (1-5): ");
+            chosen = stdin.nextInt();
+        }
+
+        return Fighter.values()[chosen-1];
+    }
 
     /**
      * Asks the user how many skulls he wants in the play
@@ -169,7 +202,31 @@ public class SocketClient implements Client {
      */
     public Integer getSkullNum() { return 5; }
 
+    /**
+     * Asks the user to choose which map he wants to use
+     * @return Number of the chosen map
+     */
+    public Integer chooseMap() {
+        return 1;
+    }
 
+    /**
+     * Asks the user about the Frenzy mode for the starting match
+     * @return True for final Frenzy mode, false elsewhere
+     */
+    public Boolean chooseFrenzy() {
+        return true;
+    }
+
+    /**
+     * Asks the user to choose a power to use
+     * @param inHand List of powers in hand
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Chosen power
+     */
+    public Power choosePower(List<Power> inHand, boolean mustChoose) {
+        return inHand.get(0);
+    }
 
 
     /**
@@ -335,6 +392,29 @@ public class SocketClient implements Client {
                     answer.type = Interaction.DISCARDWEAPON;
                     ArrayList<Weapon> ansParam = new ArrayList<>();
                     ansParam.add(discardWeapon(param, message.mustChoose));
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case CHOOSEMAP: {
+                    answer.type = Interaction.CHOOSEMAP;
+                    ArrayList<Integer> ansParam = new ArrayList<>();
+                    ansParam.add(chooseMap());
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case CHOOSEFRENZY: {
+                    answer.type = Interaction.CHOOSEFRENZY;
+                    ArrayList<Boolean> ansParam = new ArrayList<>();
+                    ansParam.add(chooseFrenzy());
+                    answer.parameters = gson.toJson(ansParam);
+                    break;
+                }
+                case CHOOSEPOWER: {
+                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {
+                    }.getType());
+                    answer.type = Interaction.CHOOSEPOWER;
+                    ArrayList<Power> ansParam = new ArrayList<>();
+                    ansParam.add(choosePower(param, message.mustChoose));
                     answer.parameters = gson.toJson(ansParam);
                     break;
                 }

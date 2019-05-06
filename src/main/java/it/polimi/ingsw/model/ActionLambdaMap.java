@@ -649,10 +649,20 @@ public class ActionLambdaMap {
 
     //Activities lambdas
         data.put("a-p", (pl, map, memory)->{
-            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).collect(Collectors.toList());
+            Power chosen;
+
+            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
             if(!inHand.isEmpty())
             {
-                //TODO add choosepower interaction
+                chosen = pl.getConn().choosePower(inHand, false);
+                while (!inHand.isEmpty() && chosen != null)
+                {
+                    chosen.getBase().execute(pl, map, null);
+                    pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
+
+                    inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+                    chosen = pl.getConn().choosePower(inHand, false);
+                }
             }
         });
 
@@ -741,7 +751,7 @@ public class ActionLambdaMap {
 
         for(Point p : possible)
         {
-            if(map.getCell(p) instanceof RegularCell && ((RegularCell) map.getCell(p)).getLoot() == null)
+            if(!map.getCell(p).hasItems(pl))
             {
                 destinations.remove(p);
             }
@@ -799,90 +809,7 @@ public class ActionLambdaMap {
     private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
     {
         Cell current = map.getCell(pl.getPosition());
-        //Ask something only if the player is in a spawn cell
-        if(current instanceof SpawnCell)
-        {
-            Weapon picked = pl.getConn().chooseWeapon(((SpawnCell) current).getWeapons(), true);
-            ((SpawnCell)current).pickWeapon(picked);
-
-            //If the player already has 3 weapons he has to discard one
-            if(pl.getWeapons().size() >= 3)
-            {
-                Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
-
-                pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                    int pos = Arrays.asList(weapons).indexOf(discard);
-                    if(pos>-1 && pos<=3)
-                    {
-                        weapons[pos].setLoaded(false);
-                        ((SpawnCell)current).refillWeapon(weapons[pos]);
-                        weapons[pos] = null;
-                    }
-                    else
-                    {
-                        Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player's hand", pl);
-                    }
-                }));
-            }
-
-            //Give the new weapon to the player
-            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                int pos;
-                for(pos=0; pos<3 && weapons[pos] != null; pos++)
-                    ;
-                if(pos<=3 && weapons[pos] == null)
-                {
-                    weapons[pos] = picked;
-                }
-                else
-                {
-                    Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player's hand", pl);
-                }
-            }));
-        }
-        else if(current instanceof RegularCell)
-        {
-            Loot picked = ((RegularCell) current).pickLoot();
-
-            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                for(Color c : picked.getContent())
-                {
-                    if(c == Color.POWER)
-                    {
-                        Power newPower = powersDeck.draw();
-                        Power discarded = null;
-
-                        if(Arrays.stream(powers).noneMatch(Objects::isNull))
-                        {
-                            List<Power> inHand = new ArrayList<>(Arrays.asList(powers));
-                            inHand.add(newPower);
-                            discarded = pl.getConn().discardPower(inHand, true);
-
-                            if(discarded == newPower)
-                                discarded = null;
-                            else
-                                powersDeck.scrapCard(discarded);
-                        }
-
-                        int empty = Arrays.asList(powers).indexOf(discarded);
-
-                        if(empty != -1)
-                            powers[empty] = newPower;
-                        else{
-                            Logger.getGlobal().log(Level.WARNING, "Scrapped new card");
-                            powersDeck.scrapCard(newPower);
-                        }
-                    }
-                    else
-                        ammo.add(c, 1);
-                }
-            }));
-            lootDeck.scrapCard(picked);
-        }
-        else
-        {
-            Logger.getGlobal().log(Level.SEVERE, "Unkown type of Cell", current);
-        }
+        current.pickItem(pl, lootDeck, powersDeck);
     }
 
     /**
@@ -989,6 +916,14 @@ public class ActionLambdaMap {
             if(chosen != null)
             {
                 chosen.setLoaded(true);
+
+                //Pay the price
+                cost.clear();
+                cost.add(chosen.getColor());
+                if(chosen.getBase().getCost() != null)
+                    cost.addAll(chosen.getBase().getCost());
+                pl.applyEffects(EffectsLambda.payAmmo(cost));
+
                 unloaded.remove(chosen);
             }
 
