@@ -110,6 +110,8 @@ public class SMain
             Player player = null;
             String nickname;
             do {
+                acceptedNick = true;
+
                 nickname = connection.getNickname();
                 for (Match m : matches) {
                     for (Player p : m.getGame().getPlayers()) {
@@ -121,14 +123,33 @@ public class SMain
                         }
                     }
                 }
-            }
-            while (!acceptedNick);
+
+                for (int i=0; i < waiting.length; i++) {
+                    if(waiting[i] != null)
+                    {
+                        for (Player p : waiting[i].getGame().getPlayers())
+                        {
+                            if (p.getNick().equals(nickname))
+                            {
+                                acceptedNick = false;
+                            }
+                        }
+                    }
+                }
+            } while (!acceptedNick);
+
             if (player != null) {
                 player.setConn(connection);
+
+                System.out.println("Il giocatore " + player.getNick() + " si è riconnesso.");
             } else {
                 String phrase = connection.getPhrase();
                 Fighter fighter = connection.getFighter();
                 player = new Player(nickname, phrase, fighter);
+                player.setConn(connection);
+
+                System.out.println("Il giocatore " + player.getNick() + " si è connesso.");
+
                 int skulls = connection.getSkullNum();
 
                 int index = skulls - MINSKULLS;
@@ -194,11 +215,12 @@ public class SMain
     }
 
     private void matchTimer(int skulls) {
+        //TODO make configuration file to set waiting time
         timer[skulls - MINSKULLS].schedule(new TimerTask() {
             @Override
             public void run() {
                 startMatch(skulls);
             }
-        }, 2*60*1000);
+        }, 60*1000);
     }
 }

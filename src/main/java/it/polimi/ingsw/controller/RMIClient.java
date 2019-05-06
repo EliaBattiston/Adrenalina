@@ -3,10 +3,13 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 
 import java.io.Serializable;
+import java.net.NetworkInterface;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,12 +17,12 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
 {
     Registry registry;
 
-    public RMIClient(String host, String username) throws RemoteException
+    public RMIClient(String host) throws RemoteException
     {
         try {
             registry = LocateRegistry.getRegistry(host);
             RMIConnHandler RMIServer = (RMIConnHandler) registry.lookup("AM06");
-            String bindName = "AM06-" + username;
+            String bindName = "AM06-" + new Random().nextInt();
             registry.bind(bindName, this);
             RMIServer.newConnection(bindName);
         }
@@ -137,19 +140,45 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * Asks the user for the nickname
      * @return user's nickname
      */
-    public String getNickname() {return "pippo"; }
+    public String getNickname() {
+        Scanner stdin = new Scanner(System.in);
+
+        System.out.print("Il tuo nickname: ");
+        return stdin.nextLine();
+    }
 
     /**
      * Asks the user for the effect phrase
      * @return user's effect phrase
      */
-    public String getPhrase() {return "Yodellah-iihh-oohh!"; }
+    public String getPhrase() {
+        Scanner stdin = new Scanner(System.in);
+
+        System.out.print("La tua esclamazione: ");
+        return stdin.nextLine();
+    }
 
     /**
      * Asks the user fot the fighter
      * @return user's fighter
      */
-    public Fighter getFighter() {return Fighter.DSTRUTTOR3; }
+    public Fighter getFighter() {
+        System.out.println("[1] Dstruttor3");
+        System.out.println("[2] Banshee");
+        System.out.println("[3] Dozer");
+        System.out.println("[4] Violetta");
+        System.out.println("[5] Sprog");
+
+        Scanner stdin = new Scanner(System.in);
+        int chosen = 0;
+        while(chosen < 1 || chosen > 5)
+        {
+            System.out.println("Scegli il tuo personaggio (1-5): ");
+            chosen = stdin.nextInt();
+        }
+
+        return Fighter.values()[chosen-1];
+    }
 
     /**
      * Asks the user how many skulls he wants in the play

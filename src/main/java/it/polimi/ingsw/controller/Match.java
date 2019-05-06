@@ -53,20 +53,30 @@ public class Match implements Runnable
     private Activities activities;
 
     /**
+     * Number of skulls
+     */
+    private int skullsNum;
+
+    /**
      * Creates a new empty match
      * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
      */
     public Match(int skullsNum) throws FileNotFoundException
     {
-        initialize(skullsNum);
-
         this.activities = Activities.getInstance();
         this.active = null;
         this.actionsNumber = 0;
         this.phase = GamePhase.REGULAR;
         this.firstFrenzy = null;
         this.frenzyKills = new ArrayList<>();
+        this.skullsNum = skullsNum;
+
+        game = Game.jsonDeserialize("resources/baseGame.json");
+        game.getPowersDeck().shuffle();
+        game.getWeaponsDeck().shuffle();
+        game.getAmmoDeck().shuffle();
+        game.initializeSkullsBoard(skullsNum);
     }
 
     /**
@@ -76,12 +86,6 @@ public class Match implements Runnable
      */
     private void initialize(int skullsNum) throws FileNotFoundException
     {
-        game = Game.jsonDeserialize("resources/baseGame.json");
-        game.getPowersDeck().shuffle();
-        game.getWeaponsDeck().shuffle();
-        game.getAmmoDeck().shuffle();
-        game.initializeSkullsBoard(skullsNum);
-
         //Ask the user which maps he wants to use and if he wants to use frenzy mode
         game.loadMap(game.getPlayers().get(0).getConn().chooseMap());
         useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
@@ -103,6 +107,17 @@ public class Match implements Runnable
      */
     public void run()
     {
+        int turnNum = 0;
+
+        try
+        {
+            initialize(skullsNum);
+        }
+        catch(FileNotFoundException e)
+        {
+            ;
+        }
+
         //Defining needed variables
         List<Action> availableActions; //Actions the user can currently do
         List<Action> feasible = new ArrayList<>();
@@ -189,6 +204,9 @@ public class Match implements Runnable
             {
                 endGame();
             }
+
+            System.out.println("Fine turno " + turnNum);
+            turnNum++;
         }
     }
 
