@@ -127,7 +127,6 @@ public class SpawnCell extends Cell{
         for (Weapon w : available)
         {
             cost.clear();
-            cost.add(w.getColor());
             if(w.getBase().getCost() != null)
                 cost.addAll(w.getBase().getCost());
 

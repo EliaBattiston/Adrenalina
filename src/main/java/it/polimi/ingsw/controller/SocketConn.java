@@ -75,6 +75,9 @@ public class SocketConn implements Connection {
      */
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose)
     {
+        if(available.size() == 0)
+            System.out.println("ooops");
+
         Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEWEAPON;

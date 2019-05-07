@@ -99,7 +99,8 @@ public class FeasibleLambdaMap
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
 
-            visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber()); //FIXME AI throwed IndexOutOfBoundsException
+            //
+            visibleRooms.remove(new Integer(map.getCell(pl.getPosition()).getRoomNumber())); //FIXME AI throwed IndexOutOfBoundsException
 
             return !playersRooms.isEmpty();
         });
