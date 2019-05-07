@@ -19,6 +19,8 @@ public class SocketConn implements Connection {
      */
     private Socket playerSocket;
 
+    private static Gson gson = new Gson();
+
     /**
      * Open socket reference to the player
      * @param socket Player's socket
@@ -57,7 +59,12 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Action> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Action>>(){}.getType());
-        return ansParam.get(0);
+
+        String lambdaID = ansParam.get(0).getLambdaID();
+        for(Action a : available)
+            if(a.getLambdaID().equals(lambdaID))
+                return a;
+        return null;
     }
 
     /**
@@ -76,7 +83,12 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
-        return ansParam.get(0);
+
+        int id = ansParam.get(0).getId();
+        for(Weapon w : available)
+            if(w.getId() == id)
+                return w;
+        return null;
     }
 
     /**
@@ -95,7 +107,12 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
-        return ansParam.get(0);
+
+        int id = ansParam.get(0).getId();
+        for(Weapon w : grabbable)
+            if(w.getId() == id)
+                return w;
+        return null;
     }
 
     /**
@@ -114,7 +131,36 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
-        return ansParam;
+
+        int id = ansParam.get(0).getId();
+        for(Weapon w : reloadable)
+            if(w.getId() == id)
+                return null; //TODO change to w after merge with fixed "reload"
+        return null;
+    }
+
+    /**
+     * Asks the user which enemy he wants to target with an effect between a list of possible enemies
+     * @param targets List of player that can be targeted
+     * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
+     * @return Chosen target
+     */
+    public Player chooseTarget(List<Player> targets, boolean mustChoose)
+    {
+        Gson gson = new Gson();
+        Payload load = new Payload();
+        load.type = Interaction.CHOOSETARGET;
+        load.parameters = gson.toJson(targets);
+        load.mustChoose = mustChoose;
+        send(gson.toJson(load));
+        Payload answer = jsonDeserialize(receive());
+        List<Player> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Player>>(){}.getType());
+
+        String nickChosen = ansParam.get(0).getNick();
+        for(Player p : targets)
+            if(p.getNick().equals(nickChosen))
+                return p;
+        return null;
     }
 
     /**
@@ -134,25 +180,7 @@ public class SocketConn implements Connection {
         Payload answer = jsonDeserialize(receive());
         List<Point> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Point>>(){}.getType());
         return ansParam.get(0);
-    }
-
-    /**
-     * Asks the user which enemy he wants to target with an effect between a list of possible enemies
-     * @param targets List of player that can be targeted
-     * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
-     * @return Chosen target
-     */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose)
-    {
-        Gson gson = new Gson();
-        Payload load = new Payload();
-        load.type = Interaction.CHOOSETARGET;
-        load.parameters = gson.toJson(targets);
-        load.mustChoose = mustChoose;
-        send(gson.toJson(load));
-        Payload answer = jsonDeserialize(receive());
-        List<Player> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Player>>(){}.getType());
-        return ansParam.get(0);
+        //TODO check it really doesn't need to return the same reference as one of the input ones
     }
 
     /**
@@ -175,6 +203,7 @@ public class SocketConn implements Connection {
         Payload answer = jsonDeserialize(receive());
         List<Point> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Point>>(){}.getType());
         return ansParam.get(0);
+        //TODO (same as movePlayer) check it really doesn't need to return the same reference as one of the input ones
     }
 
     /**
@@ -193,7 +222,9 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Power> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Power>>(){}.getType());
-        return ansParam.get(0);
+
+        int id = ansParam.get(0).getId();
+        return powers.stream().filter(p->p.getId()==id).findFirst().get();
     }
 
     /**
@@ -212,7 +243,8 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Integer> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Integer>>(){}.getType());
-        return ansParam.get(0);
+
+        return rooms.stream().filter( r -> r.equals(ansParam.get(0))).findFirst().get();
     }
 
     /**
@@ -295,12 +327,13 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
-        return ansParam.get(0);
+
+        return inHand.stream().filter(w -> w.getId() == ansParam.get(0).getId()).findFirst().get();
     }
 
 
     /**
-     * Asks the user fot the fighter
+     * Asks the user for the fighter
      * @return user's fighter
      */
     public Fighter getFighter() {
@@ -370,7 +403,8 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Power> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Power>>(){}.getType());
-        return ansParam.get(0);
+
+        return inHand.stream().filter(p -> p.getId() == ansParam.get(0).getId()).findFirst().get();
     }
 
 
@@ -419,7 +453,6 @@ public class SocketConn implements Connection {
      */
     public static Payload jsonDeserialize(String response)
     {
-        Gson gson = new Gson();
         return gson.fromJson(response, Payload.class);
     }
 

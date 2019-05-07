@@ -40,6 +40,7 @@ public class ActionLambdaMap {
             Player chosen2 = null;
             if(!targets.isEmpty())
                 chosen2 = pl.getConn().chooseTarget(targets, false);
+
             chosen1.applyEffects(EffectsLambda.damage(1, pl));
             if(chosen2 != null)
                 chosen2.applyEffects(EffectsLambda.damage(1, pl));
@@ -319,7 +320,7 @@ public class ActionLambdaMap {
         //Dai 1 danno aggiuntivo a uno dei due bersagli.
         data.put("w2-ad1", (pl, map, memory)-> ((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl)));
 
-        //((Player[])memory)[0]
+        //((Player[])memory)[1]
         data.put("w2-ad2", (pl, map, memory)->{
             //Dai 1 danno aggiuntivo all'altro dei bersagli e/o dai 1 danno a un bersaglio differente che puoi vedere.
 

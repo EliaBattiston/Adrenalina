@@ -99,7 +99,7 @@ public class FeasibleLambdaMap
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
 
-            visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber());
+            visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber()); //FIXME AI throwed IndexOutOfBoundsException
 
             return !playersRooms.isEmpty();
         });
@@ -208,7 +208,7 @@ public class FeasibleLambdaMap
 
         //((Player[])memory)[0]
         //Dai 1 danno aggiuntivo all'altro dei bersagli e/o dai 1 danno a un bersaglio differente che puoi vedere.
-        data.put("w2-ad2", (pl, map, memory)-> memory!=null);
+        data.put("w2-ad2", (pl, map, memory)-> memory!=null && ((Player[])memory)[1]!=null);
 
         //((Player[])memory)[0]
         data.put("w3-ad1", (pl, map, memory)->{
@@ -223,12 +223,14 @@ public class FeasibleLambdaMap
         data.put("w3-ad2", (pl, map, memory)->{
             //Dai 2 danni a un terzo bersaglio che il tuo secondo bersaglio può vedere. Non puoi usare questo effetto se prima non hai usato reazione a catena.
 
-            if(memory != null)
-                if(((Player[])memory).length > 1 && ((Player[])memory)[1] != null) {
+            if(memory != null) {
+                if (((Player[]) memory).length > 1 && ((Player[]) memory)[1] != null) {
                     List<Player> targets = Map.visiblePlayers(((Player[]) memory)[1], map);
                     return !targets.isEmpty();
                 }
-            Logger.getGlobal().log(Level.SEVERE, "Wrong memory");
+                else return false; //if ad1 has not been used
+            }
+            Logger.getGlobal().log(Level.SEVERE, "Wrong memory"); //FIXME some problems with memory
             return false;
         });
 
@@ -435,6 +437,7 @@ public class FeasibleLambdaMap
         return !destinations.isEmpty();
     }
 
+    //TODO elia check that it returns the right values, while testing it with the AI it happared to be a possible loot but it was not
     private static boolean possibleLoot(Player pl, Map map, int steps)
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);

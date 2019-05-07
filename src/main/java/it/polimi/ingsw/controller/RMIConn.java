@@ -126,7 +126,11 @@ public class RMIConn implements Connection
     public Player chooseTarget(List<Player> targets, boolean mustChoose)
     {
         try {
-            return client.chooseTarget(targets, mustChoose);
+            String nickChosen = client.chooseTarget(targets, mustChoose).getNick();
+            for(Player p : targets)
+                if(p.getNick().equals(nickChosen))
+                    return p;
+            return null;
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );

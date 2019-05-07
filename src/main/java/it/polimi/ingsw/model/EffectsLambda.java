@@ -56,15 +56,15 @@ public class EffectsLambda {
             if(map.getCell(position) != null)
             {
                 map.getCell(position).removePawn(pl);
-            }
 
-            try {
-                position.set(newPosition.getX(), newPosition.getY());
-            }catch(WrongPointException ex){
-                LOGGER.log( Level.SEVERE, ex.toString(), ex );
-            }
+                try {
+                    position.set(newPosition);
+                }catch(WrongPointException ex){
+                    LOGGER.log( Level.SEVERE, ex.toString(), ex );
+                }
 
-            map.getCell(newPosition).addPawn(pl);
+                map.getCell(newPosition).addPawn(pl);
+            }
         };
     }
 

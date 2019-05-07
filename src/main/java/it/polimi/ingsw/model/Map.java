@@ -8,10 +8,7 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -342,34 +339,59 @@ public class Map {
     private static List<Point> possibleMovementsSpecificDirection(Point startPoint, int dist, Map map, Direction dir){
         List<Point> visible = new ArrayList<>();
 
-        switch (dir){
-            case NORTH:
-                if(map.getCell(startPoint).getSides()[Direction.NORTH.ordinal()] != Side.WALL)
-                    visible.add(new Point(startPoint.getX(), startPoint.getY()-1));
-                if(map.getCell(startPoint.getX(), startPoint.getY()-1).getSides()[Direction.NORTH.ordinal()] != Side.WALL)
-                    visible.add(new Point(startPoint.getX(), startPoint.getY()-2));
-                break;
-            case EAST:
-                if(map.getCell(startPoint).getSides()[Direction.EAST.ordinal()] != Side.WALL)
-                    visible.add(new Point(startPoint.getX()+1, startPoint.getY()));
-                if(map.getCell(startPoint.getX()+1, startPoint.getY()).getSides()[Direction.EAST.ordinal()] != Side.WALL)
-                    visible.add(new Point(startPoint.getX()+2, startPoint.getY()));
-                break;
-            case SOUTH:
-                if(map.getCell(startPoint).getSides()[Direction.SOUTH.ordinal()] != Side.WALL)
-                    visible.add(new Point(startPoint.getX(), startPoint.getY()+1));
-                if(map.getCell(startPoint.getX(), startPoint.getY()+1).getSides()[Direction.SOUTH.ordinal()] != Side.WALL)
-                    visible.add(new Point(startPoint.getX(), startPoint.getY()+2));
-                break;
-            case WEST:
-                if(map.getCell(startPoint).getSides()[Direction.WEST.ordinal()] != Side.WALL)
-                    visible.add(new Point(startPoint.getX()-1, startPoint.getY()));
-                if(map.getCell(startPoint.getX()-1, startPoint.getY()).getSides()[Direction.WEST.ordinal()] != Side.WALL)
-                    visible.add(new Point(startPoint.getX()-2, startPoint.getY()));
-                break;
-        }
+        if(map.getCell(startPoint) != null) {
+            switch (dir) {
+                case NORTH:
+                    if (map.getCell(startPoint).getSides()[Direction.NORTH.ordinal()] != Side.WALL) {
+                        visible.add(new Point(startPoint.getX(), startPoint.getY() - 1));
 
-        return visible;
+                        if(dist>0){
+                            List toBeAdded = Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() - 1), dist-1, map, dir);
+                            Optional.ofNullable(toBeAdded).ifPresent(visible::addAll);
+                        }
+
+                        return visible;
+                    }
+                    break;
+                case EAST:
+                    if (map.getCell(startPoint).getSides()[Direction.EAST.ordinal()] != Side.WALL) {
+                        visible.add(new Point(startPoint.getX()+1, startPoint.getY()));
+
+                        if(dist>0){
+                            List toBeAdded = Map.possibleMovementsSpecificDirection(new Point(startPoint.getX()+1, startPoint.getY()), dist-1, map, dir);
+                            Optional.ofNullable(toBeAdded).ifPresent(visible::addAll);
+                        }
+
+                        return visible;
+                    }
+                    break;
+                case SOUTH:
+                    if (map.getCell(startPoint).getSides()[Direction.SOUTH.ordinal()] != Side.WALL) {
+                        visible.add(new Point(startPoint.getX(), startPoint.getY() + 1));
+
+                        if(dist>0){
+                            List toBeAdded = Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() + 1), dist-1, map, dir);
+                            Optional.ofNullable(toBeAdded).ifPresent(visible::addAll);
+                        }
+
+                        return visible;
+                    }
+                    break;
+                case WEST:
+                    if (map.getCell(startPoint).getSides()[Direction.WEST.ordinal()] != Side.WALL) {
+                        visible.add(new Point(startPoint.getX() - 1, startPoint.getY()));
+
+                        if(dist>0){
+                            List toBeAdded = Map.possibleMovementsSpecificDirection(new Point(startPoint.getX() - 1, startPoint.getY()), dist-1, map, dir);
+                            Optional.ofNullable(toBeAdded).ifPresent(visible::addAll);
+                        }
+
+                        return visible;
+                    }
+                    break;
+            }
+        }
+        return null;
     }
 
     /**

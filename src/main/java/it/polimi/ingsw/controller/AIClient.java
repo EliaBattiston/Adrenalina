@@ -35,9 +35,7 @@ public class AIClient implements Client {
         }
 
         while(true)
-        {
             receive();
-        }
     }
 
     /**
