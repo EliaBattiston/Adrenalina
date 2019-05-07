@@ -819,7 +819,8 @@ public class ActionLambdaMap {
     private static void shoot(Player pl, Map map)
     {
         //Only loaded weapons
-        List<Weapon> loaded = pl.getWeapons().stream().filter(Weapon::isLoaded).collect(Collectors.toList());
+        List<Weapon> loaded = pl.getWeapons().stream().filter(Weapon::isLoaded).filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null))).collect(Collectors.toList());
+        //TODO here????
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
 
         //Take list of available "base" actions for the chosen weapon
@@ -875,7 +876,12 @@ public class ActionLambdaMap {
 
         //Unload the used weapon
         pl.applyEffects((damage, marks, position, weapons, powers, ammo) -> {
-            weapons[Arrays.asList(weapons).indexOf(chosen)].setLoaded(false);
+            //TODO the chosen has a different
+            //weapons[Arrays.asList(weapons).indexOf(chosen)].setLoaded(false);
+            for(Weapon w : weapons)
+                if(w != null)
+                    if(w.getId() == chosen.getId())
+                        w.setLoaded(false);
         });
     }
 
@@ -910,6 +916,7 @@ public class ActionLambdaMap {
 
         while(!reloadable.isEmpty() && chosen != null)
         {
+            //TODO here????
             chosen = pl.getConn().chooseWeapon(reloadable, false);
 
             if(chosen != null)

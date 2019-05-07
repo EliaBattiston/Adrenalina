@@ -221,6 +221,6 @@ public class SMain
             public void run() {
                 startMatch(skulls);
             }
-        }, 60*1000);
+        }, 3*1000);
     }
 }

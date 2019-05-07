@@ -61,7 +61,7 @@ public class Player implements Serializable
     /**
      * Connection of the player
      */
-    private Connection conn;
+    private transient Connection conn;
 
     /**
      * Creates a new user, in a suitable configuration to start the game

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model;
 
-import javax.print.attribute.standard.Severity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -379,23 +378,23 @@ public class FeasibleLambdaMap
 
         data.put("a-b1", (pl, map, memory)-> true);
 
-        data.put("a-b2", (pl, map, memory)->  true);
+        data.put("a-b2", (pl, map, memory)->  possibleLoot(pl, map, 1));
 
-        data.put("a-b3",(pl, map, memory) ->  pl.getWeapons().stream().anyMatch(Weapon::isLoaded) );
+        data.put("a-b3",(pl, map, memory) ->  pl.getWeapons().stream().filter(Weapon::isLoaded).anyMatch(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null))) );
 
-        data.put("a-a1", (pl, map, memory)-> true);
+        data.put("a-a1", (pl, map, memory)-> possibleLoot(pl, map, 2));
 
-        data.put("a-a2", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 1, map)) );
+        data.put("a-a2", (pl, map, memory)-> possibleShoot(pl, map, 1) );
 
-        data.put("a-f1", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 1, map)) );
+        data.put("a-f1", (pl, map, memory)-> possibleShoot(pl, map, 1) );
 
         data.put("a-f2", (pl, map, memory)-> true);
 
-        data.put("a-f3", (pl, map, memory)-> true);
+        data.put("a-f3", (pl, map, memory)-> possibleLoot(pl, map, 2));
 
-        data.put("a-f4", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 2, map)) );
+        data.put("a-f4", (pl, map, memory)-> possibleShoot(pl, map, 2) );
 
-        data.put("a-f5", (pl, map, memory)-> true);
+        data.put("a-f5", (pl, map, memory)-> possibleLoot(pl, map, 3));
     }
 
     /**
@@ -413,7 +412,8 @@ public class FeasibleLambdaMap
         return instance.data.get(lambdaName).execute(pl, map, memory);
     }
 
-    private static boolean possibleRun(Player pl, Map map, List<Point> possible){
+    private static boolean possibleShoot(Player pl, Map map, int steps){
+        List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
         Point initialPosition = pl.getPosition();
@@ -431,6 +431,22 @@ public class FeasibleLambdaMap
 
         //Return the player to its real position
         pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+        return !destinations.isEmpty();
+    }
+
+    private static boolean possibleLoot(Player pl, Map map, int steps)
+    {
+        List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
+        List<Point> destinations = new ArrayList<>(possible);
+
+        for(Point p : possible)
+        {
+            if(!map.getCell(p).hasItems(pl))
+            {
+                destinations.remove(p);
+            }
+        }
 
         return !destinations.isEmpty();
     }

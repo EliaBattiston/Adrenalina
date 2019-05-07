@@ -41,36 +41,24 @@ public class CMain
         Scanner stdin = new Scanner(System.in);
 
         //RMI or Socket?
-        while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
+        /*while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
         {
             System.out.print("Connessione con [S]ocket o con [R]mi? ");
             buffer = stdin.nextLine();
         }
 
         if(buffer.toLowerCase() == "r")
-            socket = false;
+            socket = false;*/
 
-        //Ask for IP address
+        /*//Ask for IP address
         System.out.print("Indirizzo IP del server: ");
         buffer = stdin.nextLine();
         //TODO check if IP is correctly written
-        ip = buffer;
+        ip = buffer;*/
 
-        if(socket)
-        {
-            connection = new SocketClient(ip, 1906);
-        }
-        else
-        {
-            try
-            {
-                connection = new RMIClient(ip);
-            }
-            catch(RemoteException e)
-            {
-                System.out.println("Errore di connessione RMI");
-            }
-        }
+        ip = "localhost";
+
+        connection = new AIClient(ip, 1906);
     }
 
     public static void main(String[] args)

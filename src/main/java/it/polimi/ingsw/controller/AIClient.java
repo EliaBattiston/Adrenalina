@@ -10,11 +10,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SocketClient implements Client {
+public class AIClient implements Client {
     /**
      * Socket connection instance to the game server
      */
@@ -25,7 +26,7 @@ public class SocketClient implements Client {
      * @param ipAddr IP address of the server
      * @param port TCP port of the Server's socket
      */
-    SocketClient(String ipAddr, int port) {
+    AIClient(String ipAddr, int port) {
         try {
             serverSocket = new Socket(ipAddr, port);
         }
@@ -34,7 +35,9 @@ public class SocketClient implements Client {
         }
 
         while(true)
+        {
             receive();
+        }
     }
 
     /**
@@ -52,7 +55,7 @@ public class SocketClient implements Client {
      */
     public Action chooseAction(List<Action> available, boolean mustChoose)
     {
-        return (Action)available.get(0);
+        return available.get(new Random().nextInt(available.size()));
     }
 
     /**
@@ -62,7 +65,7 @@ public class SocketClient implements Client {
      */
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose)
     {
-        return available.get(0);
+        return available.get(new Random().nextInt(available.size()));
     }
 
     /**
@@ -72,7 +75,7 @@ public class SocketClient implements Client {
      */
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose)
     {
-        return grabbable.get(0);
+        return grabbable.get(new Random().nextInt(grabbable.size()));
     }
 
     /**
@@ -92,7 +95,7 @@ public class SocketClient implements Client {
      */
     public Point movePlayer(List<Point> destinations, boolean mustChoose)
     {
-        return destinations.get(0);
+        return destinations.get(new Random().nextInt(destinations.size()));
     }
 
     /**
@@ -102,7 +105,7 @@ public class SocketClient implements Client {
      */
     public Player chooseTarget(List<Player> targets, boolean mustChoose)
     {
-        return targets.get(0);
+        return targets.get(new Random().nextInt(targets.size()));
     }
 
     /**
@@ -111,11 +114,9 @@ public class SocketClient implements Client {
      * @param destinations Possible destinations for the enemy
      * @return Point where the enemy will be after being moved
      */
-
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose)
     {
-        System.out.println(enemy.getNick() + " -> (" + destinations.get(0).getX() + ", " + destinations.get(0).getY() + ")");
-        return destinations.get(0);
+        return destinations.get(new Random().nextInt(destinations.size()));
     }
 
     /**
@@ -123,7 +124,7 @@ public class SocketClient implements Client {
      * @param powers List of power cards in player's hand
      * @return Card to be discarded
      */
-    public Power discardPower(List<Power> powers, boolean mustChoose) { return powers.get(0); }
+    public Power discardPower(List<Power> powers, boolean mustChoose) { return powers.get(new Random().nextInt(powers.size())); }
 
     /**
      * Asks the user to choose a room
@@ -131,14 +132,14 @@ public class SocketClient implements Client {
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen room
      */
-    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) { return rooms.get(0); }
+    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) { return rooms.get(new Random().nextInt(rooms.size())); }
 
     /**
      * Asks the player to choose a direction
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose) { return Direction.NORTH; }
+    public Direction chooseDirection(boolean mustChoose) { return Direction.values()[new Random().nextInt(4)]; }
 
     /**
      * Asks the user to choose a precise position on the map
@@ -146,7 +147,7 @@ public class SocketClient implements Client {
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen position
      */
-    public Point choosePosition(List<Point> positions, boolean mustChoose) {return positions.get(0); }
+    public Point choosePosition(List<Point> positions, boolean mustChoose) {return positions.get(new Random().nextInt(positions.size())); }
 
     /**
      * Asks the user to choose which weapon to discard
@@ -154,7 +155,7 @@ public class SocketClient implements Client {
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen weapon
      */
-    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) { return inHand.get(0); }
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) { return inHand.get(new Random().nextInt(inHand.size())); }
 
 
     /**
@@ -162,11 +163,8 @@ public class SocketClient implements Client {
      * @return user's nickname
      */
     public String getNickname() {
-        Scanner stdin = new Scanner(System.in);
-        String nick;
-
-        System.out.print("Il tuo nickname: ");
-        nick = stdin.nextLine();
+        String nick = Integer.toString( new Random().nextInt() );
+        System.out.println("Giocatore " +  nick);
         return nick;
     }
 
@@ -175,10 +173,7 @@ public class SocketClient implements Client {
      * @return user's effect phrase
      */
     public String getPhrase() {
-        Scanner stdin = new Scanner(System.in);
-
-        System.out.print("La tua esclamazione: ");
-        return stdin.nextLine();
+        return "YAYYYY";
     }
 
     /**
@@ -186,21 +181,8 @@ public class SocketClient implements Client {
      * @return user's fighter
      */
     public Fighter getFighter() {
-        System.out.println("[1] Dstruttor3");
-        System.out.println("[2] Banshee");
-        System.out.println("[3] Dozer");
-        System.out.println("[4] Violetta");
-        System.out.println("[5] Sprog");
 
-        Scanner stdin = new Scanner(System.in);
-        int chosen = 0;
-        while(chosen < 1 || chosen > 5)
-        {
-            System.out.println("Scegli il tuo personaggio (1-5): ");
-            chosen = stdin.nextInt();
-        }
-
-        return Fighter.values()[chosen-1];
+        return Fighter.values()[new Random().nextInt(5)];
     }
 
     /**
@@ -232,7 +214,7 @@ public class SocketClient implements Client {
      * @return Chosen power
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
-        return inHand.get(0);
+        return inHand.get(new Random().nextInt(inHand.size()));
     }
 
 
@@ -417,7 +399,8 @@ public class SocketClient implements Client {
                     break;
                 }
                 case CHOOSEPOWER: {
-                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {}.getType());
+                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {
+                    }.getType());
                     answer.type = Interaction.CHOOSEPOWER;
                     ArrayList<Power> ansParam = new ArrayList<>();
                     ansParam.add(choosePower(param, message.mustChoose));
