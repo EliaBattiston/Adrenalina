@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.UserInterface;
 
 import java.io.Serializable;
 import java.net.NetworkInterface;
@@ -16,9 +17,22 @@ import java.util.logging.Logger;
 
 public class RMIClient extends UnicastRemoteObject implements Client, Serializable
 {
+    /**
+     * Remote registry instance used to bind the client interface
+     */
     Registry registry;
+    /**
+     * User gui/cli interface
+     */
+    UserInterface user;
 
-    public RMIClient(String host) throws RemoteException
+    /**
+     * CLient RMI constructor, it gets the Server interface and binds its interface to the server registry
+     * @param host IP address of the server
+     * @param userint gui/cli user interface
+     * @throws RemoteException in case of connection error
+     */
+    public RMIClient(String host, UserInterface userint) throws RemoteException
     {
         try {
             registry = LocateRegistry.getRegistry(host);
@@ -26,6 +40,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
             String bindName = "AM06-" + new Random().nextInt();
             registry.bind(bindName, this);
             RMIServer.newConnection(bindName);
+            user = userint;
         }
         catch(NotBoundException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
@@ -40,8 +55,9 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param gameView current game view
      */
     @Override
-    public void updateGame(GameView gameView){
-        ;
+    public void updateGame(GameView gameView)
+    {
+        user.updateGame(gameView);
     }
 
     /**
@@ -51,7 +67,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      */
     public Action chooseAction(List<Action> available, boolean mustChoose)
     {
-        return available.get(0);
+        return user.chooseAction(available, mustChoose);
     }
 
     /**
@@ -61,7 +77,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      */
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose)
     {
-        return available.get(0);
+        return user.chooseWeapon(available, mustChoose);
     }
 
     /**
@@ -71,17 +87,17 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      */
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose)
     {
-        return grabbable.get(0);
+        return user.grabWeapon(grabbable, mustChoose);
     }
 
     /**
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param reloadable Weapons that are currently not loaded
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose)
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose)
     {
-        return reloadable;
+        return user.reload(reloadable, mustChoose);
     }
 
     /**
@@ -91,7 +107,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      */
     public Point movePlayer(List<Point> destinations, boolean mustChoose)
     {
-        return destinations.get(0);
+        return user.movePlayer(destinations, mustChoose);
     }
 
     /**
@@ -101,7 +117,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      */
     public Player chooseTarget(List<Player> targets, boolean mustChoose)
     {
-        return targets.get(0);
+        return user.chooseTarget(targets, mustChoose);
     }
 
     /**
@@ -110,10 +126,10 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param destinations Possible destinations for the enemy
      * @return Point where the enemy will be after being moved
      */
+
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose)
     {
-        System.out.println(enemy.getNick() + " -> (" + destinations.get(0).getX() + ", " + destinations.get(0).getY() + ")");
-        return destinations.get(0);
+        return user.moveEnemy(enemy, destinations, mustChoose);
     }
 
     /**
@@ -121,7 +137,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param powers List of power cards in player's hand
      * @return Card to be discarded
      */
-    public Power discardPower(List<Power> powers, boolean mustChoose) { return powers.get(0); }
+    public Power discardPower(List<Power> powers, boolean mustChoose) { return user.discardPower(powers, mustChoose); }
 
     /**
      * Asks the user to choose a room
@@ -129,14 +145,14 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen room
      */
-    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) { return rooms.get(0); }
+    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) { return user.chooseRoom(rooms, mustChoose); }
 
     /**
      * Asks the player to choose a direction
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose) { return Direction.NORTH; }
+    public Direction chooseDirection(boolean mustChoose) { return user.chooseDirection(mustChoose); }
 
     /**
      * Asks the user to choose a precise position on the map
@@ -144,57 +160,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen position
      */
-    public Point choosePosition(List<Point> positions, boolean mustChoose) { return positions.get(0); }
-
-    /**
-     * Asks the user for the nickname
-     * @return user's nickname
-     */
-    public String getNickname() {
-        Scanner stdin = new Scanner(System.in);
-
-        System.out.print("Il tuo nickname: ");
-        return stdin.nextLine();
-    }
-
-    /**
-     * Asks the user for the effect phrase
-     * @return user's effect phrase
-     */
-    public String getPhrase() {
-        Scanner stdin = new Scanner(System.in);
-
-        System.out.print("La tua esclamazione: ");
-        return stdin.nextLine();
-    }
-
-    /**
-     * Asks the user fot the fighter
-     * @return user's fighter
-     */
-    public Fighter getFighter() {
-        System.out.println("[1] Dstruttor3");
-        System.out.println("[2] Banshee");
-        System.out.println("[3] Dozer");
-        System.out.println("[4] Violetta");
-        System.out.println("[5] Sprog");
-
-        Scanner stdin = new Scanner(System.in);
-        int chosen = 0;
-        while(chosen < 1 || chosen > 5)
-        {
-            System.out.println("Scegli il tuo personaggio (1-5): ");
-            chosen = stdin.nextInt();
-        }
-
-        return Fighter.values()[chosen-1];
-    }
-
-    /**
-     * Asks the user how many skulls he wants in the play
-     * @return skulls number
-     */
-    public Integer getSkullNum() {return 5; }
+    public Point choosePosition(List<Point> positions, boolean mustChoose) {return user.choosePosition(positions, mustChoose); }
 
     /**
      * Asks the user to choose which weapon to discard
@@ -202,17 +168,46 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen weapon
      */
-    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose)
-    {
-        return inHand.get(0);
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) { return user.discardWeapon(inHand, mustChoose); }
+
+
+    /**
+     * Asks the user for the nickname
+     * @return user's nickname
+     */
+    public String getNickname() {
+
+        return user.getNickname();
     }
+
+    /**
+     * Asks the user for the effect phrase
+     * @return user's effect phrase
+     */
+    public String getPhrase() {
+        return user.getPhrase();
+    }
+
+    /**
+     * Asks the user fot the fighter
+     * @return user's fighter
+     */
+    public Fighter getFighter() {
+        return user.getFighter();
+    }
+
+    /**
+     * Asks the user how many skulls he wants in the play
+     * @return skulls number
+     */
+    public Integer getSkullNum() { return user.getSkullNum(); }
 
     /**
      * Asks the user to choose which map he wants to use
      * @return Number of the chosen map
      */
     public Integer chooseMap() {
-        return 1;
+        return user.chooseMap();
     }
 
     /**
@@ -220,7 +215,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @return True for final Frenzy mode, false elsewhere
      */
     public Boolean chooseFrenzy() {
-        return true;
+        return user.chooseFrenzy();
     }
 
     /**
@@ -230,7 +225,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @return Chosen power
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
-        return inHand.get(0);
+        return user.choosePower(inHand, mustChoose);
     }
 }
 

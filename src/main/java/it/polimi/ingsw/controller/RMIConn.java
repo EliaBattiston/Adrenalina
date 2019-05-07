@@ -87,9 +87,9 @@ public class RMIConn implements Connection
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose)
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose)
     {
         try {
             return client.reload(reloadable, mustChoose);

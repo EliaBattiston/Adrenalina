@@ -102,9 +102,9 @@ public class SocketConn implements Connection {
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose)
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose)
     {
         Gson gson = new Gson();
         Payload load = new Payload();
@@ -114,7 +114,7 @@ public class SocketConn implements Connection {
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
-        return ansParam;
+        return ansParam.get(0);
     }
 
     /**

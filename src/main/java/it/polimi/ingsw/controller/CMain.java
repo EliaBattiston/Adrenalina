@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.rmi.RemoteException;
@@ -40,6 +41,16 @@ public class CMain
 
         Scanner stdin = new Scanner(System.in);
 
+        while (!buffer.toLowerCase().equals("g") && !buffer.toLowerCase().equals("c"))
+        {
+            System.out.print("Interfaccia GUI [g] o CLI [c]? ");
+            buffer = stdin.nextLine();
+        }
+
+        if(buffer.toLowerCase().equals("c")) {
+            //TODO implemet CLInterface declaration
+        }
+
         //RMI or Socket?
         while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
         {
@@ -58,13 +69,13 @@ public class CMain
 
         if(socket)
         {
-            connection = new SocketClient(ip, 1906);
+            connection = new SocketClient(ip, 1906, ui);
         }
         else
         {
             try
             {
-                connection = new RMIClient(ip);
+                connection = new RMIClient(ip, ui);
             }
             catch(RemoteException e)
             {

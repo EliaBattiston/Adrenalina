@@ -45,9 +45,9 @@ public interface Connection extends Remote
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose);
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose);
 
     /**
      * Asks the user where he wants to movePlayer

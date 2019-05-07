@@ -52,9 +52,9 @@ public interface Client extends Remote
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @throws RemoteException If something goes wrong with the connection
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose) throws RemoteException;
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws RemoteException;
 
     /**
      * Asks the user where he wants to movePlayer
