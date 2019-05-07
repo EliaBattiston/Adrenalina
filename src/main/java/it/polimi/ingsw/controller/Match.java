@@ -155,6 +155,7 @@ public class Match implements Runnable
                     }
                 }
 
+                //FIXME NullPointerException here @startup sometimes
                 active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
             }
 

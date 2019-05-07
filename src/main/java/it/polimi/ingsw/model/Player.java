@@ -84,7 +84,6 @@ public class Player implements Serializable
         this.position = new Point(0, 0);
 
         this.conn = null;
-
     }
 
     /**

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
@@ -21,6 +22,8 @@ public class AIClient implements Client {
      */
     private Socket serverSocket;
 
+    private Gson gson;
+
     /**
      * Open socket reference to the server
      * @param ipAddr IP address of the server
@@ -33,6 +36,10 @@ public class AIClient implements Client {
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
         }
+
+        GsonBuilder gsonBilder = new GsonBuilder();
+        gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        gson = gsonBilder.create();
 
         while(true)
             receive();
@@ -241,8 +248,6 @@ public class AIClient implements Client {
      */
     public void receive() {
         try {
-            Gson gson = new Gson();
-
             String response;
             Scanner in = new Scanner(serverSocket.getInputStream());
             response = in.nextLine();
@@ -425,9 +430,7 @@ public class AIClient implements Client {
      * @param payload Payload to serialize
      * @return Json serialization of the class
      */
-    public String jsonSerialize(Payload payload)
-    {
-        Gson gson = new Gson();
+    public String jsonSerialize(Payload payload) {
         return gson.toJson(payload);
     }
 }

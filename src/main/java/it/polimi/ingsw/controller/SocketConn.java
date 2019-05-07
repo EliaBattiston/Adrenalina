@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
@@ -19,7 +20,7 @@ public class SocketConn implements Connection {
      */
     private Socket playerSocket;
 
-    private static Gson gson = new Gson();
+    private Gson gson;
 
     /**
      * Open socket reference to the player
@@ -28,6 +29,10 @@ public class SocketConn implements Connection {
     SocketConn(Socket socket)
     {
         playerSocket = socket;
+
+        GsonBuilder gsonBilder = new GsonBuilder();
+        gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        gson = gsonBilder.create();
     }
 
     /**
@@ -36,7 +41,6 @@ public class SocketConn implements Connection {
      */
     @Override
     public void updateGame(GameView gameView) {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.UPDATEVIEW;
         load.parameters = gson.toJson(gameView);
@@ -51,7 +55,6 @@ public class SocketConn implements Connection {
      */
     public Action chooseAction(List<Action> available, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEACTION;
         load.parameters = gson.toJson(available);
@@ -78,7 +81,6 @@ public class SocketConn implements Connection {
         if(available.size() == 0)
             System.out.println("ooops");
 
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEWEAPON;
         load.parameters = gson.toJson(available);
@@ -102,7 +104,6 @@ public class SocketConn implements Connection {
      */
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.GRABWEAPON;
         load.parameters = gson.toJson(grabbable);
@@ -126,7 +127,6 @@ public class SocketConn implements Connection {
      */
     public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.RELOAD;
         load.parameters = gson.toJson(reloadable);
@@ -150,7 +150,6 @@ public class SocketConn implements Connection {
      */
     public Player chooseTarget(List<Player> targets, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSETARGET;
         load.parameters = gson.toJson(targets);
@@ -174,7 +173,6 @@ public class SocketConn implements Connection {
      */
     public Point movePlayer(List<Point> destinations, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.MOVEPLAYER;
         load.parameters = gson.toJson(destinations);
@@ -196,7 +194,6 @@ public class SocketConn implements Connection {
 
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.MOVEENEMY;
         load.parameters = gson.toJson(destinations);
@@ -217,7 +214,6 @@ public class SocketConn implements Connection {
      */
     public Power discardPower(List<Power> powers, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.DISCARDPOWER;
         load.parameters = gson.toJson(powers);
@@ -238,7 +234,6 @@ public class SocketConn implements Connection {
      */
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEROOM;
         load.parameters = gson.toJson(rooms);
@@ -257,7 +252,6 @@ public class SocketConn implements Connection {
      */
     public Direction chooseDirection(boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEDIRECTION;
         load.mustChoose = mustChoose;
@@ -275,7 +269,6 @@ public class SocketConn implements Connection {
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEPOSITION;
         load.parameters = gson.toJson(positions);
@@ -291,7 +284,6 @@ public class SocketConn implements Connection {
      * @return user's nickname
      */
     public String getNickname() {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.GETNICKNAME;
         send(gson.toJson(load));
@@ -305,7 +297,6 @@ public class SocketConn implements Connection {
      * @return user's effect phrase
      */
     public String getPhrase() {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.GETPHRASE;
         send(gson.toJson(load));
@@ -322,7 +313,6 @@ public class SocketConn implements Connection {
      */
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose)
     {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.DISCARDWEAPON;
         load.parameters = gson.toJson(inHand);
@@ -340,7 +330,6 @@ public class SocketConn implements Connection {
      * @return user's fighter
      */
     public Fighter getFighter() {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.GETFIGHTER;
         send(gson.toJson(load));
@@ -354,7 +343,6 @@ public class SocketConn implements Connection {
      * @return skulls number
      */
     public Integer getSkullNum() {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.GETSKULLSNUM;
         send(gson.toJson(load));
@@ -368,7 +356,6 @@ public class SocketConn implements Connection {
      * @return Number of the chosen map
      */
     public Integer chooseMap() {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEMAP;
         send(gson.toJson(load));
@@ -382,7 +369,6 @@ public class SocketConn implements Connection {
      * @return True for final Frenzy mode, false elsewhere
      */
     public Boolean chooseFrenzy() {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEFRENZY;
         send(gson.toJson(load));
@@ -398,7 +384,6 @@ public class SocketConn implements Connection {
      * @return Chosen power
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
-        Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.CHOOSEPOWER;
         load.parameters = gson.toJson(inHand);
@@ -454,7 +439,7 @@ public class SocketConn implements Connection {
      * @param response the string containing the json representation of the class
      * @return the object made from the json
      */
-    public static Payload jsonDeserialize(String response)
+    public Payload jsonDeserialize(String response)
     {
         return gson.fromJson(response, Payload.class);
     }

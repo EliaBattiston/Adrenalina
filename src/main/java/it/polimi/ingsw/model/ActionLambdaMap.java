@@ -101,8 +101,9 @@ public class ActionLambdaMap {
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
-                if(pointsAll.contains(p.getPosition()))
-                    targets.add(p);
+                if(p!=pl)
+                    if(pointsAll.contains(p.getPosition()))
+                        targets.add(p);
 
             Player chosen = pl.getConn().chooseTarget(targets, true);
 
@@ -140,6 +141,7 @@ public class ActionLambdaMap {
         data.put("w9-b", (pl, map, memory)->{
             //Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.
             List<Player> allInMap = Map.playersInTheMap(map);
+            allInMap.remove(pl);
 
             List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
             List<Integer> playersRooms = new ArrayList<>();
@@ -150,7 +152,7 @@ public class ActionLambdaMap {
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
 
-            visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber());
+            visibleRooms.remove(new Integer(map.getCell(pl.getPosition()).getRoomNumber()));
 
             int roomChosen = pl.getConn().chooseRoom(playersRooms, true);
 
@@ -163,6 +165,7 @@ public class ActionLambdaMap {
             //Scegli 1 bersaglio che non puoi vedere e dagli 3 danni.
 
             List<Player> targets = Map.playersInTheMap(map);
+            targets.remove(pl);
             targets.removeAll(Map.visiblePlayers(pl, map));
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(3, pl));
@@ -192,8 +195,12 @@ public class ActionLambdaMap {
             List<Player> targets = map.getCell(chosen).getPawns();
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
 
-            targets = map.getCell(secondPoint).getPawns();
-            Player chosen2 = pl.getConn().chooseTarget(targets, false);
+            Player chosen2 = null;
+            if(secondPoint != null) {
+                targets = map.getCell(secondPoint).getPawns();
+                if(!targets.isEmpty())
+                    chosen2 = pl.getConn().chooseTarget(targets, false);
+            }
 
             //Give damage
             chosen1.applyEffects(EffectsLambda.damage(1, pl));
@@ -510,8 +517,9 @@ public class ActionLambdaMap {
             for(Player p:map.getCell(chosen).getPawns())
                 p.applyEffects(EffectsLambda.damage(2, pl));
 
-            for(Player p:map.getCell(secondPoint).getPawns())
-                p.applyEffects(EffectsLambda.damage(1, pl));
+            if(secondPoint != null)
+                for(Player p:map.getCell(secondPoint).getPawns())
+                    p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("w15-al", (pl, map, memory)->{
@@ -521,7 +529,9 @@ public class ActionLambdaMap {
             List<Player> targets = Map.visiblePlayers(pl, map, dir);
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
             targets.remove(chosen1);
-            Player chosen2 = pl.getConn().chooseTarget(targets, false);
+            Player chosen2 = null;
+            if(!targets.isEmpty())
+                chosen2 = pl.getConn().chooseTarget(targets, false);
             chosen1.applyEffects(EffectsLambda.damage(2, pl));
             if(chosen2 != null)
                 chosen2.applyEffects(EffectsLambda.marks(2, pl));
@@ -568,7 +578,7 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.damage(2, pl));
 
             //Next move (just if there is a next cell)
-            if(map.getCell(secondPoint) != null){
+            if(secondPoint != null && map.getCell(secondPoint) != null){
                 try{
                     List<Point> nextPoints = new ArrayList<>();
                     nextPoints.add(secondPoint);
@@ -621,6 +631,7 @@ public class ActionLambdaMap {
             // quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)
 
             List<Player> targets = Map.playersInTheMap(map);
+            targets.remove(pl);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             List<Point> newPos = Map.possibleMovementsAllSingleDirection(chosen.getPosition(), 2, map);
             newPos.remove(chosen.getPosition());

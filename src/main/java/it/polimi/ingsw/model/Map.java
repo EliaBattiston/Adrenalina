@@ -196,22 +196,27 @@ public class Map {
         switch (dir){
             case NORTH:
                 for(int y=viewer.getPosition().getY()-1; y>=0; y--)
-                    visible.addAll(map.getCell(viewer.getPosition().getX(), y).getPawns());
+                    if(map.getCell(viewer.getPosition().getX(), y) != null)
+                        visible.addAll(map.getCell(viewer.getPosition().getX(), y).getPawns());
                 break;
             case EAST:
                 for(int x=viewer.getPosition().getX()+1; x<4; x++)
-                    visible.addAll(map.getCell(x, viewer.getPosition().getY()).getPawns());
+                    if(map.getCell(x, viewer.getPosition().getY()) != null)
+                        visible.addAll(map.getCell(x, viewer.getPosition().getY()).getPawns());
                 break;
             case SOUTH:
                 for(int y=viewer.getPosition().getY()+1; y<3; y++)
-                    visible.addAll(map.getCell(viewer.getPosition().getX(), y).getPawns());
+                    if(map.getCell(viewer.getPosition().getX(), y) != null)
+                        visible.addAll(map.getCell(viewer.getPosition().getX(), y).getPawns());
                 break;
             case WEST:
                 for(int x=viewer.getPosition().getX()-1; x>=0; x--)
-                    visible.addAll(map.getCell(x, viewer.getPosition().getY()).getPawns());
+                    if(map.getCell(x, viewer.getPosition().getY()) != null)
+                        visible.addAll(map.getCell(x, viewer.getPosition().getY()).getPawns());
                 break;
         }
 
+        visible.remove(viewer);
         return visible;
     }
 
@@ -413,7 +418,12 @@ public class Map {
         else if(start.getX()-1 == first.getX())
             nX--;
 
-        return new Point(nX, nY);
+        try{
+            Point p = new Point(nX, nY);
+            return p;
+        }catch(WrongPointException e){
+            return null;
+        }
     }
 
     /**

@@ -199,16 +199,6 @@ public class SMain
         }
     }
 
-    private void startMatch(int skulls) {
-        synchronized (lock) {
-            int index = skulls - MINSKULLS;
-            matches.add(waiting[index]);
-            matches.get(matches.indexOf(waiting[index])).run();
-            waiting[index] = null;
-            startedTimer[index] = false;
-        } //FIXME AI throwed StackOverflowException for GSON
-    }
-
     private void cancelTimer(int skulls) {
         timer[skulls - MINSKULLS].cancel();
         timer[skulls - MINSKULLS].purge();
@@ -222,5 +212,15 @@ public class SMain
                 startMatch(skulls);
             }
         }, 3*1000);
+    }
+
+    private void startMatch(int skulls) {
+        synchronized (lock) {
+            int index = skulls - MINSKULLS;
+            matches.add(waiting[index]);
+            matches.get(matches.indexOf(waiting[index])).run();
+            waiting[index] = null;
+            startedTimer[index] = false;
+        } //FIXME AI throwed StackOverflowException for GSON
     }
 }

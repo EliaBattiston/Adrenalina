@@ -54,7 +54,7 @@ public class SpawnCell extends Cell{
     public Weapon pickWeapon(Weapon chosen)
     {
         for(int i = 0; i < weapons.length; i++) {
-            if(weapons[i].equals(chosen)) {
+            if(weapons[i] != null && weapons[i].equals(chosen)) {
                 Weapon returnWeapon = weapons[i];
                 weapons[i] = null;
                 return returnWeapon;
