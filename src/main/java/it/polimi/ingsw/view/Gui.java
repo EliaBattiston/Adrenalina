@@ -148,12 +148,14 @@ public class Gui extends Application {
         return s;
     }
 
-    private StackPane drawMyArea(Player player){
-        StackPane root = new StackPane();
+    private AnchorPane drawMyArea(Player player){
+        AnchorPane anchor = new AnchorPane();
 
-        root.getChildren().add(drawAllMyWeapons(player.getWeapons()));
+        anchor.setPadding(new Insets(background_height*0.796, 0, 0, background_width*0.021));
 
-        return root;
+        anchor.getChildren().add(drawAllMyWeapons(player.getWeapons()));
+
+        return anchor;
     }
 
     private AnchorPane drawAllMyWeapons(List<Weapon> weapons){
@@ -188,7 +190,6 @@ public class Gui extends Application {
             x += delta_x;
         }
 
-        anchor.setPadding(new Insets(300, 0, 0, 10));
 
         return anchor;
     }
