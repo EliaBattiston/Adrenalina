@@ -233,7 +233,7 @@ public class ActionLambdaMap {
             //Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.
             List<Direction> possible = new ArrayList<>();
             for(Direction d: Direction.values())
-                if(Map.visiblePlayers(pl, map, d) != null)
+                if(!Map.visiblePlayers(pl, map, d).isEmpty())
                     possible.add(d);
 
             Direction dir = pl.getConn().chooseDirection(possible,true);
@@ -396,7 +396,8 @@ public class ActionLambdaMap {
 
             chosen.add(pl.getConn().chooseTarget(targets, true));
             targets.removeAll(chosen);
-            chosen.add(pl.getConn().chooseTarget(targets, false));
+            if(!targets.isEmpty())
+                chosen.add(pl.getConn().chooseTarget(targets, false));
 
             for(Player p:chosen){
                 if(p!=null){
@@ -667,6 +668,7 @@ public class ActionLambdaMap {
 
     //Activities lambdas
         data.put("a-p", (pl, map, memory)->{
+            System.out.println(pl.getNick() + " sceglie un potenziamento");
             Power chosen;
 
             List<Power> inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
@@ -749,13 +751,12 @@ public class ActionLambdaMap {
      */
     private static void run(Player pl, Map map, int steps, boolean mustChoose)
     {
+        System.out.println(pl.getNick() + " corre");
         List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
         Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
-
-        System.out.println(pl.getNick() + " ha corso fino a " + chosen.getX() + "," + chosen.getY());
     }
 
     /**
@@ -766,6 +767,7 @@ public class ActionLambdaMap {
      */
     private static void runToLoot(Player pl, Map map, int steps)
     {
+        System.out.println(pl.getNick() + " corre per raccogliere");
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
@@ -781,8 +783,6 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
-
-        System.out.println(pl.getNick() + " ha corso per raccogliere fino a " + chosen.getX() + "," + chosen.getY());
     }
 
     /**
@@ -793,6 +793,8 @@ public class ActionLambdaMap {
      */
     private static void runToShoot(Player pl, Map map, int steps)
     {
+        System.out.println(pl.getNick() + " corre per sparare");
+
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
@@ -819,8 +821,6 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
-
-        System.out.println(pl.getNick() + " ha corso per sparare fino a " + chosen.getX() + "," + chosen.getY());
     }
 
     /**

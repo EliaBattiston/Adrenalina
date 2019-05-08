@@ -64,7 +64,7 @@ public class RegularCell extends Cell {
      * @return True if the cell has items, false otherwise
      */
     public boolean hasItems(Player pl){
-        return this.loot == null;
+        return this.loot != null;
     }
 
     /**
@@ -87,6 +87,7 @@ public class RegularCell extends Cell {
 
                     if(Arrays.stream(powers).noneMatch(Objects::isNull))
                     {
+                        System.out.println(pl.getNick() + " deve scartare un potenziamento");
                         List<Power> inHand = new ArrayList<>(Arrays.asList(powers));
                         inHand.add(newPower);
                         discarded = pl.getConn().discardPower(inHand, true);

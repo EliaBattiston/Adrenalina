@@ -175,6 +175,7 @@ public class SpawnCell extends Cell{
             if(pos<=3 && weapons[pos] == null)
             {
                 weapons[pos] = picked;
+                picked.setLoaded(true);
             }
             else
             {

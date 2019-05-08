@@ -432,9 +432,11 @@ public class FeasibleLambdaMap
             pl.applyEffects(EffectsLambda.move(pl, p, map));
 
             //If no weapon has suitable action, we can't propose to move to this position
-            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null))
-                    && ( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) ))
-                        destinations.remove(p);
+            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
+                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
+                {
+                    destinations.remove(p);
+                }
         }
 
         //Return the player to its real position

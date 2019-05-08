@@ -268,6 +268,7 @@ public class Map {
         for(Cell c:cells)
             points.add(map.getCellPosition(c));
 
+        //TODO check the presence of the starting point
         return points;
     }
 
@@ -350,10 +351,8 @@ public class Map {
                     if (map.getCell(startPoint).getSides()[Direction.NORTH.ordinal()] != Side.WALL) {
                         visible.add(new Point(startPoint.getX(), startPoint.getY() - 1));
 
-                        if(dist>0){
-                            List toBeAdded = Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() - 1), dist-1, map, dir);
-                            Optional.ofNullable(toBeAdded).ifPresent(visible::addAll);
-                        }
+                        if(dist>0)
+                            return Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() - 1), dist-1, map, dir);
 
                         return visible;
                     }
@@ -362,10 +361,8 @@ public class Map {
                     if (map.getCell(startPoint).getSides()[Direction.EAST.ordinal()] != Side.WALL) {
                         visible.add(new Point(startPoint.getX()+1, startPoint.getY()));
 
-                        if(dist>0){
-                            List toBeAdded = Map.possibleMovementsSpecificDirection(new Point(startPoint.getX()+1, startPoint.getY()), dist-1, map, dir);
-                            Optional.ofNullable(toBeAdded).ifPresent(visible::addAll);
-                        }
+                        if(dist>0)
+                            return Map.possibleMovementsSpecificDirection(new Point(startPoint.getX()+1, startPoint.getY()), dist-1, map, dir);
 
                         return visible;
                     }
@@ -374,10 +371,8 @@ public class Map {
                     if (map.getCell(startPoint).getSides()[Direction.SOUTH.ordinal()] != Side.WALL) {
                         visible.add(new Point(startPoint.getX(), startPoint.getY() + 1));
 
-                        if(dist>0){
-                            List toBeAdded = Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() + 1), dist-1, map, dir);
-                            Optional.ofNullable(toBeAdded).ifPresent(visible::addAll);
-                        }
+                        if(dist>0)
+                            return Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() + 1), dist-1, map, dir);
 
                         return visible;
                     }
@@ -386,17 +381,15 @@ public class Map {
                     if (map.getCell(startPoint).getSides()[Direction.WEST.ordinal()] != Side.WALL) {
                         visible.add(new Point(startPoint.getX() - 1, startPoint.getY()));
 
-                        if(dist>0){
-                            List toBeAdded = Map.possibleMovementsSpecificDirection(new Point(startPoint.getX() - 1, startPoint.getY()), dist-1, map, dir);
-                            Optional.ofNullable(toBeAdded).ifPresent(visible::addAll);
-                        }
+                        if(dist>0)
+                            return Map.possibleMovementsSpecificDirection(new Point(startPoint.getX() - 1, startPoint.getY()), dist-1, map, dir);
 
                         return visible;
                     }
                     break;
             }
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**
