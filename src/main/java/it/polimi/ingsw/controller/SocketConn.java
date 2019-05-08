@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.MatchView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,15 +30,15 @@ public class SocketConn implements Connection {
     }
 
     /**
-     * Send the actual gameView to the client
-     * @param gameView current game view
+     * Send the actual matchView to the client
+     * @param matchView current match view
      */
     @Override
-    public void updateGame(GameView gameView) {
+    public void updateGame(MatchView matchView) {
         Gson gson = new Gson();
         Payload load = new Payload();
         load.type = Interaction.UPDATEVIEW;
-        load.parameters = gson.toJson(gameView);
+        load.parameters = gson.toJson(matchView);
         send(gson.toJson(load));
     }
 

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.io.IOException;
@@ -47,12 +48,12 @@ public class SocketClient implements Client {
 
     /**
      * Receive the actual gameView to the client
-     * @param gameView current game view
+     * @param matchView current game view
      */
     @Override
-    public void updateGame(GameView gameView)
+    public void updateGame(MatchView matchView)
     {
-        user.updateGame(gameView);
+        user.updateGame(matchView);
     }
 
     /**
@@ -415,7 +416,7 @@ public class SocketClient implements Client {
                     break;
                 }
                 case UPDATEVIEW: {
-                    GameView param = gson.fromJson(message.parameters, GameView.class);
+                    MatchView param = gson.fromJson(message.parameters, MatchView.class);
                     updateGame(param);
                     break;
                 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -19,13 +20,13 @@ public class RMIConn implements Connection
     }
 
     /**
-     * Send the actual gameView to the client
-     * @param gameView current game view
+     * Send the actual matchView to the client
+     * @param matchView current match view
      */
     @Override
-    public void updateGame(GameView gameView) {
+    public void updateGame(MatchView matchView) {
         try {
-            client.updateGame(gameView);
+            client.updateGame(matchView);
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );

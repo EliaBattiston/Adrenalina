@@ -28,4 +28,28 @@ public class GameView {
         this.players = players;
         this.skullsBoard = skullsBoard;
     }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public Kill[] getSkullsBoard() {
+        return skullsBoard;
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public void setSkullsBoard(Kill[] skullsBoard) {
+        this.skullsBoard = skullsBoard;
+    }
 }

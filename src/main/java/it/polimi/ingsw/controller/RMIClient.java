@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.io.Serializable;
@@ -52,12 +53,12 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
 
     /**
      * Receive the actual gameView to the client
-     * @param gameView current game view
+     * @param matchView current game view
      */
     @Override
-    public void updateGame(GameView gameView)
+    public void updateGame(MatchView matchView)
     {
-        user.updateGame(gameView);
+        user.updateGame(matchView);
     }
 
     /**

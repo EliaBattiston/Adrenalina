@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -13,11 +14,11 @@ import java.util.List;
 public interface Client extends Remote
 {
     /**
-     * Receive the actual gameView to the client
-     * @param gameView current game view
+     * Receive the actual matchView to the client
+     * @param matchView current match view
      * @throws RemoteException If something goes wrong with the connection
      */
-    public void updateGame(GameView gameView) throws RemoteException;
+    public void updateGame(MatchView matchView) throws RemoteException;
 
     /**
      * Asks the user to choose between a set of actions he can use

@@ -8,9 +8,9 @@ public interface UserInterface
 {
     /**
      * Update the actual gameView to the client
-     * @param gameView current game view
+     * @param matchView current game view
      */
-    public void updateGame(GameView gameView);
+    public void updateGame(MatchView matchView);
 
     /**
      * Asks the user to choose between a set of actions he can use
