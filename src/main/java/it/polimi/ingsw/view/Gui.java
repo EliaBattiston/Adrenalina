@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Weapon;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -29,13 +30,13 @@ public class Gui extends Application {
     public void start(Stage primaryStage) throws Exception {
         background_width = 960;
         background_height = background_width*9/16;
-        Pane s;
+        Pane p;
 
         primaryStage.setTitle("Adrenalina");
 
         game = Game.jsonDeserialize("resources/baseGame.json");
 
-        s = new Pane();
+        p = new Pane();
 
         //Settings for testing
         ArrayList<Player> players = new ArrayList<>();
@@ -55,9 +56,9 @@ public class Gui extends Application {
 
         //END of settings for testing
 
-        s.getChildren().addAll(drawBackground(), drawMap(), drawAllPlayersBoards(players,false), drawMyArea(me));
+        p.getChildren().addAll(drawBackground(), drawMap(), drawAllPlayersBoards(players,false), drawMyArea(me));
 
-        primaryStage.setScene(new Scene(s));
+        primaryStage.setScene(new Scene(p));
         primaryStage.setResizable(false);
         primaryStage.show();
 
@@ -155,8 +156,9 @@ public class Gui extends Application {
         return root;
     }
 
-    private StackPane drawAllMyWeapons(List<Weapon> weapons){
+    private AnchorPane drawAllMyWeapons(List<Weapon> weapons){
         StackPane root = new StackPane();
+        AnchorPane anchor = new AnchorPane();
 
         //dimensions are the same
         double width_mult = 0.0625;
@@ -174,12 +176,21 @@ public class Gui extends Application {
         for(Weapon w : weapons){
             //root.getChildren().add(drawWeapon(w, width, height, x, y));
             CardGui card = new CardGui(w, width, height, x, y);
-            root.getChildren().add(card);
+            AnchorPane.setTopAnchor(card, 10.0);
+            /*AnchorPane.setLeftAnchor(card, 50.0);
+            AnchorPane.setRightAnchor(card, 50.0);
+            AnchorPane.setBottomAnchor(card, 50.0);*/
+
+            anchor.getChildren().add(card);
+
+           // root.getChildren().add(card);
             //card.relocateCanvas(x, y);
             x += delta_x;
         }
 
-        return root;
+        anchor.setPadding(new Insets(300, 0, 0, 10));
+
+        return anchor;
     }
 
     /*private Pane createBoard(){

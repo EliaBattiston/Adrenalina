@@ -47,9 +47,7 @@ public class CardGui extends Canvas {
         //canvas = new Canvas(width, height);
         //getChildren().add( canvas );
 
-        GraphicsContext gc = this.getGraphicsContext2D();
-
-        gc.drawImage( img, x, y, width, height);
+        this.getGraphicsContext2D().drawImage( img, 0, 0, width, height);
     }
 
     public void relocateCanvas(double x, double y){
