@@ -331,7 +331,7 @@ public class Match implements Runnable
         {
             if(enemy != killed)
             {
-                damageNum = (int)Arrays.stream(killed.getReceivedDamage()).filter(player -> player == enemy ).count();
+                damageNum = (int)Arrays.stream(killed.getReceivedDamage()).filter(player -> game.getPlayer(player) == enemy ).count();
                 if(damageNum > 0)
                     inflictedDamages.add( new AbstractMap.SimpleEntry<Player, Integer>(enemy, damageNum));
             }
@@ -346,12 +346,12 @@ public class Match implements Runnable
             else
             {
                 //Check who inflicted damage first
-                for(Player p : killed.getReceivedDamage())
+                for(String p : killed.getReceivedDamage())
                 {
-                    if(p == e1.getKey())
+                    if(game.getPlayer(p) == e1.getKey())
                         return -1;
 
-                    if(p == e2.getKey())
+                    if(game.getPlayer(p) == e2.getKey())
                         return 1;
                 }
             }
@@ -362,7 +362,7 @@ public class Match implements Runnable
 
         //First blood
         if(phase != GamePhase.FRENZY)
-            killed.getReceivedDamage()[0].addPoints(1);
+            game.getPlayer(killed.getReceivedDamage()[0]).addPoints(1);
         //Give points
         for(Entry<Player, Integer> entry : inflictedDamages)
         {
@@ -381,14 +381,14 @@ public class Match implements Runnable
                 ;
             if (nextSkull > -1)
             {
-                game.getSkulls()[nextSkull].setKiller(killed.getReceivedDamage()[10], killed.getReceivedDamage()[11] != null);
+                game.getSkulls()[nextSkull].setKiller(game.getPlayer(killed.getReceivedDamage()[10]), killed.getReceivedDamage()[11] != null);
                 killed.addSkull();
             }
 
             //Give a mark to the overkiller
             if (killed.getReceivedDamage()[11] != null)
             {
-                killed.getReceivedDamage()[11].applyEffects(EffectsLambda.marks(1, killed));
+                game.getPlayer(killed.getReceivedDamage()[11]).applyEffects(EffectsLambda.marks(1, killed));
             }
 
             //Reset damages
@@ -408,9 +408,9 @@ public class Match implements Runnable
         }
         else
         {
-            frenzyKills.add(killed.getReceivedDamage()[10]);
+            frenzyKills.add( game.getPlayer(killed.getReceivedDamage()[10]) );
             if(killed.getReceivedDamage()[11] != null);
-                frenzyKills.add(killed.getReceivedDamage()[10]);
+                frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[10] ) );
         }
     }
 
@@ -506,7 +506,7 @@ public class Match implements Runnable
             {
                 if(enemy != damaged)
                 {
-                    damageNum = (int)Arrays.stream(damaged.getReceivedDamage()).filter(player -> player == enemy ).count();
+                    damageNum = (int)Arrays.stream(damaged.getReceivedDamage()).filter(player -> game.getPlayer(player) == enemy ).count();
                     if(damageNum > 0)
                         inflictedDamages.add( new AbstractMap.SimpleEntry<Player, Integer>(enemy, damageNum));
                 }
@@ -521,12 +521,12 @@ public class Match implements Runnable
                 else
                 {
                     //Check who inflicted damage first
-                    for(Player p : damaged.getReceivedDamage())
+                    for(String p : damaged.getReceivedDamage())
                     {
-                        if(p == e1.getKey())
+                        if(game.getPlayer(p) == e1.getKey())
                             return -1;
 
-                        if(p == e2.getKey())
+                        if(game.getPlayer(p) == e2.getKey())
                             return 1;
                     }
                 }
@@ -537,7 +537,7 @@ public class Match implements Runnable
 
             //First blood
             if(phase != GamePhase.FRENZY)
-                damaged.getReceivedDamage()[0].addPoints(1);
+                game.getPlayer(damaged.getReceivedDamage()[0]).addPoints(1);
             //Give points
             for(Entry<Player, Integer> entry : inflictedDamages)
             {

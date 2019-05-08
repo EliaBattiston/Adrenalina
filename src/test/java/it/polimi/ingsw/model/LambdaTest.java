@@ -21,21 +21,21 @@ public class LambdaTest {
         p.applyEffects(EffectsLambda.damage(3, att));
         d=0;
         for(int i=0; i<12; i++)
-            if(p.getReceivedDamage()[i] == att)
+            if(p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(att.getNick()))
                 d++;
-        assertTrue(d == 3);
+        assertEquals(d,3);
 
         //Check marks
         p.applyEffects(EffectsLambda.marks(2, att));
-        assertTrue(Collections.frequency(p.getReceivedMarks(), att) == 2);
+        assertEquals(Collections.frequency(p.getReceivedMarks(), att.getNick()), 2);
 
         //Give damage (+ the old marks becomes damage)
         p.applyEffects(EffectsLambda.damage(2, att));
         d=0;
         for(int i=0; i<12; i++)
-            if(p.getReceivedDamage()[i] == att)
+            if( p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(att.getNick()) )
                 d++;
-        assertTrue(d == (3+2+2));
+        assertEquals(d, (3+2+2));
 
         //Move the player
         try {
