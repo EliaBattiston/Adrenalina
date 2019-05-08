@@ -65,14 +65,12 @@ public class FeasibleLambdaMap
             //Muovi un bersaglio di 0, 1 o 2 quadrati fino a un quadrato che puoi vedere e dagli 1 danno.
 
             List<Point> pointsAll = Map.visiblePoints(pl.getPosition(), map, 2);
-            List<Point> pointsVisible = Map.visiblePoints(pl.getPosition(), map, 0);
-            List<Point> pointsNotVisible = new ArrayList<>(pointsAll);
-            pointsNotVisible.removeAll(pointsVisible);
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
-                if(pointsAll.contains(p.getPosition()))
-                    targets.add(p);
+                if(p!=pl)
+                    if(pointsAll.contains(p.getPosition()))
+                        targets.add(p);
 
             return !targets.isEmpty();
         });
@@ -89,6 +87,7 @@ public class FeasibleLambdaMap
         data.put("w9-b", (pl, map, memory)->{
             //Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.
             List<Player> allInMap = Map.playersInTheMap(map);
+            allInMap.remove(pl);
 
             List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
             List<Integer> playersRooms = new ArrayList<>();
@@ -99,8 +98,8 @@ public class FeasibleLambdaMap
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
 
-            //
-            visibleRooms.remove(new Integer(map.getCell(pl.getPosition()).getRoomNumber())); //FIXME AI throwed IndexOutOfBoundsException
+            //Without converting to integer it removes the one @ position instead of the value - Andrea Aspesi
+            visibleRooms.remove(new Integer(map.getCell(pl.getPosition()).getRoomNumber()));
 
             return !playersRooms.isEmpty();
         });
@@ -109,6 +108,7 @@ public class FeasibleLambdaMap
             //Scegli 1 bersaglio che non puoi vedere e dagli 3 danni.
 
             List<Player> targets = Map.playersInTheMap(map);
+            targets.remove(pl);
             targets.removeAll(Map.visiblePlayers(pl, map));
             return !targets.isEmpty();
         });
@@ -367,7 +367,11 @@ public class FeasibleLambdaMap
 
         //Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2
         // quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)
-        data.put("p2", (pl, map, memory)-> !Map.playersInTheMap(map).isEmpty());
+        data.put("p2", (pl, map, memory)-> {
+            List<Player> targets = Map.playersInTheMap(map);
+            targets.remove(pl);
+            return !targets.isEmpty();
+        });
 
         //memory = player that gave damage
         data.put("p3", (pl, map, memory)-> Map.visiblePlayers(pl, map).contains((Player) memory));//someone you don't see can attack you
