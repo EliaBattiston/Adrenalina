@@ -186,14 +186,11 @@ public class ActionLambdaMap {
         data.put("w12-b", (pl, map, memory)->{
             //Scegli un quadrato distante 1 movimento e possibilmente un secondo quadrato distante ancora 1 movimento nella stessa direzione. In ogni quadrato puoi scegliere 1 bersaglio e dargli 1 danno.
 
-            List<Point> squares = Map.possibleMovements(pl.getPosition(), 1, map);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
 
-            Point chosen = pl.getConn().choosePosition(squares, true);
-
-            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen);
-
-            List<Player> targets = map.getCell(chosen).getPawns();
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
+
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen1.getPosition());
 
             Player chosen2 = null;
             if(secondPoint != null) {
