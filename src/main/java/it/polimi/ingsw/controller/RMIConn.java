@@ -191,12 +191,13 @@ public class RMIConn implements Connection
 
     /**
      * Asks the player to choose a direction
-     * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
+     * @param possible Directions you can choose
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose) {
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
         try {
-            return client.chooseDirection(mustChoose);
+            return client.chooseDirection(possible, mustChoose);
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );

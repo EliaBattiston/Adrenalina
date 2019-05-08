@@ -160,7 +160,8 @@ public class Match implements Runnable
             }
 
             //Reload weapons
-            ActionLambdaMap.reload(active);
+            if(FeasibleLambdaMap.possibleReload(active))
+                ActionLambdaMap.reload(active);
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
@@ -285,6 +286,8 @@ public class Match implements Runnable
             pl.applyEffects(EffectsLambda.move(pl, spawnPoint, game.getMap()));
         }
         //If not found the map is incorrect
+
+        System.out.println(pl + " è respawnato in " + spawnX + "," + spawnY);
     }
 
     /**
@@ -304,6 +307,8 @@ public class Match implements Runnable
                     selectedCell.refill(game);
             }
         }
+
+        System.out.println("Riempita la mappa con gli oggetti mancanti");
     }
 
     /**
@@ -412,6 +417,8 @@ public class Match implements Runnable
             if(killed.getReceivedDamage()[11] != null);
                 frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[10] ) );
         }
+
+        System.out.println(killed + " è stato ucciso");
     }
 
     /**
@@ -549,6 +556,8 @@ public class Match implements Runnable
                     maxPoints = 1;
             }
         }
+
+        System.out.println("Il gioco è terminato");
     }
 
     public MatchView getMatchView(Player viewer){

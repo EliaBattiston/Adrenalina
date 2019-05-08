@@ -234,7 +234,12 @@ public class ActionLambdaMap {
 
         data.put("w15-b", (pl, map, memory)->{
             //Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.
-            Direction dir = pl.getConn().chooseDirection(true);
+            List<Direction> possible = new ArrayList<>();
+            for(Direction d: Direction.values())
+                if(Map.visiblePlayers(pl, map, d) != null)
+                    possible.add(d);
+
+            Direction dir = pl.getConn().chooseDirection(possible,true);
 
             List<Player> targets = Map.visiblePlayers(pl, map, dir);
             Player chosen = pl.getConn().chooseTarget(targets, true);
@@ -524,7 +529,12 @@ public class ActionLambdaMap {
 
         data.put("w15-al", (pl, map, memory)->{
             //Scegli una direzione cardinale e 1 o 2 bersagli in quella direzione. Dai 2 danni a ciascuno.
-            Direction dir = pl.getConn().chooseDirection(true);
+            List<Direction> possible = new ArrayList<>();
+            for(Direction d: Direction.values())
+                if(Map.visiblePlayers(pl, map, d) != null)
+                    possible.add(d);
+
+            Direction dir = pl.getConn().chooseDirection(possible, true);
 
             List<Player> targets = Map.visiblePlayers(pl, map, dir);
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
@@ -747,6 +757,8 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+
+        System.out.println(pl.getNick() + " ha corso fino a " + chosen.getX() + "," + chosen.getY());
     }
 
     /**
@@ -772,6 +784,8 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+
+        System.out.println(pl.getNick() + " ha corso per raccogliere fino a " + chosen.getX() + "," + chosen.getY());
     }
 
     /**
@@ -808,6 +822,8 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+
+        System.out.println(pl.getNick() + " ha corso per sparare fino a " + chosen.getX() + "," + chosen.getY());
     }
 
     /**
@@ -833,6 +849,7 @@ public class ActionLambdaMap {
         //Only loaded weapons
         List<Weapon> loaded = pl.getWeapons().stream().filter(Weapon::isLoaded).filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null))).collect(Collectors.toList());
         //TODO here????
+        System.out.println(pl.getNick() + " sceglie l'arma" );
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
 
         //Take list of available "base" actions for the chosen weapon
@@ -843,6 +860,7 @@ public class ActionLambdaMap {
             weaponActions.add(chosen.getAlternative());
 
         //Ask the user which one he wants to use
+        System.out.println(pl.getNick() + " sceglie l'azione di " + chosen.getName() );
         Action toExecute = pl.getConn().chooseAction(weaponActions, true);
         Object mem;
         switch (toExecute.getLambdaID())
@@ -873,6 +891,7 @@ public class ActionLambdaMap {
                 weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
 
             if(!weaponActions.isEmpty()){
+                System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
                 toExecute.execute(pl, map, mem);
 
@@ -880,6 +899,7 @@ public class ActionLambdaMap {
                 weaponActions.remove(toExecute);
                 if(!weaponActions.isEmpty())
                 {
+                    System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                     toExecute = pl.getConn().chooseAction(weaponActions, false);
                     toExecute.execute(pl, map, mem);
                 }
@@ -928,7 +948,6 @@ public class ActionLambdaMap {
 
         while(!reloadable.isEmpty() && chosen != null)
         {
-            //TODO here????
             chosen = pl.getConn().chooseWeapon(reloadable, false);
 
             if(chosen != null)

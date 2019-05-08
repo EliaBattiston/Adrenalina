@@ -141,10 +141,11 @@ public class AIClient implements Client {
 
     /**
      * Asks the player to choose a direction
-     * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
+     * @param possible Directions you can choose
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose) { return Direction.values()[new Random().nextInt(4)]; }
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return possible.get(new Random().nextInt(possible.size())); }
 
     /**
      * Asks the user to choose a precise position on the map
@@ -335,9 +336,11 @@ public class AIClient implements Client {
                     break;
                 }
                 case CHOOSEDIRECTION: {
+                    ArrayList<Direction> param = gson.fromJson(message.parameters, new TypeToken<List<Direction>>() {
+                    }.getType());
                     answer.type = Interaction.CHOOSEDIRECTION;
                     ArrayList<Direction> ansParam = new ArrayList<>();
-                    ansParam.add(chooseDirection(message.mustChoose));
+                    ansParam.add(chooseDirection(param, message.mustChoose));
                     answer.parameters = gson.toJson(ansParam);
                     break;
                 }

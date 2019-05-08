@@ -111,6 +111,8 @@ public class RegularCell extends Cell {
             }
         }));
         lootDeck.scrapCard(picked);
+
+        System.out.println(pl.getNick() + " ha raccolto un loot");
     }
 
     /**

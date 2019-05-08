@@ -181,6 +181,8 @@ public class SpawnCell extends Cell{
                 Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player's hand", pl);
             }
         }));
+
+        System.out.println(pl.getNick() + " ha comprato " + picked.getName());
     }
 
     /**

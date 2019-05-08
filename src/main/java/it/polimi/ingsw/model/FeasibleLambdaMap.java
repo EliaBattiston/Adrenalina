@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class FeasibleLambdaMap
 {
@@ -457,5 +458,35 @@ public class FeasibleLambdaMap
         }
 
         return !destinations.isEmpty();
+    }
+
+    /**
+     * Checks if the player has currently reloadable weapons
+     * @param pl Current player
+     * @return True if the action is possible, false otherwise
+     */
+    public static boolean possibleReload(Player pl)
+    {
+        List<Weapon> unloaded = pl.getWeapons().stream().filter(weapon -> !weapon.isLoaded()).collect(Collectors.toList());
+        List<Weapon> reloadable =  new ArrayList<>(unloaded); //Only the weapons the player can currently reload
+        List<Color> cost = new ArrayList<>();
+        Weapon chosen = null;
+
+        for(Weapon w : unloaded)
+        {
+            cost.clear();
+            cost.add(w.getColor());
+            if(w.getBase().getCost() != null)
+                cost.addAll(w.getBase().getCost());
+
+            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
+                    || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
+                    || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            {
+                reloadable.remove(w);
+            }
+        }
+
+        return !reloadable.isEmpty();
     }
 }

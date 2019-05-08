@@ -92,10 +92,11 @@ public interface Connection extends Remote
 
     /**
      * Asks the player to choose a direction
+     * @param possible Directions you can choose
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
-     * @return Chosen direction
+     * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose);
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose);
 
     /**
      * Asks the user to choose a precise position on the map

@@ -78,9 +78,6 @@ public class SocketConn implements Connection {
      */
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose)
     {
-        if(available.size() == 0)
-            System.out.println("ooops");
-
         Payload load = new Payload();
         load.type = Interaction.CHOOSEWEAPON;
         load.parameters = gson.toJson(available);
@@ -247,13 +244,15 @@ public class SocketConn implements Connection {
 
     /**
      * Asks the player to choose a direction
-     * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
+     * @param possible Directions you can choose
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose)
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose)
     {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEDIRECTION;
+        load.parameters = gson.toJson(possible);
         load.mustChoose = mustChoose;
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
