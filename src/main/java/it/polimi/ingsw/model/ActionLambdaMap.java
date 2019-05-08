@@ -192,17 +192,16 @@ public class ActionLambdaMap {
 
             Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen1.getPosition());
 
-            Player chosen2 = null;
             if(secondPoint != null) {
-                targets = map.getCell(secondPoint).getPawns();
-                if(!targets.isEmpty())
-                    chosen2 = pl.getConn().chooseTarget(targets, false);
+                targets = map.getCell(secondPoint).getPawns(); //FIXME @andrea weird nullpointerexception sometimes
+                if(!targets.isEmpty()) {
+                    Player chosen2 = pl.getConn().chooseTarget(targets, false);
+                    if(chosen2 != null)
+                        chosen2.applyEffects(EffectsLambda.damage(1, pl));
+                }
             }
 
-            //Give damage
             chosen1.applyEffects(EffectsLambda.damage(1, pl));
-            if(chosen2 != null)
-                chosen2.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("w13-b", (pl, map, memory)->{
@@ -289,21 +288,29 @@ public class ActionLambdaMap {
             //Scegli fino a 3 bersagli su quadrati differenti, ognuno distante esattamente 1 movimento da me. Dai 1 danno a ogni bersaglio.
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==1);
-            List<Player> chosen = new ArrayList<>();
 
-            chosen.add(pl.getConn().chooseTarget(targets, true));
-            for(Player p: map.getCell(chosen.get(0).getPosition()).getPawns())
-                targets.remove(p);
-            chosen.add(pl.getConn().chooseTarget(targets, false));
-            if(chosen.size() > 1){
-                for(Player p: map.getCell(chosen.get(1).getPosition()).getPawns())
-                    targets.remove(p);
-                chosen.add(pl.getConn().chooseTarget(targets, false));
+            Player chosen1 = pl.getConn().chooseTarget(targets, true);
+            for(Player p: map.getCell(chosen1.getPosition()).getPawns())
+                targets.remove(p);//So I remove chosen1 too
+
+            if(!targets.isEmpty()){
+                Player chosen2 = pl.getConn().chooseTarget(targets, false);
+                if(chosen2 != null){
+                    for(Player p: map.getCell(chosen2.getPosition()).getPawns())
+                        targets.remove(p);//So I remove chosen2 too
+
+                    if(!targets.isEmpty()){
+                        Player chosen3 = pl.getConn().chooseTarget(targets, false);
+
+                        if(chosen3!= null)
+                            chosen3.applyEffects(EffectsLambda.damage(1, pl));
+                    }
+
+                    chosen2.applyEffects(EffectsLambda.damage(1, pl));
+                }
+
+                chosen1.applyEffects(EffectsLambda.damage(1, pl));
             }
-
-            for(Player p: chosen)
-                if(p!=null)
-                    p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("w21-b", (pl, map, memory)->{
@@ -320,7 +327,7 @@ public class ActionLambdaMap {
             //Dai 1 marchio a un altro bersaglio che puoi vedere.
 
             List<Player> targets = Map.visiblePlayers(pl, map);
-            targets.removeAll((List<Player>)memory); //not the one I've already gave damage
+            targets.removeAll(Arrays.asList((Player[])memory)); //not the one I've already gave damage
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.marks(1, pl));
         });
@@ -342,9 +349,12 @@ public class ActionLambdaMap {
             targets = Map.visiblePlayers(pl, map);
             targets.remove(((Player[])memory)[0]);
             targets.remove(((Player[])memory)[1]);
-            Player chosenDifferent = pl.getConn().chooseTarget(targets, false);
-            if(chosenDifferent != null)
-                chosenDifferent.applyEffects(EffectsLambda.damage(1, pl));
+
+            if(!targets.isEmpty()) {
+                Player chosenDifferent = pl.getConn().chooseTarget(targets, false);
+                if (chosenDifferent != null)
+                    chosenDifferent.applyEffects(EffectsLambda.damage(1, pl));
+            }
         });
 
         //((Player[])memory)[0]
@@ -457,7 +467,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             targets.remove(((Player[])memory)[0]);
-            Player chosen = pl.getConn().chooseTarget(targets, true);
+            Player chosen = pl.getConn().chooseTarget(targets, true); //FIXME @elia targets is null sometimes
             chosen.applyEffects(EffectsLambda.damage(2, pl));
         });
 
@@ -529,7 +539,7 @@ public class ActionLambdaMap {
             //Scegli una direzione cardinale e 1 o 2 bersagli in quella direzione. Dai 2 danni a ciascuno.
             List<Direction> possible = new ArrayList<>();
             for(Direction d: Direction.values())
-                if(Map.visiblePlayers(pl, map, d) != null)
+                if(Map.visiblePlayers(pl, map, d) != null && !Map.visiblePlayers(pl, map, d).isEmpty())
                     possible.add(d);
 
             Direction dir = pl.getConn().chooseDirection(possible, true);
@@ -553,9 +563,13 @@ public class ActionLambdaMap {
 
             chosen.add(pl.getConn().chooseTarget(targets, true));
             targets.remove(chosen.get(0));
-            chosen.add(pl.getConn().chooseTarget(targets, false));
-            targets.remove(chosen.get(1));
-            chosen.add(pl.getConn().chooseTarget(targets, false));
+            if(!targets.isEmpty()){
+                chosen.add(pl.getConn().chooseTarget(targets, false));
+                targets.remove(chosen.get(1));
+                if(!targets.isEmpty()) {
+                    chosen.add(pl.getConn().chooseTarget(targets, false));
+                }
+            }
             for(Player p:chosen)
                 if(p!=null)
                     p.applyEffects(EffectsLambda.marks(1, pl));
@@ -573,6 +587,8 @@ public class ActionLambdaMap {
             //Scegli un quadrato distante esattamente 1 movimento. Muovi in quel quadrato. Puoi dare 2 danni a 1 bersaglio in quel quadrato. Se vuoi puoi muovere
             // ancora di 1 quadrato nella stessa direzione (ma solo se è un movimento valido). Puoi dare 2 danni a un bersaglio anche in quel quadrato.
 
+            //THE DEFINITION MEANS: I can just run and not shot in the first square nor the second!
+
             //Movement
             List<Point> positions = Map.possibleMovements(pl.getPosition(), 1, map);
             Point posChosen = pl.getConn().movePlayer(positions, true);
@@ -582,21 +598,29 @@ public class ActionLambdaMap {
 
             //Give damage
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
-            Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            if(!targets.isEmpty()){
+                Player chosen = pl.getConn().chooseTarget(targets, true);
+                chosen.applyEffects(EffectsLambda.damage(2, pl));
+            }
 
             //Next move (just if there is a next cell)
             if(secondPoint != null && map.getCell(secondPoint) != null){
                 try{
                     List<Point> nextPoints = new ArrayList<>();
                     nextPoints.add(secondPoint);
-                    posChosen = pl.getConn().movePlayer(nextPoints, true);
-                    pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
+                    posChosen = pl.getConn().movePlayer(nextPoints, false);
+                    if(posChosen != null){
+                        pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
 
-                    targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
+                        targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
 
-                    chosen = pl.getConn().chooseTarget(targets, true);
-                    chosen.applyEffects(EffectsLambda.damage(2, pl));
+                        if(!targets.isEmpty()){
+                            Player chosen = pl.getConn().chooseTarget(targets, false);
+                            if(chosen != null)
+                                chosen.applyEffects(EffectsLambda.damage(2, pl));
+                        }
+                    }
+
                 }catch(WrongPointException ex){
                     Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
                 }
@@ -680,10 +704,13 @@ public class ActionLambdaMap {
                     chosen.getBase().execute(pl, map, null);
                     pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
 
+                    //FIXME @elia: you check only for IDs 6 and 8 but there are other cards with same effects and colors, don't you have to filter them too?
                     inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
-                    chosen = pl.getConn().choosePower(inHand, false);
+                    if(!inHand.isEmpty()) //Fast fix Andrea //FIXME @elia check the logic of the loop
+                        chosen = pl.getConn().choosePower(inHand, false);
                 }
             }
+
         });
 
         data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true) );
@@ -817,10 +844,13 @@ public class ActionLambdaMap {
         pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
 
 
-        Point chosen = pl.getConn().movePlayer(destinations, false);
+        //FIXME @elia destination sometimes is null -> the check on the isEmpty is for delete this problem while I test the others
+        if(!destinations.isEmpty()){
+            Point chosen = pl.getConn().movePlayer(destinations, false);
 
-        if(chosen != null)
-            pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+            if(chosen != null)
+                pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+        }
     }
 
     /**
@@ -844,9 +874,15 @@ public class ActionLambdaMap {
     private static void shoot(Player pl, Map map)
     {
         //Only loaded weapons
-        List<Weapon> loaded = pl.getWeapons().stream().filter(Weapon::isLoaded).filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null))).collect(Collectors.toList());
-        //TODO here????
+        List<Weapon> loaded = pl.getWeapons().stream()
+                .filter(Weapon::isLoaded)
+                .filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)))
+                .collect(Collectors.toList());
         System.out.println(pl.getNick() + " sceglie l'arma" );
+
+        //FIXME @elia sometimes loaded is empty -> the return is temporary
+        if(loaded.isEmpty())
+            return ;
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
 
         //Take list of available "base" actions for the chosen weapon

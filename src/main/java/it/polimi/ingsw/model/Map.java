@@ -239,6 +239,7 @@ public class Map {
      * @return The list of visible players accepted from the strategy
      */
     public static List<Player> playersAtGivenDistance(Player pl, Map map, boolean mustVisible, MapDistanceStrategy strategy){
+        //TODO IMPORTANT @elia @andrea check this method really works, a call to this method appears sometimes when weird stuffs appear
         List<Player> visible;
         if(mustVisible)
             visible = Map.visiblePlayers(pl, map);
@@ -352,7 +353,7 @@ public class Map {
                         visible.add(new Point(startPoint.getX(), startPoint.getY() - 1));
 
                         if(dist>0)
-                            return Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() - 1), dist-1, map, dir);
+                            visible.addAll(Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() - 1), dist-1, map, dir));
 
                         return visible;
                     }
@@ -362,7 +363,7 @@ public class Map {
                         visible.add(new Point(startPoint.getX()+1, startPoint.getY()));
 
                         if(dist>0)
-                            return Map.possibleMovementsSpecificDirection(new Point(startPoint.getX()+1, startPoint.getY()), dist-1, map, dir);
+                            visible.addAll(Map.possibleMovementsSpecificDirection(new Point(startPoint.getX()+1, startPoint.getY()), dist-1, map, dir));
 
                         return visible;
                     }
@@ -372,7 +373,7 @@ public class Map {
                         visible.add(new Point(startPoint.getX(), startPoint.getY() + 1));
 
                         if(dist>0)
-                            return Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() + 1), dist-1, map, dir);
+                            visible.addAll(Map.possibleMovementsSpecificDirection(new Point(startPoint.getX(), startPoint.getY() + 1), dist-1, map, dir));
 
                         return visible;
                     }
@@ -382,7 +383,7 @@ public class Map {
                         visible.add(new Point(startPoint.getX() - 1, startPoint.getY()));
 
                         if(dist>0)
-                            return Map.possibleMovementsSpecificDirection(new Point(startPoint.getX() - 1, startPoint.getY()), dist-1, map, dir);
+                            visible.addAll(Map.possibleMovementsSpecificDirection(new Point(startPoint.getX() - 1, startPoint.getY()), dist-1, map, dir));
 
                         return visible;
                     }

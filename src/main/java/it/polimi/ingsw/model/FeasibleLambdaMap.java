@@ -79,10 +79,13 @@ public class FeasibleLambdaMap
         data.put("w8-b", (pl, map, memory)->{
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
-            List<Point> points = Map.visiblePoints(pl.getPosition(), map, 0);
+            //TODO look at the players and not just the points
+            return false; //For now don't use this card
+
+            /*List<Point> points = Map.visiblePoints(pl.getPosition(), map, 0);
             points.remove(pl.getPosition());
 
-            return !points.isEmpty();
+            return !points.isEmpty();*/
         });
 
         data.put("w9-b", (pl, map, memory)->{
@@ -382,13 +385,17 @@ public class FeasibleLambdaMap
         data.put("p4", (pl, map, memory)-> true);
 
         //Activities lambdas
+        //TODO @elia same as for the ActionLambda
         data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> (power.getId() == 6 || power.getId() == 8) && power.getBase().isFeasible(pl, map, null) ));
 
         data.put("a-b1", (pl, map, memory)-> true);
 
         data.put("a-b2", (pl, map, memory)->  possibleLoot(pl, map, 1));
 
-        data.put("a-b3",(pl, map, memory) ->  pl.getWeapons().stream().filter(Weapon::isLoaded).anyMatch(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null))) );
+        data.put("a-b3",(pl, map, memory) ->  pl.getWeapons().stream()
+                .filter(Weapon::isLoaded)
+                .anyMatch(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)))
+        );
 
         data.put("a-a1", (pl, map, memory)-> possibleLoot(pl, map, 2));
 
@@ -406,7 +413,7 @@ public class FeasibleLambdaMap
     }
 
     /**
-     * Determines whether the lambda is currently feasible
+     * SINGLETON: Determines whether the lambda is currently feasible looking through the Map
      * @param lambdaName Relevant lambda identifier
      * @param pl Lambda's player
      * @param map Lambda's map

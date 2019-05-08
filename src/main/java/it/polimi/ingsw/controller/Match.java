@@ -208,7 +208,7 @@ public class Match implements Runnable
                 endGame();
             }
 
-            System.out.println("Fine turno " + turnNum);
+            System.out.println("\u001B[31mFine turno " + turnNum + "\u001B[0m");
             turnNum++;
         }
     }
@@ -418,7 +418,7 @@ public class Match implements Runnable
                 frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[10] ) );
         }
 
-        System.out.println(killed + " è stato ucciso");
+        System.out.println(killed.getNick() + " è stato ucciso");
     }
 
     /**
@@ -439,7 +439,7 @@ public class Match implements Runnable
 
             for(int k = 8; k >= 0; k--)
             {
-                if(game.getSkulls()[k].isUsed() && game.getSkulls()[k].getKiller() == p)
+                if(game.getSkulls()[k].isUsed() && game.getSkulls()[k].getKiller() == p) //FIXME @elia here you go outOfBound
                 {
                     damageNum++;
 

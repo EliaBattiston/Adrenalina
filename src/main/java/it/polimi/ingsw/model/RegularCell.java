@@ -103,7 +103,7 @@ public class RegularCell extends Cell {
                     if(empty != -1)
                         powers[empty] = newPower;
                     else{
-                        Logger.getGlobal().log(Level.WARNING, "Scrapped new card");
+                        Logger.getGlobal().log(Level.WARNING, "Scrapped new card"); //TODO do we need the logger?
                         powersDeck.scrapCard(newPower);
                     }
                 }
