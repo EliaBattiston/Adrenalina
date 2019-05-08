@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model;
 
-import com.sun.org.apache.regexp.internal.RE;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.util.*;
