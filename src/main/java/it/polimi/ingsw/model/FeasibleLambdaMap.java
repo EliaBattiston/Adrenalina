@@ -385,8 +385,7 @@ public class FeasibleLambdaMap
         data.put("p4", (pl, map, memory)-> true);
 
         //Activities lambdas
-        //TODO @elia same as for the ActionLambda
-        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> (power.getId() == 6 || power.getId() == 8) && power.getBase().isFeasible(pl, map, null) ));
+        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> (power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4") && power.getBase().isFeasible(pl, map, null) ));
 
         data.put("a-b1", (pl, map, memory)-> true);
 
@@ -452,7 +451,7 @@ public class FeasibleLambdaMap
         return !destinations.isEmpty();
     }
 
-    //TODO elia check that it returns the right values, while testing it with the AI it happared to be a possible loot but it was not
+    //TODO elia check that it returns the right values, while testing it with the AI it appeared to be a possible loot but it was not
     private static boolean possibleLoot(Player pl, Map map, int steps)
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);

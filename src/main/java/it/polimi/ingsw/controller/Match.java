@@ -287,7 +287,7 @@ public class Match implements Runnable
         }
         //If not found the map is incorrect
 
-        System.out.println(pl + " è respawnato in " + spawnX + "," + spawnY);
+        System.out.println(pl.getNick() + " è respawnato in " + spawnX + "," + spawnY);
     }
 
     /**
@@ -437,9 +437,9 @@ public class Match implements Runnable
         {
             damageNum = 0;
 
-            for(int k = 8; k >= 0; k--)
+            for(int k = 7; k >= 0; k--)
             {
-                if(game.getSkulls()[k].isUsed() && game.getSkulls()[k].getKiller() == p) //FIXME @elia here you go outOfBound
+                if(game.getSkulls()[k].isUsed() && game.getSkulls()[k].getKiller() == p)
                 {
                     damageNum++;
 
@@ -466,7 +466,7 @@ public class Match implements Runnable
             else
             {
                 //Check who inflicted damage first
-                for(int k = 8; k >= 0; k--)
+                for(int k = 7; k >= 0; k--)
                 {
                     if(game.getSkulls()[k].isUsed())
                     {
@@ -500,7 +500,7 @@ public class Match implements Runnable
             inflictedDamages.clear();
 
             //Calculate max points
-            if(phase == GamePhase.FRENZY)
+            if(!useFrenzy)
                 maxPoints = 2 - (damaged.getSkulls() * 2);
             else
                 maxPoints = 8 - (damaged.getSkulls() * 2);
@@ -543,7 +543,7 @@ public class Match implements Runnable
             });
 
             //First blood
-            if(phase != GamePhase.FRENZY)
+            if(!useFrenzy)
                 game.getPlayer(damaged.getReceivedDamage()[0]).addPoints(1);
             //Give points
             for(Entry<Player, Integer> entry : inflictedDamages)

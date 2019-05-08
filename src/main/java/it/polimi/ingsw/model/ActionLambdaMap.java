@@ -695,18 +695,17 @@ public class ActionLambdaMap {
             System.out.println(pl.getNick() + " sceglie un potenziamento");
             Power chosen;
 
-            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4").filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
             if(!inHand.isEmpty())
             {
-                chosen = pl.getConn().choosePower(inHand, false);
+                chosen = pl.getConn().choosePower(inHand, true);
                 while (!inHand.isEmpty() && chosen != null)
                 {
                     chosen.getBase().execute(pl, map, null);
                     pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
 
-                    //FIXME @elia: you check only for IDs 6 and 8 but there are other cards with same effects and colors, don't you have to filter them too?
-                    inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
-                    if(!inHand.isEmpty()) //Fast fix Andrea //FIXME @elia check the logic of the loop
+                    inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4").filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+                    if(!inHand.isEmpty())
                         chosen = pl.getConn().choosePower(inHand, false);
                 }
             }
