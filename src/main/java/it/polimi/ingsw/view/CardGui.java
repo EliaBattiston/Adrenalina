@@ -8,58 +8,51 @@ import javafx.scene.layout.StackPane;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CardGui extends StackPane {
+/**
+ * Remember to relocate the card after making it in the class that use it
+ */
+public class CardGui extends Canvas {
     private it.polimi.ingsw.model.Card data;
     private Image img;
-    private double x, y;
-    private double width, height;
+    private Canvas canvas;
 
-    public CardGui(it.polimi.ingsw.model.Weapon weapon, Gui gui){
+    public CardGui(it.polimi.ingsw.model.Weapon weapon, double width, double height, double x, double y){
+        super(width, height);
         this.data = weapon;
         img = new Image( "file:images/weapon/weapon" + weapon.getId() + ".png" );
 
-        width = gui.getWidth() * 0.085;
-        height = width / 0.6;
-
-        addImage(width, height);
-
-        relocate(0, 0);
+        addImage(width, height, x, y);
 
         setOnMousePressed(e ->{
             System.out.println("Clicked " + data.toString());
         });
     }
 
-    public CardGui(it.polimi.ingsw.model.Loot loot, Gui gui){
+    public CardGui(it.polimi.ingsw.model.Loot loot, Gui gui, double width, double height, double x, double y){
         this.data = loot;
         img = new Image( "file:images/loot/" + loot.getContentAsString() + ".png" );
-
-        width = gui.getWidth() * 0.05;
-        height = gui.getWidth() * 0.05; //it's a square!
-
-        addImage(width, height);
-
-        relocate(400, 500);
+        addImage(width, height, x, y);
 
     }
 
-    public CardGui(it.polimi.ingsw.model.Power power, Gui gui){
+    public CardGui(it.polimi.ingsw.model.Power power, Gui gui, double width, double height, double x, double y){
         this.data = power;
         img = new Image( "file:images/power/power" + (power.getId()<12 ? power.getId() : power.getId()/2) + ".png" );
 
-        width = gui.getWidth() * 0.0663;
-        height = width / 0.64015;
-
-        addImage(width, height);
+        addImage(width, height, x, y);
 
     }
 
-    private void addImage(double width, double height){
-        Canvas canvas = new Canvas(width,height);
-        getChildren().add( canvas );
+    private void addImage(double width, double height, double x, double y){
+        //canvas = new Canvas(width, height);
+        //getChildren().add( canvas );
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        GraphicsContext gc = this.getGraphicsContext2D();
 
-        gc.drawImage( img, 0, 0, width,height);
+        gc.drawImage( img, x, y, width, height);
+    }
+
+    public void relocateCanvas(double x, double y){
+        canvas.relocate(x, y);
     }
 }

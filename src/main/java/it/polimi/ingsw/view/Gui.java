@@ -24,11 +24,10 @@ public class Gui extends Application {
 
     private static String IMG_BACKGROUND = "file:images/background.png";
     private static String DIR_PLAYERBOARD = "file:images/playerBoard/";
-    private static String DIR_WEAPON = "file:images/weapon/";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        background_width = 1920;
+        background_width = 960;
         background_height = background_width*9/16;
         Pane s;
 
@@ -173,24 +172,14 @@ public class Gui extends Application {
         double delta_x = background_width * 0.071;
 
         for(Weapon w : weapons){
-            root.getChildren().add(drawWeapon(w, width, height, x, y));
+            //root.getChildren().add(drawWeapon(w, width, height, x, y));
+            CardGui card = new CardGui(w, width, height, x, y);
+            root.getChildren().add(card);
+            //card.relocateCanvas(x, y);
             x += delta_x;
         }
 
         return root;
-    }
-
-    private StackPane drawWeapon(Weapon w, double width, double height, double x, double y){
-        StackPane s = new StackPane();
-
-        Canvas canvas = new Canvas(background_width, background_height);
-        s.getChildren().add( canvas );
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        gc.drawImage( new Image(DIR_WEAPON + "weapon" + w.getId() + ".png"), x, y, width, height);
-
-        return s;
     }
 
     /*private Pane createBoard(){
