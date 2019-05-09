@@ -130,7 +130,7 @@ public class MapTest {
         Point pos1 = new Point(1,1);
         List<Integer> visible1 = new ArrayList<>();
         visible1.add(1);
-        visible1.add(2);
+        visible1.add(4);
         visible1.add(3);
 
         List<Integer> calculated = Map.visibleRooms(pos1, m);
