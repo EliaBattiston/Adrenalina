@@ -92,20 +92,13 @@ public class RegularCell extends Cell {
                         inHand.add(newPower);
                         discarded = pl.getConn().discardPower(inHand, true);
 
-                        if(discarded == newPower)
-                            discarded = null;
-                        else
-                            powersDeck.scrapCard(discarded);
+                        powersDeck.scrapCard(discarded);
                     }
 
                     int empty = Arrays.asList(powers).indexOf(discarded);
 
-                    if(empty != -1)
+                    if(empty != -1) //if it was null put in the first null, if it was a specific card discarded, put where the card was
                         powers[empty] = newPower;
-                    else{
-                        Logger.getGlobal().log(Level.WARNING, "Scrapped new card"); //TODO do we need the logger?
-                        powersDeck.scrapCard(newPower);
-                    }
                 }
                 else
                     ammo.add(c, 1);

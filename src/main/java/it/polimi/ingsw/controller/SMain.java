@@ -221,6 +221,6 @@ public class SMain
             matches.get(matches.indexOf(waiting[index])).run();
             waiting[index] = null;
             startedTimer[index] = false;
-        } //FIXME AI throwed StackOverflowException for GSON
+        }
     }
 }

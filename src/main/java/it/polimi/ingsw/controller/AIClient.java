@@ -29,13 +29,13 @@ public class AIClient implements Client {
      * @param ipAddr IP address of the server
      * @param port TCP port of the Server's socket
      */
-    AIClient(String ipAddr, int port) {
-        try {
+    AIClient(String ipAddr, int port) throws IOException{
+        //try {
             serverSocket = new Socket(ipAddr, port);
-        }
+        /*}
         catch (IOException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-        }
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e ); //moved to the AIMain and AIThread(junit) junit
+        }*/
 
         GsonBuilder gsonBilder = new GsonBuilder();
         gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());

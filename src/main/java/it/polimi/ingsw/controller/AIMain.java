@@ -1,19 +1,17 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Main class for the client's executable
+ * Main class for the AIClient
  */
-//TODO @elia set the class back for normal players and use AIMain for tests
-public class CMain
+public class AIMain
 {
     /**
      * Client's representation of the game data
@@ -34,7 +32,7 @@ public class CMain
     /**
      * Creates a new CMain
      */
-    public CMain()
+    public AIMain()
     {
         //Temporary test for the login
 
@@ -71,6 +69,6 @@ public class CMain
 
     public static void main(String[] args)
     {
-        CMain base = new CMain();
+        AIMain base = new AIMain();
     }
 }

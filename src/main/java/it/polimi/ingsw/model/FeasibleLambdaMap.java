@@ -79,13 +79,17 @@ public class FeasibleLambdaMap
         data.put("w8-b", (pl, map, memory)->{
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
-            //TODO look at the players and not just the points
-            return false; //For now don't use this card
-
-            /*List<Point> points = Map.visiblePoints(pl.getPosition(), map, 0);
+            List<Point> points = Map.visiblePoints(pl.getPosition(), map, 0);
             points.remove(pl.getPosition());
 
-            return !points.isEmpty();*/
+            List<Player> targets = new ArrayList<>();
+            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
+            for(Point p : points) {
+                fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(p));
+                targets.addAll(Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1, p2)<=1));
+            }
+
+            return !targets.isEmpty();
         });
 
         data.put("w9-b", (pl, map, memory)->{
@@ -235,7 +239,7 @@ public class FeasibleLambdaMap
                 }
                 else return false; //if ad1 has not been used
             }
-            Logger.getGlobal().log(Level.SEVERE, "Wrong memory"); //FIXME some problems with memory
+            Logger.getGlobal().log(Level.SEVERE, "Wrong memory in w3-ad2");
             return false;
         });
 
@@ -451,7 +455,7 @@ public class FeasibleLambdaMap
         return !destinations.isEmpty();
     }
 
-    //TODO elia check that it returns the right values, while testing it with the AI it appeared to be a possible loot but it was not
+    //TODO @elia check that it returns the right values, while testing it with the AI it appeared to be a possible loot but it was not
     private static boolean possibleLoot(Player pl, Map map, int steps)
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);

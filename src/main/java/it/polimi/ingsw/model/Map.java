@@ -239,7 +239,6 @@ public class Map {
      * @return The list of visible players accepted from the strategy
      */
     public static List<Player> playersAtGivenDistance(Player pl, Map map, boolean mustVisible, MapDistanceStrategy strategy){
-        //TODO IMPORTANT @elia @andrea check this method really works, a call to this method appears sometimes when weird stuffs appear
         List<Player> visible;
         if(mustVisible)
             visible = Map.visiblePlayers(pl, map);
@@ -259,7 +258,7 @@ public class Map {
      * @param startPoint start position
      * @param dist max dist to look for
      * @param map the map
-     * @return the list of points reachable with that amount of movements
+     * @return the list of points reachable with that amount of movements the starting point won't be returned
      */
     public static List<Point> possibleMovements(Point startPoint, int dist, Map map) {
         Set<Cell> cells = new HashSet<>();
@@ -269,8 +268,7 @@ public class Map {
         for(Cell c:cells)
             points.add(map.getCellPosition(c));
 
-        //TODO check the presence of the starting point
-        return points;
+        return points; //the starting point won't be returned
     }
 
     /**
@@ -397,9 +395,9 @@ public class Map {
      * Find the second point in the same direction the first has been found from the start
      * @param start start point
      * @param first first point found
-     * @return the second point in the same direction as the first
+     * @return the second point in the same direction as the first if it's in the map
      */
-    public static Point nextPointSameDirection(Point start, Point first){
+    public static Point nextPointSameDirection(Point start, Point first, Map map){
         //Find the next X&Y in the same direction, it's needed for the second part of the effect
         int nX = first.getX();
         int nY = first.getY();
@@ -414,10 +412,12 @@ public class Map {
 
         try{
             Point p = new Point(nX, nY);
-            return p;
+            if(map.getCell(p) != null)
+                return p;
         }catch(WrongPointException e){
-            return null;
+            ;
         }
+        return null;
     }
 
     /**

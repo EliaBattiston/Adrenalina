@@ -178,7 +178,6 @@ public class SocketConn implements Connection {
         Payload answer = jsonDeserialize(receive());
         List<Point> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Point>>(){}.getType());
         return ansParam.get(0);
-        //TODO check it really doesn't need to return the same reference as one of the input ones
     }
 
     /**
@@ -200,7 +199,6 @@ public class SocketConn implements Connection {
         Payload answer = jsonDeserialize(receive());
         List<Point> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Point>>(){}.getType());
         return ansParam.get(0);
-        //TODO (same as movePlayer) check it really doesn't need to return the same reference as one of the input ones
     }
 
     /**

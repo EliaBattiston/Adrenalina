@@ -122,12 +122,19 @@ public class ActionLambdaMap {
         data.put("w8-b", (pl, map, memory)->{
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
-            List<Point> points = Map.visiblePoints(pl.getPosition(), map, 0);
-            points.remove(pl.getPosition());
+            List<Point> pointsAround = Map.visiblePoints(pl.getPosition(), map, 0);
+            pointsAround.remove(pl.getPosition());
+
+            List<Point> points = new ArrayList<>();
+            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
+            for(Point p : pointsAround) {
+                fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(p));
+                if(!Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1, p2)<=1).isEmpty())
+                    points.add(p);
+            }
 
             Point vortexPoint = pl.getConn().choosePosition(points, true);
 
-            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
             fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(vortexPoint));
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1,p2)<=1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
@@ -190,7 +197,7 @@ public class ActionLambdaMap {
 
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
 
-            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen1.getPosition());
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen1.getPosition(), map);
 
             if(secondPoint != null) {
                 targets = map.getCell(secondPoint).getPawns(); //FIXME @andrea weird nullpointerexception sometimes
@@ -525,7 +532,7 @@ public class ActionLambdaMap {
 
             Point chosen = pl.getConn().choosePosition(squares, true);
 
-            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen);
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen, map);
 
             for(Player p:map.getCell(chosen).getPawns())
                 p.applyEffects(EffectsLambda.damage(2, pl));
@@ -592,7 +599,7 @@ public class ActionLambdaMap {
             //Movement
             List<Point> positions = Map.possibleMovements(pl.getPosition(), 1, map);
             Point posChosen = pl.getConn().movePlayer(positions, true);
-            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), posChosen);
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), posChosen, map);
 
             pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
 
@@ -603,8 +610,8 @@ public class ActionLambdaMap {
                 chosen.applyEffects(EffectsLambda.damage(2, pl));
             }
 
-            //Next move (just if there is a next cell)
-            if(secondPoint != null && map.getCell(secondPoint) != null){
+            //Next move
+            if(secondPoint != null){
                 try{
                     List<Point> nextPoints = new ArrayList<>();
                     nextPoints.add(secondPoint);
@@ -940,11 +947,8 @@ public class ActionLambdaMap {
 
         //Unload the used weapon
         pl.applyEffects((damage, marks, position, weapons, powers, ammo) -> {
-            //TODO the chosen has a different
-            //weapons[Arrays.asList(weapons).indexOf(chosen)].setLoaded(false);
             for(Weapon w : weapons)
-                if(w != null)
-                    if(w.getId() == chosen.getId())
+                if(w != null && w.getId() == chosen.getId())
                         w.setLoaded(false);
         });
     }

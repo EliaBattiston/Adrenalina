@@ -557,7 +557,7 @@ public class Match implements Runnable
             }
         }
 
-        System.out.println("Il gioco è terminato");
+        System.out.println("\u001b[34mIl gioco è terminato\u001B[0m");
     }
 
     public MatchView getMatchView(Player viewer){
