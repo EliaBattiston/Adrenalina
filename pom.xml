@@ -70,7 +70,7 @@
           <configuration>
             <archive>
               <manifest>
-                <mainClass>it.polimi.ingsw.controller.SMain</mainClass>
+                <mainClass>it.polimi.ingsw.controller.Main</mainClass>
               </manifest>
             </archive>
           </configuration>

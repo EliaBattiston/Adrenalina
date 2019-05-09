@@ -30,8 +30,9 @@ public class CMain
 
     /**
      * Creates a new CMain
+     * @param gui True to start the GUI interface, false for CLI
      */
-    public CMain()
+    public CMain(boolean gui)
     {
         //Temporary test for the login
 
@@ -41,14 +42,12 @@ public class CMain
 
         Scanner stdin = new Scanner(System.in);
 
-        while (!buffer.toLowerCase().equals("g") && !buffer.toLowerCase().equals("c"))
-        {
-            System.out.print("Interfaccia GUI [g] o CLI [c]? ");
-            buffer = stdin.nextLine();
+        if(!gui) {
+            ui = new CLInterface();
         }
-
-        if(buffer.toLowerCase().equals("c")) {
-            //TODO implemet CLInterface declaration
+        else {
+            //TODO Instance GUI Interface
+            ui = null;
         }
 
         //RMI or Socket?
@@ -84,8 +83,4 @@ public class CMain
         }
     }
 
-    public static void main(String[] args)
-    {
-        CMain base = new CMain();
-    }
 }
