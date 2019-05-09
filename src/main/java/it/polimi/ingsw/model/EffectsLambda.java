@@ -59,11 +59,11 @@ public class EffectsLambda {
 
                 try {
                     position.set(newPosition);
+                    map.getCell(newPosition).addPawn(pl);
                 }catch(WrongPointException ex){
                     LOGGER.log( Level.SEVERE, ex.toString(), ex );
+                    map.getCell(position).addPawn(pl);
                 }
-
-                map.getCell(newPosition).addPawn(pl);
             }
         };
     }

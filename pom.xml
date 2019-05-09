@@ -72,7 +72,6 @@
               <manifest>
                 <mainClass>it.polimi.ingsw.controller.SMain</mainClass>
               </manifest>
-              <finalName>AdrenalinaServer</finalName>
             </archive>
           </configuration>
         </plugin>

@@ -200,7 +200,7 @@ public class ActionLambdaMap {
             Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen1.getPosition(), map);
 
             if(secondPoint != null) {
-                targets = map.getCell(secondPoint).getPawns(); //FIXME @andrea weird nullpointerexception sometimes
+                targets = map.getCell(secondPoint).getPawns();
                 if(!targets.isEmpty()) {
                     Player chosen2 = pl.getConn().chooseTarget(targets, false);
                     if(chosen2 != null)
@@ -474,7 +474,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             targets.remove(((Player[])memory)[0]);
-            Player chosen = pl.getConn().chooseTarget(targets, true); //FIXME @elia targets is null sometimes
+            Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(2, pl));
         });
 
@@ -831,7 +831,7 @@ public class ActionLambdaMap {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
-        Point initialPosition = pl.getPosition();
+        Point initialPosition = new Point(pl.getPosition());
 
         for(Point p : possible)
         {
@@ -849,14 +849,10 @@ public class ActionLambdaMap {
         //Return the player to its real position
         pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
 
+        Point chosen = pl.getConn().movePlayer(destinations, false);
 
-        //FIXME @elia destination sometimes is null -> the check on the isEmpty is for delete this problem while I test the others
-        if(!destinations.isEmpty()){
-            Point chosen = pl.getConn().movePlayer(destinations, false);
-
-            if(chosen != null)
-                pl.applyEffects(EffectsLambda.move(pl, chosen, map));
-        }
+        if(chosen != null)
+            pl.applyEffects(EffectsLambda.move(pl, chosen, map));
     }
 
     /**
@@ -884,11 +880,10 @@ public class ActionLambdaMap {
                 .filter(Weapon::isLoaded)
                 .filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)))
                 .collect(Collectors.toList());
+
+
         System.out.println(pl.getNick() + " sceglie l'arma" );
 
-        //FIXME @elia sometimes loaded is empty -> the return is temporary
-        if(loaded.isEmpty())
-            return ;
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
 
         //Take list of available "base" actions for the chosen weapon

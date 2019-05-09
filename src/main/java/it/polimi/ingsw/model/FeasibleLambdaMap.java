@@ -395,10 +395,7 @@ public class FeasibleLambdaMap
 
         data.put("a-b2", (pl, map, memory)->  possibleLoot(pl, map, 1));
 
-        data.put("a-b3",(pl, map, memory) ->  pl.getWeapons().stream()
-                .filter(Weapon::isLoaded)
-                .anyMatch(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)))
-        );
+        data.put("a-b3",(pl, map, memory) -> pl.getWeapons().stream().filter(Weapon::isLoaded).anyMatch(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null))) );
 
         data.put("a-a1", (pl, map, memory)-> possibleLoot(pl, map, 2));
 
@@ -434,7 +431,7 @@ public class FeasibleLambdaMap
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
-        Point initialPosition = pl.getPosition();
+        Point initialPosition = new Point(pl.getPosition());
 
         for(Point p : possible)
         {
@@ -455,7 +452,6 @@ public class FeasibleLambdaMap
         return !destinations.isEmpty();
     }
 
-    //TODO @elia check that it returns the right values, while testing it with the AI it appeared to be a possible loot but it was not
     private static boolean possibleLoot(Player pl, Map map, int steps)
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);

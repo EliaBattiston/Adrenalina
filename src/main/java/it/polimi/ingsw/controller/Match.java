@@ -155,7 +155,6 @@ public class Match implements Runnable
                     }
                 }
 
-                //FIXME NullPointerException here @startup sometimes
                 active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
             }
 
@@ -414,7 +413,7 @@ public class Match implements Runnable
         else
         {
             frenzyKills.add( game.getPlayer(killed.getReceivedDamage()[10]) );
-            if(killed.getReceivedDamage()[11] != null);
+            if(killed.getReceivedDamage()[11] != null)
                 frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[10] ) );
         }
 

@@ -30,34 +30,13 @@ public class AIMain
     private UserInterface ui;
 
     /**
-     * Creates a new CMain
+     * Creates a new AIMain
      */
     public AIMain()
     {
-        //Temporary test for the login
+        //Client used to test
 
-        String buffer = "";
         String ip;
-        boolean socket = true;
-
-        Scanner stdin = new Scanner(System.in);
-
-        //RMI or Socket?
-        /*while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
-        {
-            System.out.print("Connessione con [S]ocket o con [R]mi? ");
-            buffer = stdin.nextLine();
-        }
-
-        if(buffer.toLowerCase() == "r")
-            socket = false;*/
-
-        /*//Ask for IP address
-        System.out.print("Indirizzo IP del server: ");
-        buffer = stdin.nextLine();
-        //TODO check if IP is correctly written
-        ip = buffer;*/
-
         ip = "localhost";
 
         try {

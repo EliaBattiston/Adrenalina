@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 /**
  * Main class for the client's executable
  */
-//TODO @elia set the class back for normal players and use AIMain for tests
 public class CMain
 {
     /**
@@ -45,27 +44,36 @@ public class CMain
         Scanner stdin = new Scanner(System.in);
 
         //RMI or Socket?
-        /*while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
+        while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
         {
             System.out.print("Connessione con [S]ocket o con [R]mi? ");
             buffer = stdin.nextLine();
         }
 
         if(buffer.toLowerCase() == "r")
-            socket = false;*/
+            socket = false;
 
-        /*//Ask for IP address
+        //Ask for IP address
         System.out.print("Indirizzo IP del server: ");
         buffer = stdin.nextLine();
         //TODO check if IP is correctly written
-        ip = buffer;*/
+        ip = buffer;
 
         ip = "localhost";
 
-        try {
-            connection = new AIClient(ip, 1906);
-        }catch (IOException e){
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        if(socket)
+        {
+            connection = new SocketClient(ip, 1906);
+        }
+        else
+        {
+            try
+            {
+                connection = new RMIClient(ip);
+            } catch (IOException e)
+            {
+                Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
+            }
         }
     }
 
