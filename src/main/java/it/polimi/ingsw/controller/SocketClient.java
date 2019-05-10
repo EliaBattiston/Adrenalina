@@ -462,7 +462,8 @@ public class SocketClient implements Client {
                 default:
                     answer = null;
             }
-            send(jsonSerialize(answer));
+            if(answer.type != null)
+                send(jsonSerialize(answer));
         }
         catch (NoSuchElementException e) {
             throw new ServerDisconnectedException();

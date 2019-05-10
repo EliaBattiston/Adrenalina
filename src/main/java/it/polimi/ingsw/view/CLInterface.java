@@ -522,22 +522,25 @@ public class CLInterface implements UserInterface {
                 }
                 else {
                     RegularCell rc = (RegularCell) c;
-                    for(Color color : rc.getLoot().getContent()) {
-                        switch (color) {
-                            case BLUE:
-                                loot += highlight + ANSI_BLUE + BOX;
-                                break;
-                            case YELLOW:
-                                loot += highlight + ANSI_YELLOW + BOX;
-                                break;
-                            case RED:
-                                loot += highlight + ANSI_RED + BOX;
-                                break;
-                            case POWER:
-                                loot += highlight + ANSI_BLACK + BOX;
-                                break;
+                    if(rc.getLoot() != null)
+                    {
+                        for(Color color : rc.getLoot().getContent()) {
+                            switch (color) {
+                                case BLUE:
+                                    loot += highlight + ANSI_BLUE + BOX;
+                                    break;
+                                case YELLOW:
+                                    loot += highlight + ANSI_YELLOW + BOX;
+                                    break;
+                                case RED:
+                                    loot += highlight + ANSI_RED + BOX;
+                                    break;
+                                case POWER:
+                                    loot += highlight + ANSI_BLACK + BOX;
+                                    break;
+                            }
+                            loot += SPACE;
                         }
-                        loot += SPACE;
                     }
                 }
                 ret += highlight + innerCellFormatRight(loot) + ANSI_RESET;

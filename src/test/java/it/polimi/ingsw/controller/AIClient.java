@@ -440,7 +440,8 @@ public class AIClient implements Client {
                 default:
                     answer = null;
             }
-            send(jsonSerialize(answer));
+            if(answer.type != null)
+                send(jsonSerialize(answer));
         }
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );

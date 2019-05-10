@@ -251,7 +251,7 @@ public class Player implements Serializable
     public void clearForView(){
         //this.points = 0;
         for(int i=0; i<3; i++)
-            if(weapons[i].isLoaded())
+            if(weapons[i] != null && weapons[i].isLoaded())
                 weapons[i] = null;
 
         this.powers = null;

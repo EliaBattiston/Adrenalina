@@ -116,16 +116,14 @@ public class Match implements Runnable
             initialize(skullsNum);
         }
         catch (ClientDisconnectedException e) {
-            ; //TODO client disconnection while choosing game
+            System.out.println(game.getPlayers().get(0).getNick() + " si è disconnesso");
+            game.getPlayers().get(0).setConn(null);
+            //TODO client disconnection while choosing game
         }
         catch(FileNotFoundException e)
         {
             ;
         }
-
-        //Defining needed variables
-        List<Action> availableActions; //Actions the user can currently do
-        List<Action> feasible = new ArrayList<>();
 
         //The first turn is played by the player in the first position of the list
         active = game.getPlayers().get(0);
@@ -133,49 +131,10 @@ public class Match implements Runnable
 
         while(phase != GamePhase.ENDED)
         {
-            //Check if spawning is needed
-            if(active.getPosition() == null)
-            {
-                spawnPlayer(active);
-            }
-
-            //Let players use their actions
-            for( ; actionsNumber>0 ; actionsNumber--)
-            {
-                //Check what the player can do right now
-                availableActions = activities.getAvailable(
-                        (int) Arrays.stream(active.getReceivedDamage()).filter(Objects::nonNull).count(),
-                        phase == GamePhase.FRENZY,
-                        firstFrenzy != null && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy)
-                );
-
-                //Determine which are feasible
-                feasible.clear();
-                for(Action a : availableActions)
-                {
-                    if(a.isFeasible(active, game.getMap(), game))
-                    {
-                        feasible.add(a);
-                    }
-                }
-
-                try {
-                    active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
-                }
-                catch(ClientDisconnectedException e) {
-                    ; //TODO @Erap320 checkout and correct
-                }
-            }
-
-            //Reload weapons
-            if(FeasibleLambdaMap.possibleReload(active)) {
-                try {
-                    ActionLambdaMap.reload(active);
-                }
-                catch(ClientDisconnectedException e) {
-                    ; //TODO @Erap320 checkout and correct
-                }
-            }
+            if(active.getConn() != null)
+                playerTurn();
+            else
+                System.out.println(active.getNick() + " non esegue mosse poichè non è connesso");
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
@@ -222,9 +181,92 @@ public class Match implements Runnable
                 endGame();
             }
 
+            updateViews();
+
             System.out.println("\u001B[31mFine turno " + turnNum + "\u001B[0m");
             turnNum++;
         }
+    }
+
+    private void playerTurn()
+    {
+        //Defining needed variables
+        List<Action> availableActions; //Actions the user can currently do
+        List<Action> feasible = new ArrayList<>();
+
+        //Check if spawning is needed
+        if(active.getPosition() == null)
+        {
+            spawnPlayer(active);
+        }
+
+        //Let players use their actions
+        for( ; actionsNumber>0 ; actionsNumber--)
+        {
+            //Check what the player can do right now
+            availableActions = activities.getAvailable(
+                    (int) Arrays.stream(active.getReceivedDamage()).filter(Objects::nonNull).count(),
+                    phase == GamePhase.FRENZY,
+                    firstFrenzy != null && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy)
+            );
+
+            //Determine which are feasible
+            feasible.clear();
+            for(Action a : availableActions)
+            {
+                if(a.isFeasible(active, game.getMap(), game))
+                {
+                    feasible.add(a);
+                }
+            }
+
+            try {
+                active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
+            }
+            catch(ClientDisconnectedException e) {
+                System.out.println(active.getNick() + " si è disconnesso");
+                active.setConn(null);
+                ; //TODO @Erap320 checkout and correct
+                return;
+            }
+
+            updateViews();
+        }
+
+        //Reload weapons
+        if(FeasibleLambdaMap.possibleReload(active)) {
+            try {
+                ActionLambdaMap.reload(active);
+            }
+            catch(ClientDisconnectedException e) {
+                System.out.println(active.getNick() + " si è disconnesso");
+                active.setConn(null);
+                ; //TODO @Erap320 checkout and correct
+                return;
+            }
+        }
+    }
+
+    /**
+     * Updates game data on every client
+     */
+    private void updateViews()
+    {
+        //TODO put this back when graphics are needed
+        /*for(Player p: game.getPlayers())
+        {
+            if(p.getConn() != null)
+            {
+                try{
+                    p.getConn().updateGame(getMatchView(p));
+                }
+                catch(ClientDisconnectedException e)
+                {
+                    System.out.println(p.getNick() + " si è disconnesso");
+                    p.setConn(null);
+                }
+            }
+        }*/
     }
 
     /**
