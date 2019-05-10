@@ -40,6 +40,7 @@ public class ActionLambdaMap {
             Player chosen2 = null;
             if(!targets.isEmpty())
                 chosen2 = pl.getConn().chooseTarget(targets, false);
+
             chosen1.applyEffects(EffectsLambda.damage(1, pl));
             if(chosen2 != null)
                 chosen2.applyEffects(EffectsLambda.damage(1, pl));
@@ -100,8 +101,9 @@ public class ActionLambdaMap {
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
-                if(pointsAll.contains(p.getPosition()))
-                    targets.add(p);
+                if(p!=pl)
+                    if(pointsAll.contains(p.getPosition()))
+                        targets.add(p);
 
             Player chosen = pl.getConn().chooseTarget(targets, true);
 
@@ -120,12 +122,19 @@ public class ActionLambdaMap {
         data.put("w8-b", (pl, map, memory)->{
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
-            List<Point> points = Map.visiblePoints(pl.getPosition(), map, 0);
-            points.remove(pl.getPosition());
+            List<Point> pointsAround = Map.visiblePoints(pl.getPosition(), map, 0);
+            pointsAround.remove(pl.getPosition());
+
+            List<Point> points = new ArrayList<>();
+            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
+            for(Point p : pointsAround) {
+                fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(p));
+                if(!Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1, p2)<=1).isEmpty())
+                    points.add(p);
+            }
 
             Point vortexPoint = pl.getConn().choosePosition(points, true);
 
-            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
             fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(vortexPoint));
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1,p2)<=1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
@@ -139,6 +148,7 @@ public class ActionLambdaMap {
         data.put("w9-b", (pl, map, memory)->{
             //Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.
             List<Player> allInMap = Map.playersInTheMap(map);
+            allInMap.remove(pl);
 
             List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
             List<Integer> playersRooms = new ArrayList<>();
@@ -149,7 +159,7 @@ public class ActionLambdaMap {
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
 
-            visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber());
+            visibleRooms.remove(new Integer(map.getCell(pl.getPosition()).getRoomNumber()));
 
             int roomChosen = pl.getConn().chooseRoom(playersRooms, true);
 
@@ -162,6 +172,7 @@ public class ActionLambdaMap {
             //Scegli 1 bersaglio che non puoi vedere e dagli 3 danni.
 
             List<Player> targets = Map.playersInTheMap(map);
+            targets.remove(pl);
             targets.removeAll(Map.visiblePlayers(pl, map));
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.damage(3, pl));
@@ -182,22 +193,22 @@ public class ActionLambdaMap {
         data.put("w12-b", (pl, map, memory)->{
             //Scegli un quadrato distante 1 movimento e possibilmente un secondo quadrato distante ancora 1 movimento nella stessa direzione. In ogni quadrato puoi scegliere 1 bersaglio e dargli 1 danno.
 
-            List<Point> squares = Map.possibleMovements(pl.getPosition(), 1, map);
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
 
-            Point chosen = pl.getConn().choosePosition(squares, true);
-
-            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen);
-
-            List<Player> targets = map.getCell(chosen).getPawns();
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
 
-            targets = map.getCell(secondPoint).getPawns();
-            Player chosen2 = pl.getConn().chooseTarget(targets, false);
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen1.getPosition(), map);
 
-            //Give damage
+            if(secondPoint != null) {
+                targets = map.getCell(secondPoint).getPawns();
+                if(!targets.isEmpty()) {
+                    Player chosen2 = pl.getConn().chooseTarget(targets, false);
+                    if(chosen2 != null)
+                        chosen2.applyEffects(EffectsLambda.damage(1, pl));
+                }
+            }
+
             chosen1.applyEffects(EffectsLambda.damage(1, pl));
-            if(chosen2 != null)
-                chosen2.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("w13-b", (pl, map, memory)->{
@@ -226,7 +237,12 @@ public class ActionLambdaMap {
 
         data.put("w15-b", (pl, map, memory)->{
             //Scegli una direzione cardinale e 1 bersaglio in quella direzione. Dagli 3 danni.
-            Direction dir = pl.getConn().chooseDirection(true);
+            List<Direction> possible = new ArrayList<>();
+            for(Direction d: Direction.values())
+                if(!Map.visiblePlayers(pl, map, d).isEmpty())
+                    possible.add(d);
+
+            Direction dir = pl.getConn().chooseDirection(possible,true);
 
             List<Player> targets = Map.visiblePlayers(pl, map, dir);
             Player chosen = pl.getConn().chooseTarget(targets, true);
@@ -279,21 +295,29 @@ public class ActionLambdaMap {
             //Scegli fino a 3 bersagli su quadrati differenti, ognuno distante esattamente 1 movimento da me. Dai 1 danno a ogni bersaglio.
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==1);
-            List<Player> chosen = new ArrayList<>();
 
-            chosen.add(pl.getConn().chooseTarget(targets, true));
-            for(Player p: map.getCell(chosen.get(0).getPosition()).getPawns())
-                targets.remove(p);
-            chosen.add(pl.getConn().chooseTarget(targets, false));
-            if(chosen.size() > 1){
-                for(Player p: map.getCell(chosen.get(1).getPosition()).getPawns())
-                    targets.remove(p);
-                chosen.add(pl.getConn().chooseTarget(targets, false));
+            Player chosen1 = pl.getConn().chooseTarget(targets, true);
+            for(Player p: map.getCell(chosen1.getPosition()).getPawns())
+                targets.remove(p);//So I remove chosen1 too
+
+            if(!targets.isEmpty()){
+                Player chosen2 = pl.getConn().chooseTarget(targets, false);
+                if(chosen2 != null){
+                    for(Player p: map.getCell(chosen2.getPosition()).getPawns())
+                        targets.remove(p);//So I remove chosen2 too
+
+                    if(!targets.isEmpty()){
+                        Player chosen3 = pl.getConn().chooseTarget(targets, false);
+
+                        if(chosen3!= null)
+                            chosen3.applyEffects(EffectsLambda.damage(1, pl));
+                    }
+
+                    chosen2.applyEffects(EffectsLambda.damage(1, pl));
+                }
+
+                chosen1.applyEffects(EffectsLambda.damage(1, pl));
             }
-
-            for(Player p: chosen)
-                if(p!=null)
-                    p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("w21-b", (pl, map, memory)->{
@@ -310,7 +334,7 @@ public class ActionLambdaMap {
             //Dai 1 marchio a un altro bersaglio che puoi vedere.
 
             List<Player> targets = Map.visiblePlayers(pl, map);
-            targets.removeAll((List<Player>)memory); //not the one I've already gave damage
+            targets.removeAll(Arrays.asList((Player[])memory)); //not the one I've already gave damage
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.marks(1, pl));
         });
@@ -319,7 +343,7 @@ public class ActionLambdaMap {
         //Dai 1 danno aggiuntivo a uno dei due bersagli.
         data.put("w2-ad1", (pl, map, memory)-> ((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl)));
 
-        //((Player[])memory)[0]
+        //((Player[])memory)[1]
         data.put("w2-ad2", (pl, map, memory)->{
             //Dai 1 danno aggiuntivo all'altro dei bersagli e/o dai 1 danno a un bersaglio differente che puoi vedere.
 
@@ -332,9 +356,12 @@ public class ActionLambdaMap {
             targets = Map.visiblePlayers(pl, map);
             targets.remove(((Player[])memory)[0]);
             targets.remove(((Player[])memory)[1]);
-            Player chosenDifferent = pl.getConn().chooseTarget(targets, false);
-            if(chosenDifferent != null)
-                chosenDifferent.applyEffects(EffectsLambda.damage(1, pl));
+
+            if(!targets.isEmpty()) {
+                Player chosenDifferent = pl.getConn().chooseTarget(targets, false);
+                if (chosenDifferent != null)
+                    chosenDifferent.applyEffects(EffectsLambda.damage(1, pl));
+            }
         });
 
         //((Player[])memory)[0]
@@ -386,7 +413,8 @@ public class ActionLambdaMap {
 
             chosen.add(pl.getConn().chooseTarget(targets, true));
             targets.removeAll(chosen);
-            chosen.add(pl.getConn().chooseTarget(targets, false));
+            if(!targets.isEmpty())
+                chosen.add(pl.getConn().chooseTarget(targets, false));
 
             for(Player p:chosen){
                 if(p!=null){
@@ -504,23 +532,31 @@ public class ActionLambdaMap {
 
             Point chosen = pl.getConn().choosePosition(squares, true);
 
-            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen);
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen, map);
 
             for(Player p:map.getCell(chosen).getPawns())
                 p.applyEffects(EffectsLambda.damage(2, pl));
 
-            for(Player p:map.getCell(secondPoint).getPawns())
-                p.applyEffects(EffectsLambda.damage(1, pl));
+            if(secondPoint != null)
+                for(Player p:map.getCell(secondPoint).getPawns())
+                    p.applyEffects(EffectsLambda.damage(1, pl));
         });
 
         data.put("w15-al", (pl, map, memory)->{
             //Scegli una direzione cardinale e 1 o 2 bersagli in quella direzione. Dai 2 danni a ciascuno.
-            Direction dir = pl.getConn().chooseDirection(true);
+            List<Direction> possible = new ArrayList<>();
+            for(Direction d: Direction.values())
+                if(Map.visiblePlayers(pl, map, d) != null && !Map.visiblePlayers(pl, map, d).isEmpty())
+                    possible.add(d);
+
+            Direction dir = pl.getConn().chooseDirection(possible, true);
 
             List<Player> targets = Map.visiblePlayers(pl, map, dir);
             Player chosen1 = pl.getConn().chooseTarget(targets, true);
             targets.remove(chosen1);
-            Player chosen2 = pl.getConn().chooseTarget(targets, false);
+            Player chosen2 = null;
+            if(!targets.isEmpty())
+                chosen2 = pl.getConn().chooseTarget(targets, false);
             chosen1.applyEffects(EffectsLambda.damage(2, pl));
             if(chosen2 != null)
                 chosen2.applyEffects(EffectsLambda.marks(2, pl));
@@ -534,9 +570,13 @@ public class ActionLambdaMap {
 
             chosen.add(pl.getConn().chooseTarget(targets, true));
             targets.remove(chosen.get(0));
-            chosen.add(pl.getConn().chooseTarget(targets, false));
-            targets.remove(chosen.get(1));
-            chosen.add(pl.getConn().chooseTarget(targets, false));
+            if(!targets.isEmpty()){
+                chosen.add(pl.getConn().chooseTarget(targets, false));
+                targets.remove(chosen.get(1));
+                if(!targets.isEmpty()) {
+                    chosen.add(pl.getConn().chooseTarget(targets, false));
+                }
+            }
             for(Player p:chosen)
                 if(p!=null)
                     p.applyEffects(EffectsLambda.marks(1, pl));
@@ -554,30 +594,40 @@ public class ActionLambdaMap {
             //Scegli un quadrato distante esattamente 1 movimento. Muovi in quel quadrato. Puoi dare 2 danni a 1 bersaglio in quel quadrato. Se vuoi puoi muovere
             // ancora di 1 quadrato nella stessa direzione (ma solo se è un movimento valido). Puoi dare 2 danni a un bersaglio anche in quel quadrato.
 
+            //THE DEFINITION MEANS: I can just run and not shot in the first square nor the second!
+
             //Movement
             List<Point> positions = Map.possibleMovements(pl.getPosition(), 1, map);
             Point posChosen = pl.getConn().movePlayer(positions, true);
-            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), posChosen);
+            Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), posChosen, map);
 
             pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
 
             //Give damage
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
-            Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            if(!targets.isEmpty()){
+                Player chosen = pl.getConn().chooseTarget(targets, true);
+                chosen.applyEffects(EffectsLambda.damage(2, pl));
+            }
 
-            //Next move (just if there is a next cell)
-            if(map.getCell(secondPoint) != null){
+            //Next move
+            if(secondPoint != null){
                 try{
                     List<Point> nextPoints = new ArrayList<>();
                     nextPoints.add(secondPoint);
-                    posChosen = pl.getConn().movePlayer(nextPoints, true);
-                    pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
+                    posChosen = pl.getConn().movePlayer(nextPoints, false);
+                    if(posChosen != null){
+                        pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
 
-                    targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
+                        targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
 
-                    chosen = pl.getConn().chooseTarget(targets, true);
-                    chosen.applyEffects(EffectsLambda.damage(2, pl));
+                        if(!targets.isEmpty()){
+                            Player chosen = pl.getConn().chooseTarget(targets, false);
+                            if(chosen != null)
+                                chosen.applyEffects(EffectsLambda.damage(2, pl));
+                        }
+                    }
+
                 }catch(WrongPointException ex){
                     Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
                 }
@@ -620,6 +670,7 @@ public class ActionLambdaMap {
             // quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)
 
             List<Player> targets = Map.playersInTheMap(map);
+            targets.remove(pl);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             List<Point> newPos = Map.possibleMovementsAllSingleDirection(chosen.getPosition(), 2, map);
             newPos.remove(chosen.getPosition());
@@ -648,21 +699,24 @@ public class ActionLambdaMap {
 
     //Activities lambdas
         data.put("a-p", (pl, map, memory)->{
+            System.out.println(pl.getNick() + " sceglie un potenziamento");
             Power chosen;
 
-            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4").filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
             if(!inHand.isEmpty())
             {
-                chosen = pl.getConn().choosePower(inHand, false);
+                chosen = pl.getConn().choosePower(inHand, true);
                 while (!inHand.isEmpty() && chosen != null)
                 {
                     chosen.getBase().execute(pl, map, null);
                     pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
 
-                    inHand = pl.getPowers().stream().filter(power -> power.getId() == 6 || power.getId() == 8).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
-                    chosen = pl.getConn().choosePower(inHand, false);
+                    inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4").filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+                    if(!inHand.isEmpty())
+                        chosen = pl.getConn().choosePower(inHand, false);
                 }
             }
+
         });
 
         data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true) );
@@ -730,6 +784,7 @@ public class ActionLambdaMap {
      */
     private static void run(Player pl, Map map, int steps, boolean mustChoose)
     {
+        System.out.println(pl.getNick() + " corre");
         List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
         Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
 
@@ -745,6 +800,7 @@ public class ActionLambdaMap {
      */
     private static void runToLoot(Player pl, Map map, int steps)
     {
+        System.out.println(pl.getNick() + " corre per raccogliere");
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
@@ -770,10 +826,12 @@ public class ActionLambdaMap {
      */
     private static void runToShoot(Player pl, Map map, int steps)
     {
+        System.out.println(pl.getNick() + " corre per sparare");
+
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
-        Point initialPosition = pl.getPosition();
+        Point initialPosition = new Point(pl.getPosition());
 
         for(Point p : possible)
         {
@@ -790,7 +848,6 @@ public class ActionLambdaMap {
 
         //Return the player to its real position
         pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
-
 
         Point chosen = pl.getConn().movePlayer(destinations, false);
 
@@ -819,7 +876,14 @@ public class ActionLambdaMap {
     private static void shoot(Player pl, Map map)
     {
         //Only loaded weapons
-        List<Weapon> loaded = pl.getWeapons().stream().filter(Weapon::isLoaded).collect(Collectors.toList());
+        List<Weapon> loaded = pl.getWeapons().stream()
+                .filter(Weapon::isLoaded)
+                .filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)))
+                .collect(Collectors.toList());
+
+
+        System.out.println(pl.getNick() + " sceglie l'arma" );
+
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
 
         //Take list of available "base" actions for the chosen weapon
@@ -830,6 +894,7 @@ public class ActionLambdaMap {
             weaponActions.add(chosen.getAlternative());
 
         //Ask the user which one he wants to use
+        System.out.println(pl.getNick() + " sceglie l'azione di " + chosen.getName() );
         Action toExecute = pl.getConn().chooseAction(weaponActions, true);
         Object mem;
         switch (toExecute.getLambdaID())
@@ -860,6 +925,7 @@ public class ActionLambdaMap {
                 weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
 
             if(!weaponActions.isEmpty()){
+                System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
                 toExecute.execute(pl, map, mem);
 
@@ -867,6 +933,7 @@ public class ActionLambdaMap {
                 weaponActions.remove(toExecute);
                 if(!weaponActions.isEmpty())
                 {
+                    System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                     toExecute = pl.getConn().chooseAction(weaponActions, false);
                     toExecute.execute(pl, map, mem);
                 }
@@ -875,7 +942,9 @@ public class ActionLambdaMap {
 
         //Unload the used weapon
         pl.applyEffects((damage, marks, position, weapons, powers, ammo) -> {
-            weapons[Arrays.asList(weapons).indexOf(chosen)].setLoaded(false);
+            for(Weapon w : weapons)
+                if(w != null && w.getId() == chosen.getId())
+                        w.setLoaded(false);
         });
     }
 

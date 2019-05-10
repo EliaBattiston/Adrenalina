@@ -56,8 +56,7 @@ public class Point implements Serializable {
      * @param x the point what contains the same coordinates
      */
     public void set(Point x){
-        this.x = x.getX();
-        this.y = x.getY();
+        set(x.getX(), x.getY());
     }
 
     /**

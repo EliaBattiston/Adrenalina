@@ -1,12 +1,12 @@
 package it.polimi.ingsw.model;
 
-import javax.print.attribute.standard.Severity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class FeasibleLambdaMap
 {
@@ -66,14 +66,12 @@ public class FeasibleLambdaMap
             //Muovi un bersaglio di 0, 1 o 2 quadrati fino a un quadrato che puoi vedere e dagli 1 danno.
 
             List<Point> pointsAll = Map.visiblePoints(pl.getPosition(), map, 2);
-            List<Point> pointsVisible = Map.visiblePoints(pl.getPosition(), map, 0);
-            List<Point> pointsNotVisible = new ArrayList<>(pointsAll);
-            pointsNotVisible.removeAll(pointsVisible);
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
-                if(pointsAll.contains(p.getPosition()))
-                    targets.add(p);
+                if(p!=pl)
+                    if(pointsAll.contains(p.getPosition()))
+                        targets.add(p);
 
             return !targets.isEmpty();
         });
@@ -84,12 +82,20 @@ public class FeasibleLambdaMap
             List<Point> points = Map.visiblePoints(pl.getPosition(), map, 0);
             points.remove(pl.getPosition());
 
-            return !points.isEmpty();
+            List<Player> targets = new ArrayList<>();
+            Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
+            for(Point p : points) {
+                fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(p));
+                targets.addAll(Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1, p2)<=1));
+            }
+
+            return !targets.isEmpty();
         });
 
         data.put("w9-b", (pl, map, memory)->{
             //Scegli una stanza che puoi vedere, ma non la stanza in cui ti trovi. Dai 1 danno a ognuno in quella stanza.
             List<Player> allInMap = Map.playersInTheMap(map);
+            allInMap.remove(pl);
 
             List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
             List<Integer> playersRooms = new ArrayList<>();
@@ -100,7 +106,8 @@ public class FeasibleLambdaMap
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
 
-            visibleRooms.remove(map.getCell(pl.getPosition()).getRoomNumber());
+            //Without converting to integer it removes the one @ position instead of the value - Andrea Aspesi
+            visibleRooms.remove(new Integer(map.getCell(pl.getPosition()).getRoomNumber()));
 
             return !playersRooms.isEmpty();
         });
@@ -109,6 +116,7 @@ public class FeasibleLambdaMap
             //Scegli 1 bersaglio che non puoi vedere e dagli 3 danni.
 
             List<Player> targets = Map.playersInTheMap(map);
+            targets.remove(pl);
             targets.removeAll(Map.visiblePlayers(pl, map));
             return !targets.isEmpty();
         });
@@ -209,7 +217,7 @@ public class FeasibleLambdaMap
 
         //((Player[])memory)[0]
         //Dai 1 danno aggiuntivo all'altro dei bersagli e/o dai 1 danno a un bersaglio differente che puoi vedere.
-        data.put("w2-ad2", (pl, map, memory)-> memory!=null);
+        data.put("w2-ad2", (pl, map, memory)-> memory!=null && ((Player[])memory)[1]!=null);
 
         //((Player[])memory)[0]
         data.put("w3-ad1", (pl, map, memory)->{
@@ -224,12 +232,14 @@ public class FeasibleLambdaMap
         data.put("w3-ad2", (pl, map, memory)->{
             //Dai 2 danni a un terzo bersaglio che il tuo secondo bersaglio può vedere. Non puoi usare questo effetto se prima non hai usato reazione a catena.
 
-            if(memory != null)
-                if(((Player[])memory).length > 1 && ((Player[])memory)[1] != null) {
+            if(memory != null) {
+                if (((Player[]) memory).length > 1 && ((Player[]) memory)[1] != null) {
                     List<Player> targets = Map.visiblePlayers(((Player[]) memory)[1], map);
                     return !targets.isEmpty();
                 }
-            Logger.getGlobal().log(Level.SEVERE, "Wrong memory");
+                else return false; //if ad1 has not been used
+            }
+            Logger.getGlobal().log(Level.SEVERE, "Wrong memory in w3-ad2");
             return false;
         });
 
@@ -365,7 +375,11 @@ public class FeasibleLambdaMap
 
         //Puoi giocare questa carta nel tuo turno prima o dopo aver svolto qualsiasi azione. Scegli la miniatura di un altro giocatore e muovila di 1 o 2
         // quadrati in una direzione. (Non puoi usare questo potenziamento per muovere una miniatura dopo che è stata rigenerata alla fine del tuo turno, è troppo tardi.)
-        data.put("p2", (pl, map, memory)-> !Map.playersInTheMap(map).isEmpty());
+        data.put("p2", (pl, map, memory)-> {
+            List<Player> targets = Map.playersInTheMap(map);
+            targets.remove(pl);
+            return !targets.isEmpty();
+        });
 
         //memory = player that gave damage
         data.put("p3", (pl, map, memory)-> Map.visiblePlayers(pl, map).contains((Player) memory));//someone you don't see can attack you
@@ -375,31 +389,31 @@ public class FeasibleLambdaMap
         data.put("p4", (pl, map, memory)-> true);
 
         //Activities lambdas
-        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> (power.getId() == 6 || power.getId() == 8) && power.getBase().isFeasible(pl, map, null) ));
+        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> (power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4") && power.getBase().isFeasible(pl, map, null) ));
 
         data.put("a-b1", (pl, map, memory)-> true);
 
-        data.put("a-b2", (pl, map, memory)->  true);
+        data.put("a-b2", (pl, map, memory)->  possibleLoot(pl, map, 1));
 
-        data.put("a-b3",(pl, map, memory) ->  pl.getWeapons().stream().anyMatch(Weapon::isLoaded) );
+        data.put("a-b3",(pl, map, memory) -> pl.getWeapons().stream().filter(Weapon::isLoaded).anyMatch(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null))) );
 
-        data.put("a-a1", (pl, map, memory)-> true);
+        data.put("a-a1", (pl, map, memory)-> possibleLoot(pl, map, 2));
 
-        data.put("a-a2", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 1, map)) );
+        data.put("a-a2", (pl, map, memory)-> possibleShoot(pl, map, 1) );
 
-        data.put("a-f1", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 1, map)) );
+        data.put("a-f1", (pl, map, memory)-> possibleShoot(pl, map, 1) );
 
         data.put("a-f2", (pl, map, memory)-> true);
 
-        data.put("a-f3", (pl, map, memory)-> true);
+        data.put("a-f3", (pl, map, memory)-> possibleLoot(pl, map, 2));
 
-        data.put("a-f4", (pl, map, memory)-> possibleRun(pl, map, Map.possibleMovements(pl.getPosition(), 2, map)) );
+        data.put("a-f4", (pl, map, memory)-> possibleShoot(pl, map, 2) );
 
-        data.put("a-f5", (pl, map, memory)-> true);
+        data.put("a-f5", (pl, map, memory)-> possibleLoot(pl, map, 3));
     }
 
     /**
-     * Determines whether the lambda is currently feasible
+     * SINGLETON: Determines whether the lambda is currently feasible looking through the Map
      * @param lambdaName Relevant lambda identifier
      * @param pl Lambda's player
      * @param map Lambda's map
@@ -413,10 +427,11 @@ public class FeasibleLambdaMap
         return instance.data.get(lambdaName).execute(pl, map, memory);
     }
 
-    private static boolean possibleRun(Player pl, Map map, List<Point> possible){
+    private static boolean possibleShoot(Player pl, Map map, int steps){
+        List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
-        Point initialPosition = pl.getPosition();
+        Point initialPosition = new Point(pl.getPosition());
 
         for(Point p : possible)
         {
@@ -424,14 +439,62 @@ public class FeasibleLambdaMap
             pl.applyEffects(EffectsLambda.move(pl, p, map));
 
             //If no weapon has suitable action, we can't propose to move to this position
-            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null))
-                    && ( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) ))
-                        destinations.remove(p);
+            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
+                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
+                {
+                    destinations.remove(p);
+                }
         }
 
         //Return the player to its real position
         pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
 
         return !destinations.isEmpty();
+    }
+
+    private static boolean possibleLoot(Player pl, Map map, int steps)
+    {
+        List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
+        List<Point> destinations = new ArrayList<>(possible);
+
+        for(Point p : possible)
+        {
+            if(!map.getCell(p).hasItems(pl))
+            {
+                destinations.remove(p);
+            }
+        }
+
+        return !destinations.isEmpty();
+    }
+
+    /**
+     * Checks if the player has currently reloadable weapons
+     * @param pl Current player
+     * @return True if the action is possible, false otherwise
+     */
+    public static boolean possibleReload(Player pl)
+    {
+        List<Weapon> unloaded = pl.getWeapons().stream().filter(weapon -> !weapon.isLoaded()).collect(Collectors.toList());
+        List<Weapon> reloadable =  new ArrayList<>(unloaded); //Only the weapons the player can currently reload
+        List<Color> cost = new ArrayList<>();
+        Weapon chosen = null;
+
+        for(Weapon w : unloaded)
+        {
+            cost.clear();
+            cost.add(w.getColor());
+            if(w.getBase().getCost() != null)
+                cost.addAll(w.getBase().getCost());
+
+            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
+                    || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
+                    || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            {
+                reloadable.remove(w);
+            }
+        }
+
+        return !reloadable.isEmpty();
     }
 }

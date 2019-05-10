@@ -37,11 +37,11 @@ public class Player implements Serializable
     /**
      * Representation of taken damage by the use of Player tokens
      */
-    private Player[] receivedDamage;
+    private String[] receivedDamage;
     /**
      * Representation of taken marks by the use of Player tokens
      */
-    private List<Player> receivedMarks;
+    private List<String> receivedMarks;
     /**
      * Number of kills taken by the player, used to calculate how many points other players take when killing this player
      */
@@ -61,7 +61,7 @@ public class Player implements Serializable
     /**
      * Connection of the player
      */
-    private Connection conn;
+    private transient Connection conn;
 
     /**
      * Creates a new user, in a suitable configuration to start the game
@@ -76,7 +76,7 @@ public class Player implements Serializable
         this.character = f;
         this.points = 0;
         this.weapons = new Weapon[3];
-        this.receivedDamage = new Player[12];
+        this.receivedDamage = new String[12];
         this.receivedMarks = new ArrayList<>();
         this.skulls = 0;
         this.ammo = new Ammunitions();
@@ -84,7 +84,6 @@ public class Player implements Serializable
         this.position = new Point(0, 0);
 
         this.conn = null;
-
     }
 
     /**
@@ -148,7 +147,7 @@ public class Player implements Serializable
      *
      * @return Player's received damage
      */
-    public Player[] getReceivedDamage()
+    public String[] getReceivedDamage()
     {
         return receivedDamage;
     }
@@ -157,7 +156,7 @@ public class Player implements Serializable
      *
      * @return Player's received marks
      */
-    public List<Player> getReceivedMarks()
+    public List<String> getReceivedMarks()
     {
         return receivedMarks;
     }

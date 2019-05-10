@@ -159,7 +159,8 @@ public class Match implements Runnable
             }
 
             //Reload weapons
-            ActionLambdaMap.reload(active);
+            if(FeasibleLambdaMap.possibleReload(active))
+                ActionLambdaMap.reload(active);
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
@@ -206,7 +207,7 @@ public class Match implements Runnable
                 endGame();
             }
 
-            System.out.println("Fine turno " + turnNum);
+            System.out.println("\u001B[31mFine turno " + turnNum + "\u001B[0m");
             turnNum++;
         }
     }
@@ -284,6 +285,8 @@ public class Match implements Runnable
             pl.applyEffects(EffectsLambda.move(pl, spawnPoint, game.getMap()));
         }
         //If not found the map is incorrect
+
+        System.out.println(pl.getNick() + " è respawnato in " + spawnX + "," + spawnY);
     }
 
     /**
@@ -303,6 +306,8 @@ public class Match implements Runnable
                     selectedCell.refill(game);
             }
         }
+
+        System.out.println("Riempita la mappa con gli oggetti mancanti");
     }
 
     /**
@@ -330,7 +335,7 @@ public class Match implements Runnable
         {
             if(enemy != killed)
             {
-                damageNum = (int)Arrays.stream(killed.getReceivedDamage()).filter(player -> player == enemy ).count();
+                damageNum = (int)Arrays.stream(killed.getReceivedDamage()).filter(player -> game.getPlayer(player) == enemy ).count();
                 if(damageNum > 0)
                     inflictedDamages.add( new AbstractMap.SimpleEntry<Player, Integer>(enemy, damageNum));
             }
@@ -345,12 +350,12 @@ public class Match implements Runnable
             else
             {
                 //Check who inflicted damage first
-                for(Player p : killed.getReceivedDamage())
+                for(String p : killed.getReceivedDamage())
                 {
-                    if(p == e1.getKey())
+                    if(game.getPlayer(p) == e1.getKey())
                         return -1;
 
-                    if(p == e2.getKey())
+                    if(game.getPlayer(p) == e2.getKey())
                         return 1;
                 }
             }
@@ -361,7 +366,7 @@ public class Match implements Runnable
 
         //First blood
         if(phase != GamePhase.FRENZY)
-            killed.getReceivedDamage()[0].addPoints(1);
+            game.getPlayer(killed.getReceivedDamage()[0]).addPoints(1);
         //Give points
         for(Entry<Player, Integer> entry : inflictedDamages)
         {
@@ -380,14 +385,14 @@ public class Match implements Runnable
                 ;
             if (nextSkull > -1)
             {
-                game.getSkulls()[nextSkull].setKiller(killed.getReceivedDamage()[10], killed.getReceivedDamage()[11] != null);
+                game.getSkulls()[nextSkull].setKiller(game.getPlayer(killed.getReceivedDamage()[10]), killed.getReceivedDamage()[11] != null);
                 killed.addSkull();
             }
 
             //Give a mark to the overkiller
             if (killed.getReceivedDamage()[11] != null)
             {
-                killed.getReceivedDamage()[11].applyEffects(EffectsLambda.marks(1, killed));
+                game.getPlayer(killed.getReceivedDamage()[11]).applyEffects(EffectsLambda.marks(1, killed));
             }
 
             //Reset damages
@@ -407,10 +412,12 @@ public class Match implements Runnable
         }
         else
         {
-            frenzyKills.add(killed.getReceivedDamage()[10]);
-            if(killed.getReceivedDamage()[11] != null);
-                frenzyKills.add(killed.getReceivedDamage()[10]);
+            frenzyKills.add( game.getPlayer(killed.getReceivedDamage()[10]) );
+            if(killed.getReceivedDamage()[11] != null)
+                frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[10] ) );
         }
+
+        System.out.println(killed.getNick() + " è stato ucciso");
     }
 
     /**
@@ -429,7 +436,7 @@ public class Match implements Runnable
         {
             damageNum = 0;
 
-            for(int k = 8; k >= 0; k--)
+            for(int k = 7; k >= 0; k--)
             {
                 if(game.getSkulls()[k].isUsed() && game.getSkulls()[k].getKiller() == p)
                 {
@@ -458,7 +465,7 @@ public class Match implements Runnable
             else
             {
                 //Check who inflicted damage first
-                for(int k = 8; k >= 0; k--)
+                for(int k = 7; k >= 0; k--)
                 {
                     if(game.getSkulls()[k].isUsed())
                     {
@@ -492,7 +499,7 @@ public class Match implements Runnable
             inflictedDamages.clear();
 
             //Calculate max points
-            if(phase == GamePhase.FRENZY)
+            if(!useFrenzy)
                 maxPoints = 2 - (damaged.getSkulls() * 2);
             else
                 maxPoints = 8 - (damaged.getSkulls() * 2);
@@ -505,7 +512,7 @@ public class Match implements Runnable
             {
                 if(enemy != damaged)
                 {
-                    damageNum = (int)Arrays.stream(damaged.getReceivedDamage()).filter(player -> player == enemy ).count();
+                    damageNum = (int)Arrays.stream(damaged.getReceivedDamage()).filter(player -> game.getPlayer(player) == enemy ).count();
                     if(damageNum > 0)
                         inflictedDamages.add( new AbstractMap.SimpleEntry<Player, Integer>(enemy, damageNum));
                 }
@@ -520,12 +527,12 @@ public class Match implements Runnable
                 else
                 {
                     //Check who inflicted damage first
-                    for(Player p : damaged.getReceivedDamage())
+                    for(String p : damaged.getReceivedDamage())
                     {
-                        if(p == e1.getKey())
+                        if(game.getPlayer(p) == e1.getKey())
                             return -1;
 
-                        if(p == e2.getKey())
+                        if(game.getPlayer(p) == e2.getKey())
                             return 1;
                     }
                 }
@@ -535,8 +542,8 @@ public class Match implements Runnable
             });
 
             //First blood
-            if(phase != GamePhase.FRENZY)
-                damaged.getReceivedDamage()[0].addPoints(1);
+            if(!useFrenzy)
+                game.getPlayer(damaged.getReceivedDamage()[0]).addPoints(1);
             //Give points
             for(Entry<Player, Integer> entry : inflictedDamages)
             {
@@ -548,6 +555,8 @@ public class Match implements Runnable
                     maxPoints = 1;
             }
         }
+
+        System.out.println("\u001b[34mIl gioco è terminato\u001B[0m");
     }
 
     public MatchView getMatchView(Player viewer){

@@ -4,8 +4,11 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main class for the client's executable
@@ -66,6 +69,8 @@ public class CMain
         //TODO check if IP is correctly written
         ip = buffer;
 
+        ip = "localhost";
+
         if(socket)
         {
             connection = new SocketClient(ip, 1906, ui);
@@ -78,7 +83,7 @@ public class CMain
             }
             catch(RemoteException e)
             {
-                System.out.println("Errore di connessione RMI");
+                Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
             }
         }
     }

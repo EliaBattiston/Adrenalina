@@ -7,5 +7,5 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface PlayerLambda {
-    public void execute(Player[] damage, List<Player> marks, Point position, Weapon[] weapons, Power[] powers, Ammunitions ammo);
+    public void execute(String[] damage, List<String> marks, Point position, Weapon[] weapons, Power[] powers, Ammunitions ammo);
 }

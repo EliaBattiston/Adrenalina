@@ -29,13 +29,13 @@ public class EffectsLambda {
             while(i<12 && damage[i]!=null)
                 i++;
             while(i<12 && d>0){
-                damage[i] = damageGiver;
+                damage[i] = damageGiver.getNick();
                 d--;
                 i++;
             }
-            while(i<12 && marks.contains(damageGiver)){
-                damage[i] = damageGiver;
-                marks.remove(damageGiver);
+            while(i<12 && marks.contains(damageGiver.getNick())){
+                damage[i] = damageGiver.getNick();
+                marks.remove(damageGiver.getNick());
                 i++;
             }
 
@@ -56,15 +56,15 @@ public class EffectsLambda {
             if(map.getCell(position) != null)
             {
                 map.getCell(position).removePawn(pl);
-            }
 
-            try {
-                position.set(newPosition.getX(), newPosition.getY());
-            }catch(WrongPointException ex){
-                LOGGER.log( Level.SEVERE, ex.toString(), ex );
+                try {
+                    position.set(newPosition);
+                    map.getCell(newPosition).addPawn(pl);
+                }catch(WrongPointException ex){
+                    LOGGER.log( Level.SEVERE, ex.toString(), ex );
+                    map.getCell(position).addPawn(pl);
+                }
             }
-
-            map.getCell(newPosition).addPawn(pl);
         };
     }
 
@@ -79,7 +79,7 @@ public class EffectsLambda {
             int actualMarks = Collections.frequency(marks, damageGiver);
             int recMarks = marksReceived;
             while(actualMarks < 3 && recMarks> 0){
-                marks.add(damageGiver);
+                marks.add(damageGiver.getNick());
                 recMarks--;
                 actualMarks++;
             }

@@ -191,6 +191,11 @@ public class Game {
         return false;
     }
 
+    /**
+     * Gives a simpler representation of the game, to be sent to a client
+     * @param viewer Client's player
+     * @return GameView of this game
+     */
     public GameView getGameView(Player viewer){
         try {
             Game cleanable = Game.jsonDeserialize(this.jsonSerialize());
@@ -206,5 +211,23 @@ public class Game {
         }
 
         return  null;
+    }
+
+    /**
+     * Returns the reference of the player with the desired nickname
+     * @param nickname Nickname of the desired player
+     * @return Reference of the desired player
+     */
+    public Player getPlayer(String nickname)
+    {
+        for(Player p : players)
+        {
+            if (p.getNick().equals(nickname))
+            {
+                return p;
+            }
+        }
+
+        return null;
     }
 }
