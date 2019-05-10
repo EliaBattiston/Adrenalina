@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+
 import java.util.List;
 
 /**
@@ -13,5 +15,5 @@ public interface ActionLambda {
      * @param m map representing the actual game board
      * @param memory additional parameter used by some lambdas for additional actions
      */
-    void execute(Player pl, Map m, Object memory);
+    void execute(Player pl, Map m, Object memory) throws ClientDisconnectedException;
 }

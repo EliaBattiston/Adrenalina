@@ -2,16 +2,21 @@ package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.exceptions.ServerDisconnectedException;
+import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,17 +38,33 @@ public class SocketClient implements Client {
      * @param port TCP port of the Server's socket
      * @param userint gui/cli interface instance
      */
-    SocketClient(String ipAddr, int port, UserInterface userint) {
-        try {
-            serverSocket = new Socket(ipAddr, port);
-            user = userint;
+    SocketClient(String ipAddr, int port, UserInterface userint) throws ServerNotFoundException, ServerDisconnectedException {
+        user = userint;
+        boolean instanced = false;
+        do {
+            try {
+                serverSocket = new Socket(ipAddr, port);
+                instanced = true;
+            }
+            catch (UnknownHostException f) {
+                throw new ServerNotFoundException();
+            }
+            catch (ConnectException e) {
+                throw new ServerNotFoundException();
+            }
+            catch (IOException e) {
+                Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
+            }
         }
-        catch (IOException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-        }
+        while(!instanced);
 
-        while(true)
-            receive();
+        try {
+            while (true)
+                receive();
+        }
+        catch (ServerDisconnectedException e) {
+            throw new ServerDisconnectedException();
+        }
     }
 
     /**
@@ -224,19 +245,30 @@ public class SocketClient implements Client {
         return user.choosePower(inHand, mustChoose);
     }
 
+    /**
+     * Sends a general message to the user to be displayed
+     * @param payload Message payload
+     */
+    public void sendMessage(String payload) {
+        user.generalMessage(payload);
+    }
+
 
     /**
      * Opens the writer and sends the message to the server, then closes the writer
      * @param payload Content to be delivered to the client
      * @return true on success, false in case of connection error
      */
-    public boolean send(String payload) {
+    public boolean send(String payload) throws ServerDisconnectedException {
         boolean success = false;
         try {
             PrintWriter out = new PrintWriter(serverSocket.getOutputStream());
             out.println(payload);
             out.flush();
             success = true;
+        }
+        catch(NoSuchElementException e) {
+            throw new ServerDisconnectedException();
         }
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
@@ -248,7 +280,7 @@ public class SocketClient implements Client {
     /**
      *deserializes the received string from server and executes it
      */
-    public void receive() {
+    public void receive() throws ServerDisconnectedException {
         try {
             Gson gson = new Gson();
 
@@ -422,10 +454,18 @@ public class SocketClient implements Client {
                     updateGame(param);
                     break;
                 }
+                case MESSAGE: {
+                    String param = gson.fromJson(message.parameters, String.class);
+                    sendMessage(param);
+                    break;
+                }
                 default:
                     answer = null;
             }
             send(jsonSerialize(answer));
+        }
+        catch (NoSuchElementException e) {
+            throw new ServerDisconnectedException();
         }
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );

@@ -152,4 +152,10 @@ public interface UserInterface
      * @return Chosen power
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose);
+
+    /**
+     * Prints out a general message to the client interface
+     * @param message Message to be printed
+     */
+    public void generalMessage(String message);
 }

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -45,7 +47,7 @@ public class Action implements Serializable {
      * @param map Map of the active board
      * @param memory Used by some actions with side effects
      */
-    public void execute(Player pl, Map map, Object memory)
+    public void execute(Player pl, Map map, Object memory) throws ClientDisconnectedException
     {
         ActionLambda lambda = ActionLambdaMap.getLambda(lambdaIdentifier);
         lambda.execute(pl, map, memory);

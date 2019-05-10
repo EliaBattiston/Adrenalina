@@ -76,97 +76,6 @@ public class CLInterface implements UserInterface {
     private static final String L_VERT = "|";
 
 
-    public static void main(String[] args) throws IOException {
-        List<Action> list = new ArrayList<>();
-        List<Color> cost = new ArrayList<>();
-        List<Weapon> weaplist = new ArrayList<>();
-        List<Power> powlist = new ArrayList<>();
-        List<Point> pointlist = new ArrayList<>();
-        List<Player> playerlist = new ArrayList<>();
-        cost.add(Color.BLUE);
-        cost.add(Color.YELLOW);
-        cost.add(Color.BLUE);
-        cost.add(Color.BLUE);
-        cost.add(Color.RED);
-        cost.add(Color.RED);
-        list.add(new Action("Prova1", "Desc1", cost, null));
-        list.add(new Action("Prova2", "Desc2", cost, null));
-        list.add(new Action("Prova3", "Desc3", cost, null));
-        weaplist.add(new Weapon(0, "Weapon1", "Notes1",new Action("WeapAct", "", cost, null), null, null, Color.BLUE));
-        weaplist.add(new Weapon(1, "Weapon2", "Notes2",new Action("WeapAct", "", cost, null), null, null, Color.RED));
-        weaplist.add(new Weapon(2, "Weapon3", "Notes3",new Action("WeapAct", "", cost, null), null, null, Color.YELLOW));
-        powlist.add(new Power(0, "Power1", new Action("PowAct", "", cost, null), Color.BLUE));
-        powlist.add(new Power(1, "Power2", new Action("PowAct", "", cost, null), Color.YELLOW));
-        powlist.add(new Power(2, "Power3", new Action("PowAct", "", cost, null), Color.RED));
-        pointlist.add(new Point(0,0));
-        pointlist.add(new Point(1,2));
-        pointlist.add(new Point(0,2));
-        pointlist.add(new Point(3,0));
-        pointlist.add(new Point(3,2));
-        Player p1 = new Player("Player1", "", Fighter.DSTRUTTOR3);
-        playerlist.add(p1);
-        Player p2 = new Player("Player2", "", Fighter.DOZER);
-        playerlist.add(p2);
-        Player p3 = new Player("Player3", "", Fighter.BANSHEE);
-        playerlist.add(p3);
-
-        CLInterface inter = new CLInterface();
-        Game game = Game.jsonDeserialize("resources/baseGame.json");
-        MatchView matchView = new MatchView(new GameView(Map.jsonDeserialize(inter.chooseMap()), playerlist, null), p1, p2, 3, GamePhase.REGULAR, true, p3);
-        for(int x = 0; x < 4; x++) {
-            for(int y = 0; y < 3; y++) {
-                Cell c = matchView.getGame().getMap().getCell(x,y);
-                if(c != null)
-                    c.refill(game);
-            }
-        }
-
-        inter.updateGame(matchView);
-
-        /*
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseAction(list, true).getName() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseAction(list, true).getName() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseAction(list, false).getName() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseDirection(false).toString() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseFrenzy().toString() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseWeapon(weaplist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.getSkullNum().toString() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.discardWeapon(weaplist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.grabWeapon(weaplist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.choosePower(powlist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.reload(weaplist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.choosePosition(pointlist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.discardPower(powlist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.movePlayer(pointlist, true) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseTarget(playerlist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.moveEnemy(p1, pointlist, false) + ANSI_RESET);
-        */
-
-        List<Integer> roomlist = new ArrayList<>();
-        roomlist.add(1);
-        roomlist.add(0);
-        roomlist.add(4);
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseRoom(roomlist, false) + ANSI_RESET);
-
-
-    }
-
-
     /**
      * Initialization of the interface, in particular instantiation of scanne and writer over System in and out
      */
@@ -216,7 +125,10 @@ public class CLInterface implements UserInterface {
 
     private String scan() {
         try {
-            return in.nextLine();
+            String line = in.nextLine();
+            while(line.equals(""))
+                line = in.nextLine();
+            return line;
         }
         catch(NoSuchElementException e) {
             return null;
@@ -1426,5 +1338,13 @@ public class CLInterface implements UserInterface {
             return null;
         else
             return inHand.get(choose - 1);
+    }
+
+    /**
+     * Prints out a general message to the client interface
+     * @param message Message to be printed
+     */
+    public void generalMessage(String message) {
+        println(message);
     }
 }

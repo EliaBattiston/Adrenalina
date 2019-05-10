@@ -229,5 +229,13 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
         return user.choosePower(inHand, mustChoose);
     }
+
+    /**
+     * Sends a general message to the user to be displayed
+     * @param payload Message payload
+     */
+    public void sendMessage(String payload) {
+        user.generalMessage(payload);
+    }
 }
 

@@ -1,13 +1,10 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.MatchView;
 
-import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RMIConn implements Connection
 {
@@ -22,14 +19,15 @@ public class RMIConn implements Connection
     /**
      * Send the actual matchView to the client
      * @param matchView current match view
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
     @Override
-    public void updateGame(MatchView matchView) {
+    public void updateGame(MatchView matchView) throws ClientDisconnectedException {
         try {
             client.updateGame(matchView);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -38,15 +36,15 @@ public class RMIConn implements Connection
      * @param available List of available actions
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Chosen action
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Action chooseAction(List<Action> available, boolean mustChoose)
+    public Action chooseAction(List<Action> available, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.chooseAction(available, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -55,15 +53,15 @@ public class RMIConn implements Connection
      * @param available List of available weapons
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Chosen weapon
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose)
+    public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.chooseWeapon(available, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -72,15 +70,15 @@ public class RMIConn implements Connection
      * @param grabbable List of weapons that can be picked up by the player
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Chosen weapon
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose)
+    public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.grabWeapon(grabbable, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -89,15 +87,15 @@ public class RMIConn implements Connection
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Weapon to be reloaded
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon reload(List<Weapon> reloadable, boolean mustChoose)
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.reload(reloadable, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -106,15 +104,15 @@ public class RMIConn implements Connection
      * @param destinations Possible destinations for the user
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Point where the player will be when he's done moving
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Point movePlayer(List<Point> destinations, boolean mustChoose)
+    public Point movePlayer(List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.movePlayer(destinations, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -123,8 +121,9 @@ public class RMIConn implements Connection
      * @param targets List of player that can be targeted
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Chosen target
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose)
+    public Player chooseTarget(List<Player> targets, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             String nickChosen = client.chooseTarget(targets, mustChoose).getNick();
@@ -133,9 +132,8 @@ public class RMIConn implements Connection
                     return p;
             return null;
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -145,16 +143,16 @@ public class RMIConn implements Connection
      * @param destinations Possible destinations for the enemy
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Point where the enemy will be after being moved
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
 
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose)
+    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.moveEnemy(enemy, destinations, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -163,14 +161,14 @@ public class RMIConn implements Connection
      * @param powers List of power cards in player's hand
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Card to be discarded
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Power discardPower(List<Power> powers, boolean mustChoose) {
+    public Power discardPower(List<Power> powers, boolean mustChoose) throws ClientDisconnectedException {
         try {
             return client.discardPower(powers, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -179,14 +177,14 @@ public class RMIConn implements Connection
      * @param rooms list of possible rooms
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen room
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) {
+    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) throws ClientDisconnectedException {
         try {
             return client.chooseRoom(rooms, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -195,14 +193,14 @@ public class RMIConn implements Connection
      * @param possible Directions you can choose
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) throws ClientDisconnectedException {
         try {
             return client.chooseDirection(possible, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -211,70 +209,70 @@ public class RMIConn implements Connection
      * @param positions list of possible positions
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen position
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Point choosePosition(List<Point> positions, boolean mustChoose) {
+    public Point choosePosition(List<Point> positions, boolean mustChoose) throws ClientDisconnectedException {
         try {
             return client.choosePosition(positions, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
     /**
      * Asks the user for the nickname
      * @return user's nickname
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public String getNickname() {
+    public String getNickname() throws ClientDisconnectedException {
         try {
             return client.getNickname();
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
     /**
      * Asks the user for the effect phrase
      * @return user's effect phrase
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public String getPhrase() {
+    public String getPhrase() throws ClientDisconnectedException {
         try {
             return client.getPhrase();
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
     /**
      * Asks the user fot the fighter
      * @return user's fighter
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Fighter getFighter() {
+    public Fighter getFighter() throws ClientDisconnectedException {
         try {
             return client.getFighter();
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
     /**
      * Asks the user how many skulls he wants in the play
      * @return skulls number
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Integer getSkullNum() {
+    public Integer getSkullNum() throws ClientDisconnectedException {
         try {
             return client.getSkullNum();
-            }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        }
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
     
@@ -283,43 +281,43 @@ public class RMIConn implements Connection
      * @param inHand List of weapons in hand
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen weapon
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose)
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.discardWeapon(inHand, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
     /**
      * Asks the user to choose which map he wants to use
      * @return Number of the chosen map
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Integer chooseMap() {
+    public Integer chooseMap() throws ClientDisconnectedException {
         try {
             return client.chooseMap();
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
     /**
      * Asks the user about the Frenzy mode for the starting match
      * @return True for final Frenzy mode, false elsewhere
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Boolean chooseFrenzy() {
+    public Boolean chooseFrenzy() throws ClientDisconnectedException {
         try {
             return client.chooseFrenzy();
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 
@@ -328,14 +326,28 @@ public class RMIConn implements Connection
      * @param inHand List of powers in hand
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen power
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Power choosePower(List<Power> inHand, boolean mustChoose) {
+    public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException {
         try {
             return client.choosePower(inHand, mustChoose);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            return null;
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
+        }
+    }
+
+    /**
+     * Sends a general message to the user to be displayed
+     * @param payload Message payload
+     * @throws ClientDisconnectedException
+     */
+    public void sendMessage(String payload) throws ClientDisconnectedException {
+        try {
+            client.sendMessage(payload);
+        }
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
         }
     }
 }

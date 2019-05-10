@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
@@ -85,7 +86,7 @@ public class Match implements Runnable
      * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
      */
-    private void initialize(int skullsNum) throws FileNotFoundException
+    private void initialize(int skullsNum) throws FileNotFoundException, ClientDisconnectedException
     {
         //Ask the user which maps he wants to use and if he wants to use frenzy mode
         game.loadMap(game.getPlayers().get(0).getConn().chooseMap());
@@ -113,6 +114,9 @@ public class Match implements Runnable
         try
         {
             initialize(skullsNum);
+        }
+        catch (ClientDisconnectedException e) {
+            ; //TODO client disconnection while choosing game
         }
         catch(FileNotFoundException e)
         {
@@ -155,12 +159,23 @@ public class Match implements Runnable
                     }
                 }
 
-                active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
+                try {
+                    active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
+                }
+                catch(ClientDisconnectedException e) {
+                    ; //TODO @Erap320 checkout and correct
+                }
             }
 
             //Reload weapons
-            if(FeasibleLambdaMap.possibleReload(active))
-                ActionLambdaMap.reload(active);
+            if(FeasibleLambdaMap.possibleReload(active)) {
+                try {
+                    ActionLambdaMap.reload(active);
+                }
+                catch(ClientDisconnectedException e) {
+                    ; //TODO @Erap320 checkout and correct
+                }
+            }
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
@@ -246,47 +261,47 @@ public class Match implements Runnable
 
 
         //Choose power
-        Power chosen = pl.getConn().discardPower(pl.getPowers(), true);
-        Color spawnColor = chosen.getColor();
-        //Discard the power
-        pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-            for(int i = 0; i < 3; i++)
-            {
-                if(powers[i] == chosen)
-                {
-                    game.getPowersDeck().scrapCard(powers[i]);
-                    powers[i] = null;
+        try {
+            Power chosen = pl.getConn().discardPower(pl.getPowers(), true);
+            Color spawnColor = chosen.getColor();
+            //Discard the power
+            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                for (int i = 0; i < 3; i++) {
+                    if (powers[i] == chosen) {
+                        game.getPowersDeck().scrapCard(powers[i]);
+                        powers[i] = null;
+                    }
+                }
+            }));
+
+            boolean found = false;
+            int spawnX = 0;
+            int spawnY = 0;
+
+            //Move in the correct position
+            for (int x = 0; x < 4 && !found; x++) {
+                for (int y = 0; y < 3 && !found; y++) {
+                    if (game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor)) {
+                        spawnX = x;
+                        spawnY = y;
+                        found = true;
+                    }
                 }
             }
-        }));
 
-        boolean found = false;
-        int spawnX = 0;
-        int spawnY = 0;
+            final Point spawnPoint = new Point(spawnX, spawnY);
 
-        //Move in the correct position
-        for(int x = 0; x < 4 && !found; x++)
-        {
-            for(int y = 0; y < 3 && !found; y++)
-            {
-                if(game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor))
-                {
-                    spawnX = x;
-                    spawnY = y;
-                    found = true;
-                }
+            if (found) {
+                pl.applyEffects(EffectsLambda.move(pl, spawnPoint, game.getMap()));
             }
+            //If not found the map is incorrect
+
+            System.out.println(pl.getNick() + " è respawnato in " + spawnX + "," + spawnY);
+
         }
-
-        final Point spawnPoint = new Point(spawnX, spawnY);
-
-        if(found)
-        {
-            pl.applyEffects(EffectsLambda.move(pl, spawnPoint, game.getMap()));
+        catch (ClientDisconnectedException e) {
+            ; //TODO @Erap320 checkout and correct
         }
-        //If not found the map is incorrect
-
-        System.out.println(pl.getNick() + " è respawnato in " + spawnX + "," + spawnY);
     }
 
     /**

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.Client;
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,7 +76,7 @@ public class RegularCell extends Cell {
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
+    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck) throws ClientDisconnectedException
     {
         Loot picked = pickLoot();
 
@@ -90,7 +93,12 @@ public class RegularCell extends Cell {
                         System.out.println(pl.getNick() + " deve scartare un potenziamento");
                         List<Power> inHand = new ArrayList<>(Arrays.asList(powers));
                         inHand.add(newPower);
-                        discarded = pl.getConn().discardPower(inHand, true);
+                        try {
+                            discarded = pl.getConn().discardPower(inHand, true);
+                        }
+                        catch(ClientDisconnectedException e) {
+                            ; //TODO @Erap320 burn it down
+                        }
 
                         powersDeck.scrapCard(discarded);
                     }

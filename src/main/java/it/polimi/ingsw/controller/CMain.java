@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ServerDisconnectedException;
+import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
@@ -60,32 +62,37 @@ public class CMain
             buffer = stdin.nextLine();
         }
 
-        if(buffer.toLowerCase() == "r")
+        if(buffer.equalsIgnoreCase("r"))
             socket = false;
 
-        //Ask for IP address
-        System.out.print("Indirizzo IP del server: ");
-        buffer = stdin.nextLine();
-        //TODO check if IP is correctly written
-        ip = buffer;
+        boolean instanced = false;
+        do {
+            //Ask for IP address
+            System.out.print("Indirizzo IP del server: ");
+            buffer = stdin.nextLine();
+            //TODO check if IP is correctly written
+            ip = buffer;
 
-        ip = "localhost";
-
-        if(socket)
-        {
-            connection = new SocketClient(ip, 1906, ui);
-        }
-        else
-        {
-            try
-            {
-                connection = new RMIClient(ip, ui);
+            try {
+                if (socket)
+                    connection = new SocketClient(ip, 1906, ui);
+                else
+                    connection = new RMIClient(ip, ui);
+                instanced = true;
             }
-            catch(RemoteException e)
-            {
+            catch (ServerNotFoundException e) {
+                ui.generalMessage("Server non trovato, riprova\n");
+            }
+            catch (ServerDisconnectedException e) {
+                ui.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
+                return;
+            }
+            catch (RemoteException e) {
                 Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
             }
+
         }
+        while (!instanced);
     }
 
 }

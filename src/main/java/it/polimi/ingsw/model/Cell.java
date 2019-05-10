@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +91,7 @@ public abstract class Cell {
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public abstract void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck);
+    public abstract void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck) throws ClientDisconnectedException;
 
     /**
      * Refill the cell's items if needed

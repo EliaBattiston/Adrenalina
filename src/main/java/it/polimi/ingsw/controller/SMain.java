@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.model.Fighter;
 import it.polimi.ingsw.model.Player;
@@ -77,6 +78,10 @@ public class SMain
         listen();
     }
 
+    private void println(String payload) {
+        System.out.println(payload);
+    }
+
     /**
      * Starts listening for new users' connections
      */
@@ -100,70 +105,74 @@ public class SMain
 
     public void newConnection(Connection connection) {
         synchronized (lock) {
-            boolean acceptedNick = true;
-            Player player = null;
-            String nickname;
-            do {
-                acceptedNick = true;
+            println("Rilevata nuova connessione");
+            try {
+                boolean acceptedNick = true;
+                Player player = null;
+                String nickname;
+                do {
+                    acceptedNick = true;
 
-                nickname = connection.getNickname();
-                for (Match m : matches) {
-                    for (Player p : m.getGame().getPlayers()) {
-                        if (p.getNick().equals(nickname)) {
-                            if (p.getConn() != null)
-                                acceptedNick = false;
-                            else
-                                player = p;
-                        }
-                    }
-                }
-
-                for (int i=0; i < waiting.length; i++) {
-                    if(waiting[i] != null)
-                    {
-                        for (Player p : waiting[i].getGame().getPlayers())
-                        {
-                            if (p.getNick().equals(nickname))
-                            {
-                                acceptedNick = false;
+                    nickname = connection.getNickname();
+                    for (Match m : matches) {
+                        for (Player p : m.getGame().getPlayers()) {
+                            if (p.getNick().equals(nickname)) {
+                                if (p.getConn() != null)
+                                    acceptedNick = false;
+                                else
+                                    player = p;
                             }
                         }
                     }
-                }
-            } while (!acceptedNick);
 
-            if (player != null) {
-                player.setConn(connection);
-
-                System.out.println("Il giocatore " + player.getNick() + " si è riconnesso.");
-            } else {
-                String phrase = connection.getPhrase();
-                Fighter fighter = connection.getFighter();
-                player = new Player(nickname, phrase, fighter);
-                player.setConn(connection);
-
-                System.out.println("Il giocatore " + player.getNick() + " si è connesso.");
-
-                int skulls = connection.getSkullNum();
-
-                int index = skulls - MINSKULLS;
-                if (waiting[index] == null) {
-                    try {
-                        waiting[index] = new Match(skulls);
-                    } catch (FileNotFoundException e) {
-                        Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
+                    for (int i = 0; i < waiting.length; i++) {
+                        if (waiting[i] != null) {
+                            for (Player p : waiting[i].getGame().getPlayers()) {
+                                if (p.getNick().equals(nickname)) {
+                                    acceptedNick = false;
+                                }
+                            }
+                        }
                     }
-                }
-                waiting[index].getGame().addPlayer(player);
-                if (waiting[index].getGame().getPlayers().size() >= 3) {
-                    if (!startedTimer[index]) {
-                        matchTimer(skulls);
-                        startedTimer[index] = true;
-                    } else if (waiting[index].getGame().getPlayers().size() == 5) {
-                        cancelTimer(skulls);
-                        startMatch(skulls);
+                } while (!acceptedNick);
+
+                if (player != null) {
+                    player.setConn(connection);
+
+                    println("Il giocatore " + player.getNick() + " si è riconnesso.");
+                } else {
+                    String phrase = connection.getPhrase();
+                    Fighter fighter = connection.getFighter();
+                    player = new Player(nickname, phrase, fighter);
+                    player.setConn(connection);
+
+                    int skulls = connection.getSkullNum();
+
+                    int index = skulls - MINSKULLS;
+                    if (waiting[index] == null) {
+                        try {
+                            waiting[index] = new Match(skulls);
+                        } catch (FileNotFoundException e) {
+                            Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
+                        }
                     }
+                    waiting[index].getGame().addPlayer(player);
+                    if (waiting[index].getGame().getPlayers().size() >= 3) {
+                        if (!startedTimer[index]) {
+                            matchTimer(skulls);
+                            startedTimer[index] = true;
+                        } else if (waiting[index].getGame().getPlayers().size() == 5) {
+                            cancelTimer(skulls);
+                            startMatch(skulls);
+                        }
+                    }
+
+                    println("Il giocatore " + player.getNick() + " si è connesso.");
                 }
+                player.getConn().sendMessage("Benvenuto in Adrenalina!");
+            }
+            catch (ClientDisconnectedException e) {
+                println("Nuova connessione annullata");
             }
         }
     }
@@ -176,7 +185,7 @@ public class SMain
                 for (Player p : waiting[i].getGame().getPlayers()) {
                     if (p.getNick().equals(nickname)) {
                         String nick = p.getNick();
-                        System.out.println("Giocatore " + nick + " disconnesso");
+                        println("Giocatore " + nick + " disconnesso");
                         waiting[i].getGame().removePlayer(p);
                         found = true;
                     }
@@ -186,7 +195,7 @@ public class SMain
                 for (Match m : matches) {
                     for (Player p : m.getGame().getPlayers()) {
                         if (p.getNick().equals(nickname)) {
-                            System.out.println("GIocatore " + p.getNick() + " rimosso dalla lista di attesa");
+                            println("Giocatore " + p.getNick() + " rimosso dalla lista di attesa");
                             p.setConn(null);
                         }
                     }
@@ -207,16 +216,41 @@ public class SMain
             public void run() {
                 startMatch(skulls);
             }
-        }, 3*1000);
+        }, 10*1000);
     }
 
     private void startMatch(int skulls) {
         synchronized (lock) {
+            println("Partita in avvio...");
             int index = skulls - MINSKULLS;
-            matches.add(waiting[index]);
-            matches.get(matches.indexOf(waiting[index])).run();
-            waiting[index] = null;
-            startedTimer[index] = false;
+
+            for(Player p: waiting[index].getGame().getPlayers()) {
+                try {
+                    p.getConn().sendMessage("Partita in avvio...");
+                }
+                catch (ClientDisconnectedException e) {
+                    cancelConnection(p.getNick());
+                }
+            }
+
+            if(waiting[index].getGame().getPlayers().size() >= 3) {
+                println("Partita avviata");
+                matches.add(waiting[index]);
+                matches.get(matches.indexOf(waiting[index])).run();
+                waiting[index] = null;
+                startedTimer[index] = false;
+            }
+            else {
+                println("Ripristino - giocatori insufficienti");
+                for(Player p: waiting[index].getGame().getPlayers()) {
+                    try {
+                        p.getConn().sendMessage("Errore - troppi utenti disconnessi. Ripristino a stanza di attesa");
+                    }
+                    catch (ClientDisconnectedException e) {
+                        cancelConnection(p.getNick());
+                    }
+                }
+            }
         }
     }
 }

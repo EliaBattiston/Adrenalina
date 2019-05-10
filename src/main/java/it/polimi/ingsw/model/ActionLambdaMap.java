@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.util.*;
@@ -14,7 +15,7 @@ public class ActionLambdaMap {
     private HashMap<String, ActionLambda> data;
     private static ActionLambdaMap instance = null;
 
-    private ActionLambdaMap(){
+    private ActionLambdaMap() {
         data = new HashMap<>();
 
     //Base weapon lambdas
@@ -768,7 +769,7 @@ public class ActionLambdaMap {
      * @param lambdaName the name of the lambda you're looking for
      * @return the lambda you searched or null if it doesn't exists
      */
-    public static ActionLambda getLambda(String lambdaName){
+    public static ActionLambda getLambda(String lambdaName) throws ClientDisconnectedException {
         if(instance == null)
             instance = new ActionLambdaMap();
 
@@ -782,7 +783,7 @@ public class ActionLambdaMap {
      * @param steps number of allowed steps
      * @param mustChoose False if the player doesn't have to run
      */
-    private static void run(Player pl, Map map, int steps, boolean mustChoose)
+    private static void run(Player pl, Map map, int steps, boolean mustChoose) throws ClientDisconnectedException
     {
         System.out.println(pl.getNick() + " corre");
         List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
@@ -798,7 +799,7 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      */
-    private static void runToLoot(Player pl, Map map, int steps)
+    private static void runToLoot(Player pl, Map map, int steps) throws ClientDisconnectedException
     {
         System.out.println(pl.getNick() + " corre per raccogliere");
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
@@ -824,7 +825,7 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      */
-    private static void runToShoot(Player pl, Map map, int steps)
+    private static void runToShoot(Player pl, Map map, int steps) throws ClientDisconnectedException
     {
         System.out.println(pl.getNick() + " corre per sparare");
 
@@ -862,7 +863,7 @@ public class ActionLambdaMap {
      * @param lootDeck Deck where to scrap the picked loot card
      * @param powersDeck Deck for picking a power card
      */
-    private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
+    private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck) throws ClientDisconnectedException
     {
         Cell current = map.getCell(pl.getPosition());
         current.pickItem(pl, lootDeck, powersDeck);
@@ -873,7 +874,7 @@ public class ActionLambdaMap {
      * @param pl Lambda's player
      * @param map Lambda's map
      */
-    private static void shoot(Player pl, Map map)
+    private static void shoot(Player pl, Map map) throws ClientDisconnectedException
     {
         //Only loaded weapons
         List<Weapon> loaded = pl.getWeapons().stream()
@@ -952,7 +953,7 @@ public class ActionLambdaMap {
      * Basic reload action
      * @param pl Lambda's player
      */
-    public static void reload(Player pl)
+    public static void reload(Player pl) throws ClientDisconnectedException
     {
         List<Weapon> unloaded = pl.getWeapons().stream().filter(weapon -> !weapon.isLoaded()).collect(Collectors.toList());
         List<Weapon> reloadable =  new ArrayList<>(unloaded); //Only the weapons the player can currently reload

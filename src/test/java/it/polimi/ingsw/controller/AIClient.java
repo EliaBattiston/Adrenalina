@@ -229,6 +229,14 @@ public class AIClient implements Client {
         return inHand.get(new Random().nextInt(inHand.size()));
     }
 
+    /**
+     * Sends a general message to the user to be displayed
+     * @param payload Message payload
+     */
+    public void sendMessage(String payload) {
+        user.generalMessage(payload);
+    }
+
 
     /**
      * Opens the writer and sends the message to the server, then closes the writer
@@ -422,6 +430,11 @@ public class AIClient implements Client {
                 case UPDATEVIEW: {
                     MatchView param = gson.fromJson(message.parameters, MatchView.class);
                     updateGame(param);
+                    break;
+                }
+                case MESSAGE: {
+                    String param = gson.fromJson(message.parameters, String.class);
+                    sendMessage(param);
                     break;
                 }
                 default:

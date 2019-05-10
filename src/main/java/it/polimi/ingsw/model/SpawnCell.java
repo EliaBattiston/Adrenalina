@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -118,7 +120,7 @@ public class SpawnCell extends Cell{
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
+    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck) throws ClientDisconnectedException
     {
         List<Weapon> available = getWeapons();
         List<Weapon> purchasable = new ArrayList<>(available);
@@ -145,6 +147,7 @@ public class SpawnCell extends Cell{
         if(pl.getWeapons().size() >= 3)
         {
             Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
+
 
             pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 int pos = Arrays.asList(weapons).indexOf(discard);

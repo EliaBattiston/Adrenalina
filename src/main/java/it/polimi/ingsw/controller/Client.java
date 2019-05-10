@@ -1,7 +1,7 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.Remote;
@@ -180,4 +180,11 @@ public interface Client extends Remote
      * @throws RemoteException If something goes wrong with the connection
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) throws RemoteException;
+
+    /**
+     * Sends a general message to the user to be displayed
+     * @param payload Message payload
+     * @throws RemoteException If something goes wrong with the connection
+     */
+    public void sendMessage(String payload) throws RemoteException;
 }

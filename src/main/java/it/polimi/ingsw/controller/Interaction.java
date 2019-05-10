@@ -20,5 +20,6 @@ public enum Interaction {
     CHOOSEMAP,
     CHOOSEFRENZY,
     CHOOSEPOWER,
-    UPDATEVIEW
+    UPDATEVIEW,
+    MESSAGE
 }

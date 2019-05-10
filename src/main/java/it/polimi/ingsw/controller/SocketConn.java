@@ -3,14 +3,15 @@ package it.polimi.ingsw.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.MatchView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,9 +40,10 @@ public class SocketConn implements Connection {
     /**
      * Send the actual matchView to the client
      * @param matchView current match view
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
     @Override
-    public void updateGame(MatchView matchView) {
+    public void updateGame(MatchView matchView) throws ClientDisconnectedException {
         Payload load = new Payload();
         load.type = Interaction.UPDATEVIEW;
         load.parameters = gson.toJson(matchView);
@@ -53,8 +55,9 @@ public class SocketConn implements Connection {
      * @param available List of available actions
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Chosen action
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Action chooseAction(List<Action> available, boolean mustChoose)
+    public Action chooseAction(List<Action> available, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEACTION;
@@ -76,8 +79,9 @@ public class SocketConn implements Connection {
      * @param available List of available weapons
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Chosen weapon
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose)
+    public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEWEAPON;
@@ -99,8 +103,9 @@ public class SocketConn implements Connection {
      * @param grabbable List of weapons that can be picked up by the player
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Chosen weapon
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose)
+    public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.GRABWEAPON;
@@ -122,8 +127,9 @@ public class SocketConn implements Connection {
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Weapon to be reloaded
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon reload(List<Weapon> reloadable, boolean mustChoose)
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.RELOAD;
@@ -136,7 +142,7 @@ public class SocketConn implements Connection {
         int id = ansParam.get(0).getId();
         for(Weapon w : reloadable)
             if(w.getId() == id)
-                return null; //TODO change to w after merge with fixed "reload"
+                return w;
         return null;
     }
 
@@ -145,8 +151,9 @@ public class SocketConn implements Connection {
      * @param targets List of player that can be targeted
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Chosen target
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose)
+    public Player chooseTarget(List<Player> targets, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.CHOOSETARGET;
@@ -168,8 +175,9 @@ public class SocketConn implements Connection {
      * @param destinations Possible destinations for the user
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Point where the player will be when he's done moving
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Point movePlayer(List<Point> destinations, boolean mustChoose)
+    public Point movePlayer(List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.MOVEPLAYER;
@@ -187,9 +195,10 @@ public class SocketConn implements Connection {
      * @param destinations Possible destinations for the enemy
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Point where the enemy will be after being moved
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
 
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose)
+    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.MOVEENEMY;
@@ -207,8 +216,9 @@ public class SocketConn implements Connection {
      * @param powers List of power cards in player's hand
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return Card to be discarded
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Power discardPower(List<Power> powers, boolean mustChoose)
+    public Power discardPower(List<Power> powers, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.DISCARDPOWER;
@@ -227,8 +237,9 @@ public class SocketConn implements Connection {
      * @param rooms list of possible rooms
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen room
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose)
+    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEROOM;
@@ -246,8 +257,9 @@ public class SocketConn implements Connection {
      * @param possible Directions you can choose
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Direction chooseDirection(List<Direction> possible, boolean mustChoose)
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEDIRECTION;
@@ -264,8 +276,9 @@ public class SocketConn implements Connection {
      * @param positions list of possible positions
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen position
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Point choosePosition(List<Point> positions, boolean mustChoose)
+    public Point choosePosition(List<Point> positions, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEPOSITION;
@@ -280,8 +293,9 @@ public class SocketConn implements Connection {
     /**
      * Asks the user for the nickname
      * @return user's nickname
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public String getNickname() {
+    public String getNickname() throws ClientDisconnectedException {
         Payload load = new Payload();
         load.type = Interaction.GETNICKNAME;
         send(gson.toJson(load));
@@ -293,8 +307,9 @@ public class SocketConn implements Connection {
     /**
      * Asks the user for the effect phrase
      * @return user's effect phrase
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public String getPhrase() {
+    public String getPhrase() throws ClientDisconnectedException {
         Payload load = new Payload();
         load.type = Interaction.GETPHRASE;
         send(gson.toJson(load));
@@ -308,8 +323,9 @@ public class SocketConn implements Connection {
      * @param inHand List of weapons in hand
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen weapon
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose)
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
         load.type = Interaction.DISCARDWEAPON;
@@ -326,8 +342,9 @@ public class SocketConn implements Connection {
     /**
      * Asks the user for the fighter
      * @return user's fighter
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Fighter getFighter() {
+    public Fighter getFighter() throws ClientDisconnectedException {
         Payload load = new Payload();
         load.type = Interaction.GETFIGHTER;
         send(gson.toJson(load));
@@ -340,7 +357,7 @@ public class SocketConn implements Connection {
      * Asks the user how many skulls he wants in the play
      * @return skulls number
      */
-    public Integer getSkullNum() {
+    public Integer getSkullNum() throws ClientDisconnectedException {
         Payload load = new Payload();
         load.type = Interaction.GETSKULLSNUM;
         send(gson.toJson(load));
@@ -352,8 +369,9 @@ public class SocketConn implements Connection {
     /**
      * Asks the user to choose which map he wants to use
      * @return Number of the chosen map
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Integer chooseMap() {
+    public Integer chooseMap() throws ClientDisconnectedException {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEMAP;
         send(gson.toJson(load));
@@ -365,8 +383,9 @@ public class SocketConn implements Connection {
     /**
      * Asks the user about the Frenzy mode for the starting match
      * @return True for final Frenzy mode, false elsewhere
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Boolean chooseFrenzy() {
+    public Boolean chooseFrenzy() throws ClientDisconnectedException {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEFRENZY;
         send(gson.toJson(load));
@@ -380,8 +399,9 @@ public class SocketConn implements Connection {
      * @param inHand List of powers in hand
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen power
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Power choosePower(List<Power> inHand, boolean mustChoose) {
+    public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException {
         Payload load = new Payload();
         load.type = Interaction.CHOOSEPOWER;
         load.parameters = gson.toJson(inHand);
@@ -393,20 +413,36 @@ public class SocketConn implements Connection {
         return inHand.stream().filter(p -> p.getId() == ansParam.get(0).getId()).findFirst().get();
     }
 
+    /**
+     * Sends a general message to the user to be displayed
+     * @param payload Message payload
+     * @throws ClientDisconnectedException
+     */
+    public void sendMessage(String payload) throws ClientDisconnectedException {
+        Payload load = new Payload();
+        load.type = Interaction.MESSAGE;
+        load.parameters = gson.toJson(payload);
+        send(gson.toJson(load));
+    }
+
 
 
     /**
      * Opens the writer and sends the message, then closes the writer
      * @param payload Content to be delivered to the client
      * @return If true, the payload was correctly sent
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    private boolean send(String payload) {
+    private boolean send(String payload) throws ClientDisconnectedException {
         boolean success;
         try {
             PrintWriter out = new PrintWriter(playerSocket.getOutputStream());
             out.println(payload);
             out.flush();
             success = true;
+        }
+        catch (NoSuchElementException e) {
+            throw new ClientDisconnectedException();
         }
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
@@ -418,12 +454,16 @@ public class SocketConn implements Connection {
     /**
      *returns the received string
      * @return received string (null in case of error)
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    private String receive() {
+    private String receive() throws ClientDisconnectedException {
         String response;
         try {
             Scanner in = new Scanner(playerSocket.getInputStream());
             response = in.nextLine();
+        }
+        catch (NoSuchElementException e) {
+            throw new ClientDisconnectedException();
         }
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
