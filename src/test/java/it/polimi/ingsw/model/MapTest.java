@@ -1,12 +1,12 @@
 package it.polimi.ingsw.model;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
-import org.junit.Test;
 
 import java.util.List;
 import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 public class MapTest {
     /**

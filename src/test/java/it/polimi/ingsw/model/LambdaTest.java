@@ -1,11 +1,11 @@
 package it.polimi.ingsw.model;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import it.polimi.ingsw.exceptions.WrongPointException;
-import org.junit.Test;
 
 import java.util.Collections;
-
-import static org.junit.Assert.*;
 
 public class LambdaTest {
     @Test

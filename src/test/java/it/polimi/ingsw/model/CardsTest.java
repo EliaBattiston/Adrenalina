@@ -1,14 +1,12 @@
 package it.polimi.ingsw.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import it.polimi.ingsw.exceptions.EmptyDeckException;
-import org.junit.Test;
 
 public class CardsTest {
     /**

@@ -19,9 +19,15 @@
 
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.4.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -56,9 +62,26 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
         </plugin>
+        <!-- Jacoco code pasted from piazza answer -->
         <plugin>
+          <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.3</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <!-- attached to Maven test phase -->
+            <execution>
+              <id>report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>

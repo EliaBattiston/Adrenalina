@@ -1,14 +1,13 @@
 package it.polimi.ingsw.model;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.exceptions.WrongPointException;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import static junit.framework.TestCase.*;
 
 public class GameTest {
     /**
