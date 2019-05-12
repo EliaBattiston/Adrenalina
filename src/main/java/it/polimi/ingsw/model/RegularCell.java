@@ -36,14 +36,6 @@ public class RegularCell extends Cell {
         return loot;
     }
 
-    public String getLootAcronym(){
-        String a = "";
-
-        //for()
-
-        return a;
-    }
-
     /**
      * Returns the loot and removes it from the cell
      * @return Cell's loot
