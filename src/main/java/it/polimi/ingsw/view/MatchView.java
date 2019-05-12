@@ -75,39 +75,7 @@ public class MatchView {
         return myPlayer;
     }
 
-    public void setMyPlayer(Player myPlayer) {
-        this.myPlayer = myPlayer;
-    }
-
-    public int getActionsNumber() {
-        return actionsNumber;
-    }
-
-    public void setActionsNumber(int actionsNumber) {
-        this.actionsNumber = actionsNumber;
-    }
-
     public GamePhase getPhase() {
         return phase;
-    }
-
-    public void setPhase(GamePhase phase) {
-        this.phase = phase;
-    }
-
-    public boolean isUseFrenzy() {
-        return useFrenzy;
-    }
-
-    public void setUseFrenzy(boolean useFrenzy) {
-        this.useFrenzy = useFrenzy;
-    }
-
-    public Player getFirstFrenzy() {
-        return firstFrenzy;
-    }
-
-    public void setFirstFrenzy(Player firstFrenzy) {
-        this.firstFrenzy = firstFrenzy;
     }
 }

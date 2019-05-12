@@ -1,7 +1,11 @@
 package it.polimi.ingsw.view;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.model.*;
 
+import java.io.FileReader;
 import java.util.List;
 
 /**
@@ -13,7 +17,7 @@ public class GameView {
     /**
      * Map used in this match
      */
-    private Map map;
+    private String map;
     /**
      * Players participating the match
      */
@@ -24,13 +28,19 @@ public class GameView {
     private Kill[] skullsBoard;
 
     public GameView(Map map, List<Player> players, Kill[] skullsBoard) {
-        this.map = map;
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        Gson gson = gsonBuilder.create();
+        this.map = gson.toJson(map, Map.class);
         this.players = players;
         this.skullsBoard = skullsBoard;
     }
 
     public Map getMap() {
-        return map;
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        Gson gson = gsonBuilder.create();
+        return gson.fromJson(map, Map.class);
     }
 
     public List<Player> getPlayers() {
@@ -42,7 +52,10 @@ public class GameView {
     }
 
     public void setMap(Map map) {
-        this.map = map;
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        Gson gson = gsonBuilder.create();
+        this.map = gson.toJson(map, Map.class);
     }
 
     public void setPlayers(List<Player> players) {

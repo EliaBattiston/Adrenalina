@@ -154,7 +154,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return user.chooseDirection(mustChoose); }
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return user.chooseDirection(possible, mustChoose); }
 
     /**
      * Asks the user to choose a precise position on the map

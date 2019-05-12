@@ -193,7 +193,6 @@ public class AIClient implements Client {
      * @return user's fighter
      */
     public Fighter getFighter() {
-
         return Fighter.values()[new Random().nextInt(5)];
     }
 

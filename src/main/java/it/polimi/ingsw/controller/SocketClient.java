@@ -169,7 +169,7 @@ public class SocketClient implements Client {
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return user.chooseDirection(mustChoose); }
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return user.chooseDirection(possible, mustChoose); }
 
     /**
      * Asks the user to choose a precise position on the map
@@ -460,7 +460,7 @@ public class SocketClient implements Client {
                     break;
                 }
                 default:
-                    answer = null;
+                    answer.type = null;
             }
             if(answer.type != null)
                 send(jsonSerialize(answer));

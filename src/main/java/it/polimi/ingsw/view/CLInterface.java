@@ -34,6 +34,11 @@ public class CLInterface implements UserInterface {
     private MatchView view;
 
     /**
+     * Map instance of the MatchView
+     */
+    private Map mapInstance;
+
+    /**
      *Color and symbol constants
      */
     private static final int CELLDIM = 20;
@@ -225,6 +230,7 @@ public class CLInterface implements UserInterface {
      */
     public void updateGame(MatchView matchView) {
         view = matchView;
+        mapInstance = view.getGame().getMap();
         map(null, null);
         frenzyInfo();
         playerInfo();
@@ -257,8 +263,8 @@ public class CLInterface implements UserInterface {
                     cellN--;
                     int y = cellN / 4;
                     int x = cellN - (y * 4);
-                    if(view.getGame().getMap().getCell(x,y) != null) {
-                        Cell cell = view.getGame().getMap().getCell(x,y);
+                    if(mapInstance.getCell(x,y) != null) {
+                        Cell cell = mapInstance.getCell(x,y);
                         if(cell.getRoomNumber() < 3 && cell.hasSpawn(Color.values()[cell.getRoomNumber()])) {
                             print("ARMI: ");
                             SpawnCell sc = (SpawnCell) cell;
@@ -441,7 +447,7 @@ public class CLInterface implements UserInterface {
         for(int y = 0; y < 3; y++) {
             for(int rowN = 0; rowN < 9; rowN++) {
                 for(int x = 0; x < 4; x++) {
-                    if(view.getGame().getMap().getCell(x,y) != null)
+                    if(mapInstance.getCell(x,y) != null)
                         print(printCell(x,y,rowN, marked, highlighted));
                     else {
                         print(" " + innerCellFormat("") + " ");
@@ -463,8 +469,7 @@ public class CLInterface implements UserInterface {
      * @return Cell part formatted string
      */
     private String printCell(int x, int y, int row, List<Player> marked, List<Point> highlighted) {
-        Map m = view.getGame().getMap();
-        Cell c = m.getCell(x,y);
+        Cell c = mapInstance.getCell(x,y);
         String ret = "";
         String highlight = "";
         if(highlighted != null) {
@@ -564,7 +569,7 @@ public class CLInterface implements UserInterface {
                 }
                 if(c.getPawns().size() >= 1) {
                     Player p = c.getPawns().get(0);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -597,7 +602,7 @@ public class CLInterface implements UserInterface {
                 }
                 if(c.getPawns().size() >= 2) {
                     Player p = c.getPawns().get(1);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -630,7 +635,7 @@ public class CLInterface implements UserInterface {
                 }
                 if(c.getPawns().size() >= 3) {
                     Player p = c.getPawns().get(2);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -656,7 +661,7 @@ public class CLInterface implements UserInterface {
 
                 if(c.getPawns().size() >= 4) {
                     Player p = c.getPawns().get(3);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -682,7 +687,7 @@ public class CLInterface implements UserInterface {
 
                 if(c.getPawns().size() >= 5) {
                     Player p = c.getPawns().get(4);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -737,8 +742,7 @@ public class CLInterface implements UserInterface {
      * @return Formatted corner string
      */
     private String corner(int x, int y, boolean north, boolean west) {
-        Map m = view.getGame().getMap();
-        Cell center = m.getCell(x,y);
+        Cell center = mapInstance.getCell(x,y);
         String ret = null;
         if(north) {
             if(west) {
@@ -1123,7 +1127,7 @@ public class CLInterface implements UserInterface {
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose) {
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
         println("Scegli una direzione:");
         int i = 0;
         int starting = 1;
@@ -1133,16 +1137,36 @@ public class CLInterface implements UserInterface {
             println("0 - Nessuna scelta");
         }
 
-        println("N - Nord");
-        println("E - Est");
-        println("S - Sud");
-        println("W - Ovest");
+        List<String> possibleString = new ArrayList<>();
+        for(Direction d: possible) {
+            switch (d) {
+                case NORTH:
+                    println("N - Nord");
+                    possibleString.add("n");
+                    break;
+                case EAST:
+                    println("E - Est");
+                    possibleString.add("e");
+                    break;
+                case SOUTH:
+                    println("S - Sud");
+                    possibleString.add("s");
+                    break;
+                case WEST:
+                    println("W - Ovest");
+                    possibleString.add("w");
+                    break;
+                default:
+                    return null;
+            }
+        }
+
         println("[?] Informazioni sul gioco");
 
         do {
             print("La tua scelta: ");
             choose = scan();
-        }while (!choose.equalsIgnoreCase("N") && !choose.equalsIgnoreCase("W") && !choose.equalsIgnoreCase("S") && !choose.equalsIgnoreCase("E") && !choose.equalsIgnoreCase("0") && !choose.equalsIgnoreCase("?"));
+        }while (!choose.equalsIgnoreCase("0") && !choose.equalsIgnoreCase("?") && !possibleString.contains(choose));
 
         switch (choose.toUpperCase()) {
             case "N":

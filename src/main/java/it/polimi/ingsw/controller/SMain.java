@@ -207,10 +207,12 @@ public class SMain
     private void cancelTimer(int skulls) {
         timer[skulls - MINSKULLS].cancel();
         timer[skulls - MINSKULLS].purge();
+        timer[skulls - MINSKULLS] = null;
     }
 
     private void matchTimer(int skulls) {
         //TODO make configuration file to set waiting time
+        timer[skulls - MINSKULLS] = new Timer();
         timer[skulls - MINSKULLS].schedule(new TimerTask() {
             @Override
             public void run() {
@@ -236,7 +238,8 @@ public class SMain
             if(waiting[index].getGame().getPlayers().size() >= 3) {
                 println("Partita avviata");
                 matches.add(waiting[index]);
-                matches.get(matches.indexOf(waiting[index])).run();
+                Thread matchThread = new Thread (matches.get(matches.indexOf(waiting[index])));
+                matchThread.start();
                 waiting[index] = null;
                 startedTimer[index] = false;
             }

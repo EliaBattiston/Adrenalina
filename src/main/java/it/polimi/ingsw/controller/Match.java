@@ -253,7 +253,8 @@ public class Match implements Runnable
     private void updateViews()
     {
         //TODO put this back when graphics are needed
-        /*for(Player p: game.getPlayers())
+
+        for(Player p: game.getPlayers())
         {
             if(p.getConn() != null)
             {
@@ -266,7 +267,7 @@ public class Match implements Runnable
                     p.setConn(null);
                 }
             }
-        }*/
+        }
     }
 
     /**
