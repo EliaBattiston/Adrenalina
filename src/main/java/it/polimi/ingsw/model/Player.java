@@ -171,6 +171,9 @@ public class Player implements Serializable
         return skulls;
     }
 
+    public Ammunitions getAmmo(){
+        return new Ammunitions(ammo);
+    }
 
     /**
      * Gives the number of requested ammunition

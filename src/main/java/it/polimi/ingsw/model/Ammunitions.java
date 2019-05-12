@@ -22,11 +22,18 @@ public class Ammunitions implements Serializable {
     /**
      * Creation of the class with 1 ammo for every type
      */
-    Ammunitions()
+    public Ammunitions()
     {
         this.red = 1;
         this.blue = 1;
         this.yellow = 1;
+    }
+
+    public Ammunitions(Ammunitions ammo)
+    {
+        this.red = ammo.red;
+        this.blue = ammo.blue;
+        this.yellow = ammo.yellow;
     }
 
     /**

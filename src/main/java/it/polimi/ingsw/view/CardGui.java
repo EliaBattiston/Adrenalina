@@ -16,12 +16,12 @@ public class CardGui extends Canvas {
     private Image img;
     private Canvas canvas;
 
-    public CardGui(it.polimi.ingsw.model.Weapon weapon, double width, double height, double x, double y){
-        super(width, height);
+    public CardGui(it.polimi.ingsw.model.Weapon weapon, double canvasWidth, double canvasHeight, double imgWidth, double imgHeight, double x, double y){
+        super(canvasWidth, canvasHeight);
         this.data = weapon;
         img = new Image( "file:images/weapon/weapon" + weapon.getId() + ".png" );
 
-        addImage(width, height, x, y);
+        this.getGraphicsContext2D().drawImage( img, x, y, imgWidth, imgHeight);
 
         setOnMousePressed(e ->{
             System.out.println("Clicked " + data.toString());
@@ -31,26 +31,17 @@ public class CardGui extends Canvas {
     public CardGui(it.polimi.ingsw.model.Loot loot, Gui gui, double width, double height, double x, double y){
         this.data = loot;
         img = new Image( "file:images/loot/" + loot.getContentAsString() + ".png" );
-        addImage(width, height, x, y);
+
+        this.getGraphicsContext2D().drawImage( img, x, y, width, height);
 
     }
 
-    public CardGui(it.polimi.ingsw.model.Power power, Gui gui, double width, double height, double x, double y){
+    public CardGui(it.polimi.ingsw.model.Power power, double canvasWidth, double canvasHeight, double imgWidth, double imgHeight, double x, double y){
+        super(canvasWidth, canvasHeight);
         this.data = power;
         img = new Image( "file:images/power/power" + (power.getId()<12 ? power.getId() : power.getId()/2) + ".png" );
 
-        addImage(width, height, x, y);
+        this.getGraphicsContext2D().drawImage( img, x, y, imgWidth, imgHeight);
 
-    }
-
-    private void addImage(double width, double height, double x, double y){
-        //canvas = new Canvas(width, height);
-        //getChildren().add( canvas );
-
-        this.getGraphicsContext2D().drawImage( img, 0, 0, width, height);
-    }
-
-    public void relocateCanvas(double x, double y){
-        canvas.relocate(x, y);
     }
 }
