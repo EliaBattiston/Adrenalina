@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import com.google.gson.*;
+
 import java.lang.reflect.Type;
 
 /**

@@ -45,8 +45,8 @@ public class SocketConn implements Connection {
     @Override
     public void updateGame(MatchView matchView) throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.UPDATEVIEW;
-        load.parameters = gson.toJson(matchView);
+        load.setType(Interaction.UPDATEVIEW);
+        load.setParameters(gson.toJson(matchView));
         send(gson.toJson(load));
     }
 
@@ -60,12 +60,12 @@ public class SocketConn implements Connection {
     public Action chooseAction(List<Action> available, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSEACTION;
-        load.parameters = gson.toJson(available);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.CHOOSEACTION);
+        load.setParameters(gson.toJson(available));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Action> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Action>>(){}.getType());
+        List<Action> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Action>>(){}.getType());
 
         String lambdaID = ansParam.get(0).getLambdaID();
         for(Action a : available)
@@ -84,12 +84,12 @@ public class SocketConn implements Connection {
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSEWEAPON;
-        load.parameters = gson.toJson(available);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.CHOOSEWEAPON);
+        load.setParameters(gson.toJson(available));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
+        List<Weapon> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Weapon>>(){}.getType());
 
         int id = ansParam.get(0).getId();
         for(Weapon w : available)
@@ -108,12 +108,12 @@ public class SocketConn implements Connection {
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.GRABWEAPON;
-        load.parameters = gson.toJson(grabbable);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.GRABWEAPON);
+        load.setParameters(gson.toJson(grabbable));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
+        List<Weapon> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Weapon>>(){}.getType());
 
         int id = ansParam.get(0).getId();
         for(Weapon w : grabbable)
@@ -132,12 +132,12 @@ public class SocketConn implements Connection {
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.RELOAD;
-        load.parameters = gson.toJson(reloadable);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.RELOAD);
+        load.setParameters(gson.toJson(reloadable));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
+        List<Weapon> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Weapon>>(){}.getType());
 
         int id = ansParam.get(0).getId();
         for(Weapon w : reloadable)
@@ -156,12 +156,12 @@ public class SocketConn implements Connection {
     public Player chooseTarget(List<Player> targets, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSETARGET;
-        load.parameters = gson.toJson(targets);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.CHOOSETARGET);
+        load.setParameters(gson.toJson(targets));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Player> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Player>>(){}.getType());
+        List<Player> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Player>>(){}.getType());
 
         String nickChosen = ansParam.get(0).getNick();
         for(Player p : targets)
@@ -180,12 +180,12 @@ public class SocketConn implements Connection {
     public Point movePlayer(List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.MOVEPLAYER;
-        load.parameters = gson.toJson(destinations);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.MOVEPLAYER);
+        load.setParameters(gson.toJson(destinations));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Point> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Point>>(){}.getType());
+        List<Point> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Point>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -201,13 +201,13 @@ public class SocketConn implements Connection {
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.MOVEENEMY;
-        load.parameters = gson.toJson(destinations);
-        load.mustChoose = mustChoose;
-        load.enemy = enemy;
+        load.setType(Interaction.MOVEENEMY);
+        load.setParameters(gson.toJson(destinations));
+        load.setMustChoose(mustChoose);
+        load.setEnemy(enemy);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Point> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Point>>(){}.getType());
+        List<Point> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Point>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -221,15 +221,15 @@ public class SocketConn implements Connection {
     public Power discardPower(List<Power> powers, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.DISCARDPOWER;
-        load.parameters = gson.toJson(powers);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.DISCARDPOWER);
+        load.setParameters(gson.toJson(powers));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Power> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Power>>(){}.getType());
+        List<Power> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Power>>(){}.getType());
 
         int id = ansParam.get(0).getId();
-        return powers.stream().filter(p->p.getId()==id).findFirst().get();
+        return powers.stream().filter(p->p.getId()==id).findFirst().orElse(null);
     }
 
     /**
@@ -242,14 +242,14 @@ public class SocketConn implements Connection {
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSEROOM;
-        load.parameters = gson.toJson(rooms);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.CHOOSEROOM);
+        load.setParameters(gson.toJson(rooms));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Integer> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Integer>>(){}.getType());
+        List<Integer> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Integer>>(){}.getType());
 
-        return rooms.stream().filter( r -> r.equals(ansParam.get(0))).findFirst().get();
+        return rooms.stream().filter( r -> r.equals(ansParam.get(0))).findFirst().orElse(null);
     }
 
     /**
@@ -262,12 +262,12 @@ public class SocketConn implements Connection {
     public Direction chooseDirection(List<Direction> possible, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSEDIRECTION;
-        load.parameters = gson.toJson(possible);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.CHOOSEDIRECTION);
+        load.setParameters(gson.toJson(possible));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Direction> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Direction>>(){}.getType());
+        List<Direction> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Direction>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -281,12 +281,12 @@ public class SocketConn implements Connection {
     public Point choosePosition(List<Point> positions, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSEPOSITION;
-        load.parameters = gson.toJson(positions);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.CHOOSEPOSITION);
+        load.setParameters(gson.toJson(positions));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Point> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Point>>(){}.getType());
+        List<Point> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Point>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -297,10 +297,10 @@ public class SocketConn implements Connection {
      */
     public String getNickname() throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.GETNICKNAME;
+        load.setType(Interaction.GETNICKNAME);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<String> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<String>>(){}.getType());
+        List<String> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<String>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -311,10 +311,10 @@ public class SocketConn implements Connection {
      */
     public String getPhrase() throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.GETPHRASE;
+        load.setType(Interaction.GETPHRASE);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<String> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<String>>(){}.getType());
+        List<String> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<String>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -328,14 +328,14 @@ public class SocketConn implements Connection {
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) throws ClientDisconnectedException
     {
         Payload load = new Payload();
-        load.type = Interaction.DISCARDWEAPON;
-        load.parameters = gson.toJson(inHand);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.DISCARDWEAPON);
+        load.setParameters(gson.toJson(inHand));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Weapon> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Weapon>>(){}.getType());
+        List<Weapon> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Weapon>>(){}.getType());
 
-        return inHand.stream().filter(w -> w.getId() == ansParam.get(0).getId()).findFirst().get();
+        return inHand.stream().filter(w -> w.getId() == ansParam.get(0).getId()).findFirst().orElse(null);
     }
 
 
@@ -346,10 +346,10 @@ public class SocketConn implements Connection {
      */
     public Fighter getFighter() throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.GETFIGHTER;
+        load.setType(Interaction.GETFIGHTER);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Fighter> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Fighter>>(){}.getType());
+        List<Fighter> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Fighter>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -359,10 +359,10 @@ public class SocketConn implements Connection {
      */
     public Integer getSkullNum() throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.GETSKULLSNUM;
+        load.setType(Interaction.GETSKULLSNUM);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Integer> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Integer>>(){}.getType());
+        List<Integer> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Integer>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -373,13 +373,13 @@ public class SocketConn implements Connection {
      */
     public Integer chooseMap() throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSEMAP;
+        load.setType(Interaction.CHOOSEMAP);
         send(gson.toJson(load));
         String debug = receive();
         System.out.println(debug);
         Payload answer = jsonDeserialize(debug);
-        System.out.println(answer.parameters);
-        List<Integer> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Integer>>(){}.getType());
+        System.out.println(answer.getParameters());
+        List<Integer> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Integer>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -390,10 +390,10 @@ public class SocketConn implements Connection {
      */
     public Boolean chooseFrenzy() throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSEFRENZY;
+        load.setType(Interaction.CHOOSEFRENZY);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Boolean> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Boolean>>(){}.getType());
+        List<Boolean> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Boolean>>(){}.getType());
         return ansParam.get(0);
     }
 
@@ -406,14 +406,14 @@ public class SocketConn implements Connection {
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.CHOOSEPOWER;
-        load.parameters = gson.toJson(inHand);
-        load.mustChoose = mustChoose;
+        load.setType(Interaction.CHOOSEPOWER);
+        load.setParameters(gson.toJson(inHand));
+        load.setMustChoose(mustChoose);
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
-        List<Power> ansParam = gson.fromJson(answer.parameters, new TypeToken<List<Power>>(){}.getType());
+        List<Power> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Power>>(){}.getType());
 
-        return inHand.stream().filter(p -> p.getId() == ansParam.get(0).getId()).findFirst().get();
+        return inHand.stream().filter(p -> p.getId() == ansParam.get(0).getId()).findFirst().orElse(null);
     }
 
     /**
@@ -423,8 +423,8 @@ public class SocketConn implements Connection {
      */
     public void sendMessage(String payload) throws ClientDisconnectedException {
         Payload load = new Payload();
-        load.type = Interaction.MESSAGE;
-        load.parameters = gson.toJson(payload);
+        load.setType(Interaction.MESSAGE);
+        load.setParameters(gson.toJson(payload));
         send(gson.toJson(load));
     }
 

@@ -2,8 +2,8 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.EmptyDeckException;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An endless deck is a type of deck in which the used cards are reused when the deck becomes empty
@@ -20,10 +20,9 @@ public class EndlessDeck<T extends Card> extends Deck<T> {
     /**
      * Get the first card of the deck and remove from it. If the deck is empty but you have scrapped old cards, it will be recreated with that ones and give you the new first card.
      * @return the first card of the deck
-     * @throws EmptyDeckException if both the deck and the scraps are empty.
      */
     @Override
-    public T draw() throws EmptyDeckException
+    public T draw()
     {
         try{
             return super.draw();

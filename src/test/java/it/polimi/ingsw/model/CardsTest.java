@@ -1,14 +1,12 @@
 package it.polimi.ingsw.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import it.polimi.ingsw.exceptions.EmptyDeckException;
 import org.junit.Test;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.*;
 
 public class CardsTest {
     /**
@@ -97,7 +95,7 @@ public class CardsTest {
         assertTrue(dP.getCards().contains(p3));
 
         //check the clone function
-        Deck<Power> dP2 = dP.clone();
+        Deck<Power> dP2 = new Deck<>(dP);
         assertTrue(dP.getCards().equals(dP2.getCards()));
 
         //check the shuffle function: try tree times to shuffle, if none of them change the order, there's probably a problem

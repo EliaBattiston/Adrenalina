@@ -21,9 +21,8 @@ public class Point implements Serializable {
      * Creates a new point
      * @param x Has to be between 0 and 2
      * @param y Has to be between 0 and 3
-     * @throws WrongPointException When the given coordinates are outside the map
      */
-    public Point(int x, int y) throws WrongPointException
+    public Point(int x, int y)
     {
         set(x, y);
     }
@@ -37,9 +36,8 @@ public class Point implements Serializable {
      * Sets the two coordinates
      * @param x X coordinate
      * @param y Y coordinate
-     * @throws WrongPointException When the given coordinates are outside the map
      */
-    public void set(int x, int y) throws WrongPointException
+    public void set(int x, int y)
     {
         if(x>=0 && x<=3 && y>=0 && y<= 2)
         {

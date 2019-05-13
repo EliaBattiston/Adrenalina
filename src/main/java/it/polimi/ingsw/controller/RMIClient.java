@@ -1,31 +1,29 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
-import java.io.Serializable;
-import java.net.NetworkInterface;
-import java.rmi.*;
-import java.rmi.registry.*;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RMIClient extends UnicastRemoteObject implements Client, Serializable
+//TODO check that it doesn't need to be serializable
+public class RMIClient extends UnicastRemoteObject implements Client
 {
     /**
      * Remote registry instance used to bind the client interface
      */
-    Registry registry;
+    private Registry registry;
     /**
      * User gui/cli interface
      */
-    UserInterface user;
+    private UserInterface user;
 
     /**
      * CLient RMI constructor, it gets the Server interface and binds its interface to the server registry
@@ -43,10 +41,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
             RMIServer.newConnection(bindName);
             user = userint;
         }
-        catch(NotBoundException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-        }
-        catch(AlreadyBoundException e) {
+        catch(Exception e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
         }
     }

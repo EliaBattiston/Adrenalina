@@ -3,7 +3,10 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -102,8 +105,7 @@ public class ActionLambdaMap {
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
-                if(p!=pl)
-                    if(pointsAll.contains(p.getPosition()))
+                if(p!=pl && pointsAll.contains(p.getPosition()))
                         targets.add(p);
 
             Player chosen = pl.getConn().chooseTarget(targets, true);
@@ -703,7 +705,7 @@ public class ActionLambdaMap {
             System.out.println(pl.getNick() + " sceglie un potenziamento");
             Power chosen;
 
-            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4").filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID().equals("p2") || power.getBase().getLambdaID().equals("p4")).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
             if(!inHand.isEmpty())
             {
                 chosen = pl.getConn().choosePower(inHand, true);
@@ -712,7 +714,7 @@ public class ActionLambdaMap {
                     chosen.getBase().execute(pl, map, null);
                     pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
 
-                    inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4").filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+                    inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID().equals("p2") || power.getBase().getLambdaID().equals("p4")).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
                     if(!inHand.isEmpty())
                         chosen = pl.getConn().choosePower(inHand, false);
                 }
@@ -769,7 +771,7 @@ public class ActionLambdaMap {
      * @param lambdaName the name of the lambda you're looking for
      * @return the lambda you searched or null if it doesn't exists
      */
-    public static ActionLambda getLambda(String lambdaName) throws ClientDisconnectedException {
+    public static ActionLambda getLambda(String lambdaName) {
         if(instance == null)
             instance = new ActionLambdaMap();
 
@@ -840,11 +842,9 @@ public class ActionLambdaMap {
             pl.applyEffects(EffectsLambda.move(pl, p, map));
 
             //If no weapon has suitable action, we can't propose to move to this position
-            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
-                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
-                {
+            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) &&
+                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
                     destinations.remove(p);
-                }
         }
 
         //Return the player to its real position

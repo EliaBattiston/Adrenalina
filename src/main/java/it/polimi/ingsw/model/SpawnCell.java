@@ -159,7 +159,7 @@ public class SpawnCell extends Cell{
                 }
                 else
                 {
-                    Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player's hand", pl);
+                    Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player\'s hand", pl);
                 }
             }));
         }
@@ -182,7 +182,7 @@ public class SpawnCell extends Cell{
             }
             else
             {
-                Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player's hand", pl);
+                Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player\'s hand", pl);
             }
         }));
 

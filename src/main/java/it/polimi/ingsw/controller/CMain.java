@@ -2,11 +2,9 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
-import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -18,17 +16,6 @@ import java.util.logging.Logger;
 public class CMain
 {
     /**
-     * Client's representation of the game data
-     */
-    private Game game;
-
-    /**
-     * Connection to the server
-     */
-    private Client connection;
-
-
-    /**
      * Endpoint for interface control
      */
     private UserInterface ui;
@@ -39,6 +26,8 @@ public class CMain
      */
     public CMain(boolean gui)
     {
+        Client connection;
+
         //Temporary test for the login
 
         String buffer = "";
@@ -56,7 +45,7 @@ public class CMain
         }
 
         //RMI or Socket?
-        while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
+        while (!buffer.equalsIgnoreCase("r") && !buffer.equalsIgnoreCase("s"))
         {
             System.out.print("Connessione con [S]ocket o con [R]mi? ");
             buffer = stdin.nextLine();

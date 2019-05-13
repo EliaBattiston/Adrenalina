@@ -1,10 +1,7 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.GamePhase;
-import it.polimi.ingsw.model.Activities;
 import it.polimi.ingsw.model.Player;
-
-import java.util.List;
 
 /**
  * From the controller.Match are missing: frenzyKills

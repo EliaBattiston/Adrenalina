@@ -1,17 +1,13 @@
 package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.controller.GamePhase;
-import it.polimi.ingsw.controller.SocketConn;
-import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.Map;
+import it.polimi.ingsw.model.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -136,7 +132,7 @@ public class CLInterface implements UserInterface {
             return line;
         }
         catch(NoSuchElementException e) {
-            return null;
+            return "";
         }
     }
 
@@ -186,8 +182,9 @@ public class CLInterface implements UserInterface {
                 return ANSI_RED + BOX + ANSI_RESET;
             case YELLOW:
                 return ANSI_YELLOW + BOX + ANSI_RESET;
+            default:
+                return "";
         }
-        return "";
     }
 
     /**
@@ -498,6 +495,8 @@ public class CLInterface implements UserInterface {
                     case NOTHING:
                         for(int i = 0; i < CELLDIM - 2; i++)
                             ret += L_HOR;
+                        break;
+                    default:
                         break;
                 }
                 ret += corner(x,y,true, false) + ANSI_RESET;
@@ -1335,7 +1334,7 @@ public class CLInterface implements UserInterface {
             ans = scan();
         }
         while(!ans.equalsIgnoreCase("s") && !ans.equalsIgnoreCase("n"));
-        return ans.toLowerCase() == "s";
+        return ans.toLowerCase().equals("s");
     }
 
     /**

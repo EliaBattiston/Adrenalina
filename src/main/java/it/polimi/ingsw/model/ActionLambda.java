@@ -2,8 +2,6 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 
-import java.util.List;
-
 /**
  * this interface implements a lambda function representing an action a player can do
  */

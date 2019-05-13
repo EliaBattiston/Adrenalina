@@ -3,9 +3,9 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.EmptyDeckException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * A normal deck for non reusable cards
@@ -20,6 +20,14 @@ public class Deck<T extends Card> {
     public Deck(){ cards = new ArrayList<>(); }
 
     /**
+     * Clone the Deck
+     */
+    public Deck(Deck<T> original)
+    {
+        cards = new ArrayList<>(original.cards);
+    }
+
+    /**
      * Add a card to the Deck
      * @param card Card to be added to the Deck
      */
@@ -30,7 +38,7 @@ public class Deck<T extends Card> {
      * @return the first card of the deck
      * @throws EmptyDeckException if the deck is empty and you try to draw a card
      */
-    public T draw() throws EmptyDeckException
+    public T draw()
     {
         try{
             T card = cards.get(0);
@@ -48,19 +56,6 @@ public class Deck<T extends Card> {
      * Shuffle the deck
      */
     public void shuffle(){ Collections.shuffle(cards); }
-
-    /**
-     * Clone the Deck
-     * @return the clone
-     */
-    public Deck<T> clone()
-    {
-        Deck<T> d = new Deck<>();
-        for(T c : cards){
-            d.add(c);
-        }
-        return d;
-    }
 
     /**
      * Used for the Junit testing

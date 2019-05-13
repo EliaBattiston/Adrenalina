@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
-import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.model.Fighter;
 import it.polimi.ingsw.model.Player;
 
@@ -218,7 +217,7 @@ public class SMain
             public void run() {
                 startMatch(skulls);
             }
-        }, 10*1000);
+        }, ((long)10)*1000);
     }
 
     private void startMatch(int skulls) {

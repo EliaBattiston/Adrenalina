@@ -1,14 +1,11 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.controller.Client;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The class represents a non-spawning (regular) cell

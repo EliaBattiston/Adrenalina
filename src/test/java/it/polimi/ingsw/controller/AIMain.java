@@ -3,14 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
-
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Main class for the AIClient

@@ -2,10 +2,8 @@ package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.model.*;
 
-import java.io.FileReader;
 import java.util.List;
 
 /**

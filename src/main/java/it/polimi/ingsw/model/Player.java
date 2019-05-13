@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.controller.Connection;
-import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -249,7 +248,6 @@ public class Player implements Serializable
     }
 
     public void clearForView(){
-        //this.points = 0;
         for(int i=0; i<3; i++)
             if(weapons[i] != null && weapons[i].isLoaded())
                 weapons[i] = null;

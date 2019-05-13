@@ -1,13 +1,14 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
-import it.polimi.ingsw.exceptions.WrongPointException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class containing every information needed for the execution of a single match
@@ -86,7 +87,7 @@ public class Match implements Runnable
      * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
      */
-    private void initialize(int skullsNum) throws FileNotFoundException, ClientDisconnectedException
+    private void initialize() throws FileNotFoundException, ClientDisconnectedException
     {
         //Ask the user which maps he wants to use and if he wants to use frenzy mode
         game.loadMap(game.getPlayers().get(0).getConn().chooseMap());
@@ -113,7 +114,7 @@ public class Match implements Runnable
 
         try
         {
-            initialize(skullsNum);
+            initialize();
         }
         catch (ClientDisconnectedException e) {
             System.out.println(game.getPlayers().get(0).getNick() + " si è disconnesso");
@@ -122,7 +123,7 @@ public class Match implements Runnable
         }
         catch(FileNotFoundException e)
         {
-            ;
+            Logger.getGlobal().log(Level.SEVERE, "Map not found (Match.java)");
         }
 
         //The first turn is played by the player in the first position of the list
@@ -242,7 +243,6 @@ public class Match implements Runnable
                 System.out.println(active.getNick() + " si è disconnesso");
                 active.setConn(null);
                 ; //TODO @Erap320 checkout and correct
-                return;
             }
         }
     }
@@ -274,7 +274,7 @@ public class Match implements Runnable
      * Does every step needed to spawn a player
      * @param pl Player who needs to be spawned
      */
-    private void spawnPlayer(Player pl) throws WrongPointException
+    private void spawnPlayer(Player pl)
     {
         //Draw powers if not enough to choose
         switch(pl.getPowers().size())

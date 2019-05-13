@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
@@ -268,178 +267,178 @@ public class AIClient implements Client {
 
             Payload message = gson.fromJson(response, Payload.class);
             Payload answer = new Payload();
-            switch (message.type) {
+            switch (message.getType()) {
                 case CHOOSEACTION: {
-                    ArrayList<Action> param = gson.fromJson(message.parameters, new TypeToken<List<Action>>() {
+                    ArrayList<Action> param = gson.fromJson(message.getParameters(), new TypeToken<List<Action>>() {
                     }.getType());
-                    answer.type = Interaction.CHOOSEACTION;
+                    answer.setType(Interaction.CHOOSEACTION);
                     ArrayList<Action> ansParam = new ArrayList<>();
-                    ansParam.add(chooseAction(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(chooseAction(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case CHOOSEWEAPON: {
-                    ArrayList<Weapon> param = gson.fromJson(message.parameters, new TypeToken<List<Weapon>>() {
+                    ArrayList<Weapon> param = gson.fromJson(message.getParameters(), new TypeToken<List<Weapon>>() {
                     }.getType());
-                    answer.type = Interaction.CHOOSEWEAPON;
+                    answer.setType(Interaction.CHOOSEWEAPON);
                     ArrayList<Weapon> ansParam = new ArrayList<>();
-                    ansParam.add(chooseWeapon(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(chooseWeapon(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case GRABWEAPON: {
-                    ArrayList<Weapon> param = gson.fromJson(message.parameters, new TypeToken<List<Weapon>>() {
+                    ArrayList<Weapon> param = gson.fromJson(message.getParameters(), new TypeToken<List<Weapon>>() {
                     }.getType());
-                    answer.type = Interaction.GRABWEAPON;
+                    answer.setType(Interaction.GRABWEAPON);
                     ArrayList<Weapon> ansParam = new ArrayList<>();
-                    ansParam.add(grabWeapon(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(grabWeapon(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case RELOAD: {
-                    ArrayList<Weapon> param = gson.fromJson(message.parameters, new TypeToken<List<Weapon>>() {
+                    ArrayList<Weapon> param = gson.fromJson(message.getParameters(), new TypeToken<List<Weapon>>() {
                     }.getType());
-                    answer.type = Interaction.RELOAD;
-                    answer.parameters = gson.toJson(reload(param, message.mustChoose));
+                    answer.setType(Interaction.RELOAD);
+                    answer.setParameters(gson.toJson(reload(param, message.isMustChoose())));
                     break;
                 }
                 case MOVEPLAYER: {
-                    ArrayList<Point> param = gson.fromJson(message.parameters, new TypeToken<List<Point>>() {
+                    ArrayList<Point> param = gson.fromJson(message.getParameters(), new TypeToken<List<Point>>() {
                     }.getType());
-                    answer.type = Interaction.MOVEPLAYER;
+                    answer.setType(Interaction.MOVEPLAYER);
                     ArrayList<Point> ansParam = new ArrayList<>();
-                    ansParam.add(movePlayer(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(movePlayer(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case CHOOSETARGET: {
-                    ArrayList<Player> param = gson.fromJson(message.parameters, new TypeToken<List<Player>>() {
+                    ArrayList<Player> param = gson.fromJson(message.getParameters(), new TypeToken<List<Player>>() {
                     }.getType());
-                    answer.type = Interaction.CHOOSETARGET;
+                    answer.setType(Interaction.CHOOSETARGET);
                     ArrayList<Player> ansParam = new ArrayList<>();
-                    ansParam.add(chooseTarget(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(chooseTarget(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case MOVEENEMY: {
-                    ArrayList<Point> param = gson.fromJson(message.parameters, new TypeToken<List<Point>>() {
+                    ArrayList<Point> param = gson.fromJson(message.getParameters(), new TypeToken<List<Point>>() {
                     }.getType());
-                    answer.type = Interaction.MOVEENEMY;
+                    answer.setType(Interaction.MOVEENEMY);
                     ArrayList<Point> ansParam = new ArrayList<>();
-                    ansParam.add(moveEnemy(message.enemy, param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(moveEnemy(message.getEnemy(), param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case DISCARDPOWER: {
-                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {
+                    ArrayList<Power> param = gson.fromJson(message.getParameters(), new TypeToken<List<Power>>() {
                     }.getType());
-                    answer.type = Interaction.DISCARDPOWER;
+                    answer.setType(Interaction.DISCARDPOWER);
                     ArrayList<Power> ansParam = new ArrayList<>();
-                    ansParam.add(discardPower(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(discardPower(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case CHOOSEROOM: {
-                    ArrayList<Integer> param = gson.fromJson(message.parameters, new TypeToken<List<Integer>>() {
+                    ArrayList<Integer> param = gson.fromJson(message.getParameters(), new TypeToken<List<Integer>>() {
                     }.getType());
-                    answer.type = Interaction.CHOOSEROOM;
+                    answer.setType(Interaction.CHOOSEROOM);
                     ArrayList<Integer> ansParam = new ArrayList<>();
-                    ansParam.add(chooseRoom(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(chooseRoom(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case CHOOSEDIRECTION: {
-                    ArrayList<Direction> param = gson.fromJson(message.parameters, new TypeToken<List<Direction>>() {
+                    ArrayList<Direction> param = gson.fromJson(message.getParameters(), new TypeToken<List<Direction>>() {
                     }.getType());
-                    answer.type = Interaction.CHOOSEDIRECTION;
+                    answer.setType(Interaction.CHOOSEDIRECTION);
                     ArrayList<Direction> ansParam = new ArrayList<>();
-                    ansParam.add(chooseDirection(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(chooseDirection(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case CHOOSEPOSITION: {
-                    ArrayList<Point> param = gson.fromJson(message.parameters, new TypeToken<List<Point>>() {
+                    ArrayList<Point> param = gson.fromJson(message.getParameters(), new TypeToken<List<Point>>() {
                     }.getType());
-                    answer.type = Interaction.CHOOSEPOSITION;
+                    answer.setType(Interaction.CHOOSEPOSITION);
                     ArrayList<Point> ansParam = new ArrayList<>();
-                    ansParam.add(choosePosition(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(choosePosition(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case GETNICKNAME: {
-                    answer.type = Interaction.GETNICKNAME;
+                    answer.setType(Interaction.GETNICKNAME);
                     ArrayList<String> ansParam = new ArrayList<>();
                     ansParam.add(getNickname());
-                    answer.parameters = gson.toJson(ansParam);
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case GETPHRASE: {
-                    answer.type = Interaction.GETPHRASE;
+                    answer.setType(Interaction.GETPHRASE);
                     ArrayList<String> ansParam = new ArrayList<>();
                     ansParam.add(getPhrase());
-                    answer.parameters = gson.toJson(ansParam);
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case GETFIGHTER: {
-                    answer.type = Interaction.GETFIGHTER;
+                    answer.setType(Interaction.GETFIGHTER);
                     ArrayList<Fighter> ansParam = new ArrayList<>();
                     ansParam.add(getFighter());
-                    answer.parameters = gson.toJson(ansParam);
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case GETSKULLSNUM: {
-                    answer.type = Interaction.GETSKULLSNUM;
+                    answer.setType(Interaction.GETSKULLSNUM);
                     ArrayList<Integer> ansParam = new ArrayList<>();
                     ansParam.add(getSkullNum());
-                    answer.parameters = gson.toJson(ansParam);
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case DISCARDWEAPON: {
-                    ArrayList<Weapon> param = gson.fromJson(message.parameters, new TypeToken<List<Weapon>>() {
+                    ArrayList<Weapon> param = gson.fromJson(message.getParameters(), new TypeToken<List<Weapon>>() {
                     }.getType());
-                    answer.type = Interaction.DISCARDWEAPON;
+                    answer.setType(Interaction.DISCARDWEAPON);
                     ArrayList<Weapon> ansParam = new ArrayList<>();
-                    ansParam.add(discardWeapon(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(discardWeapon(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case CHOOSEMAP: {
-                    answer.type = Interaction.CHOOSEMAP;
+                    answer.setType(Interaction.CHOOSEMAP);
                     ArrayList<Integer> ansParam = new ArrayList<>();
                     ansParam.add(chooseMap());
-                    answer.parameters = gson.toJson(ansParam);
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case CHOOSEFRENZY: {
-                    answer.type = Interaction.CHOOSEFRENZY;
+                    answer.setType(Interaction.CHOOSEFRENZY);
                     ArrayList<Boolean> ansParam = new ArrayList<>();
                     ansParam.add(chooseFrenzy());
-                    answer.parameters = gson.toJson(ansParam);
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case CHOOSEPOWER: {
-                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {
+                    ArrayList<Power> param = gson.fromJson(message.getParameters(), new TypeToken<List<Power>>() {
                     }.getType());
-                    answer.type = Interaction.CHOOSEPOWER;
+                    answer.setType(Interaction.CHOOSEPOWER);
                     ArrayList<Power> ansParam = new ArrayList<>();
-                    ansParam.add(choosePower(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    ansParam.add(choosePower(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
                     break;
                 }
                 case UPDATEVIEW: {
-                    MatchView param = gson.fromJson(message.parameters, MatchView.class);
+                    MatchView param = gson.fromJson(message.getParameters(), MatchView.class);
                     updateGame(param);
                     break;
                 }
                 case MESSAGE: {
-                    String param = gson.fromJson(message.parameters, String.class);
+                    String param = gson.fromJson(message.getParameters(), String.class);
                     sendMessage(param);
                     break;
                 }
                 default:
                     answer = null;
             }
-            if(answer.type != null)
+            if(answer.getType() != null)
                 send(jsonSerialize(answer));
         }
         catch (IOException e) {

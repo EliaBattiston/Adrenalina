@@ -10,8 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Game {
     /**
@@ -134,7 +132,7 @@ public class Game {
         return ammoDeck;
     }
 
-    public Kill[] getSkulls() { return skullsBoard; };
+    public Kill[] getSkulls() { return skullsBoard; }
 
     /**
      * Serializes the content of the class (which contains every important aspect of the match) in json

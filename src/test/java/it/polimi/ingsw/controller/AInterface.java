@@ -1,23 +1,10 @@
 package it.polimi.ingsw.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.Map;
 import it.polimi.ingsw.view.CLInterface;
-import it.polimi.ingsw.view.MatchView;
-import it.polimi.ingsw.view.UserInterface;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Random;
 
 public class AInterface extends CLInterface {
 

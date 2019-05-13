@@ -69,8 +69,7 @@ public class FeasibleLambdaMap
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
-                if(p!=pl)
-                    if(pointsAll.contains(p.getPosition()))
+                if(p!=pl && pointsAll.contains(p.getPosition()))
                         targets.add(p);
 
             return !targets.isEmpty();
@@ -389,7 +388,7 @@ public class FeasibleLambdaMap
         data.put("p4", (pl, map, memory)-> true);
 
         //Activities lambdas
-        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> (power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4") && power.getBase().isFeasible(pl, map, null) ));
+        data.put("a-p", (pl, map, memory)-> pl.getPowers().stream().anyMatch(power -> (power.getBase().getLambdaID().equals("p2") || power.getBase().getLambdaID().equals("p4")) && power.getBase().isFeasible(pl, map, null) ));
 
         data.put("a-b1", (pl, map, memory)-> true);
 
@@ -439,11 +438,9 @@ public class FeasibleLambdaMap
             pl.applyEffects(EffectsLambda.move(pl, p, map));
 
             //If no weapon has suitable action, we can't propose to move to this position
-            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
-                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
-                {
+            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) &&
+                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
                     destinations.remove(p);
-                }
         }
 
         //Return the player to its real position
@@ -478,7 +475,6 @@ public class FeasibleLambdaMap
         List<Weapon> unloaded = pl.getWeapons().stream().filter(weapon -> !weapon.isLoaded()).collect(Collectors.toList());
         List<Weapon> reloadable =  new ArrayList<>(unloaded); //Only the weapons the player can currently reload
         List<Color> cost = new ArrayList<>();
-        Weapon chosen = null;
 
         for(Weapon w : unloaded)
         {

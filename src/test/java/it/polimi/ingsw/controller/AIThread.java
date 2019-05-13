@@ -4,9 +4,6 @@ import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AIThread extends Thread {
     private boolean done;
@@ -17,7 +14,7 @@ public class AIThread extends Thread {
 
     @Override
     public void run() {
-        String[] args = new String[2];
+        /*String[] args = new String[2];
         Client connection;
         UserInterface ui = new CLInterface();
 
@@ -28,6 +25,6 @@ public class AIThread extends Thread {
             done = true;
         }catch (IOException e){
             ;
-        }
+        }*/
     }
 }

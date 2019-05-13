@@ -3,8 +3,8 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
