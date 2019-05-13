@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
@@ -37,7 +38,7 @@ public class SocketClient implements Client {
      * @param port TCP port of the Server's socket
      * @param userint gui/cli interface instance
      */
-    SocketClient(String ipAddr, int port, UserInterface userint) throws ServerNotFoundException, ServerDisconnectedException {
+    public SocketClient(String ipAddr, int port, UserInterface userint) throws ServerNotFoundException, ServerDisconnectedException {
         user = userint;
         boolean instanced = false;
         do {
@@ -51,8 +52,7 @@ public class SocketClient implements Client {
             catch (IOException e) {
                 Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
             }
-        }
-        while(!instanced);
+        } while(!instanced);
 
         try {
             while (true)
@@ -278,7 +278,11 @@ public class SocketClient implements Client {
      */
     public void receive() throws ServerDisconnectedException {
         try {
-            Gson gson = new Gson();
+            Gson gson;
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+            gson = gsonBuilder.create();
 
             String response;
             Scanner in = new Scanner(serverSocket.getInputStream());

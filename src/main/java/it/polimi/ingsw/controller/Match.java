@@ -221,6 +221,8 @@ public class Match implements Runnable
                 }
             }
 
+            updateViews();
+
             try {
                 active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
             }

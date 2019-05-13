@@ -30,11 +30,6 @@ public class CLInterface implements UserInterface {
     private MatchView view;
 
     /**
-     * Map instance of the MatchView
-     */
-    private Map mapInstance;
-
-    /**
      *Color and symbol constants
      */
     private static final int CELLDIM = 20;
@@ -227,7 +222,6 @@ public class CLInterface implements UserInterface {
      */
     public void updateGame(MatchView matchView) {
         view = matchView;
-        mapInstance = view.getGame().getMap();
         map(null, null);
         frenzyInfo();
         playerInfo();
@@ -260,8 +254,8 @@ public class CLInterface implements UserInterface {
                     cellN--;
                     int y = cellN / 4;
                     int x = cellN - (y * 4);
-                    if(mapInstance.getCell(x,y) != null) {
-                        Cell cell = mapInstance.getCell(x,y);
+                    if(view.getGame().getMap().getCell(x,y) != null) {
+                        Cell cell = view.getGame().getMap().getCell(x,y);
                         if(cell.getRoomNumber() < 3 && cell.hasSpawn(Color.values()[cell.getRoomNumber()])) {
                             print("ARMI: ");
                             SpawnCell sc = (SpawnCell) cell;
@@ -444,7 +438,7 @@ public class CLInterface implements UserInterface {
         for(int y = 0; y < 3; y++) {
             for(int rowN = 0; rowN < 9; rowN++) {
                 for(int x = 0; x < 4; x++) {
-                    if(mapInstance.getCell(x,y) != null)
+                    if(view.getGame().getMap().getCell(x,y) != null)
                         print(printCell(x,y,rowN, marked, highlighted));
                     else {
                         print(" " + innerCellFormat("") + " ");
@@ -466,7 +460,7 @@ public class CLInterface implements UserInterface {
      * @return Cell part formatted string
      */
     private String printCell(int x, int y, int row, List<Player> marked, List<Point> highlighted) {
-        Cell c = mapInstance.getCell(x,y);
+        Cell c = view.getGame().getMap().getCell(x,y);
         String ret = "";
         String highlight = "";
         if(highlighted != null) {
@@ -741,7 +735,7 @@ public class CLInterface implements UserInterface {
      * @return Formatted corner string
      */
     private String corner(int x, int y, boolean north, boolean west) {
-        Cell center = mapInstance.getCell(x,y);
+        Cell center = view.getGame().getMap().getCell(x,y);
         String ret = null;
         if(north) {
             if(west) {

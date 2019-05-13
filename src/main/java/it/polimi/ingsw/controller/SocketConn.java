@@ -28,7 +28,7 @@ public class SocketConn implements Connection {
      * Open socket reference to the player
      * @param socket Player's socket
      */
-    SocketConn(Socket socket)
+    public SocketConn(Socket socket)
     {
         playerSocket = socket;
 

@@ -15,7 +15,7 @@ public class GameView {
     /**
      * Map used in this match
      */
-    private String map;
+    private Map map;
     /**
      * Players participating the match
      */
@@ -25,41 +25,62 @@ public class GameView {
      */
     private Kill[] skullsBoard;
 
+    /**
+     * Creates a GameView instance
+     * @param map Current gaming map
+     * @param players List of players in game
+     * @param skullsBoard Skulls board instance
+     */
     public GameView(Map map, List<Player> players, Kill[] skullsBoard) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
-        Gson gson = gsonBuilder.create();
-        this.map = gson.toJson(map, Map.class);
+        this.map = map;
         this.players = players;
         this.skullsBoard = skullsBoard;
     }
 
+    /**
+     * Returns the map instance
+     * @return Map instance of the game
+     */
     public Map getMap() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
-        Gson gson = gsonBuilder.create();
-        return gson.fromJson(map, Map.class);
+        return map;
     }
 
+    /**
+     * Returns the list of players in the game
+     * @return List of playing players
+     */
     public List<Player> getPlayers() {
         return players;
     }
 
+    /**
+     * Returns the Skulls Board
+     * @return Skulls board
+     */
     public Kill[] getSkullsBoard() {
         return skullsBoard;
     }
 
+    /**
+     * Set the map instance of the GameView
+     * @param map Current map
+     */
     public void setMap(Map map) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
-        Gson gson = gsonBuilder.create();
-        this.map = gson.toJson(map, Map.class);
+        this.map = map;
     }
 
+    /**
+     * Set the list of players
+     * @param players List of players in game
+     */
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
+    /**
+     * Set the Skulls Board
+     * @param skullsBoard Current skulls board
+     */
     public void setSkullsBoard(Kill[] skullsBoard) {
         this.skullsBoard = skullsBoard;
     }
