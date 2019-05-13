@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ServerDisconnectedException;
+import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
 
@@ -14,17 +16,22 @@ public class AIThread extends Thread {
 
     @Override
     public void run() {
-        /*String[] args = new String[2];
+        String[] args = new String[2];
         Client connection;
-        UserInterface ui = new CLInterface();
+        UserInterface ui = new AInterface();
 
         done = false;
 
         try {
-            connection = new AIClient("localhost", 1906, ui);
+            connection = new SocketClient("localhost", 1906, ui);
             done = true;
-        }catch (IOException e){
-            ;
-        }*/
+        }
+        catch (ServerNotFoundException e) {
+            ui.generalMessage("Server non trovato, riprova\n");
+        }
+        catch (ServerDisconnectedException e) {
+            ui.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
+            return;
+        }
     }
 }
