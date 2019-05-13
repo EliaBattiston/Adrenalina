@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.model.Weapon;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -36,7 +37,7 @@ public class CardGui extends Canvas {
             this.getGraphicsContext2D().drawImage( img, x, y, imgWidth, imgHeight);
 
         setOnMousePressed(e ->{
-            System.out.println("Clicked " + data.toString());
+            System.out.println("Clicked " + ((Weapon)data).getName());
         });
     }
 
@@ -45,7 +46,6 @@ public class CardGui extends Canvas {
         img = new Image( "file:images/loot/" + loot.getContentAsString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, x, y, width, height);
-
     }
 
     public CardGui(it.polimi.ingsw.model.Power power, double canvasWidth, double canvasHeight, double imgWidth, double imgHeight, double x, double y){
@@ -54,6 +54,5 @@ public class CardGui extends Canvas {
         img = new Image( "file:images/power/power" + (power.getId()<12 ? power.getId() : power.getId()/2) + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, x, y, imgWidth, imgHeight);
-
     }
 }

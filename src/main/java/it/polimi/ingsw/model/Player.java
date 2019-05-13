@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Contains all the info about a Player, from his nick to the current status of his boards
@@ -35,11 +37,11 @@ public class Player implements Serializable
      */
     private Weapon[] weapons;
     /**
-     * Representation of taken damage by the use of Player tokens
+     * Representation of taken damage by the use of Player's nickname
      */
     private String[] receivedDamage;
     /**
-     * Representation of taken marks by the use of Player tokens
+     * Representation of taken marks by the use of Player's nickname
      */
     private List<String> receivedMarks;
     /**
@@ -259,5 +261,14 @@ public class Player implements Serializable
 
         this.powers = null;
         this.conn = null;
+    }
+
+    public static Fighter fighterFromNick(List<Player> players, String nick){
+        for(Player p : players)
+            if(p.getNick().equals(nick))
+                return p.getCharacter();
+
+        Logger.getGlobal().log(Level.SEVERE, "Error while looking for Fighter from nick");
+        return null;
     }
 }
