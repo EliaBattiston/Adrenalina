@@ -7,6 +7,12 @@ import java.util.List;
 public interface UserInterface
 {
     /**
+     * Update the actual gameView to the client
+     * @param matchView current game view
+     */
+    public void updateGame(MatchView matchView);
+
+    /**
      * Asks the user to choose between a set of actions he can use
      * @param available List of available actions
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
@@ -35,9 +41,9 @@ public interface UserInterface
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose);
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose);
 
     /**
      * Asks the user where he wants to movePlayer

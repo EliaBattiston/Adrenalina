@@ -1,14 +1,13 @@
 package it.polimi.ingsw.model;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.exceptions.WrongPointException;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import static junit.framework.TestCase.*;
 
 public class GameTest {
     /**
@@ -104,10 +103,10 @@ public class GameTest {
 
         //check setting of values with lambda
         p.applyEffects( (damage, marks, position, weapons, powers, ammo) -> {
-            damage[0] = b;
+            damage[0] = b.getNick();
 
-            marks.add(b);
-            marks.add(b);
+            marks.add(b.getNick());
+            marks.add(b.getNick());
 
             try
             {
@@ -127,11 +126,11 @@ public class GameTest {
 
         } );
 
-        assertSame(p.getReceivedDamage()[0], b);
+        assertSame(p.getReceivedDamage()[0], b.getNick());
         assertSame(p.getReceivedDamage()[1], null);
         assertEquals(p.getReceivedMarks().size(), 2);
-        assertTrue(p.getReceivedMarks().contains(b));
-        assertEquals(Collections.frequency(p.getReceivedMarks(), b), 2);
+        assertTrue(p.getReceivedMarks().contains(b.getNick()));
+        assertEquals(Collections.frequency(p.getReceivedMarks(), b.getNick()), 2);
         assertEquals(p.getPosition().getX(), 3);
         assertEquals(p.getPosition().getY(), 2);
         assertTrue(p.getWeapons().contains(weapon));
@@ -156,8 +155,8 @@ public class GameTest {
         { fail();};
 
 
-        assertTrue(p.getX() == 1);
-        assertTrue(p.getY() == 1);
+        assertEquals(p.getX(),1);
+        assertEquals(p.getY(),1);
 
         try
         {
@@ -170,8 +169,8 @@ public class GameTest {
         }
 
         //it didn't change the values
-        assertTrue(p.getX() == 1);
-        assertTrue(p.getY() == 1);
+        assertEquals(p.getX(),1);
+        assertEquals(p.getY(),1);
 
         try
         {
@@ -183,8 +182,8 @@ public class GameTest {
             ;
         }
         //it didn't change the values
-        assertTrue(p.getX() == 1);
-        assertTrue(p.getY() == 1);
+        assertEquals(p.getX(),1);
+        assertEquals(p.getY(),1);
 
         try
         {
@@ -195,8 +194,8 @@ public class GameTest {
             fail();
         }
         //it changed the values
-        assertTrue(p.getX() == 3);
-        assertTrue(p.getY() == 2);
+        assertEquals(p.getX(), 3);
+        assertEquals(p.getY(), 2);
     }
 
     /**
@@ -229,7 +228,7 @@ public class GameTest {
         //Usable Kill
         Kill k = new Kill(false);
         assertFalse(k.getSkull());
-        assertEquals(k.getKiller(), null);
+        assertNull(k.getKiller());
 
         k.setKiller(p, false);
         assertFalse(k.getSkull());

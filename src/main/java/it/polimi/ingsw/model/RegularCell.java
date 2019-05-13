@@ -64,7 +64,7 @@ public class RegularCell extends Cell {
      * @return True if the cell has items, false otherwise
      */
     public boolean hasItems(Player pl){
-        return this.loot == null;
+        return this.loot != null;
     }
 
     /**
@@ -87,30 +87,26 @@ public class RegularCell extends Cell {
 
                     if(Arrays.stream(powers).noneMatch(Objects::isNull))
                     {
+                        System.out.println(pl.getNick() + " deve scartare un potenziamento");
                         List<Power> inHand = new ArrayList<>(Arrays.asList(powers));
                         inHand.add(newPower);
                         discarded = pl.getConn().discardPower(inHand, true);
 
-                        if(discarded == newPower)
-                            discarded = null;
-                        else
-                            powersDeck.scrapCard(discarded);
+                        powersDeck.scrapCard(discarded);
                     }
 
                     int empty = Arrays.asList(powers).indexOf(discarded);
 
-                    if(empty != -1)
+                    if(empty != -1) //if it was null put in the first null, if it was a specific card discarded, put where the card was
                         powers[empty] = newPower;
-                    else{
-                        Logger.getGlobal().log(Level.WARNING, "Scrapped new card");
-                        powersDeck.scrapCard(newPower);
-                    }
                 }
                 else
                     ammo.add(c, 1);
             }
         }));
         lootDeck.scrapCard(picked);
+
+        System.out.println(pl.getNick() + " ha raccolto un loot");
     }
 
     /**

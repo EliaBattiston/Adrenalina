@@ -1,6 +1,8 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -11,6 +13,13 @@ import java.util.List;
  */
 public interface Client extends Remote
 {
+    /**
+     * Receive the actual matchView to the client
+     * @param matchView current match view
+     * @throws RemoteException If something goes wrong with the connection
+     */
+    public void updateGame(MatchView matchView) throws RemoteException;
+
     /**
      * Asks the user to choose between a set of actions he can use
      * @param available List of available actions
@@ -44,9 +53,9 @@ public interface Client extends Remote
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @throws RemoteException If something goes wrong with the connection
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose) throws RemoteException;
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws RemoteException;
 
     /**
      * Asks the user where he wants to movePlayer
@@ -96,11 +105,12 @@ public interface Client extends Remote
 
     /**
      * Asks the player to choose a direction
+     * @param possible Directions you can choose
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @throws RemoteException If something goes wrong with the connection
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose) throws RemoteException;
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) throws RemoteException;
 
     /**
      * Asks the user to choose a precise position on the map

@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.exceptions.UsedNameException;
+import it.polimi.ingsw.view.GameView;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Game {
     /**
@@ -76,7 +79,7 @@ public class Game {
      * @return  If false there are too many players already or there is already a player with the same name
      * @throws UsedNameException When the new player has the same nickname as another one already in the game, but is not the same player
      */
-    public boolean addPlayer(Player pl) throws UsedNameException
+    public boolean addPlayer(Player pl)
     {
         if(players.size() < 5 && !players.contains(pl))
         {
@@ -186,5 +189,45 @@ public class Game {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Gives a simpler representation of the game, to be sent to a client
+     * @param viewer Client's player
+     * @return GameView of this game
+     */
+    public GameView getGameView(Player viewer){
+        try {
+            Game cleanable = Game.jsonDeserialize(this.jsonSerialize());
+
+            for(Player p : cleanable.players){
+                if(p!=viewer)
+                    p.clearForView();
+            }
+
+            return new GameView(map, players, skullsBoard);
+        }catch(FileNotFoundException e){
+            Logger.getGlobal().log(Level.SEVERE, "Error while extracting the game view");
+        }
+
+        return  null;
+    }
+
+    /**
+     * Returns the reference of the player with the desired nickname
+     * @param nickname Nickname of the desired player
+     * @return Reference of the desired player
+     */
+    public Player getPlayer(String nickname)
+    {
+        for(Player p : players)
+        {
+            if (p.getNick().equals(nickname))
+            {
+                return p;
+            }
+        }
+
+        return null;
     }
 }

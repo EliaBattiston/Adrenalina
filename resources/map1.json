@@ -21,7 +21,7 @@
             "properties": {
                 "sides": ["DOOR", "NOTHING", "WALL", "WALL"],
                 "pawns": [],
-                "roomNumber": 1
+                "roomNumber": 3
             }
         }],
         [{
@@ -29,21 +29,21 @@
             "properties": {
                 "sides": ["WALL", "NOTHING", "DOOR", "DOOR"],
                 "pawns": [],
-                "roomNumber": 2
+                "roomNumber": 1
             }
         }, {
             "type": "RegularCell",
             "properties": {
                 "sides": ["DOOR", "NOTHING", "DOOR", "WALL"],
                 "pawns": [],
-                "roomNumber": 3
+                "roomNumber": 4
             }
         }, {
             "type": "RegularCell",
             "properties": {
                 "sides": ["DOOR", "NOTHING", "WALL", "NOTHING"],
                 "pawns": [],
-                "roomNumber": 1
+                "roomNumber": 3
             }
         }],
         [{
@@ -53,21 +53,21 @@
                 "weapons": [null, null, null],
                 "sides": ["WALL", "WALL", "DOOR", "NOTHING"],
                 "pawns": [],
-                "roomNumber": 2
+                "roomNumber": 1
             }
         }, {
             "type": "RegularCell",
             "properties": {
                 "sides": ["DOOR", "DOOR", "WALL", "NOTHING"],
                 "pawns": [],
-                "roomNumber": 3
+                "roomNumber": 4
             }
         }, {
             "type": "RegularCell",
             "properties": {
                 "sides": ["WALL", "DOOR", "WALL", "NOTHING"],
                 "pawns": [],
-                "roomNumber": 1
+                "roomNumber": 3
             }
         }],
         [
@@ -77,7 +77,7 @@
             "properties": {
                 "sides": ["WALL", "WALL", "NOTHING", "DOOR"],
                 "pawns": [],
-                "roomNumber": 5
+                "roomNumber": 2
             }
         }, {
             "type": "SpawnCell",
@@ -86,7 +86,7 @@
                 "weapons": [null, null, null],
                 "sides": ["NOTHING", "WALL", "WALL", "DOOR"],
                 "pawns": [],
-                "roomNumber": 5
+                "roomNumber": 2
             }
         }]
     ]

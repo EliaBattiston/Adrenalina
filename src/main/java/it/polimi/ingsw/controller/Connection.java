@@ -1,6 +1,8 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.Remote;
 import java.util.List;
@@ -10,6 +12,12 @@ import java.util.List;
  */
 public interface Connection extends Remote
 {
+    /**
+     * Send the actual matchView to the client
+     * @param matchView current match view
+     */
+    public void updateGame(MatchView matchView);
+
     /**
      * Asks the user to choose between a set of actions he can use
      * @param available List of available actions
@@ -38,9 +46,9 @@ public interface Connection extends Remote
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose);
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose);
 
     /**
      * Asks the user where he wants to movePlayer
@@ -85,10 +93,11 @@ public interface Connection extends Remote
 
     /**
      * Asks the player to choose a direction
+     * @param possible Directions you can choose
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
-     * @return Chosen direction
+     * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose);
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose);
 
     /**
      * Asks the user to choose a precise position on the map

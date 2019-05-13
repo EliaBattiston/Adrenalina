@@ -1,6 +1,8 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -15,6 +17,20 @@ public class RMIConn implements Connection
     RMIConn(Client client, String ID) {
         this.client = client;
         registryID = ID;
+    }
+
+    /**
+     * Send the actual matchView to the client
+     * @param matchView current match view
+     */
+    @Override
+    public void updateGame(MatchView matchView) {
+        try {
+            client.updateGame(matchView);
+        }
+        catch (RemoteException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        }
     }
 
     /**
@@ -72,9 +88,9 @@ public class RMIConn implements Connection
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param reloadable Weapons that are currently not loaded
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
-     * @return Weapons to be reloaded
+     * @return Weapon to be reloaded
      */
-    public List<Weapon> reload(List<Weapon> reloadable, boolean mustChoose)
+    public Weapon reload(List<Weapon> reloadable, boolean mustChoose)
     {
         try {
             return client.reload(reloadable, mustChoose);
@@ -111,7 +127,11 @@ public class RMIConn implements Connection
     public Player chooseTarget(List<Player> targets, boolean mustChoose)
     {
         try {
-            return client.chooseTarget(targets, mustChoose);
+            String nickChosen = client.chooseTarget(targets, mustChoose).getNick();
+            for(Player p : targets)
+                if(p.getNick().equals(nickChosen))
+                    return p;
+            return null;
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
@@ -172,12 +192,13 @@ public class RMIConn implements Connection
 
     /**
      * Asks the player to choose a direction
-     * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
+     * @param possible Directions you can choose
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose) {
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
         try {
-            return client.chooseDirection(mustChoose);
+            return client.chooseDirection(possible, mustChoose);
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );

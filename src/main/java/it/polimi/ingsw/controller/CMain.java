@@ -1,10 +1,14 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main class for the client's executable
@@ -29,8 +33,9 @@ public class CMain
 
     /**
      * Creates a new CMain
+     * @param gui True to start the GUI interface, false for CLI
      */
-    public CMain()
+    public CMain(boolean gui)
     {
         //Temporary test for the login
 
@@ -39,6 +44,14 @@ public class CMain
         boolean socket = true;
 
         Scanner stdin = new Scanner(System.in);
+
+        if(!gui) {
+            ui = new CLInterface();
+        }
+        else {
+            //TODO Instance GUI Interface
+            ui = null;
+        }
 
         //RMI or Socket?
         while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
@@ -56,25 +69,23 @@ public class CMain
         //TODO check if IP is correctly written
         ip = buffer;
 
+        ip = "localhost";
+
         if(socket)
         {
-            connection = new SocketClient(ip, 1906);
+            connection = new SocketClient(ip, 1906, ui);
         }
         else
         {
             try
             {
-                connection = new RMIClient(ip);
+                connection = new RMIClient(ip, ui);
             }
             catch(RemoteException e)
             {
-                System.out.println("Errore di connessione RMI");
+                Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
             }
         }
     }
 
-    public static void main(String[] args)
-    {
-        CMain base = new CMain();
-    }
 }

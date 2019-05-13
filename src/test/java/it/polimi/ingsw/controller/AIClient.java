@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GameView;
@@ -12,35 +13,38 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SocketClient implements Client {
+public class AIClient implements Client {
     /**
      * Socket connection instance to the game server
      */
     private Socket serverSocket;
 
-    /**
-     * User gui/cli interface
-     */
+    private Gson gson;
+
     private UserInterface user;
 
     /**
      * Open socket reference to the server
      * @param ipAddr IP address of the server
      * @param port TCP port of the Server's socket
-     * @param userint gui/cli interface instance
      */
-    SocketClient(String ipAddr, int port, UserInterface userint) {
-        try {
+    AIClient(String ipAddr, int port, UserInterface userint) throws IOException{
+        //try {
             serverSocket = new Socket(ipAddr, port);
             user = userint;
-        }
+        /*}
         catch (IOException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-        }
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e ); //moved to the AIMain and AIThread(junit) junit
+        }*/
+
+        GsonBuilder gsonBilder = new GsonBuilder();
+        gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        gson = gsonBilder.create();
 
         while(true)
             receive();
@@ -62,7 +66,7 @@ public class SocketClient implements Client {
      */
     public Action chooseAction(List<Action> available, boolean mustChoose)
     {
-        return user.chooseAction(available, mustChoose);
+        return available.get(new Random().nextInt(available.size()));
     }
 
     /**
@@ -72,7 +76,7 @@ public class SocketClient implements Client {
      */
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose)
     {
-        return user.chooseWeapon(available, mustChoose);
+        return available.get(new Random().nextInt(available.size()));
     }
 
     /**
@@ -82,17 +86,17 @@ public class SocketClient implements Client {
      */
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose)
     {
-        return user.grabWeapon(grabbable, mustChoose);
+        return grabbable.get(new Random().nextInt(grabbable.size()));
     }
 
     /**
      * Asks the user which unloaded weapons located in his hand he wants to reload
      * @param reloadable Weapons that are currently not loaded
-     * @return Weapon to be reloaded
+     * @return Weapons to be reloaded
      */
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose)
     {
-        return user.reload(reloadable, mustChoose);
+        return reloadable.get(new Random().nextInt(reloadable.size()));
     }
 
     /**
@@ -102,7 +106,7 @@ public class SocketClient implements Client {
      */
     public Point movePlayer(List<Point> destinations, boolean mustChoose)
     {
-        return user.movePlayer(destinations, mustChoose);
+        return destinations.get(new Random().nextInt(destinations.size()));
     }
 
     /**
@@ -112,7 +116,7 @@ public class SocketClient implements Client {
      */
     public Player chooseTarget(List<Player> targets, boolean mustChoose)
     {
-        return user.chooseTarget(targets, mustChoose);
+        return targets.get(new Random().nextInt(targets.size()));
     }
 
     /**
@@ -121,10 +125,9 @@ public class SocketClient implements Client {
      * @param destinations Possible destinations for the enemy
      * @return Point where the enemy will be after being moved
      */
-
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose)
     {
-        return user.moveEnemy(enemy, destinations, mustChoose);
+        return destinations.get(new Random().nextInt(destinations.size()));
     }
 
     /**
@@ -132,7 +135,7 @@ public class SocketClient implements Client {
      * @param powers List of power cards in player's hand
      * @return Card to be discarded
      */
-    public Power discardPower(List<Power> powers, boolean mustChoose) { return user.discardPower(powers, mustChoose); }
+    public Power discardPower(List<Power> powers, boolean mustChoose) { return powers.get(new Random().nextInt(powers.size())); }
 
     /**
      * Asks the user to choose a room
@@ -140,7 +143,7 @@ public class SocketClient implements Client {
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen room
      */
-    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) { return user.chooseRoom(rooms, mustChoose); }
+    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) { return rooms.get(new Random().nextInt(rooms.size())); }
 
     /**
      * Asks the player to choose a direction
@@ -148,7 +151,7 @@ public class SocketClient implements Client {
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return user.chooseDirection(mustChoose); }
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return possible.get(new Random().nextInt(possible.size())); }
 
     /**
      * Asks the user to choose a precise position on the map
@@ -156,7 +159,7 @@ public class SocketClient implements Client {
      * @param mustChoose boolean indicating if the player can choose NOT to answer (true: must choose, false: can avoid to choose)
      * @return chosen position
      */
-    public Point choosePosition(List<Point> positions, boolean mustChoose) {return user.choosePosition(positions, mustChoose); }
+    public Point choosePosition(List<Point> positions, boolean mustChoose) {return positions.get(new Random().nextInt(positions.size())); }
 
     /**
      * Asks the user to choose which weapon to discard
@@ -164,7 +167,7 @@ public class SocketClient implements Client {
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen weapon
      */
-    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) { return user.discardWeapon(inHand, mustChoose); }
+    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) { return inHand.get(new Random().nextInt(inHand.size())); }
 
 
     /**
@@ -172,8 +175,9 @@ public class SocketClient implements Client {
      * @return user's nickname
      */
     public String getNickname() {
-
-        return user.getNickname();
+        String nick = Integer.toString( new Random().nextInt() );
+        System.out.println("Giocatore " +  nick);
+        return nick;
     }
 
     /**
@@ -181,7 +185,7 @@ public class SocketClient implements Client {
      * @return user's effect phrase
      */
     public String getPhrase() {
-        return user.getPhrase();
+        return "YAYYYY";
     }
 
     /**
@@ -189,21 +193,22 @@ public class SocketClient implements Client {
      * @return user's fighter
      */
     public Fighter getFighter() {
-        return user.getFighter();
+
+        return Fighter.values()[new Random().nextInt(5)];
     }
 
     /**
      * Asks the user how many skulls he wants in the play
      * @return skulls number
      */
-    public Integer getSkullNum() { return user.getSkullNum(); }
+    public Integer getSkullNum() { return 5; }
 
     /**
      * Asks the user to choose which map he wants to use
      * @return Number of the chosen map
      */
     public Integer chooseMap() {
-        return user.chooseMap();
+        return 1;
     }
 
     /**
@@ -211,7 +216,7 @@ public class SocketClient implements Client {
      * @return True for final Frenzy mode, false elsewhere
      */
     public Boolean chooseFrenzy() {
-        return user.chooseFrenzy();
+        return true;
     }
 
     /**
@@ -221,7 +226,7 @@ public class SocketClient implements Client {
      * @return Chosen power
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
-        return user.choosePower(inHand, mustChoose);
+        return inHand.get(new Random().nextInt(inHand.size()));
     }
 
 
@@ -250,8 +255,6 @@ public class SocketClient implements Client {
      */
     public void receive() {
         try {
-            Gson gson = new Gson();
-
             String response;
             Scanner in = new Scanner(serverSocket.getInputStream());
             response = in.nextLine();
@@ -290,9 +293,7 @@ public class SocketClient implements Client {
                     ArrayList<Weapon> param = gson.fromJson(message.parameters, new TypeToken<List<Weapon>>() {
                     }.getType());
                     answer.type = Interaction.RELOAD;
-                    ArrayList<Weapon> ansParam = new ArrayList<>();
-                    ansParam.add(reload(param, message.mustChoose));
-                    answer.parameters = gson.toJson(ansParam);
+                    answer.parameters = gson.toJson(reload(param, message.mustChoose));
                     break;
                 }
                 case MOVEPLAYER: {
@@ -410,7 +411,8 @@ public class SocketClient implements Client {
                     break;
                 }
                 case CHOOSEPOWER: {
-                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {}.getType());
+                    ArrayList<Power> param = gson.fromJson(message.parameters, new TypeToken<List<Power>>() {
+                    }.getType());
                     answer.type = Interaction.CHOOSEPOWER;
                     ArrayList<Power> ansParam = new ArrayList<>();
                     ansParam.add(choosePower(param, message.mustChoose));
@@ -437,9 +439,7 @@ public class SocketClient implements Client {
      * @param payload Payload to serialize
      * @return Json serialization of the class
      */
-    public String jsonSerialize(Payload payload)
-    {
-        Gson gson = new Gson();
+    public String jsonSerialize(Payload payload) {
         return gson.toJson(payload);
     }
 }

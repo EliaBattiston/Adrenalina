@@ -1,12 +1,12 @@
 package it.polimi.ingsw.model;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import it.polimi.ingsw.exceptions.EmptyDeckException;
-import org.junit.Test;
 
 import java.io.FileNotFoundException;
-
-import static junit.framework.TestCase.fail;
 
 public class JsonTest {
     /**

@@ -54,7 +54,7 @@ public class SpawnCell extends Cell{
     public Weapon pickWeapon(Weapon chosen)
     {
         for(int i = 0; i < weapons.length; i++) {
-            if(weapons[i].equals(chosen)) {
+            if(weapons[i] != null && weapons[i].equals(chosen)) {
                 Weapon returnWeapon = weapons[i];
                 weapons[i] = null;
                 return returnWeapon;
@@ -127,7 +127,6 @@ public class SpawnCell extends Cell{
         for (Weapon w : available)
         {
             cost.clear();
-            cost.add(w.getColor());
             if(w.getBase().getCost() != null)
                 cost.addAll(w.getBase().getCost());
 
@@ -176,12 +175,15 @@ public class SpawnCell extends Cell{
             if(pos<=3 && weapons[pos] == null)
             {
                 weapons[pos] = picked;
+                picked.setLoaded(true);
             }
             else
             {
                 Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player's hand", pl);
             }
         }));
+
+        System.out.println(pl.getNick() + " ha comprato " + picked.getName());
     }
 
     /**

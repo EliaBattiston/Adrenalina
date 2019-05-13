@@ -63,7 +63,8 @@ public class SMain
                 timer[i] = new Timer();
                 startedTimer[i] = false;
             }
-            System.out.println("Server ready");
+            System.out.println("Adrenalina Server ready");
+            listen();
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
@@ -74,13 +75,6 @@ public class SMain
             System.out.println("Errore nell'avvio del server Socket");
         }
         listen();
-    }
-
-    public static void main(String[] args)
-    {
-        System.out.println("Welcome to Adrenalina game server!");
-        SMain server = new SMain();
-        server.listen();
     }
 
     /**
@@ -182,6 +176,7 @@ public class SMain
                 for (Player p : waiting[i].getGame().getPlayers()) {
                     if (p.getNick().equals(nickname)) {
                         String nick = p.getNick();
+                        System.out.println("Giocatore " + nick + " disconnesso");
                         waiting[i].getGame().removePlayer(p);
                         found = true;
                     }
@@ -191,21 +186,12 @@ public class SMain
                 for (Match m : matches) {
                     for (Player p : m.getGame().getPlayers()) {
                         if (p.getNick().equals(nickname)) {
+                            System.out.println("GIocatore " + p.getNick() + " rimosso dalla lista di attesa");
                             p.setConn(null);
                         }
                     }
                 }
             }
-        }
-    }
-
-    private void startMatch(int skulls) {
-        synchronized (lock) {
-            int index = skulls - MINSKULLS;
-            matches.add(waiting[index]);
-            matches.get(matches.indexOf(waiting[index])).run();
-            waiting[index] = null;
-            startedTimer[index] = false;
         }
     }
 
@@ -221,6 +207,16 @@ public class SMain
             public void run() {
                 startMatch(skulls);
             }
-        }, 60*1000);
+        }, 3*1000);
+    }
+
+    private void startMatch(int skulls) {
+        synchronized (lock) {
+            int index = skulls - MINSKULLS;
+            matches.add(waiting[index]);
+            matches.get(matches.indexOf(waiting[index])).run();
+            waiting[index] = null;
+            startedTimer[index] = false;
+        }
     }
 }
