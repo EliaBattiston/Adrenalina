@@ -19,8 +19,9 @@ public class Gui extends Application {
     private double backgroundHeight;
     private double dimMult;
 
-    private static String IMG_BACKGROUND = "file:images/background.png";
-    private static String DIR_PLAYERBOARD = "file:images/playerBoard/";
+    private static String imgBackground = "file:images/background.png";
+    private static String dirPlayerboard = "file:images/playerBoard/";
+    private static String dirLoot = "file:images/loot/";
 
     public static void main(String[] args) {
         launch(args);
@@ -73,15 +74,14 @@ public class Gui extends Application {
             ((SpawnCell)map.getCell(3,2)).refillWeapon(game.getWeaponsDeck().draw());
         }
 
-        ((RegularCell)map.getCell(0,0)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
+        ((RegularCell)map.getCell(0, 0)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
+        ((RegularCell)map.getCell(0, 2)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
         ((RegularCell)map.getCell(1, 0)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
         ((RegularCell)map.getCell(1, 1)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
         ((RegularCell)map.getCell(1, 2)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
         ((RegularCell)map.getCell(2, 1)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
         ((RegularCell)map.getCell(2, 2)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
         ((RegularCell)map.getCell(3, 1)).refillLoot(new Loot(new Color[]{Color.POWER, Color.YELLOW, Color.BLUE}));
-
-
 
         //END of settings for testing
 
@@ -109,7 +109,7 @@ public class Gui extends Application {
 
     private Canvas drawBackground(){
         Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
-        canvas.getGraphicsContext2D().drawImage( new Image( IMG_BACKGROUND ), 0, 0, backgroundWidth, backgroundHeight);
+        canvas.getGraphicsContext2D().drawImage( new Image(imgBackground), 0, 0, backgroundWidth, backgroundHeight);
         return canvas;
     }
 
@@ -211,26 +211,55 @@ public class Gui extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         //dimensions are the same
-        double size = 45 * dimMult;
-        double x = 310 * dimMult;
-        double basicY = 334 * dimMult;
-        double y = basicY;
+        double size = 55 * dimMult;
+        double x;
+        double y;
 
-        //calculate distance from board to board
-        double deltaX = 210 * dimMult;
-        double deltaY = 210 * dimMult;
-
-        for(int i=0; i<4; i++){
-            for(int j=0; j<3; j++){
-                if(map.getCell(i, j) != null && !map.getCell(i, j).hasSpawn(Color.YELLOW) && !map.getCell(i, j).hasSpawn(Color.BLUE) && !map.getCell(i, j).hasSpawn(Color.RED)){
-                    Image l = new Image("file:images/loot/" + ((RegularCell)map.getCell(i,j)).getLoot().getContentAsString() + ".png");
-                    gc.drawImage(l, x, y, size, size);
-                }
-                y += deltaY;
-            }
-            y = basicY;
-            x += deltaX;
-
+        //Manually add for each cell because they haven't the same dim. Create row by row from the top one
+        if(map.getCell(0, 0) != null) {
+            x = 310 * dimMult;
+            y = 325 * dimMult;
+            gc.drawImage(new Image( dirLoot + ((RegularCell)map.getCell(0, 0)).getLoot().getContentAsString() +".png"), x, y, size, size);
+        }
+        if(map.getCell(1, 0) != null) {
+            x = 526 * dimMult;
+            y = 325 * dimMult;
+            gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(1, 0)).getLoot().getContentAsString() +".png"), x, y, size, size);
+        }
+        if(map.getCell(3, 0) != null) {
+            x = 900 * dimMult;
+            y = 900 * dimMult;
+            gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(3, 0)).getLoot().getContentAsString() +".png"), x, y, size, size);
+        }
+        if(map.getCell(1, 1) != null) {
+            x = 526 * dimMult;
+            y = 530 * dimMult;
+            gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(1, 1)).getLoot().getContentAsString() +".png"), x, y, size, size);
+        }
+        if(map.getCell(2, 1) != null) {
+            x = 725 * dimMult;
+            y = 530 * dimMult;
+            gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(2, 1)).getLoot().getContentAsString() +".png"), x, y, size, size);
+        }
+        if(map.getCell(3, 1) != null) {
+            x = 900 * dimMult;
+            y = 530 * dimMult;
+            gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(3, 1)).getLoot().getContentAsString() +".png"), x, y, size, size);
+        }
+        if(map.getCell(0, 2) != null) {
+            x = 335 * dimMult;
+            y = 730 * dimMult;
+            gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(0, 2)).getLoot().getContentAsString() +".png"), x, y, size, size);
+        }
+        if(map.getCell(1, 2) != null) {
+            x = 526 * dimMult;
+            y = 730 * dimMult;
+            gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(1, 2)).getLoot().getContentAsString() +".png"), x, y, size, size);
+        }
+        if(map.getCell(2, 2) != null) {
+            x = 725 * dimMult;
+            y = 730 * dimMult;
+            gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(2, 2)).getLoot().getContentAsString() +".png"), x, y, size, size);
         }
 
         return canvas;
@@ -246,26 +275,29 @@ public class Gui extends Application {
         double y = 74 * dimMult;
 
         //calculate distance from board to board
-        double delta_y = 169 * dimMult;
+        double deltaY = 169 * dimMult;
 
         for(Player p : players){
             root.getChildren().add(drawPlayerBoard(p, adrenalineMode, width, height, x, y));
-            y += delta_y;
+            y += deltaY;
         }
 
         return root;
     }
 
-    private StackPane drawPlayerBoard(Player player, boolean adrenalineMode, double width, double height, double x, double y){
+    private Canvas drawPlayerBoard(Player player, boolean adrenalineMode, double width, double height, double x, double y){
         //TODO write player name, draw marks, draw skulls
-        StackPane s = new StackPane();
-
         Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
-        s.getChildren().add( canvas );
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        double pbMulti = dimMult * 560/1123; //dimMult * width@1080p/textureWidth -> internal reference based on the card
 
-        canvas.getGraphicsContext2D().drawImage( new Image(DIR_PLAYERBOARD + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
+        gc.drawImage( new Image(dirPlayerboard + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
 
-        return s;
+        for(int i=0; i<12; i++){
+            //if()
+        }
+
+        return canvas;
     }
 
     private StackPane drawMyWeapons(List<Weapon> weapons){
