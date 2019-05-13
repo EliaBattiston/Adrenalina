@@ -7,6 +7,7 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
 /**
  * this class represents the map or board of the actual game
  */
-public class Map {
+public class Map implements Serializable {
     /**
      * Matrix of cells representing the map
      */

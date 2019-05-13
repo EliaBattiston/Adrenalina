@@ -4,6 +4,7 @@ import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 public class RMIConn implements Connection
@@ -26,7 +27,7 @@ public class RMIConn implements Connection
         try {
             client.updateGame(matchView);
         }
-        catch (Exception e) {
+        catch (RemoteException e) {
             throw new ClientDisconnectedException();
         }
     }

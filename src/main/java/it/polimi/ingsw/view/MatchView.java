@@ -3,10 +3,12 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.model.Player;
 
+import java.io.Serializable;
+
 /**
  * From the controller.Match are missing: frenzyKills
  */
-public class MatchView {
+public class MatchView implements Serializable {
     /**
      * Model of the match's game, containing all relevant information
      */

@@ -2,13 +2,14 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The class represent the single cell of the board
  */
-public abstract class Cell {
+public abstract class Cell implements Serializable {
     /**
      * The attribute represents the sides of the cell (wall, door or nothing), ordered NORTH-EAST-SOUTH-WEST
      */

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.model.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * From the model.Game class the missing parts are: the decks, the other players data
  * From the controller.Match class it gets:
  */
-public class GameView {
+public class GameView implements Serializable {
     /**
      * Map used in this match
      */
