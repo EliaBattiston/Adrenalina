@@ -10,7 +10,7 @@
         }, {
             "type": "SpawnCell",
             "properties": {
-                "spawn": "Red",
+                "spawn": "RED",
                 "weapons": [null, null, null],
                 "sides": ["DOOR", "NOTHING", "WALL", "WALL"],
                 "pawns": [],
@@ -43,7 +43,7 @@
         [{
             "type": "SpawnCell",
             "properties": {
-                "spawn": "Blue",
+                "spawn": "BLUE",
                 "weapons": [null, null, null],
                 "sides": ["WALL", "DOOR", "DOOR", "NOTHING"],
                 "pawns": [],
@@ -83,7 +83,7 @@
             }, {
             "type": "SpawnCell",
             "properties": {
-                "spawn": "Yellow",
+                "spawn": "YELLOW",
                 "weapons": [null, null, null],
                 "sides": ["NOTHING", "WALL", "WALL", "NOTHING"],
                 "pawns": [],

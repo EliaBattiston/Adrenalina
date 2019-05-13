@@ -85,7 +85,7 @@ public class Gui extends Application {
 
         //END of settings for testing
 
-        masterPane.getChildren().addAll(drawBackground(), drawMap(), drawWeaponsLoot(map), drawDecks(), drawAllPlayersBoards(players,false),
+        masterPane.getChildren().addAll(drawBackground(), drawMap(), drawWeaponsLoot(map), drawLootOnMap(map), drawDecks(), drawAllPlayersBoards(players,false),
                 drawMyWeapons(me.getWeapons()), drawMyPowers(me.getPowers()), drawMyAmmo(me.getAmmo()));
 
 
@@ -206,33 +206,34 @@ public class Gui extends Application {
         return root;
     }
 
-    private void drawInsideCells (GraphicsContext mapGc, Map map){
+    private Canvas drawLootOnMap (Map map){
+        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
         //dimensions are the same
-        double sizeMult = 0.026;
-        double xMult = 0.277;
-        double yMult = 0.3;
-        double size = backgroundWidth * sizeMult;
-        double x = backgroundWidth * xMult;
-        double y = backgroundHeight * yMult;
+        double size = 45 * dimMult;
+        double x = 310 * dimMult;
+        double basicY = 334 * dimMult;
+        double y = basicY;
 
         //calculate distance from board to board
-        double deltaX = backgroundWidth * 0.053;
+        double deltaX = 210 * dimMult;
+        double deltaY = 210 * dimMult;
 
         for(int i=0; i<4; i++){
             for(int j=0; j<3; j++){
-                if(map.getCell(i, j) != null){
-                    //if(map.getCell(i, j).hasSpawn())TODO check if it's a spown or not
-
+                if(map.getCell(i, j) != null && !map.getCell(i, j).hasSpawn(Color.YELLOW) && !map.getCell(i, j).hasSpawn(Color.BLUE) && !map.getCell(i, j).hasSpawn(Color.RED)){
                     Image l = new Image("file:images/loot/" + ((RegularCell)map.getCell(i,j)).getLoot().getContentAsString() + ".png");
-                    mapGc.drawImage(l, x, y, size, size);
+                    gc.drawImage(l, x, y, size, size);
                 }
+                y += deltaY;
             }
-            //CardGui card = new CardGui(p, backgroundWidth, backgroundHeight, width, height, x, y);
-            //root.getChildren().add(card);
+            y = basicY;
             x += deltaX;
+
         }
 
-
+        return canvas;
     }
 
     private StackPane drawAllPlayersBoards(List<Player> players, boolean adrenalineMode){
