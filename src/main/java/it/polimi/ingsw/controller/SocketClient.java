@@ -203,10 +203,11 @@ public class SocketClient implements Client {
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      */
-    public Fighter getFighter() {
-        return user.getFighter();
+    public Fighter getFighter(List<Fighter> available) {
+        return user.getFighter(available);
     }
 
     /**
@@ -405,9 +406,11 @@ public class SocketClient implements Client {
                     break;
                 }
                 case GETFIGHTER: {
+                    ArrayList<Fighter> param = gson.fromJson(message.getParameters(), new TypeToken<List<Fighter>>() {
+                    }.getType());
                     answer.setType(Interaction.GETFIGHTER);
                     ArrayList<Fighter> ansParam = new ArrayList<>();
-                    ansParam.add(getFighter());
+                    ansParam.add(getFighter(param));
                     answer.setParameters(gson.toJson(ansParam));
                     break;
                 }

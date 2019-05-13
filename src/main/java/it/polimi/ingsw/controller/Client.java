@@ -136,10 +136,11 @@ public interface Client extends Remote
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @throws RemoteException If something goes wrong with the connection
      * @return user's fighter
      */
-    public Fighter getFighter() throws RemoteException;
+    public Fighter getFighter(List<Fighter> available) throws RemoteException;
 
     /**
      * Asks the user how many skulls he wants in the play

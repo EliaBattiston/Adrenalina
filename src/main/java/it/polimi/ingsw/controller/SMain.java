@@ -7,10 +7,7 @@ import it.polimi.ingsw.model.Player;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -140,14 +137,22 @@ public class SMain
 
                     println("Il giocatore " + player.getNick() + " si è riconnesso.");
                 } else {
+                    int skulls = connection.getSkullNum();
+                    int index = skulls - MINSKULLS;
+
+                    List<Fighter> available = new ArrayList<>();
+                    Collections.addAll(available, Fighter.values());
+                    if(waiting[index] != null) {
+                        for(Player p: waiting[index].getGame().getPlayers()) {
+                            available.remove(p.getCharacter());
+                        }
+                    }
+
                     String phrase = connection.getPhrase();
-                    Fighter fighter = connection.getFighter();
+                    Fighter fighter = connection.getFighter(available);
                     player = new Player(nickname, phrase, fighter);
                     player.setConn(connection);
 
-                    int skulls = connection.getSkullNum();
-
-                    int index = skulls - MINSKULLS;
                     if (waiting[index] == null) {
                         try {
                             waiting[index] = new Match(skulls);

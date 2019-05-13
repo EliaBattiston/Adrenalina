@@ -341,12 +341,14 @@ public class SocketConn implements Connection {
 
     /**
      * Asks the user for the fighter
+     * @param available List of available fighters
      * @return user's fighter
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Fighter getFighter() throws ClientDisconnectedException {
+    public Fighter getFighter(List<Fighter> available) throws ClientDisconnectedException {
         Payload load = new Payload();
         load.setType(Interaction.GETFIGHTER);
+        load.setParameters(gson.toJson(available));
         send(gson.toJson(load));
         Payload answer = jsonDeserialize(receive());
         List<Fighter> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Fighter>>(){}.getType());

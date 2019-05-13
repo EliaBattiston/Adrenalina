@@ -251,12 +251,13 @@ public class RMIConn implements Connection
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Fighter getFighter() throws ClientDisconnectedException {
+    public Fighter getFighter(List<Fighter> available) throws ClientDisconnectedException {
         try {
-            return client.getFighter();
+            return client.getFighter(available);
         }
         catch (Exception e) {
             throw new ClientDisconnectedException();

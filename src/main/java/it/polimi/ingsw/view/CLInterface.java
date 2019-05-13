@@ -182,6 +182,30 @@ public class CLInterface implements UserInterface {
         }
     }
 
+    private String fighterToString(Fighter fighter) {
+        String res;
+        switch (fighter) {
+            case BANSHEE:
+                res = ANSI_BLUE + "Banshee" + ANSI_RESET;
+                break;
+            case SPROG:
+                res = ANSI_GREEN + "Sprog" + ANSI_RESET;
+                break;
+            case DOZER:
+                res = ANSI_BLACK + "Dozer" + ANSI_RESET;
+                break;
+            case VIOLETTA:
+                res = ANSI_PURPLE + "Violetta" + ANSI_RESET;
+                break;
+            case DSTRUTTOR3:
+                res = ANSI_YELLOW + "Dstruttor3" + ANSI_RESET;
+                break;
+            default:
+                res = ANSI_RESET;
+        }
+        return res;
+    }
+
     /**
      * Prints weapon action informations in a well-presented format
      * @param weapon Weapon to print out info
@@ -388,14 +412,15 @@ public class CLInterface implements UserInterface {
         println("Giocatori: ");
         for(Player p: view.getGame().getPlayers()) {
             String print = "";
+            String background = "";
             if(p.equals(view.getMyPlayer())) {
-                print = ANSI_BOLD;
+                print += ANSI_BOLD;
             }
             if(p.equals(view.getActive())) {
-                print = ANSI_CYAN_BACKGROUND;
+                background = ANSI_CYAN_BACKGROUND;
             }
 
-            print += String.format("%-25s", p.getNick()) + ANSI_RESET;
+            print += background + String.format("%-25s", p.getNick() + SPACE + background + fighterToString(p.getCharacter())) + ANSI_RESET;
             print += " Ammo: ";
             print += p.getAmmo(Color.BLUE) + "x" + formatColorBox(Color.BLUE) + " ";
             print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";
@@ -405,15 +430,21 @@ public class CLInterface implements UserInterface {
     }
 
     private int generalMenu(List<String> options, int starting) {
+        return generalMenu(options, starting, true);
+    }
+
+    private int generalMenu(List<String> options, int starting, boolean gameInfo) {
         int choose;
         for(String opt: options)
             println(opt);
-        println("[?] Informazioni sul gioco");
+
+        if(gameInfo)
+            println("[?] Informazioni sul gioco");
 
         do {
             print("Qual è la tua scelta? [" + starting + "-" + (options.size() - 1) + "]: ");
             choose = scanInt();
-            if(choose == -1)
+            if(choose == -1 && gameInfo)
                 generalInfo();
         }
         while (choose < starting || choose > options.size() - 1);
@@ -1221,23 +1252,38 @@ public class CLInterface implements UserInterface {
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      */
-    public Fighter getFighter() {
-        println("[1] Dstruttor3");
-        println("[2] Banshee");
-        println("[3] Dozer");
-        println("[4] Violetta");
-        println("[5] Sprog");
+    public Fighter getFighter(List<Fighter> available) {
 
-        int chosen = 0;
-        while(chosen < 1 || chosen > 5)
-        {
-            print("Scegli il tuo personaggio [1-5]: ");
-            chosen = scanInt();
+        List<String> options = new ArrayList<>();
+        options.add("Scegli il tuo Fighter");
+        int i = 1;
+        for(Fighter f: available) {
+            switch (f) {
+                case DSTRUTTOR3:
+                    options.add("[" + i + "] Dstruttor3");
+                    break;
+                case VIOLETTA:
+                    options.add("[" + i + "] Violetta");
+                    break;
+                case DOZER:
+                    options.add("[" + i + "] Dozer");
+                    break;
+                case SPROG:
+                    options.add("[" + i + "] Sprog");
+                    break;
+                case BANSHEE:
+                    options.add("[" + i + "] Banshee");
+                    break;
+            }
+            i++;
         }
 
-        return Fighter.values()[chosen-1];
+        int chosen = generalMenu(options, 1, false);
+
+        return available.get(chosen - 1);
     }
 
     /**
@@ -1308,7 +1354,7 @@ public class CLInterface implements UserInterface {
         options.add("[3] Ottima per qualsiasi numero di giocatori");
         options.add("[4] Ottima per 4 o 5 giocatori");
 
-        return generalMenu(options, 1);
+        return generalMenu(options, 1, false);
     }
 
     /**

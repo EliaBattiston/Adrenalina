@@ -115,9 +115,10 @@ public interface UserInterface
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      */
-    public Fighter getFighter();
+    public Fighter getFighter(List<Fighter> available);
 
     /**
      * Asks the user how many skulls he wants in the play

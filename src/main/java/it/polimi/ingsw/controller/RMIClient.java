@@ -193,10 +193,11 @@ public class RMIClient extends UnicastRemoteObject implements Client
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      */
-    public Fighter getFighter() {
-        return user.getFighter();
+    public Fighter getFighter(List<Fighter> available) {
+        return user.getFighter(available);
     }
 
     /**

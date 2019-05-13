@@ -159,11 +159,12 @@ public class AInterface extends CLInterface {
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      */
     @Override
-    public Fighter getFighter() {
-        return Fighter.values()[new Random().nextInt(5)];
+    public Fighter getFighter(List<Fighter> available) {
+        return available.get(new Random().nextInt(available.size()));
     }
 
     /**

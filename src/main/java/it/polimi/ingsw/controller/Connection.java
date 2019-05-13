@@ -128,17 +128,18 @@ public interface Connection extends Remote
 
     /**
      * Asks the user for the effect phrase
-     * @return user's effect phrase
+     * @return User's effect phrase
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
     public String getPhrase() throws ClientDisconnectedException;
 
     /**
-     * Asks the user fot the fighter
-     * @return user's fighter
+     * Asks the user for the fighter
+     * @param available List of available fighters
+     * @return User's fighter
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Fighter getFighter() throws ClientDisconnectedException;
+    public Fighter getFighter(List<Fighter> available) throws ClientDisconnectedException;
 
     /**
      * Asks the user how many skulls he wants in the play
