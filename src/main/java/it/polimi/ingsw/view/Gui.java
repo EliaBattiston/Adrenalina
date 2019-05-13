@@ -81,8 +81,9 @@ public class Gui extends Application {
 
         //END of settings for testing
 
-        masterPane.getChildren().addAll(drawBackground(), drawMap(map), drawAllPlayersBoards(players,false),
+        masterPane.getChildren().addAll(drawBackground(), drawMap(), drawWeaponsLoot(map), drawDecks(), drawAllPlayersBoards(players,false),
                 drawMyWeapons(me.getWeapons()), drawMyPowers(me.getPowers()), drawMyAmmo(me.getAmmo()));
+
 
         primaryStage.setScene(new Scene(masterPane));
         primaryStage.setResizable(false);
@@ -108,12 +109,13 @@ public class Gui extends Application {
         return canvas;
     }
 
-    private StackPane drawMap(Map map){
+    private StackPane drawMap(){
         double widthMult = 0.605;
         double heightMult = 0.815;
+        double xMult = 2/(double)320;
         double width = backgroundWidth*widthMult;
         double height = backgroundHeight*heightMult;
-        double x = 18 * widthMult;
+        double x = backgroundWidth * xMult;
         double y = x;
 
         StackPane s = new StackPane();
@@ -124,9 +126,7 @@ public class Gui extends Application {
 
         gc.drawImage( new Image("file:images/map/map1.png"), x, y, width, height); //TODO print the right map
 
-        //drawAmmoLootOnMap(gc, map);
-
-        s.getChildren().addAll( canvas, drawWeaponsLoot(map), drawDecks());
+        s.getChildren().add(canvas);
 
         return s;
     }
@@ -138,7 +138,7 @@ public class Gui extends Application {
         double widthMult = 0.056;
         double heightMult = 0.165;
         double xMult = 0.327;
-        double yMult = 1/216;
+        double yMult = 1/(double)216;
         double width = backgroundWidth * widthMult;
         double height = backgroundHeight * heightMult;
         double x = backgroundWidth * xMult;
@@ -158,7 +158,7 @@ public class Gui extends Application {
         }
 
         //set values for new position (red)
-        xMult = 1/960;
+        xMult = 1/(double)960;
         yMult = 0.31;
         x = backgroundWidth * xMult;
         y = backgroundHeight * yMult;
