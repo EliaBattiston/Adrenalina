@@ -1,9 +1,12 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -31,7 +34,7 @@ public class RMIClient extends UnicastRemoteObject implements Client
      * @param userint gui/cli user interface
      * @throws RemoteException in case of connection error
      */
-    public RMIClient(String host, UserInterface userint) throws RemoteException
+    public RMIClient(String host, UserInterface userint) throws RemoteException, ServerNotFoundException
     {
         try {
             registry = LocateRegistry.getRegistry(host);
@@ -40,6 +43,9 @@ public class RMIClient extends UnicastRemoteObject implements Client
             registry.bind(bindName, this);
             RMIServer.newConnection(bindName);
             user = userint;
+        }
+        catch (java.rmi.UnknownHostException e) {
+            throw new ServerNotFoundException();
         }
         catch(Exception e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );

@@ -387,18 +387,12 @@ public class CLInterface implements UserInterface {
     private void playerInfo() {
         println("Giocatori: ");
         for(Player p: view.getGame().getPlayers()) {
-            String print;
-            if(p.getConn() != null)
-                print = ANSI_GREEN;
-            else
-                print = ANSI_YELLOW;
-
-            print += BOX + ANSI_RESET + " ";
+            String print = "";
             if(p.equals(view.getMyPlayer())) {
-                print += ANSI_BOLD;
+                print = ANSI_BOLD;
             }
             if(p.equals(view.getActive())) {
-                print += ANSI_CYAN_BACKGROUND;
+                print = ANSI_CYAN_BACKGROUND;
             }
 
             print += String.format("%-25s", p.getNick()) + ANSI_RESET;
