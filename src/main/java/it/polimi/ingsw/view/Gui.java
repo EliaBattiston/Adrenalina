@@ -17,6 +17,7 @@ public class Gui extends Application {
 
     private double backgroundWidth;
     private double backgroundHeight;
+    private double dimMult;
 
     private static String IMG_BACKGROUND = "file:images/background.png";
     private static String DIR_PLAYERBOARD = "file:images/playerBoard/";
@@ -31,6 +32,9 @@ public class Gui extends Application {
 
         backgroundWidth = 1920;
         backgroundHeight = backgroundWidth*9/16;
+
+        dimMult = backgroundWidth/1920;
+
         Pane masterPane = new Pane();
 
         primaryStage.setTitle("Adrenalina");
@@ -110,12 +114,9 @@ public class Gui extends Application {
     }
 
     private StackPane drawMap(){
-        double widthMult = 0.605;
-        double heightMult = 0.815;
-        double xMult = 2/(double)320;
-        double width = backgroundWidth*widthMult;
-        double height = backgroundHeight*heightMult;
-        double x = backgroundWidth * xMult;
+        double width = 1142 * dimMult;
+        double height = 866 * dimMult;
+        double x = 18 * dimMult;
         double y = x;
 
         StackPane s = new StackPane();
@@ -135,17 +136,13 @@ public class Gui extends Application {
         StackPane root = new StackPane();
 
         //dimensions are the same
-        double widthMult = 0.056;
-        double heightMult = 0.165;
-        double xMult = 0.327;
-        double yMult = 1/(double)216;
-        double width = backgroundWidth * widthMult;
-        double height = backgroundHeight * heightMult;
-        double x = backgroundWidth * xMult;
-        double y = backgroundHeight * yMult;
+        double width = 98 * dimMult;
+        double height = 168 * dimMult;
+        double x = 628 * dimMult;
+        double y = 4 * dimMult;
 
         //calculate distance from board to board
-        double deltaX = backgroundWidth * 0.067;
+        double deltaX = 122 * dimMult;
         double deltaY = deltaX;
 
         //First the blue spawn
@@ -158,10 +155,8 @@ public class Gui extends Application {
         }
 
         //set values for new position (red)
-        xMult = 1/(double)960;
-        yMult = 0.31;
-        x = backgroundWidth * xMult;
-        y = backgroundHeight * yMult;
+        x = 4 * dimMult;
+        y = 335 * dimMult;
         //Red spawn
         c = (SpawnCell) map.getCell(0, 1);
         for(Weapon w:c.getWeapons()){
@@ -173,10 +168,8 @@ public class Gui extends Application {
         }
 
         //set values for new position (yellow)
-        xMult = 0.525;
-        yMult = 0.476;
-        x = backgroundWidth * xMult;
-        y = backgroundHeight * yMult;
+        x = 1008 * dimMult;
+        y = 514 * dimMult;
         //Yellow spawn
         c = (SpawnCell) map.getCell(3, 2);
         for(Weapon w:c.getWeapons()){
@@ -195,26 +188,18 @@ public class Gui extends Application {
 
         //PowersDeck
         Canvas pow = new Canvas(backgroundWidth, backgroundHeight);
-        double widthMult = 0.04;
-        double heightMult = 0.12;
-        double xMult = 0.555;
-        double yMult = 0.061;
-        double width = backgroundWidth * widthMult;
-        double height = backgroundHeight * heightMult;
-        double x = backgroundWidth * xMult;
-        double y = backgroundHeight * yMult;
+        double width = 74 * dimMult;
+        double height = 109 * dimMult;
+        double x = 1046 * dimMult;
+        double y = 68 * dimMult;
         pow.getGraphicsContext2D().drawImage(new Image("file:images/power/powerBackPile.png"), x, y, width, height);
 
         //WeaponsDeck
         Canvas wea = new Canvas(backgroundWidth, backgroundHeight);
-        widthMult = 0.06;
-        heightMult = 0.175;
-        xMult = 0.535;
-        yMult = 0.233;
-        width = backgroundWidth * widthMult;
-        height = backgroundHeight * heightMult;
-        x = backgroundWidth * xMult;
-        y = backgroundHeight * yMult;
+        width = 96 * dimMult;
+        height = 174 * dimMult;
+        x = 1020 * dimMult;
+        y = 252 * dimMult;
         wea.getGraphicsContext2D().drawImage(new Image("file:images/weapon/weaponBackPile.png"), x, y, width, height);
 
         root.getChildren().addAll(pow, wea);
@@ -254,17 +239,13 @@ public class Gui extends Application {
         StackPane root = new StackPane();
 
         //dimensions are the same for all the players
-        double widthMult = 0.29;
-        double heightMult = 0.124;
-        double xMult = 0.6365;
-        double yMult = 0.0685;
-        double width = backgroundWidth * widthMult;
-        double height = backgroundHeight * heightMult;
-        double x = backgroundWidth * xMult;
-        double y = backgroundHeight * yMult;
+        double width = 560 * dimMult;
+        double height = 134 * dimMult;
+        double x = 1222 * dimMult;
+        double y = 74 * dimMult;
 
         //calculate distance from board to board
-        double delta_y = backgroundHeight * 0.1565;
+        double delta_y = 169 * dimMult;
 
         for(Player p : players){
             root.getChildren().add(drawPlayerBoard(p, adrenalineMode, width, height, x, y));
@@ -290,17 +271,13 @@ public class Gui extends Application {
         StackPane root = new StackPane();
 
         //dimensions are the same
-        double widthMult = 0.0625;
-        double heightMult = 0.188;
-        double xMult = 0.024;
-        double yMult = 0.8;
-        double width = backgroundWidth * widthMult;
-        double height = backgroundHeight * heightMult;
-        double x = backgroundWidth * xMult;
-        double y = backgroundHeight * yMult;
+        double width = 120 * dimMult;
+        double height = 203 * dimMult;
+        double x = 46 * dimMult;
+        double y = 865 * dimMult;
 
         //calculate distance from board to board
-        double deltaX = backgroundWidth * 0.0725;
+        double deltaX = 136 * dimMult;
 
         for(Weapon w : weapons){
             CardGui card = new CardGui(w, backgroundWidth, backgroundHeight, width, height, x, y, 0);
@@ -315,17 +292,13 @@ public class Gui extends Application {
         StackPane root = new StackPane();
 
         //dimensions are the same
-        double widthMult = 0.048;
-        double heightMult = 0.135;
-        double xMult = 0.253;
-        double yMult = 0.853;
-        double width = backgroundWidth * widthMult;
-        double height = backgroundHeight * heightMult;
-        double x = backgroundWidth * xMult;
-        double y = backgroundHeight * yMult;
+        double width = 92 * dimMult;
+        double height = 146 * dimMult;
+        double x = 484 * dimMult;
+        double y = 920 * dimMult;
 
         //calculate distance from board to board
-        double deltaX = backgroundWidth * 0.053;
+        double deltaX = 102 * dimMult;
 
         for(Power p : powers){
             CardGui card = new CardGui(p, backgroundWidth, backgroundHeight, width, height, x, y);
@@ -340,16 +313,13 @@ public class Gui extends Application {
         StackPane root = new StackPane();
 
         //dimensions are the same
-        double widthMult = 0.018;
-        double xMult = 0.435;
-        double yMult = 0.887;
-        double width = backgroundWidth * widthMult;
-        double x = backgroundWidth * xMult;
-        double y = backgroundHeight * yMult;
+        double width = 35 * dimMult;
+        double x = 837 * dimMult;
+        double y = 958 * dimMult;
 
         //calculate distance from board to board
-        double deltaX = backgroundWidth * 0.0224;
-        double deltaY = backgroundHeight * 0.0333;
+        double deltaX = 43 * dimMult;
+        double deltaY = 36 * dimMult;
 
         Canvas ammoCanvas = new Canvas(backgroundWidth, backgroundHeight);
         GraphicsContext gc = ammoCanvas.getGraphicsContext2D();
@@ -361,14 +331,14 @@ public class Gui extends Application {
             gc.drawImage(blue, x, y, width, width);
             x += deltaX;
         }
-        x = backgroundWidth * xMult; //reset x
+        x = 837 * dimMult; //reset x
         y += deltaY;
 
         for(int i=0; i<ammo.getRed(); i++){
             gc.drawImage(red, x, y, width, width);
             x += deltaX;
         }
-        x = backgroundWidth * xMult; //reset x
+        x = 837 * dimMult; //reset x
         y += deltaY;
 
         for(int i=0; i<ammo.getYellow(); i++){
