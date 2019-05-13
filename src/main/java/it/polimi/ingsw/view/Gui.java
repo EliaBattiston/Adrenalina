@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
@@ -285,19 +286,45 @@ public class Gui extends Application {
         return root;
     }
 
-    private Canvas drawPlayerBoard(Player player, boolean adrenalineMode, double width, double height, double x, double y){
+    private StackPane drawPlayerBoard(Player player, boolean adrenalineMode, double width, double height, double x, double y){
         //TODO write player name, draw marks, draw skulls
+        StackPane pane = new StackPane();
         Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        double pbMulti = dimMult * 560/1123; //dimMult * width@1080p/textureWidth -> internal reference based on the card
+        double pbMult = width/1123; //(dimMult * width@1080p)/textureWidth -> internal reference based on the card
+        double xDrop = 129 * pbMult;
+        double yDrop = 120 * pbMult;
+        double widthDrop = 26 * pbMult;
+        double heightDrop = 45 * pbMult;
+
+        double deltaX = 65 * pbMult;
+
+        //y - 30 -> write the name of the player
+        //pane.getChildren().add(new Text(x, y-30, player.getNick())); TODO check this implementation
 
         gc.drawImage( new Image(dirPlayerboard + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
 
+        //damages
         for(int i=0; i<12; i++){
-            //if()
+            if(player.getReceivedDamage()[i] != null)
+                gc.drawImage( new Image(dirPlayerboard + player.getReceivedDamage()[i] + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+
+            xDrop += deltaX;
         }
 
-        return canvas;
+        //marks
+        xDrop = 537 * pbMult;
+        yDrop = 8 * pbMult;
+        deltaX = widthDrop * 1.1; //put just a little bit of space, we don't know how many marks a player will get
+        for(Player p: player.getReceivedMarks()){
+            if(p != null)
+                gc.drawImage( new Image(dirPlayerboard + p + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+
+            xDrop += deltaX;
+        }
+
+        pane.getChildren().add(canvas);
+        return pane;
     }
 
     private StackPane drawMyWeapons(List<Weapon> weapons){
