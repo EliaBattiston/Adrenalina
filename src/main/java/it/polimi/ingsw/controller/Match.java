@@ -310,12 +310,13 @@ public class Match implements Runnable
 
         //Choose power
         try {
+            pl.getConn().sendMessage("Scegli un potenziamento da scartare, il colore del potenziamento scartato determinerà la cella di spawn");
             Power chosen = pl.getConn().discardPower(pl.getPowers(), true);
             Color spawnColor = chosen.getColor();
             //Discard the power
             pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 for (int i = 0; i < 3; i++) {
-                    if (powers[i] == chosen) {
+                    if (powers[i].getId() == chosen.getId()) {
                         game.getPowersDeck().scrapCard(powers[i]);
                         powers[i] = null;
                     }

@@ -29,7 +29,6 @@ public class EndlessDeck<T extends Card> extends Deck<T> {
         try{
             return super.draw();
         }catch(EmptyDeckException e){
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             cards = scraps;
             super.shuffle();
             scraps = new ArrayList<>();

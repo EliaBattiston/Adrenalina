@@ -47,7 +47,6 @@ public class SocketClient implements Client {
                 instanced = true;
             }
             catch (UnknownHostException | ConnectException e) {
-                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 throw new ServerNotFoundException();
             }
             catch (IOException e) {

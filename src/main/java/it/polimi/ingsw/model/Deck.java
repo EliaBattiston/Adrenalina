@@ -49,7 +49,7 @@ public class Deck<T extends Card> {
             cards.remove(0);
             return card;
         }catch (IndexOutOfBoundsException e){
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new EmptyDeckException();
         }
 

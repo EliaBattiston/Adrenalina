@@ -68,13 +68,12 @@ public class CMain
                 else
                     connection = new RMIClient(ip, ui);
                 instanced = true;
+                ui.generalMessage("Connesso al server Adrenalina");
             }
             catch (ServerNotFoundException e) {
-                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 ui.generalMessage("Server non trovato, riprova\n");
             }
             catch (ServerDisconnectedException e) {
-                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 ui.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
                 return;
             }

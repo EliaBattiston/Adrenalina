@@ -121,6 +121,10 @@ public class CLInterface implements UserInterface {
         return ret;
     }
 
+    /**
+     * Reads a string from System.in
+     * @return Read string
+     */
     private String scan() {
         try {
             String line = in.nextLine();
@@ -133,6 +137,10 @@ public class CLInterface implements UserInterface {
         }
     }
 
+    /**
+     * Reads an integer from System.in
+     * @return Read integer
+     */
     private int scanInt() {
         int num = 0;
         try {
@@ -184,6 +192,11 @@ public class CLInterface implements UserInterface {
         }
     }
 
+    /**
+     * Formats a string to represent the name and colour of a Fighter
+     * @param fighter Fighter to be formatted
+     * @return Formatted Fighter string
+     */
     private String fighterToString(Fighter fighter) {
         String res;
         switch (fighter) {
@@ -213,6 +226,7 @@ public class CLInterface implements UserInterface {
      * @param weapon Weapon to print out info
      */
     private void printWeapon(Weapon weapon) {
+        println("");
         print(ANSI_BOLD + weapon.getName() + ANSI_RESET + " " + formatColorBox(weapon.getColor()) + " ");
         for(Color c: weapon.getBase().getCost()) {
             print(formatColorBox(c) + " ");
@@ -248,6 +262,7 @@ public class CLInterface implements UserInterface {
      */
     public void updateGame(MatchView matchView) {
         view = matchView;
+        println("");
         map(null, null);
         frenzyInfo();
         playerInfo();
@@ -401,19 +416,19 @@ public class CLInterface implements UserInterface {
      * Prints out the Frenzy mode status
      */
     private void frenzyInfo() {
-        print("Modalità Frenesia: ");
+        print("\nModalità Frenesia: ");
         if(view.getPhase() == GamePhase.FRENZY)
-            print(ANSI_GREEN);
+            print(ANSI_GREEN + "SI");
         else
-            print(ANSI_RED);
-        println(BOX + ANSI_RESET);
+            print(ANSI_RED + "NO");
+        println(ANSI_RESET);
     }
 
     /**
      * Prints out players' general informations (connection, playing player, ammos)
      */
     private void playerInfo() {
-        println("Giocatori: ");
+        println("\nGiocatori: ");
         for(Player p: view.getGame().getPlayers()) {
             String print = "";
             String background = "";
@@ -424,7 +439,7 @@ public class CLInterface implements UserInterface {
                 background = ANSI_CYAN_BACKGROUND;
             }
 
-            print += background + String.format("%-25s", p.getNick() + SPACE + background + fighterToString(p.getCharacter())) + ANSI_RESET;
+            print += background + String.format("%-50s", p.getNick() + "\t" + background + fighterToString(p.getCharacter())) + ANSI_RESET;
             print += " Ammo: ";
             print += p.getAmmo(Color.BLUE) + "x" + formatColorBox(Color.BLUE) + " ";
             print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";
@@ -439,6 +454,7 @@ public class CLInterface implements UserInterface {
 
     private int generalMenu(List<String> options, int starting, boolean gameInfo) {
         int choose;
+        println("");
         for(String opt: options)
             println(opt);
 
@@ -850,7 +866,7 @@ public class CLInterface implements UserInterface {
      */
     public Action chooseAction(List<Action> available, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Azioni disponibili:");
+        options.add("\nAzioni disponibili:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -885,7 +901,7 @@ public class CLInterface implements UserInterface {
      */
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Armi disponibili:");
+        options.add("\nArmi disponibili:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -914,7 +930,7 @@ public class CLInterface implements UserInterface {
      */
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Armi disponibili nella cella:");
+        options.add("\nArmi disponibili nella cella:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -944,7 +960,7 @@ public class CLInterface implements UserInterface {
      */
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Armi ricaricabili:");
+        options.add("\nArmi ricaricabili:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -980,7 +996,7 @@ public class CLInterface implements UserInterface {
     public Point movePlayer(List<Point> destinations, boolean mustChoose) {
         map(null, destinations);
         List<String> options = new ArrayList<>();
-        options.add("Movimenti possibili:");
+        options.add("\nMovimenti possibili:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1010,7 +1026,7 @@ public class CLInterface implements UserInterface {
     public Player chooseTarget(List<Player> targets, boolean mustChoose) {
         map(targets, null);
         List<String> options = new ArrayList<>();
-        options.add("Scegli un bersaglio:");
+        options.add("\nScegli un bersaglio:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1043,7 +1059,7 @@ public class CLInterface implements UserInterface {
         List<String> options = new ArrayList<>();
         plist.add(enemy);
         map(plist, destinations);
-        options.add("Scegli dove muovere il giocatore:");
+        options.add("\nScegli dove muovere il giocatore:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1072,7 +1088,7 @@ public class CLInterface implements UserInterface {
      */
     public Power discardPower(List<Power> powers, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Scegli quale carta potenziamento scartare:");
+        options.add("\nScegli quale carta potenziamento scartare:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1082,7 +1098,7 @@ public class CLInterface implements UserInterface {
         }
         for(Power pow: powers) {
             i++;
-            options.add("[" + i + "] " + pow.getName() + ", costo: " + formatColorBox(pow.getColor()) + " ");
+            options.add("[" + i + "] " + pow.getName() + ", colore: " + formatColorBox(pow.getColor()) + " ");
         }
 
         choose = generalMenu(options, starting);
@@ -1101,7 +1117,7 @@ public class CLInterface implements UserInterface {
      */
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Scegli una stanza:");
+        options.add("\nScegli una stanza:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1150,7 +1166,7 @@ public class CLInterface implements UserInterface {
      * @return chosen direction
      */
     public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
-        println("Scegli una direzione:");
+        println("\nScegli una direzione:");
         int i = 0;
         int starting = 1;
         String choose;
@@ -1213,7 +1229,7 @@ public class CLInterface implements UserInterface {
     public Point choosePosition(List<Point> positions, boolean mustChoose) {
         map(null, positions);
         List<String> options = new ArrayList<>();
-        options.add("Scegli una cella della mappa:");
+        options.add("\nScegli una cella della mappa:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1240,7 +1256,7 @@ public class CLInterface implements UserInterface {
      */
     public String getNickname() {
         String nick;
-        print("Il tuo nickname: ");
+        print("\nIl tuo nickname: ");
         nick = scan();
         return nick;
     }
@@ -1250,7 +1266,7 @@ public class CLInterface implements UserInterface {
      * @return user's effect phrase
      */
     public String getPhrase() {
-        print("La tua esclamazione: ");
+        print("\nLa tua esclamazione: ");
         return scan();
     }
 
@@ -1262,7 +1278,7 @@ public class CLInterface implements UserInterface {
     public Fighter getFighter(List<Fighter> available) {
 
         List<String> options = new ArrayList<>();
-        options.add("Scegli il tuo Fighter");
+        options.add("\nScegli il tuo Fighter");
         int i = 1;
         for(Fighter f: available) {
             switch (f) {
@@ -1297,7 +1313,7 @@ public class CLInterface implements UserInterface {
     public Integer getSkullNum() {
         int num;
         do {
-            print("Scegli con quanti teschi vuoi giocare [5-8]: ");
+            print("\nScegli con quanti teschi vuoi giocare [5-8]: ");
             num = scanInt();
         }
         while(num < 5 || num > 8);
@@ -1312,7 +1328,7 @@ public class CLInterface implements UserInterface {
      */
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Scegli un'arma da scartare:");
+        options.add("\nScegli un'arma da scartare:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1352,7 +1368,7 @@ public class CLInterface implements UserInterface {
     public Integer chooseMap() {
         int map;
         List<String> options = new ArrayList<>();
-        options.add("Scegli la mappa da utilizzare:");
+        options.add("\nScegli la mappa da utilizzare:");
         options.add("[1] Ottima per iniziare");
         options.add("[2] Ottima per 3 o 4 giocatori");
         options.add("[3] Ottima per qualsiasi numero di giocatori");
@@ -1368,7 +1384,7 @@ public class CLInterface implements UserInterface {
     public Boolean chooseFrenzy() {
         String ans;
         do {
-            print("Vuoi la modalità Frenesia a fine partita? [S/N]: ");
+            print("\nVuoi la modalità Frenesia a fine partita? [S/N]: ");
             ans = scan();
         }
         while(!ans.equalsIgnoreCase("s") && !ans.equalsIgnoreCase("n"));
@@ -1383,7 +1399,7 @@ public class CLInterface implements UserInterface {
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Scegli un potenziamento da usare:");
+        options.add("\nScegli un potenziamento da usare:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1409,6 +1425,6 @@ public class CLInterface implements UserInterface {
      * @param message Message to be printed
      */
     public void generalMessage(String message) {
-        println(message);
+        println("\n" + message);
     }
 }
