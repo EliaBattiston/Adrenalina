@@ -102,6 +102,25 @@ public class CLInterface implements UserInterface {
     }
 
     /**
+     *General text formatting (spacing insertion on the right of the text)
+     * @param toPrint Text to be formatted
+     * @return Formatted text
+     */
+    private String stringFormat(String toPrint, int totChar) {
+        String copy = toPrint.replace(ANSI_RESET, "");
+        for(String s: ANSI_COLORS)
+            copy = copy.replace(s, "");
+        for(String s: ANSI_BACKGROUNDS)
+            copy = copy.replace(s, "");
+
+        String ret = toPrint;
+        for(int i = 0; i < totChar - copy.length(); i++) {
+            ret += " ";
+        }
+        return ret;
+    }
+
+    /**
      * Inner cell text formatting (spacing insertion on the left of the text)
      * @param toPrint Text to be formatted
      * @return Formatted text
@@ -214,6 +233,35 @@ public class CLInterface implements UserInterface {
                 break;
             case DSTRUTTOR3:
                 res = ANSI_YELLOW + "Dstruttor3" + ANSI_RESET;
+                break;
+            default:
+                res = ANSI_RESET;
+        }
+        return res;
+    }
+
+    /**
+     * Formats a letter to represent the name and colour of a Fighter
+     * @param fighter Fighter to be formatted
+     * @return Formatted Fighter letter
+     */
+    private String fighterToLetter(Fighter fighter) {
+        String res;
+        switch (fighter) {
+            case BANSHEE:
+                res = ANSI_BLUE + "B" + ANSI_RESET;
+                break;
+            case SPROG:
+                res = ANSI_GREEN + "S" + ANSI_RESET;
+                break;
+            case DOZER:
+                res = ANSI_BLACK + "D" + ANSI_RESET;
+                break;
+            case VIOLETTA:
+                res = ANSI_PURPLE + "V" + ANSI_RESET;
+                break;
+            case DSTRUTTOR3:
+                res = ANSI_YELLOW + "3" + ANSI_RESET;
                 break;
             default:
                 res = ANSI_RESET;
@@ -432,18 +480,42 @@ public class CLInterface implements UserInterface {
         for(Player p: view.getGame().getPlayers()) {
             String print = "";
             String background = "";
-            if(p.equals(view.getMyPlayer())) {
+            if(p.getNick().equals(view.getMyPlayer().getNick())) {
                 print += ANSI_BOLD;
             }
-            if(p.equals(view.getActive())) {
+            if(view.getActive() != null && p.getNick().equals(view.getActive().getNick())) {
                 background = ANSI_CYAN_BACKGROUND;
             }
 
-            print += background + String.format("%-40s", p.getNick() + " - " + background + fighterToString(p.getCharacter())) + ANSI_RESET;
+
+            print += background + stringFormat(p.getNick() + " - " + background + fighterToString(p.getCharacter()), 40) + ANSI_RESET;
             print += " Ammo: ";
             print += p.getAmmo(Color.BLUE) + "x" + formatColorBox(Color.BLUE) + " ";
             print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";
             print += p.getAmmo(Color.RED) + "x" + formatColorBox(Color.RED) + " ";
+            print += "Danni: ";
+            for(int i = 0; i < p.getReceivedDamage().length; i++) {
+                boolean found = false;
+                for(Player pl: view.getGame().getPlayers()) {
+                    if (p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(pl.getNick())) {
+                        print += fighterToLetter(pl.getCharacter());
+                        found = true;
+                    }
+                }
+                if(!found)
+                    print += "-";
+            }
+            print += " Marchi: ";
+            if(p.getReceivedMarks().isEmpty())
+                print += "-";
+            else {
+                for (String mark : p.getReceivedMarks()) {
+                    for (Player pl : view.getGame().getPlayers())
+                        if (mark.equals(pl.getNick()))
+                            print += fighterToLetter(pl.getCharacter());
+                }
+            }
+
             println(print);
         }
     }
@@ -615,7 +687,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -648,7 +720,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -681,7 +753,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -707,7 +779,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -733,7 +805,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -995,26 +1067,42 @@ public class CLInterface implements UserInterface {
      */
     public Point movePlayer(List<Point> destinations, boolean mustChoose) {
         map(null, destinations);
-        List<String> options = new ArrayList<>();
-        options.add("\nMovimenti possibili:");
-        int i = 0;
-        int starting = 1;
-        int choose;
+        List<Integer> options = new ArrayList<>();
+        print("\nMovimenti possibili:");
+
+        int choose, actPos;
+        actPos = -1;
         if(!mustChoose) {
-            starting = 0;
-            options.add("[0] Non muoverti");
+            Point p = view.getActive().getPosition();
+            actPos = p.getY() * 4 + p.getX() + 1;
+            options.add(actPos);
+            print(actPos + " ");
         }
         for(Point disp: destinations) {
-            i++;
-            options.add("[" + i + "] " + (disp.getY() * 4 + disp.getX() + 1));
+            int point = disp.getY() * 4 + disp.getX() + 1;
+            options.add(point);
+            print(point + " ");
         }
 
-        choose = generalMenu(options, starting);
+        println("");
+        do {
+            print("Scelta: ");
+            choose = scanInt();
+        }
+        while (!options.contains(choose));
 
-        if(choose == 0)
+        if(choose == actPos)
             return null;
-        else
-            return destinations.get(choose - 1);
+        else {
+            choose--;
+            Point eqP = new Point(choose % 4, choose / 4);
+            Point retP = null;
+            for(Point p: destinations) {
+                if(p.getX() == eqP.getX() && p.getY() == eqP.getY())
+                    retP = p;
+            }
+            return retP;
+        }
     }
 
     /**
@@ -1056,28 +1144,45 @@ public class CLInterface implements UserInterface {
      */
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) {
         List<Player> plist = new ArrayList<>();
-        List<String> options = new ArrayList<>();
+        List<Integer> options = new ArrayList<>();
         plist.add(enemy);
         map(plist, destinations);
-        options.add("\nScegli dove muovere il giocatore:");
-        int i = 0;
-        int starting = 1;
-        int choose;
+        println("\nScegli dove muovere il giocatore:");
+
+        int choose, actPos;
+        actPos = -1;
+        print("Posizioni (celle) possibili: ");
         if(!mustChoose) {
-            starting = 0;
-            options.add("[0] Non muoverti");
+            Point p = view.getActive().getPosition();
+            actPos = p.getY() * 4 + p.getX() + 1;
+            options.add(actPos);
+            print(actPos + " ");
         }
         for(Point disp: destinations) {
-            i++;
-            options.add("[" + i + "] " + (disp.getY() * 4 + disp.getX() + 1));
+            int point = disp.getY() * 4 + disp.getX() + 1;
+            options.add(point);
+            print(point + " ");
         }
 
-        choose = generalMenu(options, starting);
+        println("");
+        do {
+            print("Scelta: ");
+            choose = scanInt();
+        }
+        while (!options.contains(choose));
 
-        if(choose == 0)
+        if(choose == actPos)
             return null;
-        else
-            return destinations.get(choose - 1);
+        else {
+            choose--;
+            Point eqP = new Point(choose % 4, choose / 4);
+            Point retP = null;
+            for(Point p: destinations) {
+                if(p.getX() == eqP.getX() && p.getY() == eqP.getY())
+                    retP = p;
+            }
+            return retP;
+        }
     }
 
     /**
@@ -1228,26 +1333,42 @@ public class CLInterface implements UserInterface {
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose) {
         map(null, positions);
-        List<String> options = new ArrayList<>();
-        options.add("\nScegli una cella della mappa:");
-        int i = 0;
-        int starting = 1;
-        int choose;
+        List<Integer> options = new ArrayList<>();
+        println("\nScegli una cella della mappa:");
+        int choose, actPos;
+        actPos = -1;
+        print("Celle disponibili: ");
         if(!mustChoose) {
-            starting = 0;
-            options.add("[0] Non scegliere");
+            Point p = view.getActive().getPosition();
+            actPos = p.getY() * 4 + p.getX() + 1;
+            options.add(actPos);
+            print(actPos + " ");
         }
         for(Point disp: positions) {
-            i++;
-            options.add("[" + i + "] " + (disp.getY() * 4 + disp.getX()));
+            int point = disp.getY() * 4 + disp.getX() + 1;
+            options.add(point);
+            print(point + " ");
         }
 
-        choose = generalMenu(options, starting);
+        println("");
+        do {
+            print("Scelta: ");
+            choose = scanInt();
+        }
+        while (!options.contains(choose));
 
-        if(choose == 0)
+        if(choose == actPos)
             return null;
-        else
-            return positions.get(choose - 1);
+        else {
+            choose--;
+            Point eqP = new Point(choose % 4, choose / 4);
+            Point retP = null;
+            for(Point p: positions) {
+                if(p.getX() == eqP.getX() && p.getY() == eqP.getY())
+                    retP = p;
+            }
+            return retP;
+        }
     }
 
     /**

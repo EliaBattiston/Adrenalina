@@ -930,6 +930,7 @@ public class ActionLambdaMap {
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
                 toExecute.execute(pl, map, mem);
 
+                weaponActions.clear();
                 weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
                 weaponActions.remove(toExecute);
                 if(!weaponActions.isEmpty())
