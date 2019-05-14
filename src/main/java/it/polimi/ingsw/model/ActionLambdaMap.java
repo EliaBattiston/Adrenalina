@@ -980,7 +980,7 @@ public class ActionLambdaMap {
 
         while(!reloadable.isEmpty() && chosen != null)
         {
-            chosen = pl.getConn().chooseWeapon(reloadable, false);
+            chosen = pl.getConn().reload(reloadable, false);
 
             if(chosen != null)
             {

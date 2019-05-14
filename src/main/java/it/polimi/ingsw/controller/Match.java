@@ -196,7 +196,7 @@ public class Match implements Runnable
         List<Action> feasible = new ArrayList<>();
 
         //Check if spawning is needed
-        if(active.getPosition() == null)
+        if(!active.isSpawned())
         {
             spawnPlayer(active);
         }
@@ -351,6 +351,8 @@ public class Match implements Runnable
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             ; //TODO @Erap320 checkout and correct
         }
+
+        pl.setSpawned(true);
     }
 
     /**
@@ -480,6 +482,8 @@ public class Match implements Runnable
             if(killed.getReceivedDamage()[11] != null)
                 frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[10] ) );
         }
+
+        killed.setSpawned(false);
 
         System.out.println(killed.getNick() + " è stato ucciso");
     }

@@ -57,10 +57,16 @@ public class Player implements Serializable
      * Position of the player's pawn in the map
      */
     private Point position;
+
     /**
      * Connection of the player
      */
     private transient Connection conn;
+
+    /**
+     * False if the player has to be spawned in the map
+     */
+    private boolean spawned;
 
     /**
      * Creates a new user, in a suitable configuration to start the game
@@ -81,6 +87,7 @@ public class Player implements Serializable
         this.ammo = new Ammunitions();
         this.powers = new Power[3];
         this.position = new Point(0, 0);
+        this.spawned = false;
 
         this.conn = null;
     }
@@ -254,5 +261,23 @@ public class Player implements Serializable
 
         this.powers = null;
         this.conn = null;
+    }
+
+    /**
+     * Tells if the player has already been spawned
+     * @return True if the player is already on the map, false if it has to be spawned
+     */
+    public boolean isSpawned()
+    {
+        return spawned;
+    }
+
+    /**
+     * Sets the 'spawned' state of the player
+     * @param s Value to be set
+     */
+    public void setSpawned(boolean s)
+    {
+        spawned = s;
     }
 }

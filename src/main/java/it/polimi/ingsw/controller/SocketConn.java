@@ -377,10 +377,7 @@ public class SocketConn implements Connection {
         Payload load = new Payload();
         load.setType(Interaction.CHOOSEMAP);
         send(gson.toJson(load));
-        String debug = receive();
-        System.out.println(debug);
-        Payload answer = jsonDeserialize(debug);
-        System.out.println(answer.getParameters());
+        Payload answer = jsonDeserialize(receive());
         List<Integer> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Integer>>(){}.getType());
         return ansParam.get(0);
     }
