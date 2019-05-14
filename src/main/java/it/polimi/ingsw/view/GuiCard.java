@@ -37,6 +37,13 @@ public class GuiCard extends Canvas {
         setOnMousePressed(e ->{
             System.out.println("Clicked " + ((Weapon)data).getName());
         });
+
+        setOnMouseEntered(e ->{
+            setStyle("-fx-effect: innershadow(gaussian, #d1d331, 10, 0.5, 0, 0);");
+        });
+        setOnMouseExited(e->{
+            setStyle("-fx-effect: innershadow(gaussian, #d1d331, 0, 0, 0, 0);");
+        });
     }
 
     public GuiCard(it.polimi.ingsw.model.Loot loot, double size){
