@@ -439,7 +439,7 @@ public class CLInterface implements UserInterface {
                 background = ANSI_CYAN_BACKGROUND;
             }
 
-            print += background + String.format("%-50s", p.getNick() + "\t" + background + fighterToString(p.getCharacter())) + ANSI_RESET;
+            print += background + String.format("%-40s", p.getNick() + " - " + background + fighterToString(p.getCharacter())) + ANSI_RESET;
             print += " Ammo: ";
             print += p.getAmmo(Color.BLUE) + "x" + formatColorBox(Color.BLUE) + " ";
             print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";

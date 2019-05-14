@@ -6,12 +6,17 @@ import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RMIConn implements Connection
 {
+    /**
+     * Client instance
+     */
     Client client;
+
+    /**
+     * Client Registry ID
+     */
     String registryID;
 
     RMIConn(Client client, String ID) {
@@ -30,7 +35,7 @@ public class RMIConn implements Connection
             client.updateGame(matchView);
         }
         catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -65,7 +70,7 @@ public class RMIConn implements Connection
             return client.chooseWeapon(available, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -83,7 +88,7 @@ public class RMIConn implements Connection
             return client.grabWeapon(grabbable, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -101,7 +106,7 @@ public class RMIConn implements Connection
             return client.reload(reloadable, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -119,7 +124,7 @@ public class RMIConn implements Connection
             return client.movePlayer(destinations, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -141,7 +146,7 @@ public class RMIConn implements Connection
             return null;
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -161,7 +166,7 @@ public class RMIConn implements Connection
             return client.moveEnemy(enemy, destinations, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -178,7 +183,7 @@ public class RMIConn implements Connection
             return client.discardPower(powers, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -195,7 +200,7 @@ public class RMIConn implements Connection
             return client.chooseRoom(rooms, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -212,7 +217,7 @@ public class RMIConn implements Connection
             return client.chooseDirection(possible, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -229,7 +234,7 @@ public class RMIConn implements Connection
             return client.choosePosition(positions, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -244,7 +249,7 @@ public class RMIConn implements Connection
             return client.getNickname();
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -259,7 +264,7 @@ public class RMIConn implements Connection
             return client.getPhrase();
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -275,7 +280,7 @@ public class RMIConn implements Connection
             return client.getFighter(available);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -290,7 +295,7 @@ public class RMIConn implements Connection
             return client.getSkullNum();
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -308,7 +313,7 @@ public class RMIConn implements Connection
             return client.discardWeapon(inHand, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -323,7 +328,7 @@ public class RMIConn implements Connection
             return client.chooseMap();
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -338,7 +343,7 @@ public class RMIConn implements Connection
             return client.chooseFrenzy();
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+
             throw new ClientDisconnectedException();
         }
     }
@@ -355,7 +360,6 @@ public class RMIConn implements Connection
             return client.choosePower(inHand, mustChoose);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ClientDisconnectedException();
         }
     }
@@ -370,8 +374,8 @@ public class RMIConn implements Connection
             client.sendMessage(payload);
         }
         catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ClientDisconnectedException();
         }
     }
+
 }

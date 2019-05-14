@@ -10,9 +10,7 @@ import it.polimi.ingsw.view.MatchView;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +20,9 @@ public class SocketConn implements Connection {
      */
     private Socket playerSocket;
 
+    /**
+     * Gson instance
+     */
     private Gson gson;
 
     /**
@@ -444,7 +445,6 @@ public class SocketConn implements Connection {
             success = true;
         }
         catch (NoSuchElementException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ClientDisconnectedException();
         }
         catch (IOException e) {
@@ -466,7 +466,6 @@ public class SocketConn implements Connection {
             response = in.nextLine();
         }
         catch (NoSuchElementException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ClientDisconnectedException();
         }
         catch (IOException e) {

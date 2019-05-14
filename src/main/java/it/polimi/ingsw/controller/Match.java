@@ -316,7 +316,7 @@ public class Match implements Runnable
             //Discard the power
             pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 for (int i = 0; i < 3; i++) {
-                    if (powers[i].getId() == chosen.getId()) {
+                    if (powers[i] != null && powers[i].getId() == chosen.getId()) {
                         game.getPowersDeck().scrapCard(powers[i]);
                         powers[i] = null;
                     }
