@@ -61,6 +61,11 @@ public class Match implements Runnable
     private int skullsNum;
 
     /**
+     * Number of the current turn
+     */
+    private int turnNumber;
+
+    /**
      * Creates a new empty match
      * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
@@ -74,6 +79,7 @@ public class Match implements Runnable
         this.firstFrenzy = null;
         this.frenzyKills = new ArrayList<>();
         this.skullsNum = skullsNum;
+        this.turnNumber = 0;
 
         game = Game.jsonDeserialize("resources/baseGame.json");
         game.getPowersDeck().shuffle();
@@ -109,17 +115,12 @@ public class Match implements Runnable
      */
     public void run()
     {
-        int turnNum = 0;
-
         try
         {
             initialize();
         }
         catch (ClientDisconnectedException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            System.out.println(game.getPlayers().get(0).getNick() + " si è disconnesso");
-            game.getPlayers().get(0).setConn(null);
-            //TODO client disconnection while choosing game
+            disconnectPlayer(game.getPlayers().get(0));
         }
         catch(FileNotFoundException e)
         {
@@ -184,8 +185,29 @@ public class Match implements Runnable
 
             updateViews();
 
-            System.out.println("\u001B[31mFine turno " + turnNum + "\u001B[0m");
-            turnNum++;
+            System.out.println("\u001B[31mFine turno " + turnNumber + "\u001B[0m");
+            turnNumber++;
+        }
+    }
+
+    private void disconnectPlayer(Player pl)
+    {
+        Logger.getGlobal().log( Level.SEVERE, pl.getNick()+" si è disconnesso" );
+        System.out.println(pl.getNick() + " si è disconnesso");
+        pl.setConn(null);
+
+        for(Player p: game.getPlayers())
+        {
+            if(p.getConn() != null)
+            {
+                try{
+                    p.getConn().sendMessage(pl.getNick() + "Si è disconnesso");
+                }
+                catch(ClientDisconnectedException e)
+                {
+                    disconnectPlayer(p);
+                }
+            }
         }
     }
 
@@ -227,10 +249,7 @@ public class Match implements Runnable
                 active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
             }
             catch(ClientDisconnectedException e) {
-                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-                System.out.println(active.getNick() + " si è disconnesso");
-                active.setConn(null);
-                ; //TODO @Erap320 checkout and correct
+                disconnectPlayer(active);
                 return;
             }
 
@@ -243,10 +262,7 @@ public class Match implements Runnable
                 ActionLambdaMap.reload(active);
             }
             catch(ClientDisconnectedException e) {
-                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-                System.out.println(active.getNick() + " si è disconnesso");
-                active.setConn(null);
-                ; //TODO @Erap320 checkout and correct
+                disconnectPlayer(active);
             }
         }
     }
@@ -256,8 +272,6 @@ public class Match implements Runnable
      */
     private void updateViews()
     {
-        //TODO put this back when graphics are needed
-
         for(Player p: game.getPlayers())
         {
             if(p.getConn() != null)
@@ -267,9 +281,7 @@ public class Match implements Runnable
                 }
                 catch(ClientDisconnectedException e)
                 {
-                    Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-                    System.out.println(p.getNick() + " si è disconnesso");
-                    p.setConn(null);
+                    disconnectPlayer(p);
                 }
             }
         }
@@ -349,8 +361,7 @@ public class Match implements Runnable
 
         }
         catch (ClientDisconnectedException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            ; //TODO @Erap320 checkout and correct
+            disconnectPlayer(pl);
         }
 
         pl.setSpawned(true);
