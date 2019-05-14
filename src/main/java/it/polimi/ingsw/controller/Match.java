@@ -127,6 +127,8 @@ public class Match implements Runnable
             Logger.getGlobal().log(Level.SEVERE, "Map not found (Match.java)");
         }
 
+        updateViews();
+
         //The first turn is played by the player in the first position of the list
         active = game.getPlayers().get(0);
         actionsNumber = 2;
