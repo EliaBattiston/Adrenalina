@@ -1,57 +1,71 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.model.Loot;
+import it.polimi.ingsw.model.Power;
 import it.polimi.ingsw.model.Weapon;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Remember to relocate the card after making it in the class that use it
  */
-public class GuiCard {
+public class GuiCard extends Canvas {
     private it.polimi.ingsw.model.Card data;
     private Image img;
-    private ImageView iv;
 
-    public GuiCard(it.polimi.ingsw.model.Weapon weapon, GraphicsContext gc, double imgWidth, double imgHeight, double x, double y, int rotation){
+    public GuiCard(it.polimi.ingsw.model.Weapon weapon, double width, double height, int rotation){
+        super((rotation==0?width:height), (rotation==0?height:width));
         this.data = weapon;
+
         img = new Image( "file:images/weapon/weapon" + weapon.getId() + ".png" );
 
-        iv = new ImageView(img);
-        iv.setRotate(rotation);
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
-        
-        Image fixImg = iv.snapshot(params, null);
         if(rotation != 0){
-            gc.drawImage(fixImg, x, y, imgHeight, imgWidth); //the rotation should be of +-90 degrees so height and width will be inverted
+            ImageView iv = new ImageView(img);
+            iv.setPickOnBounds(false);
+            iv.setRotate(rotation);
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(Color.TRANSPARENT);
+            Image rotatedImage = iv.snapshot(params, null);
+            getGraphicsContext2D().drawImage(rotatedImage, 0, 0, height, width); //the rotation should be of +-90 degrees so height and width will be inverted
         }
         else
-            gc.drawImage( fixImg, x, y, imgWidth, imgHeight);
+            getGraphicsContext2D().drawImage( img, 0, 0, width, height);
 
-        iv.setOnMousePressed(e ->{
+        setOnMousePressed(e ->{
             System.out.println("Clicked " + ((Weapon)data).getName());
         });
     }
 
-    public GuiCard(it.polimi.ingsw.model.Loot loot, GraphicsContext gc, double width, double height, double x, double y){
+    public GuiCard(it.polimi.ingsw.model.Loot loot, double size){
+        super(size, size);
         this.data = loot;
         img = new Image( "file:images/loot/" + loot.getContentAsString() + ".png" );
 
-        gc.drawImage( img, x, y, width, height);
+        this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
+
+        setOnMousePressed(e ->{
+            System.out.println("Clicked " + ((Loot)data).getContentAsString());
+        });
     }
 
-    public GuiCard(it.polimi.ingsw.model.Power power, GraphicsContext gc, double imgWidth, double imgHeight, double x, double y){
+    public GuiCard(it.polimi.ingsw.model.Power power, double width, double height){
+        super(width, height);
         this.data = power;
-        img = new Image( "file:images/power/power" + (power.getId()<12 ? power.getId() : power.getId()/2) + ".png" );
+        img = new Image( "file:images/power/power" + (power.getId()<=12 ? power.getId() : power.getId()/2) + ".png" );
 
-        gc.drawImage( img, x, y, imgWidth, imgHeight);
+        this.getGraphicsContext2D().drawImage( img, 0, 0, width, height);
+
+        setOnMousePressed(e ->{
+            System.out.println("Clicked " + ((Power)data).getName());
+        });
+    }
+
+    public void setPosition(double x, double y){
+        setPickOnBounds(false);
+        setTranslateX(x);
+        setTranslateY(y);
     }
 }
