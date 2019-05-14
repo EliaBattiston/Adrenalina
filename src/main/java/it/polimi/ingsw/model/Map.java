@@ -17,9 +17,18 @@ import java.util.logging.Logger;
  */
 public class Map {
     /**
+     *
+     */
+    private int id;
+
+    /**
      * Matrix of cells representing the map
      */
     private Cell[][] cells;
+
+    public int getId() {
+        return id;
+    }
 
     /**
      * Returns the reference of a selected cell
@@ -64,15 +73,15 @@ public class Map {
      */
     public static Map jsonDeserialize(int mapNumber) {
         try{
-            if(mapNumber >= 1 && mapNumber <= 4)
-            {
-                return Map.jsonDeserialize("resources/map" + mapNumber + ".json");
+            if(mapNumber >= 1 && mapNumber <= 4){
+                Map m = Map.jsonDeserialize("resources/map" + mapNumber + ".json");
+                m.id = mapNumber;
+                return m;
             }
             else
-            {
                 return null;
-            }
         }catch(FileNotFoundException ex){
+            Logger.getGlobal().log(Level.SEVERE, "Map not found!");
             return null;
         }
     }

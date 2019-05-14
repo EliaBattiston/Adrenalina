@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -9,6 +10,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,10 @@ import java.util.Random;
 import static java.lang.Math.abs;
 
 public class Gui extends Application implements UserInterface{
+    private MatchView match;
+    private GameView game;
+
+    private Scene mainScene;
     private double backgroundWidth;
     private double backgroundHeight;
     private double dimMult;
@@ -24,7 +30,6 @@ public class Gui extends Application implements UserInterface{
 
     private static String imgBackground = "file:images/background.png";
     private static String dirPlayerboard = "file:images/playerBoard/";
-    private static String dirLoot = "file:images/loot/";
     private static String dirDrops = "file:images/drops/";
     private static String dirPawns = "file:images/playerPawn/";
 
@@ -36,87 +41,38 @@ public class Gui extends Application implements UserInterface{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Game game;
-
-        backgroundWidth = 1920;
+        backgroundWidth = 1800;
         backgroundHeight = backgroundWidth*9/16;
 
         dimMult = backgroundWidth/1920;
 
-        //Settings for testing
-        game = Game.jsonDeserialize("resources/baseGame.json");
-        ArrayList<Player> players = new ArrayList<>();
-        players.add(new Player("p1", "!", Fighter.VIOLETTA));
-        players.add(new Player("p2", "!", Fighter.DSTRUTTOR3));
-        players.add(new Player("p3", "!", Fighter.SPROG));
-        players.add(new Player("p4", "!", Fighter.BANSHEE));
-        players.add(new Player("p5", "!", Fighter.DOZER));
+        initForTest();
 
-        Player me = players.get(0);
-
-        me.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-            game.getWeaponsDeck().shuffle();
-            weapons[0] = game.getWeaponsDeck().draw();
-            weapons[1] = game.getWeaponsDeck().draw();
-
-            game.getPowersDeck().shuffle();
-            powers[0] = game.getPowersDeck().draw();
-            powers[1] = game.getPowersDeck().draw();
-
-            ammo.add(Color.YELLOW, 2);
-            ammo.add(Color.BLUE, 1);
-
-            damage[0] = "p2";
-            damage[1] = "p2";
-            damage[2] = "p3";
-
-            marks.addAll(Arrays.asList("p2", "p3", "p3"));
-            marks.addAll(Arrays.asList("p4", "p5", "p4"));
-        }));
-
-        game.loadMap(1);
-
-        for(int x = 0; x < 4; x++)
-            for(int y = 0; y < 3; y++)
-                if(game.getMap().getCell(x, y) != null)
-                    game.getMap().getCell(x, y).refill(game);
-
-        //it's just for test
-        for(Player p:players){
-            int x, y;
-            do {
-                x = new Random().nextInt(4);
-                y = new Random().nextInt(3);
-            }while(game.getMap().getCell(x, y) == null);
-
-            game.getMap().getCell(x, y).addPawn(p);
-        }
-
-        //END of settings for testing
+        mainScene = new Scene(drawGame());
 
         primaryStage.setTitle("Adrenalina");
-        primaryStage.setScene(new Scene(drawGame(game.getMap(), me, players)));
-        primaryStage.setResizable(true);
+        primaryStage.setScene(mainScene);
+        //primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
         //Event handlers
-
-        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+       /* primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
             // Do whatever you want
-            if(abs(newVal.doubleValue() - backgroundWidth) > 15) {
+            if(abs(newVal.doubleValue() - backgroundWidth) > 150) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
 
                 dimMult = backgroundWidth / 1920;
                 primaryStage.setScene(new Scene(drawGame(game.getMap(), me, players)));
+                primaryStage.setHeight(backgroundHeight);
             }
-        });
+        });*/
 
         // primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> { });
     }
 
-    private Pane drawGame(Map map, Player me, List<Player> players){
+    private Pane drawGame(){
         Pane masterPane;
         Canvas canvas;
         StackPane a, b, c, d;
@@ -126,17 +82,17 @@ public class Gui extends Application implements UserInterface{
         gc = canvas.getGraphicsContext2D();
 
         drawBackground();
-        drawMap(1);
-        drawPawnsOnMap(map);
+        drawMap(match.getGame().getMap());
+        drawPawnsOnMap(match.getGame().getMap());
 
         drawDecks();
-        drawAllPlayersBoards(players,false);
-        drawMyAmmo(me.getAmmo());
+        drawAllPlayersBoards(match.getGame().getPlayers(),false); //FRENZY?
+        drawMyAmmo(match.getMyPlayer().getAmmo());
 
-        a = drawMyWeapons(me.getWeapons());
-        b = drawMyPowers(me.getPowers());
-        c = drawWeaponsLoot(map);
-        d = drawLootOnMap(map);
+        a = drawMyWeapons(match.getMyPlayer().getWeapons());
+        b = drawMyPowers(match.getMyPlayer().getPowers());
+        c = drawWeaponsLoot(match.getGame().getMap());
+        d = drawLootOnMap(match.getGame().getMap());
 
         a.setPickOnBounds(false);
         b.setPickOnBounds(false);
@@ -152,13 +108,13 @@ public class Gui extends Application implements UserInterface{
         gc.drawImage( new Image(imgBackground), 0, 0, backgroundWidth, backgroundHeight);
     }
 
-    private void drawMap(int mapNum){
+    private void drawMap(Map map){
         double width = 1142 * dimMult;
         double height = 866 * dimMult;
         double x = 18 * dimMult;
         double y = x;
 
-        gc.drawImage( new Image("file:images/map/map" + mapNum + ".png"), x, y, width, height);
+        gc.drawImage( new Image("file:images/map/map" + map.getId() + ".png"), x, y, width, height);
     }
 
     private StackPane drawLootOnMap (Map map){
@@ -173,7 +129,6 @@ public class Gui extends Application implements UserInterface{
         if(map.getCell(0, 0) != null) {
             x = 310 * dimMult;
             y = 325 * dimMult;
-            //gc.drawImage(new Image( dirLoot + ((RegularCell)map.getCell(0, 0)).getLoot().getContentAsString() +".png"), x, y, size, size);
             GuiCard card = new GuiCard(((RegularCell)map.getCell(0, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
@@ -499,13 +454,46 @@ public class Gui extends Application implements UserInterface{
     }
 
     /**
+     * Used for: getNickname, getPhrase, getFighter, getSkulls
+     */
+    private void askUserSettings(){}
+
+    /**
+     * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
+     */
+    private void chooseWeaponCard(){}
+
+    /**
+     * Used for: discardPower, choosePower
+     */
+    private void choosePowerCard(){}
+
+    /**
+     * Used for: movePlayer, choosePosition
+     */
+    private void chooseCell(){}
+
+    /**
+     * Used for: chooseTarget, moveEnemy
+     */
+    private void chooseEnemy(){}
+
+    /**
+     * Used for: chooseRoom, chooseDirection, chooseMap, chooseFrenzy
+     */
+    private void chooseDialog(){}
+
+    /**
      * Update the actual gameView to the client
      *
      * @param matchView current game view
      */
     @Override
     public void updateGame(MatchView matchView) {
+        match = matchView;
+        game = matchView.getGame();
 
+        drawGame();
     }
 
     /**
@@ -647,7 +635,7 @@ public class Gui extends Application implements UserInterface{
      */
     @Override
     public String getNickname() {
-        return null;
+        return "GuiGuy";
     }
 
     /**
@@ -657,7 +645,7 @@ public class Gui extends Application implements UserInterface{
      */
     @Override
     public String getPhrase() {
-        return null;
+        return "HelloMondo";
     }
 
     /**
@@ -667,7 +655,7 @@ public class Gui extends Application implements UserInterface{
      */
     @Override
     public Fighter getFighter() {
-        return null;
+        return Fighter.DSTRUTTOR3;
     }
 
     /**
@@ -677,7 +665,7 @@ public class Gui extends Application implements UserInterface{
      */
     @Override
     public Integer getSkullNum() {
-        return null;
+        return 5;
     }
 
     /**
@@ -709,7 +697,7 @@ public class Gui extends Application implements UserInterface{
      */
     @Override
     public Boolean chooseFrenzy() {
-        return null;
+        return false;
     }
 
     /**
@@ -722,5 +710,60 @@ public class Gui extends Application implements UserInterface{
     @Override
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
         return null;
+    }
+
+    private void initForTest() throws FileNotFoundException {
+        //Settings for testing
+        Game allGame = Game.jsonDeserialize("resources/baseGame.json");
+        ArrayList<Player> players = new ArrayList<>();
+        players.add(new Player("p1", "!", Fighter.VIOLETTA));
+        players.add(new Player("p2", "!", Fighter.DSTRUTTOR3));
+        players.add(new Player("p3", "!", Fighter.SPROG));
+        players.add(new Player("p4", "!", Fighter.BANSHEE));
+        players.add(new Player("p5", "!", Fighter.DOZER));
+
+        Player me = players.get(0);
+
+        me.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+            allGame.getWeaponsDeck().shuffle();
+            weapons[0] = allGame.getWeaponsDeck().draw();
+            weapons[1] = allGame.getWeaponsDeck().draw();
+
+            allGame.getPowersDeck().shuffle();
+            powers[0] = allGame.getPowersDeck().draw();
+            powers[1] = allGame.getPowersDeck().draw();
+
+            ammo.add(Color.YELLOW, 2);
+            ammo.add(Color.BLUE, 1);
+
+            damage[0] = "p2";
+            damage[1] = "p2";
+            damage[2] = "p3";
+
+            marks.addAll(Arrays.asList("p2", "p3", "p3"));
+            marks.addAll(Arrays.asList("p4", "p5", "p4"));
+        }));
+
+        allGame.loadMap(1);
+
+        for(int x = 0; x < 4; x++)
+            for(int y = 0; y < 3; y++)
+                if(allGame.getMap().getCell(x, y) != null)
+                    allGame.getMap().getCell(x, y).refill(allGame);
+
+        //it's just for test
+        for(Player p:players){
+            int x, y;
+            do {
+                x = new Random().nextInt(4);
+                y = new Random().nextInt(3);
+            }while(allGame.getMap().getCell(x, y) == null);
+
+            allGame.getMap().getCell(x, y).addPawn(p);
+        }
+
+        game = new GameView(allGame.getMap(), players, null);
+
+        match = new MatchView(game, me, me, 3, GamePhase.REGULAR, true, me);
     }
 }

@@ -205,7 +205,7 @@ public class Game {
                     p.clearForView();
             }
 
-            return new GameView(map, players, skullsBoard);
+            return new GameView(map, cleanable.getPlayers(), skullsBoard);
         }catch(FileNotFoundException e){
             Logger.getGlobal().log(Level.SEVERE, "Error while extracting the game view");
         }
