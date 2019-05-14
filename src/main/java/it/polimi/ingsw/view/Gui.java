@@ -6,17 +6,13 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.RecursiveTask;
 
 public class Gui extends Application {
     Game game;
@@ -31,6 +27,10 @@ public class Gui extends Application {
     private static String dirDrops = "file:images/drops/";
     private static String dirPawns = "file:images/playerPawn/";
 
+    private Pane masterPane;
+    private Canvas canvas;
+    private GraphicsContext gc;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -44,7 +44,9 @@ public class Gui extends Application {
 
         dimMult = backgroundWidth/1920;
 
-        Pane masterPane = new Pane();
+        masterPane = new Pane();
+        canvas = new Canvas(backgroundWidth, backgroundHeight);
+        gc = canvas.getGraphicsContext2D();
 
         primaryStage.setTitle("Adrenalina");
 
@@ -69,7 +71,6 @@ public class Gui extends Application {
             powers[0] = game.getPowersDeck().draw();
             powers[1] = game.getPowersDeck().draw();
 
-            //ammo = new Ammunitions();
             ammo.add(Color.YELLOW, 2);
             ammo.add(Color.BLUE, 1);
 
@@ -113,8 +114,17 @@ public class Gui extends Application {
 
         //END of settings for testing
 
-        masterPane.getChildren().addAll(drawBackground(), drawMap(1), drawPawnsOnMap(map), drawLootOnMap(map), drawDecks(), drawAllPlayersBoards(players,false),
-                drawMyWeapons(me.getWeapons()), drawMyPowers(me.getPowers()), drawMyAmmo(me.getAmmo()), drawPoints(5), drawWeaponsLoot(map));
+        drawBackground();
+        drawMap(1);
+        drawPawnsOnMap(map);
+        drawLootOnMap(map);
+        drawDecks();
+        drawAllPlayersBoards(players,false);
+        drawMyAmmo(me.getAmmo());
+        drawMyWeapons(me.getWeapons());
+        drawMyPowers(me.getPowers());
+        drawWeaponsLoot(map);
+        masterPane.getChildren().addAll(canvas);
 
         primaryStage.setScene(new Scene(masterPane));
         primaryStage.setResizable(false);
@@ -134,28 +144,28 @@ public class Gui extends Application {
         });*/
     }
 
-    private Canvas drawBackground(){
-        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
-        canvas.getGraphicsContext2D().drawImage( new Image(imgBackground), 0, 0, backgroundWidth, backgroundHeight);
-        return canvas;
+    private void drawBackground(){
+        //Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        gc.drawImage( new Image(imgBackground), 0, 0, backgroundWidth, backgroundHeight);
+        //return canvas;
     }
 
-    private Canvas drawMap(int mapNum){
-        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+    private void drawMap(int mapNum){
+        //Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
 
         double width = 1142 * dimMult;
         double height = 866 * dimMult;
         double x = 18 * dimMult;
         double y = x;
 
-        canvas.getGraphicsContext2D().drawImage( new Image("file:images/map/map" + mapNum + ".png"), x, y, width, height);
+        gc.drawImage( new Image("file:images/map/map" + mapNum + ".png"), x, y, width, height);
 
-        return canvas;
+        //return canvas;
     }
 
-    private Canvas drawLootOnMap (Map map){
-        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    private void drawLootOnMap (Map map){
+        //Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        //GraphicsContext gc = canvas.getGraphicsContext2D();
 
         //dimensions are the same
         double size = 55 * dimMult;
@@ -209,12 +219,12 @@ public class Gui extends Application {
             gc.drawImage(new Image(dirLoot + ((RegularCell)map.getCell(2, 2)).getLoot().getContentAsString() +".png"), x, y, size, size);
         }
 
-        return canvas;
+        //return canvas;
     }
 
-    private Canvas drawPawnsOnMap (Map map){
-        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    private void drawPawnsOnMap (Map map){
+        //Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        //GraphicsContext gc = canvas.getGraphicsContext2D();
 
         double size = 50 * dimMult;
         double baseX = 224 * dimMult;
@@ -248,11 +258,11 @@ public class Gui extends Application {
             }
         }
 
-        return canvas;
+        //return canvas;
     }
 
-    private StackPane drawWeaponsLoot(Map map){
-        StackPane root = new StackPane();
+    private void drawWeaponsLoot(Map map){
+        //StackPane root = new StackPane();
 
         //dimensions are the same
         double width = 104 * dimMult;
@@ -267,8 +277,8 @@ public class Gui extends Application {
         //First the blue spawn
         SpawnCell c = (SpawnCell) map.getCell(2,0);
         for(Weapon w:c.getWeapons()){
-            CardGui card = new CardGui(w, backgroundWidth, backgroundHeight, width, height, x, y, 0);
-            root.getChildren().add(card);
+            GuiCard card = new GuiCard(w, gc, width, height, x, y, 0);
+            //root.getChildren().add(card);
 
             x += deltaX;
         }
@@ -279,9 +289,9 @@ public class Gui extends Application {
         //Red spawn
         c = (SpawnCell) map.getCell(0, 1);
         for(Weapon w:c.getWeapons()){
-            CardGui card = new CardGui(w, backgroundWidth, backgroundHeight, width, height, x, y, -90);
+            GuiCard card = new GuiCard(w, gc, width, height, x, y, -90);
 
-            root.getChildren().add(card);
+            //root.getChildren().add(card);
 
             y += deltaY;
         }
@@ -292,41 +302,41 @@ public class Gui extends Application {
         //Yellow spawn
         c = (SpawnCell) map.getCell(3, 2);
         for(Weapon w:c.getWeapons()){
-            CardGui card = new CardGui(w, backgroundWidth, backgroundHeight, width, height, x, y, +90);
+            GuiCard card = new GuiCard(w, gc, width, height, x, y, +90);
 
-            root.getChildren().add(card);
+            //root.getChildren().add(card);
 
             y += deltaY;
         }
 
-        return root;
+        //return root;
     }
 
-    private StackPane drawDecks(){
-        StackPane root = new StackPane();
+    private void drawDecks(){
+        //StackPane root = new StackPane();
 
         //PowersDeck
-        Canvas pow = new Canvas(backgroundWidth, backgroundHeight);
+        //Canvas pow = new Canvas(backgroundWidth, backgroundHeight);
         double width = 80 * dimMult;
         double height = 109 * dimMult;
         double x = 1044 * dimMult;
         double y = 65 * dimMult;
-        pow.getGraphicsContext2D().drawImage(new Image("file:images/power/powerBackPile.png"), x, y, width, height);
+        gc.drawImage(new Image("file:images/power/powerBackPile.png"), x, y, width, height);
 
         //WeaponsDeck
-        Canvas wea = new Canvas(backgroundWidth, backgroundHeight);
+        //Canvas wea = new Canvas(backgroundWidth, backgroundHeight);
         width = 100 * dimMult;
         height = 174 * dimMult;
         x = 1018 * dimMult;
         y = 252 * dimMult;
-        wea.getGraphicsContext2D().drawImage(new Image("file:images/weapon/weaponBackPile.png"), x, y, width, height);
+        gc.drawImage(new Image("file:images/weapon/weaponBackPile.png"), x, y, width, height);
 
-        root.getChildren().addAll(pow, wea);
-        return root;
+        //root.getChildren().addAll(pow, wea);
+        //return root;
     }
 
-    private StackPane drawAllPlayersBoards(List<Player> players, boolean adrenalineMode){
-        StackPane root = new StackPane();
+    private void drawAllPlayersBoards(List<Player> players, boolean adrenalineMode){
+        //StackPane root = new StackPane();
 
         //dimensions are the same for all the players
         double width = 560 * dimMult;
@@ -338,17 +348,17 @@ public class Gui extends Application {
         double deltaY = 169 * dimMult;
 
         for(Player p : players){
-            root.getChildren().add(drawPlayerBoard(p, players, adrenalineMode, width, height, x, y));
+            drawPlayerBoard(p, players, adrenalineMode, width, height, x, y);
             y += deltaY;
         }
 
-        return root;
+        //return root;
     }
 
-    private StackPane drawPlayerBoard(Player player, List<Player> players, boolean adrenalineMode, double width, double height, double x, double y){
-        StackPane pane = new StackPane();
-        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    private void drawPlayerBoard(Player player, List<Player> players, boolean adrenalineMode, double width, double height, double x, double y){
+        //StackPane pane = new StackPane();
+        //Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        //GraphicsContext gc = canvas.getGraphicsContext2D();
 
         double pbMult = width/1123; //(dimMult * width@1080p)/textureWidth -> internal reference based on the card
         double xDrop = (adrenalineMode?130:116) * pbMult + x;
@@ -388,12 +398,12 @@ public class Gui extends Application {
             xDrop += deltaX;
         }
 
-        pane.getChildren().add(canvas);
-        return pane;
+        //pane.getChildren().add(canvas);
+        //return pane;
     }
 
-    private StackPane drawMyWeapons(List<Weapon> weapons){
-        StackPane root = new StackPane();
+    private void drawMyWeapons(List<Weapon> weapons){
+        //StackPane root = new StackPane();
 
         //dimensions are the same
         double width = 120 * dimMult;
@@ -405,16 +415,16 @@ public class Gui extends Application {
         double deltaX = 136 * dimMult;
 
         for(Weapon w : weapons){
-            CardGui card = new CardGui(w, backgroundWidth, backgroundHeight, width, height, x, y, 0);
-            root.getChildren().add(card);
+            GuiCard card = new GuiCard(w, gc, width, height, x, y, 0);
+            //root.getChildren().add(card);
             x += deltaX;
         }
 
-        return root;
+        //return root;
     }
 
-    private StackPane drawMyPowers(List<Power> powers){
-        StackPane root = new StackPane();
+    private void drawMyPowers(List<Power> powers){
+        //StackPane root = new StackPane();
 
         //dimensions are the same
         double width = 92 * dimMult;
@@ -426,16 +436,16 @@ public class Gui extends Application {
         double deltaX = 102 * dimMult;
 
         for(Power p : powers){
-            CardGui card = new CardGui(p, backgroundWidth, backgroundHeight, width, height, x, y);
-            root.getChildren().add(card);
+            GuiCard card = new GuiCard(p, gc, width, height, x, y);
+            //root.getChildren().add(card);
             x += deltaX;
         }
 
-        return root;
+        //return root;
     }
 
-    private StackPane drawMyAmmo(Ammunitions ammo){
-        StackPane root = new StackPane();
+    private void drawMyAmmo(Ammunitions ammo){
+        //StackPane root = new StackPane();
 
         //dimensions are the same
         double width = 35 * dimMult;
@@ -446,8 +456,8 @@ public class Gui extends Application {
         double deltaX = 43 * dimMult;
         double deltaY = 36 * dimMult;
 
-        Canvas ammoCanvas = new Canvas(backgroundWidth, backgroundHeight);
-        GraphicsContext gc = ammoCanvas.getGraphicsContext2D();
+        //Canvas ammoCanvas = new Canvas(backgroundWidth, backgroundHeight);
+        //GraphicsContext gc = ammoCanvas.getGraphicsContext2D();
         Image blue = new Image("file:images/loot/blue.png");
         Image red = new Image("file:images/loot/red.png");
         Image yellow = new Image("file:images/loot/yellow.png");
@@ -471,8 +481,8 @@ public class Gui extends Application {
             x += deltaX;
         }
 
-        root.getChildren().add(ammoCanvas);
-        return root;
+        //root.getChildren().add(ammoCanvas);
+        //return root;
     }
 
     private StackPane drawPoints(int points){
