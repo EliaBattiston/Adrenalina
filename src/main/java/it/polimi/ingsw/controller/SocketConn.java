@@ -447,6 +447,7 @@ public class SocketConn implements Connection {
             success = true;
         }
         catch (NoSuchElementException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ClientDisconnectedException();
         }
         catch (IOException e) {
@@ -468,6 +469,7 @@ public class SocketConn implements Connection {
             response = in.nextLine();
         }
         catch (NoSuchElementException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ClientDisconnectedException();
         }
         catch (IOException e) {

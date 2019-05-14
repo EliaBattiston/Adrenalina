@@ -46,7 +46,8 @@ public class SocketClient implements Client {
                 serverSocket = new Socket(ipAddr, port);
                 instanced = true;
             }
-            catch (UnknownHostException | ConnectException f) {
+            catch (UnknownHostException | ConnectException e) {
+                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 throw new ServerNotFoundException();
             }
             catch (IOException e) {
@@ -59,6 +60,7 @@ public class SocketClient implements Client {
                 receive();
         }
         catch (ServerDisconnectedException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ServerDisconnectedException();
         }
     }
@@ -265,6 +267,7 @@ public class SocketClient implements Client {
             success = true;
         }
         catch(NoSuchElementException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ServerDisconnectedException();
         }
         catch (IOException e) {
@@ -469,6 +472,7 @@ public class SocketClient implements Client {
                 send(jsonSerialize(answer));
         }
         catch (NoSuchElementException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ServerDisconnectedException();
         }
         catch (IOException e) {

@@ -70,9 +70,11 @@ public class CMain
                 instanced = true;
             }
             catch (ServerNotFoundException e) {
+                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 ui.generalMessage("Server non trovato, riprova\n");
             }
             catch (ServerDisconnectedException e) {
+                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 ui.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
                 return;
             }

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The class represents a non-spawning (regular) cell
@@ -94,6 +96,7 @@ public class RegularCell extends Cell {
                             discarded = pl.getConn().discardPower(inHand, true);
                         }
                         catch(ClientDisconnectedException e) {
+                            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                             ; //TODO @Erap320 burn it down
                         }
 

@@ -176,6 +176,7 @@ public class SMain
                 player.getConn().sendMessage("Benvenuto in Adrenalina!");
             }
             catch (ClientDisconnectedException e) {
+                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 println("Nuova connessione annullata");
             }
         }
@@ -235,6 +236,7 @@ public class SMain
                     p.getConn().sendMessage("Partita in avvio...");
                 }
                 catch (ClientDisconnectedException e) {
+                    Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                     cancelConnection(p.getNick());
                 }
             }
@@ -254,6 +256,7 @@ public class SMain
                         p.getConn().sendMessage("Errore - troppi utenti disconnessi. Ripristino a stanza di attesa");
                     }
                     catch (ClientDisconnectedException e) {
+                        Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                         cancelConnection(p.getNick());
                     }
                 }

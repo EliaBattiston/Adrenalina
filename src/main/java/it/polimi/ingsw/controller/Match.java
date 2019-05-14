@@ -84,7 +84,6 @@ public class Match implements Runnable
 
     /**
      *  Executes the operations needed before the start of the game
-     * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
      */
     private void initialize() throws FileNotFoundException, ClientDisconnectedException
@@ -117,6 +116,7 @@ public class Match implements Runnable
             initialize();
         }
         catch (ClientDisconnectedException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             System.out.println(game.getPlayers().get(0).getNick() + " si è disconnesso");
             game.getPlayers().get(0).setConn(null);
             //TODO client disconnection while choosing game
@@ -227,6 +227,7 @@ public class Match implements Runnable
                 active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
             }
             catch(ClientDisconnectedException e) {
+                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 System.out.println(active.getNick() + " si è disconnesso");
                 active.setConn(null);
                 ; //TODO @Erap320 checkout and correct
@@ -242,6 +243,7 @@ public class Match implements Runnable
                 ActionLambdaMap.reload(active);
             }
             catch(ClientDisconnectedException e) {
+                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                 System.out.println(active.getNick() + " si è disconnesso");
                 active.setConn(null);
                 ; //TODO @Erap320 checkout and correct
@@ -265,6 +267,7 @@ public class Match implements Runnable
                 }
                 catch(ClientDisconnectedException e)
                 {
+                    Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                     System.out.println(p.getNick() + " si è disconnesso");
                     p.setConn(null);
                 }
@@ -345,6 +348,7 @@ public class Match implements Runnable
 
         }
         catch (ClientDisconnectedException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             ; //TODO @Erap320 checkout and correct
         }
     }

@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * CLI implementation of the user interface
@@ -333,7 +335,8 @@ public class CLInterface implements UserInterface {
                         sel2--;
                         printWeapon(weaplist.get(sel2));
                     }
-                    catch(FileNotFoundException ex){
+                    catch(FileNotFoundException e){
+                        Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                         println("Error! Error!");
                     }
                     break;
@@ -357,7 +360,8 @@ public class CLInterface implements UserInterface {
                         sel2--;
                         println(ANSI_BOLD + powlist.get(sel2).getName() + ANSI_RESET + ": " + powlist.get(sel2).getBase().getDescription());
                     }
-                    catch(FileNotFoundException ex){
+                    catch(FileNotFoundException e){
+                        Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                         println("Error! Error!");
                     }
                     break;

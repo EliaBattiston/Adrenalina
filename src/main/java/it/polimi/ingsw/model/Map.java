@@ -76,6 +76,7 @@ public class Map implements Serializable {
                 return null;
             }
         }catch(FileNotFoundException ex){
+            Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
             return null;
         }
     }

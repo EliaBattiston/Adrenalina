@@ -45,6 +45,7 @@ public class RMIClient extends UnicastRemoteObject implements Client
             user = userint;
         }
         catch (java.rmi.UnknownHostException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             throw new ServerNotFoundException();
         }
         catch(Exception e) {

@@ -3,6 +3,8 @@ package it.polimi.ingsw.model;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is needed for Gson to understand when serializing/deserializing a Cell data if it is an instance of a
@@ -27,6 +29,7 @@ public class CellAdapter implements JsonSerializer<Cell>, JsonDeserializer<Cell>
         try {
             return context.deserialize(element, Class.forName("it.polimi.ingsw.model." + type));
         } catch (ClassNotFoundException cnfe) {
+            Logger.getGlobal().log( Level.SEVERE, cnfe.toString());
             throw new JsonParseException("Unknown element type: " + type, cnfe);
         }
     }
