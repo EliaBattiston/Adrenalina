@@ -49,6 +49,8 @@ public class SocketConn implements Connection {
         load.setType(Interaction.UPDATEVIEW);
         load.setParameters(gson.toJson(matchView));
         send(gson.toJson(load));
+        //Needed to complete the connection protocol
+        receive();
     }
 
     /**
@@ -426,6 +428,8 @@ public class SocketConn implements Connection {
         load.setType(Interaction.MESSAGE);
         load.setParameters(gson.toJson(payload));
         send(gson.toJson(load));
+        //Needed to complete the connection protocol
+        receive();
     }
 
 

@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.Player;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
@@ -39,7 +38,8 @@ public class SMain
 
     private boolean stop;
     private Timer[] timer;
-    Object lock = new Object();
+    Object lock, cancelLock;
+    Object matchLock[];
     private static final int MINSKULLS = 5;
     private boolean[] startedTimer;
 
@@ -48,6 +48,14 @@ public class SMain
      */
     public SMain()
     {
+
+        lock = new Object();
+        cancelLock = new Object();
+        matchLock = new Object[8 - MINSKULLS + 1];
+        for(int i = 0; i <  matchLock.length; i++) {
+            matchLock[i] = new Object();
+        }
+
         try {
             socket = new SocketServer(1906);
             rmi = new RMIServer();
@@ -103,12 +111,12 @@ public class SMain
     }
 
     public void newConnection(Connection connection) {
-        synchronized (lock) {
-            println("Rilevata nuova connessione");
-            try {
-                boolean acceptedNick = true;
-                Player player = null;
-                String nickname;
+        println("Rilevata nuova connessione");
+        try {
+            boolean acceptedNick = true;
+            Player player = null;
+            String nickname;
+            synchronized (lock) {
                 do {
                     acceptedNick = true;
 
@@ -134,59 +142,63 @@ public class SMain
                         }
                     }
                 } while (!acceptedNick);
+            }
 
-                if (player != null) {
-                    player.setConn(connection);
+            if (player != null) {
+                player.setConn(connection);
 
-                    println("Il giocatore " + player.getNick() + " si è riconnesso.");
-                } else {
-                    int skulls = connection.getSkullNum();
-                    int index = skulls - MINSKULLS;
+                println("Il giocatore " + player.getNick() + " si è riconnesso.");
+            } else {
+                int skulls = connection.getSkullNum();
+                int index = skulls - MINSKULLS;
 
+                String phrase = connection.getPhrase();
+                Fighter fighter;
+
+                synchronized (matchLock[index]) {
                     List<Fighter> available = new ArrayList<>();
                     Collections.addAll(available, Fighter.values());
-                    if(waiting[index] != null) {
-                        for(Player p: waiting[index].getGame().getPlayers()) {
+                    if (waiting[index] != null) {
+                        for (Player p : waiting[index].getGame().getPlayers()) {
                             available.remove(p.getCharacter());
                         }
                     }
 
-                    String phrase = connection.getPhrase();
-                    Fighter fighter = connection.getFighter(available);
-                    player = new Player(nickname, phrase, fighter);
-                    player.setConn(connection);
-
-                    if (waiting[index] == null) {
-                        try {
-                            waiting[index] = new Match(skulls);
-                        } catch (FileNotFoundException e) {
-                            Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
-                        }
-                    }
-                    waiting[index].getGame().addPlayer(player);
-                    if (waiting[index].getGame().getPlayers().size() >= 3) {
-                        if (!startedTimer[index]) {
-                            matchTimer(skulls);
-                            startedTimer[index] = true;
-                        } else if (waiting[index].getGame().getPlayers().size() == 5) {
-                            cancelTimer(skulls);
-                            startMatch(skulls);
-                        }
-                    }
-
-                    println("Il giocatore " + player.getNick() + " si è connesso.");
+                    fighter = connection.getFighter(available);
                 }
-                player.getConn().sendMessage("Benvenuto in Adrenalina!");
+                player = new Player(nickname, phrase, fighter);
+                player.setConn(connection);
+
+                if (waiting[index] == null) {
+                    try {
+                        waiting[index] = new Match(skulls);
+                    } catch (FileNotFoundException e) {
+                        Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
+                    }
+                }
+                waiting[index].getGame().addPlayer(player);
+                if (waiting[index].getGame().getPlayers().size() >= 3) {
+                    if (!startedTimer[index]) {
+                        matchTimer(skulls);
+                        startedTimer[index] = true;
+                    } else if (waiting[index].getGame().getPlayers().size() == 5) {
+                        cancelTimer(skulls);
+                        startMatch(skulls);
+                    }
+                }
+
+                println("Il giocatore " + player.getNick() + " si è connesso.");
             }
-            catch (ClientDisconnectedException e) {
-                Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-                println("Nuova connessione annullata");
-            }
+            player.getConn().sendMessage("Benvenuto in Adrenalina!");
+        }
+        catch (ClientDisconnectedException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            println("Nuova connessione annullata");
         }
     }
 
     public void cancelConnection(String nickname) {
-        synchronized (lock) {
+        synchronized (cancelLock) {
             boolean found = false;
             int i;
             for (i = 0; i < waiting.length && !found; i++) {
