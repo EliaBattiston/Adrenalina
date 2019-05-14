@@ -6,6 +6,8 @@ import it.polimi.ingsw.model.Player;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
@@ -61,6 +63,7 @@ public class SMain
                 startedTimer[i] = false;
             }
             System.out.println("Adrenalina Server ready");
+            System.out.println("Server IP: " + Inet4Address.getLocalHost().getHostAddress());
             listen();
         }
         catch (RemoteException e) {
