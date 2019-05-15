@@ -60,6 +60,7 @@ public class CLInterface implements UserInterface {
     private static final String[] ANSI_BACKGROUNDS = {ANSI_RED_BACKGROUND, ANSI_BLUE_BACKGROUND, ANSI_YELLOW_BACKGROUND, ANSI_WHITE_BACKGROUND, ANSI_PURPLE_BACKGROUND, ANSI_GREEN_BACKGROUND, ANSI_CYAN_BACKGROUND, ANSI_BLACK_BACKGROUND};
 
     private static final String BOX = "◼";//"\u25FC";
+    private static final String SKULL = "\uD83D\uDC80";
 
     private static final String SPACE = "\u0020";
 
@@ -312,6 +313,7 @@ public class CLInterface implements UserInterface {
         view = matchView;
         println("");
         map(null, null);
+        skullsInfo();
         frenzyInfo();
         playerInfo();
     }
@@ -520,26 +522,55 @@ public class CLInterface implements UserInterface {
         }
     }
 
+    public void skullsInfo() {
+        print("\nTeschi: ");
+        for(Kill k: view.getGame().getSkullsBoard()) {
+            if(k.isUsed()) {
+                if(k.getSkull())
+                    print(SKULL + " ");
+                else {
+                    print(fighterToLetter(k.getKiller().getCharacter()));
+                    if(k.getOverkill())
+                        print("(" + fighterToLetter(k.getKiller().getCharacter()) + ")");
+                    print(" ");
+                }
+            }
+            else
+                print("- ");
+        }
+    }
+
     private int generalMenu(List<String> options, int starting) {
         return generalMenu(options, starting, true);
     }
 
     private int generalMenu(List<String> options, int starting, boolean gameInfo) {
         int choose;
-        println("");
-        for(String opt: options)
-            println(opt);
-
-        if(gameInfo)
-            println("[?] Informazioni sul gioco");
 
         do {
-            print("Qual è la tua scelta? [" + starting + "-" + (options.size() - 1) + "]: ");
-            choose = scanInt();
-            if(choose == -1 && gameInfo)
-                generalInfo();
+            println("");
+            for (String opt : options)
+                println(opt);
+
+            if (gameInfo)
+                println("[?] Informazioni sul gioco");
+
+            int end;
+            if(starting == 0)
+                end = options.size() - 2;
+            else
+                end = options.size() - 1;
+
+            do {
+                print("Qual è la tua scelta? [" + starting + "-" + end + "]: ");
+                choose = scanInt();
+                if (choose == -1 && gameInfo)
+                    generalInfo();
+            }
+            while (choose != -1 && (choose < starting || choose > end));
         }
-        while (choose < starting || choose > options.size() - 1);
+        while(choose == -1);
+
         return choose;
     }
 
@@ -1066,24 +1097,25 @@ public class CLInterface implements UserInterface {
      * @return Point where the player will be when he's done moving
      */
     public Point movePlayer(List<Point> destinations, boolean mustChoose) {
-        map(null, destinations);
         List<Integer> options = new ArrayList<>();
-        print("\nMovimenti possibili:");
-
         int choose, actPos;
         actPos = -1;
         if(!mustChoose) {
             Point p = view.getActive().getPosition();
             actPos = p.getY() * 4 + p.getX() + 1;
             options.add(actPos);
-            print(actPos + " ");
         }
         for(Point disp: destinations) {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
-            print(point + " ");
         }
 
+        map(null, destinations);
+
+        print("\nMovimenti possibili:");
+        for(Integer point: options) {
+            print(point + " ");
+        }
         println("");
         do {
             print("Scelta: ");
@@ -1146,23 +1178,29 @@ public class CLInterface implements UserInterface {
         List<Player> plist = new ArrayList<>();
         List<Integer> options = new ArrayList<>();
         plist.add(enemy);
-        map(plist, destinations);
-        println("\nScegli dove muovere il giocatore:");
 
         int choose, actPos;
         actPos = -1;
-        print("Posizioni (celle) possibili: ");
         if(!mustChoose) {
             Point p = view.getActive().getPosition();
             actPos = p.getY() * 4 + p.getX() + 1;
             options.add(actPos);
-            print(actPos + " ");
         }
         for(Point disp: destinations) {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
+        }
+
+        println("\nScegli dove muovere il giocatore:");
+
+        map(plist, destinations);
+
+        print("Posizioni (celle) possibili: ");
+        for(Integer point: options) {
             print(point + " ");
         }
+
+
 
         println("");
         do {
@@ -1332,24 +1370,27 @@ public class CLInterface implements UserInterface {
      * @return chosen position
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose) {
-        map(null, positions);
         List<Integer> options = new ArrayList<>();
-        println("\nScegli una cella della mappa:");
         int choose, actPos;
         actPos = -1;
-        print("Celle disponibili: ");
         if(!mustChoose) {
             Point p = view.getActive().getPosition();
             actPos = p.getY() * 4 + p.getX() + 1;
             options.add(actPos);
-            print(actPos + " ");
         }
         for(Point disp: positions) {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
-            print(point + " ");
         }
 
+        println("\nScegli una cella della mappa:");
+
+        map(null, positions);
+
+        print("\nCelle disponibili:");
+        for(Integer point: options) {
+            print(point + " ");
+        }
         println("");
         do {
             print("Scelta: ");

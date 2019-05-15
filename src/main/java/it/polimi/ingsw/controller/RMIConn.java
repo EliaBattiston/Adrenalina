@@ -50,7 +50,11 @@ public class RMIConn implements Connection
     public Action chooseAction(List<Action> available, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            return client.chooseAction(available, mustChoose);
+            String lambdaID = client.chooseAction(available, mustChoose).getLambdaID();
+            for(Action a : available)
+                if(a.getLambdaID().equals(lambdaID))
+                    return a;
+            return null;
         }
         catch (Exception e) {
             throw new ClientDisconnectedException();
@@ -67,7 +71,11 @@ public class RMIConn implements Connection
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            return client.chooseWeapon(available, mustChoose);
+            int id = client.chooseWeapon(available, mustChoose).getId();
+            for(Weapon w : available)
+                if(w.getId() == id)
+                    return w;
+            return null;
         }
         catch (Exception e) {
 
@@ -85,7 +93,11 @@ public class RMIConn implements Connection
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            return client.grabWeapon(grabbable, mustChoose);
+            int id = client.grabWeapon(grabbable, mustChoose).getId();
+            for(Weapon w : grabbable)
+                if(w.getId() == id)
+                    return w;
+            return null;
         }
         catch (Exception e) {
 
@@ -103,7 +115,11 @@ public class RMIConn implements Connection
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            return client.reload(reloadable, mustChoose);
+            int id = client.reload(reloadable, mustChoose).getId();
+            for(Weapon w : reloadable)
+                if(w.getId() == id)
+                    return w;
+            return null;
         }
         catch (Exception e) {
 
@@ -180,7 +196,8 @@ public class RMIConn implements Connection
      */
     public Power discardPower(List<Power> powers, boolean mustChoose) throws ClientDisconnectedException {
         try {
-            return client.discardPower(powers, mustChoose);
+            int id = client.discardPower(powers, mustChoose).getId();
+            return powers.stream().filter(p->p.getId()==id).findFirst().orElse(null);
         }
         catch (Exception e) {
 
@@ -197,7 +214,8 @@ public class RMIConn implements Connection
      */
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) throws ClientDisconnectedException {
         try {
-            return client.chooseRoom(rooms, mustChoose);
+            Integer room = client.chooseRoom(rooms, mustChoose);
+            return rooms.stream().filter( r -> r.equals(room)).findFirst().orElse(null);
         }
         catch (Exception e) {
 
@@ -357,7 +375,8 @@ public class RMIConn implements Connection
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException {
         try {
-            return client.choosePower(inHand, mustChoose);
+            Power chosen = client.choosePower(inHand, mustChoose);
+            return inHand.stream().filter(p -> p.getId() == chosen.getId()).findFirst().orElse(null);
         }
         catch (Exception e) {
             throw new ClientDisconnectedException();
