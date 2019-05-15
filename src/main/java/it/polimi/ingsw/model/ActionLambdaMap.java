@@ -822,9 +822,11 @@ public class ActionLambdaMap {
         Point chosen = pl.getConn().movePlayer(destinations, false);
 
         if(chosen != null)
+        {
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+            Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
+        }
 
-        Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
     }
 
     /**
