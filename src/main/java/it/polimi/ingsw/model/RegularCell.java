@@ -87,7 +87,6 @@ public class RegularCell extends Cell {
 
                     if(Arrays.stream(powers).noneMatch(Objects::isNull))
                     {
-                        System.out.println(pl.getNick() + " deve scartare un potenziamento");
                         List<Power> inHand = new ArrayList<>(Arrays.asList(powers));
                         inHand.add(newPower);
                         try {
@@ -99,6 +98,8 @@ public class RegularCell extends Cell {
                         }
 
                         powersDeck.scrapCard(discarded);
+
+                        Match.broadcastMessage(pl.getNick() + " scarta " + discarded.getName() + " per pescare un nuovo potenziamento", messageReceivers);
                     }
 
                     int empty = Arrays.asList(powers).indexOf(discarded);
@@ -112,7 +113,6 @@ public class RegularCell extends Cell {
         }));
         lootDeck.scrapCard(picked);
 
-        System.out.println(pl.getNick() + " ha raccolto un loot");
         Match.broadcastMessage(pl.getNick() + " raccoglie delle munizioni", messageReceivers);
     }
 

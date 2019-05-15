@@ -703,7 +703,6 @@ public class ActionLambdaMap {
 
     //Activities lambdas
         data.put("a-p", (pl, map, memory)->{
-            System.out.println(pl.getNick() + " sceglie un potenziamento");
             Power chosen;
 
             List<Power> inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID().equals("p2") || power.getBase().getLambdaID().equals("p4")).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
@@ -713,6 +712,9 @@ public class ActionLambdaMap {
                 while (!inHand.isEmpty() && chosen != null)
                 {
                     chosen.getBase().execute(pl, map, null);
+
+                    Match.broadcastMessage(pl.getNick() + " usa il potenziamento " + chosen.getName(), ((Game)memory).getPlayers());
+
                     pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
 
                     inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID().equals("p2") || power.getBase().getLambdaID().equals("p4")).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
@@ -789,7 +791,6 @@ public class ActionLambdaMap {
      */
     private static void run(Player pl, Map map, int steps, boolean mustChoose, List<Player> messageReceivers) throws ClientDisconnectedException
     {
-        System.out.println(pl.getNick() + " corre");
         List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
         Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
 
@@ -807,7 +808,6 @@ public class ActionLambdaMap {
      */
     private static void runToLoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
-        System.out.println(pl.getNick() + " corre per raccogliere");
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
@@ -837,8 +837,6 @@ public class ActionLambdaMap {
      */
     private static void runToShoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
-        System.out.println(pl.getNick() + " corre per sparare");
-
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
@@ -892,9 +890,6 @@ public class ActionLambdaMap {
                 .filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)))
                 .collect(Collectors.toList());
 
-
-        System.out.println(pl.getNick() + " sceglie l'arma" );
-
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
 
         //Take list of available "base" actions for the chosen weapon
@@ -905,8 +900,6 @@ public class ActionLambdaMap {
             weaponActions.add(chosen.getAlternative());
 
         //Ask the user which one he wants to use
-        System.out.println(pl.getNick() + " sceglie l'azione di " + chosen.getName() );
-
         Action toExecute = pl.getConn().chooseAction(weaponActions, true);
 
         Object mem;
@@ -940,7 +933,6 @@ public class ActionLambdaMap {
                 weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
 
             if(!weaponActions.isEmpty()){
-                System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
                 toExecute.execute(pl, map, mem);
 
@@ -951,7 +943,6 @@ public class ActionLambdaMap {
                 weaponActions.remove(toExecute);
                 if(!weaponActions.isEmpty())
                 {
-                    System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                     toExecute = pl.getConn().chooseAction(weaponActions, false);
                     toExecute.execute(pl, map, mem);
 

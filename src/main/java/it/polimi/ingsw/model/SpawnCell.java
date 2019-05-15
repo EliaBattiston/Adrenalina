@@ -176,8 +176,7 @@ public class SpawnCell extends Cell{
             }
         }));
 
-        System.out.println(pl.getNick() + " ha comprato " + picked.getName());
-        Match.broadcastMessage(pl.getNick() + " raccoglie " + picked.getName(), messageReceivers);
+        Match.broadcastMessage(pl.getNick() + " ha comprato " + picked.getName(), messageReceivers);
     }
 
     /**

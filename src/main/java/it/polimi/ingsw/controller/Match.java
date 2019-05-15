@@ -147,7 +147,7 @@ public class Match implements Runnable
             if(active.getConn() != null)
                 playerTurn();
             else
-                System.out.println(active.getNick() + " non esegue mosse poichè non è connesso");
+                broadcastMessage(active.getNick() + " non esegue mosse poichè non è connesso", game.getPlayers());
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
@@ -358,8 +358,6 @@ public class Match implements Runnable
         }
         //If not found the map is incorrect
 
-        System.out.println(pl.getNick() + " è respawnato in " + spawnX + "," + spawnY);
-
         broadcastMessage(pl.getNick() + " scarta " + chosen.getName() + " e spawna nella cella " + ((spawnY*4)+spawnX+1), game.getPlayers() );
 
         pl.setSpawned(true);
@@ -383,7 +381,6 @@ public class Match implements Runnable
             }
         }
 
-        System.out.println("Riempita la mappa con gli oggetti mancanti");
         broadcastMessage("Gli oggetti mancanti dalla mappa sono stati posizionati", game.getPlayers());
     }
 
@@ -497,8 +494,6 @@ public class Match implements Runnable
         }
 
         killed.setSpawned(false);
-
-        System.out.println(killed.getNick() + " è stato ucciso");
     }
 
     /**
@@ -638,6 +633,7 @@ public class Match implements Runnable
         }
 
         System.out.println("\u001b[34mIl gioco è terminato\u001B[0m");
+        broadcastMessage("La partita è terminata!", game.getPlayers()); //TODO add winner
     }
 
     public MatchView getMatchView(Player viewer){
@@ -646,6 +642,7 @@ public class Match implements Runnable
 
     public static void broadcastMessage(String message, List<Player> players)
     {
+        System.out.println(message);
         for(Player p: players)
         {
             if(p.getConn() != null)
@@ -664,7 +661,6 @@ public class Match implements Runnable
     public static void disconnectPlayer(Player pl, List<Player> players)
     {
         Logger.getGlobal().log( Level.SEVERE, pl.getNick()+" si è disconnesso" );
-        System.out.println(pl.getNick() + " si è disconnesso");
         pl.setConn(null);
 
         broadcastMessage(pl.getNick() + "Si è disconnesso", players);
