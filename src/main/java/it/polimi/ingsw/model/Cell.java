@@ -92,7 +92,7 @@ public abstract class Cell implements Serializable {
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public abstract void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck) throws ClientDisconnectedException;
+    public abstract void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException;
 
     /**
      * Refill the cell's items if needed

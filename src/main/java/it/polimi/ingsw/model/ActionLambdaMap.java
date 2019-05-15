@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
@@ -722,47 +723,47 @@ public class ActionLambdaMap {
 
         });
 
-        data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true) );
+        data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true, ((Game)memory).getPlayers()) );
 
         data.put("a-b2", (pl, map, memory)->{
-            runToLoot(pl, map,1);
-            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
+            runToLoot(pl, map,1, ((Game)memory).getPlayers());
+            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(),((Game)memory).getPlayers());
         });
 
-        data.put("a-b3",(pl, map, memory) -> shoot(pl, map) );
+        data.put("a-b3",(pl, map, memory) -> shoot(pl, map, ((Game)memory).getPlayers()) );
 
         data.put("a-a1", (pl, map, memory)->{
-            runToLoot(pl, map,2);
-            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
+            runToLoot(pl, map,2, ((Game)memory).getPlayers());
+            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(), ((Game)memory).getPlayers());
         });
 
         data.put("a-a2", (pl, map, memory)->{
-            runToShoot(pl, map,1);
-            shoot(pl, map);
+            runToShoot(pl, map,1, ((Game)memory).getPlayers());
+            shoot(pl, map, ((Game)memory).getPlayers());
         });
 
         data.put("a-f1", (pl, map, memory)->{
-            runToShoot(pl, map,1);
-            reload(pl);
-            shoot(pl, map);
+            runToShoot(pl, map,1, ((Game)memory).getPlayers());
+            reload(pl, ((Game)memory).getPlayers());
+            shoot(pl, map, ((Game)memory).getPlayers());
         });
 
-        data.put("a-f2", (pl, map, memory)-> run(pl, map,4,true) );
+        data.put("a-f2", (pl, map, memory)-> run(pl, map,4,true, ((Game)memory).getPlayers()) );
 
         data.put("a-f3", (pl, map, memory)->{
-            runToLoot(pl, map,2);
-            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
+            runToLoot(pl, map,2, ((Game)memory).getPlayers());
+            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(), ((Game)memory).getPlayers());
         });
 
         data.put("a-f4", (pl, map, memory)->{
-            runToShoot(pl, map,2);
-            reload(pl);
-            shoot(pl, map);
+            runToShoot(pl, map,2, ((Game)memory).getPlayers());
+            reload(pl, ((Game)memory).getPlayers());
+            shoot(pl, map, ((Game)memory).getPlayers());
         });
 
         data.put("a-f5", (pl, map, memory)->{
-            runToLoot(pl, map,3);
-            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
+            runToLoot(pl, map,3, ((Game)memory).getPlayers());
+            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(), ((Game)memory).getPlayers());
         });
     }
 
@@ -784,8 +785,9 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      * @param mustChoose False if the player doesn't have to run
+     * @param messageReceivers Players to receive the broadcasted message of the action
      */
-    private static void run(Player pl, Map map, int steps, boolean mustChoose) throws ClientDisconnectedException
+    private static void run(Player pl, Map map, int steps, boolean mustChoose, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         System.out.println(pl.getNick() + " corre");
         List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
@@ -793,6 +795,8 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+
+        Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
     }
 
     /**
@@ -801,7 +805,7 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      */
-    private static void runToLoot(Player pl, Map map, int steps) throws ClientDisconnectedException
+    private static void runToLoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         System.out.println(pl.getNick() + " corre per raccogliere");
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
@@ -819,6 +823,8 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+
+        Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
     }
 
     /**
@@ -827,7 +833,7 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      */
-    private static void runToShoot(Player pl, Map map, int steps) throws ClientDisconnectedException
+    private static void runToShoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         System.out.println(pl.getNick() + " corre per sparare");
 
@@ -854,6 +860,8 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+
+        Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
     }
 
     /**
@@ -863,10 +871,10 @@ public class ActionLambdaMap {
      * @param lootDeck Deck where to scrap the picked loot card
      * @param powersDeck Deck for picking a power card
      */
-    private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck) throws ClientDisconnectedException
+    private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         Cell current = map.getCell(pl.getPosition());
-        current.pickItem(pl, lootDeck, powersDeck);
+        current.pickItem(pl, lootDeck, powersDeck, messageReceivers);
     }
 
     /**
@@ -874,7 +882,7 @@ public class ActionLambdaMap {
      * @param pl Lambda's player
      * @param map Lambda's map
      */
-    private static void shoot(Player pl, Map map) throws ClientDisconnectedException
+    private static void shoot(Player pl, Map map, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         //Only loaded weapons
         List<Weapon> loaded = pl.getWeapons().stream()
@@ -896,7 +904,9 @@ public class ActionLambdaMap {
 
         //Ask the user which one he wants to use
         System.out.println(pl.getNick() + " sceglie l'azione di " + chosen.getName() );
+
         Action toExecute = pl.getConn().chooseAction(weaponActions, true);
+
         Object mem;
         switch (toExecute.getLambdaID())
         {
@@ -918,6 +928,8 @@ public class ActionLambdaMap {
         }
         toExecute.execute(pl, map, mem);
 
+        Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
+
         if(toExecute.getLambdaID().contains("-b")) //Base action
         {
             //Additional actions management
@@ -930,6 +942,8 @@ public class ActionLambdaMap {
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
                 toExecute.execute(pl, map, mem);
 
+                Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
+
                 weaponActions.clear();
                 weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
                 weaponActions.remove(toExecute);
@@ -938,6 +952,8 @@ public class ActionLambdaMap {
                     System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                     toExecute = pl.getConn().chooseAction(weaponActions, false);
                     toExecute.execute(pl, map, mem);
+
+                    Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
                 }
             }
         }
@@ -954,7 +970,7 @@ public class ActionLambdaMap {
      * Basic reload action
      * @param pl Lambda's player
      */
-    public static void reload(Player pl) throws ClientDisconnectedException
+    public static void reload(Player pl, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         List<Weapon> unloaded = pl.getWeapons().stream().filter(weapon -> !weapon.isLoaded()).collect(Collectors.toList());
         List<Weapon> reloadable =  new ArrayList<>(unloaded); //Only the weapons the player can currently reload
@@ -995,6 +1011,8 @@ public class ActionLambdaMap {
                 pl.applyEffects(EffectsLambda.payAmmo(cost));
 
                 unloaded.remove(chosen);
+
+                Match.broadcastMessage(pl.getNick() + " ha ricaricato " + chosen.getName(), messageReceivers);
             }
 
             reloadable.clear();

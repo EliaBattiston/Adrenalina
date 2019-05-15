@@ -1,11 +1,9 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,7 +73,7 @@ public class RegularCell extends Cell {
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck) throws ClientDisconnectedException
+    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         Loot picked = pickLoot();
 
@@ -96,8 +94,8 @@ public class RegularCell extends Cell {
                             discarded = pl.getConn().discardPower(inHand, true);
                         }
                         catch(ClientDisconnectedException e) {
-                            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-                            ; //TODO @Erap320 burn it down
+                            Match.disconnectPlayer(pl, messageReceivers);
+                            discarded = inHand.get(new Random().nextInt(inHand.size()));
                         }
 
                         powersDeck.scrapCard(discarded);
@@ -115,6 +113,7 @@ public class RegularCell extends Cell {
         lootDeck.scrapCard(picked);
 
         System.out.println(pl.getNick() + " ha raccolto un loot");
+        Match.broadcastMessage(pl.getNick() + " raccoglie delle munizioni", messageReceivers);
     }
 
     /**

@@ -95,8 +95,13 @@ public class Match implements Runnable
     private void initialize() throws FileNotFoundException, ClientDisconnectedException
     {
         //Ask the user which maps he wants to use and if he wants to use frenzy mode
-        game.loadMap(game.getPlayers().get(0).getConn().chooseMap());
+        int mapNum = game.getPlayers().get(0).getConn().chooseMap();
+        game.loadMap(mapNum);
+        broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di usare la mappa " + mapNum, game.getPlayers());
+
         useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
+        broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di" +  ( useFrenzy ? "" : " non" ) + " usare la modalità Frenesia", game.getPlayers());
+
 
         refillMap();
     }
@@ -120,7 +125,7 @@ public class Match implements Runnable
             initialize();
         }
         catch (ClientDisconnectedException e) {
-            disconnectPlayer(game.getPlayers().get(0));
+            disconnectPlayer(game.getPlayers().get(0), game.getPlayers());
         }
         catch(FileNotFoundException e)
         {
@@ -133,8 +138,12 @@ public class Match implements Runnable
         active = game.getPlayers().get(0);
         actionsNumber = 2;
 
+        broadcastMessage("Partita avviata, è il turno di " + active.getNick(), game.getPlayers());
+
         while(phase != GamePhase.ENDED)
         {
+            //TODO add check if there are less than 3 players
+
             if(active.getConn() != null)
                 playerTurn();
             else
@@ -155,6 +164,8 @@ public class Match implements Runnable
 
             //When the active player's turn finishes, we pick the next active player
             active = game.getNextPlayer(active);
+
+            broadcastMessage("È il turno di " + active.getNick(), game.getPlayers());
 
             if(phase == GamePhase.FRENZY)
             {
@@ -189,27 +200,6 @@ public class Match implements Runnable
 
             System.out.println("\u001B[31mFine turno " + turnNumber + "\u001B[0m");
             turnNumber++;
-        }
-    }
-
-    private void disconnectPlayer(Player pl)
-    {
-        Logger.getGlobal().log( Level.SEVERE, pl.getNick()+" si è disconnesso" );
-        System.out.println(pl.getNick() + " si è disconnesso");
-        pl.setConn(null);
-
-        for(Player p: game.getPlayers())
-        {
-            if(p.getConn() != null)
-            {
-                try{
-                    p.getConn().sendMessage(pl.getNick() + "Si è disconnesso");
-                }
-                catch(ClientDisconnectedException e)
-                {
-                    disconnectPlayer(p);
-                }
-            }
         }
     }
 
@@ -251,7 +241,7 @@ public class Match implements Runnable
                 active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
             }
             catch(ClientDisconnectedException e) {
-                disconnectPlayer(active);
+                disconnectPlayer(active, game.getPlayers());
                 return;
             }
 
@@ -261,10 +251,10 @@ public class Match implements Runnable
         //Reload weapons
         if(FeasibleLambdaMap.possibleReload(active)) {
             try {
-                ActionLambdaMap.reload(active);
+                ActionLambdaMap.reload(active, game.getPlayers());
             }
             catch(ClientDisconnectedException e) {
-                disconnectPlayer(active);
+                disconnectPlayer(active, game.getPlayers());
             }
         }
     }
@@ -283,7 +273,7 @@ public class Match implements Runnable
                 }
                 catch(ClientDisconnectedException e)
                 {
-                    disconnectPlayer(p);
+                    disconnectPlayer(p, game.getPlayers());
                 }
             }
         }
@@ -321,50 +311,56 @@ public class Match implements Runnable
                 break;
         }
 
-
         //Choose power
-        try {
-            pl.getConn().sendMessage("Scegli un potenziamento da scartare, il colore del potenziamento scartato determinerà la cella di spawn");
-            Power chosen = pl.getConn().discardPower(pl.getPowers(), true);
-            Color spawnColor = chosen.getColor();
-            //Discard the power
-            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                for (int i = 0; i < 3; i++) {
-                    if (powers[i] != null && powers[i].getId() == chosen.getId()) {
-                        game.getPowersDeck().scrapCard(powers[i]);
-                        powers[i] = null;
-                    }
-                }
-            }));
+        Power chosen;
 
-            boolean found = false;
-            int spawnX = 0;
-            int spawnY = 0;
+        if(pl.getConn() != null)
+        {
+            try
+            {
+                pl.getConn().sendMessage("Scegli un potenziamento da scartare, il colore del potenziamento scartato determinerà la cella di spawn");
+                chosen = pl.getConn().discardPower(pl.getPowers(), true);
+            }
+            catch(ClientDisconnectedException e)
+            {
+                chosen = pl.getPowers().get(new Random().nextInt(pl.getPowers().size()));
+                disconnectPlayer(pl, game.getPlayers());
+            }
+        }
+        else //If the player is disconnected we have to choose a random card to make him respawn
+        {
+            chosen = pl.getPowers().get(new Random().nextInt(pl.getPowers().size()));
+        }
 
-            //Move in the correct position
-            for (int x = 0; x < 4 && !found; x++) {
-                for (int y = 0; y < 3 && !found; y++) {
-                    if (game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor)) {
-                        spawnX = x;
-                        spawnY = y;
-                        found = true;
-                    }
+        Color spawnColor = chosen.getColor();
+        //Discard the power
+        pl.applyEffects(EffectsLambda.removePower(chosen, game.getPowersDeck()));
+
+        boolean found = false;
+        int spawnX = 0;
+        int spawnY = 0;
+
+        //Move in the correct position
+        for (int x = 0; x < 4 && !found; x++) {
+            for (int y = 0; y < 3 && !found; y++) {
+                if (game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor)) {
+                    spawnX = x;
+                    spawnY = y;
+                    found = true;
                 }
             }
-
-            final Point spawnPoint = new Point(spawnX, spawnY);
-
-            if (found) {
-                pl.applyEffects(EffectsLambda.move(pl, spawnPoint, game.getMap()));
-            }
-            //If not found the map is incorrect
-
-            System.out.println(pl.getNick() + " è respawnato in " + spawnX + "," + spawnY);
-
         }
-        catch (ClientDisconnectedException e) {
-            disconnectPlayer(pl);
+
+        final Point spawnPoint = new Point(spawnX, spawnY);
+
+        if (found) {
+            pl.applyEffects(EffectsLambda.move(pl, spawnPoint, game.getMap()));
         }
+        //If not found the map is incorrect
+
+        System.out.println(pl.getNick() + " è respawnato in " + spawnX + "," + spawnY);
+
+        broadcastMessage(pl.getNick() + " scarta " + chosen.getName() + " e spawna nella cella " + ((spawnY*4)+spawnX+1), game.getPlayers() );
 
         pl.setSpawned(true);
     }
@@ -388,6 +384,7 @@ public class Match implements Runnable
         }
 
         System.out.println("Riempita la mappa con gli oggetti mancanti");
+        broadcastMessage("Gli oggetti mancanti dalla mappa sono stati posizionati", game.getPlayers());
     }
 
     /**
@@ -500,6 +497,8 @@ public class Match implements Runnable
         killed.setSpawned(false);
 
         System.out.println(killed.getNick() + " è stato ucciso");
+
+        broadcastMessage(killed.getNick() + " è stato ucciso da " + game.getPlayer(killed.getReceivedDamage()[10]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[10]).getActionPhrase(), game.getPlayers());
     }
 
     /**
@@ -644,4 +643,31 @@ public class Match implements Runnable
     public MatchView getMatchView(Player viewer){
         return new MatchView(game.getGameView(viewer), active, viewer, actionsNumber, phase, useFrenzy, firstFrenzy);
     }
+
+    public static void broadcastMessage(String message, List<Player> players)
+    {
+        for(Player p: players)
+        {
+            if(p.getConn() != null)
+            {
+                try{
+                    p.getConn().sendMessage(message);
+                }
+                catch(ClientDisconnectedException e)
+                {
+                    disconnectPlayer(p, players);
+                }
+            }
+        }
+    }
+
+    public static void disconnectPlayer(Player pl, List<Player> players)
+    {
+        Logger.getGlobal().log( Level.SEVERE, pl.getNick()+" si è disconnesso" );
+        System.out.println(pl.getNick() + " si è disconnesso");
+        pl.setConn(null);
+
+        broadcastMessage(pl.getNick() + "Si è disconnesso", players);
+    }
+
 }
