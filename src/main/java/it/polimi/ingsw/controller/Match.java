@@ -472,6 +472,8 @@ public class Match implements Runnable
                 game.getPlayer(killed.getReceivedDamage()[11]).applyEffects(EffectsLambda.marks(1, killed));
             }
 
+            broadcastMessage(killed.getNick() + " è stato ucciso da " + game.getPlayer(killed.getReceivedDamage()[10]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[10]).getActionPhrase(), game.getPlayers());
+
             //Reset damages
             for (int i = 0; i < 12; i++)
             {
@@ -497,8 +499,6 @@ public class Match implements Runnable
         killed.setSpawned(false);
 
         System.out.println(killed.getNick() + " è stato ucciso");
-
-        broadcastMessage(killed.getNick() + " è stato ucciso da " + game.getPlayer(killed.getReceivedDamage()[10]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[10]).getActionPhrase(), game.getPlayers());
     }
 
     /**
