@@ -64,7 +64,6 @@ public class Gui extends Application{
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
-        //Thread.sleep(10000);
 
        /* while(true){
             if(GuiExchanger.getInstance().getActualInteraction() != Interaction.NONE)
@@ -73,9 +72,7 @@ public class Gui extends Application{
 
         //Event handlers
        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
-            // Do whatever you want
-           System.out.println("a" + abs(newVal.doubleValue() - backgroundWidth));
-            if(abs(newVal.doubleValue() - backgroundWidth) > 150) {
+            if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
 
@@ -85,10 +82,7 @@ public class Gui extends Application{
                 drawBackground();
                 drawMap(match.getGame().getMap());
                 drawDecks();
-                mainScene = new Scene(drawGame());
-                //mainScene = new Scene(drawGame());
-                //primaryStage.setScene(new Scene(drawGame()));
-                //primaryStage.setHeight(backgroundHeight);
+                primaryStage.setScene(new Scene(drawGame()));
             }
         });
 
