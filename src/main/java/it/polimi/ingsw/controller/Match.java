@@ -359,6 +359,8 @@ public class Match implements Runnable
         broadcastMessage(pl.getNick() + " scarta " + chosen.getName() + " e spawna nella cella " + ((spawnY*4)+spawnX+1), game.getPlayers() );
 
         pl.setSpawned(true);
+
+        updateViews();
     }
 
     /**

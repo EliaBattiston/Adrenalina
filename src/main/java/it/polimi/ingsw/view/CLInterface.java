@@ -338,7 +338,7 @@ public class CLInterface implements UserInterface {
             println("[1] Oggetti presenti in una cella");
             println("[2] Informazioni su arma");
             println("[3] Informazioni su potenziamento");
-            println("[4] Informazioni su armi/potenziamenti in mano");
+            println("[4] Informazioni su armi/potenziamenti in mano e punti accumulati");
             println("[5] Log completo della partita");
             println("[0] Esci");
             print("Selezione: ");
@@ -396,8 +396,14 @@ public class CLInterface implements UserInterface {
                         while(weaplist.size() < 21) {
                             weaplist.add(baseGame.getWeaponsDeck().draw());
                         }
+                        Collections.sort(weaplist, new Comparator<Weapon>() {
+                            @Override
+                            public int compare(Weapon o1, Weapon o2) {
+                                return o1.getName().compareToIgnoreCase(o2.getName());
+                            }
+                        });
                         for(int i = 0; i < weaplist.size() - (weaplist.size() % 2); i += 2) {
-                            println(String.format("[%2d] %-23s | [%2d] %-23s", i+1, weaplist.get(i).getName(), i+2, weaplist.get(i+1).getName()));
+                            println(String.format("[%2d] %-23s [%2d] %-23s", i+1, weaplist.get(i).getName(), i+2, weaplist.get(i+1).getName()));
                         }
                         if(weaplist.size() % 2 == 1) {
                             println(String.format("[%2d] %-23s", weaplist.size(), weaplist.get(weaplist.size()-1).getName()));
@@ -441,6 +447,8 @@ public class CLInterface implements UserInterface {
                     }
                     break;
                 case 4:
+                    println("Punti accumulati: " + view.getMyPlayer().getPoints());
+
                     if(view.getMyPlayer().getWeapons() != null && !view.getMyPlayer().getWeapons().isEmpty()) {
                         println("Armi in mano: ");
                         for (Weapon w : view.getMyPlayer().getWeapons()) {
@@ -458,7 +466,7 @@ public class CLInterface implements UserInterface {
                     if(view.getMyPlayer().getPowers() != null && !view.getMyPlayer().getPowers().isEmpty()) {
                         println("Potenziamenti in mano: ");
                         for (Power p : view.getMyPlayer().getPowers()) {
-                            println("\t" + p.getName() + formatColorBox(p.getColor()));
+                            println("\t" + p.getName() + " " + formatColorBox(p.getColor()));
                         }
                     }
                     else
@@ -1115,11 +1123,8 @@ public class CLInterface implements UserInterface {
         List<Integer> options = new ArrayList<>();
         int choose, actPos;
         actPos = -1;
-        if(!mustChoose) {
-            Point p = view.getActive().getPosition();
-            actPos = p.getY() * 4 + p.getX() + 1;
-            options.add(actPos);
-        }
+        if(!mustChoose)
+            destinations.add(view.getActive().getPosition());
         for(Point disp: destinations) {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
@@ -1197,11 +1202,8 @@ public class CLInterface implements UserInterface {
 
         int choose, actPos;
         actPos = -1;
-        if(!mustChoose) {
-            Point p = view.getActive().getPosition();
-            actPos = p.getY() * 4 + p.getX() + 1;
-            options.add(actPos);
-        }
+        if(!mustChoose)
+            destinations.add(view.getActive().getPosition());
         for(Point disp: destinations) {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
@@ -1390,11 +1392,8 @@ public class CLInterface implements UserInterface {
         List<Integer> options = new ArrayList<>();
         int choose, actPos;
         actPos = -1;
-        if(!mustChoose) {
-            Point p = view.getActive().getPosition();
-            actPos = p.getY() * 4 + p.getX() + 1;
-            options.add(actPos);
-        }
+        if(!mustChoose)
+            positions.add(view.getActive().getPosition());
         for(Point disp: positions) {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
