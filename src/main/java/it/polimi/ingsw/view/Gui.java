@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static java.lang.Math.abs;
+
 public class Gui extends Application{
     private MatchView match;
     private GameView game;
@@ -58,29 +60,37 @@ public class Gui extends Application{
 
         primaryStage.setTitle("Adrenalina");
         primaryStage.setScene(mainScene);
-        //primaryStage.setResizable(true);
+        primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
-        Thread.sleep(10000);
+        //Thread.sleep(10000);
 
-        while(true){
+       /* while(true){
             if(GuiExchanger.getInstance().getActualInteraction() != Interaction.NONE)
                 System.out.println(GuiExchanger.getInstance().getActualInteraction().toString());
-        }
+        }*/
 
         //Event handlers
-       /* primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+       primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
             // Do whatever you want
+           System.out.println("a" + abs(newVal.doubleValue() - backgroundWidth));
             if(abs(newVal.doubleValue() - backgroundWidth) > 150) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
 
                 dimMult = backgroundWidth / 1920;
-                primaryStage.setScene(new Scene(drawGame(game.getMap(), me, players)));
-                primaryStage.setHeight(backgroundHeight);
+                fixedGraphics = new Canvas(backgroundWidth, backgroundHeight);
+                gc = fixedGraphics.getGraphicsContext2D();
+                drawBackground();
+                drawMap(match.getGame().getMap());
+                drawDecks();
+                mainScene = new Scene(drawGame());
+                //mainScene = new Scene(drawGame());
+                //primaryStage.setScene(new Scene(drawGame()));
+                //primaryStage.setHeight(backgroundHeight);
             }
-        });*/
+        });
 
         // primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> { });
     }
@@ -115,7 +125,7 @@ public class Gui extends Application{
     }
 
     private void drawBackground(){
-        gc.drawImage( new Image(imgBackground), 0, 0, backgroundWidth, backgroundHeight);
+        gc.drawImage( GuiImagesMap.getImage(imgBackground), 0, 0, backgroundWidth, backgroundHeight);
     }
 
     private void drawMap(Map map){
@@ -124,7 +134,7 @@ public class Gui extends Application{
         double x = 18 * dimMult;
         double y = x;
 
-        gc.drawImage( new Image("file:images/map/map" + map.getId() + ".png"), x, y, width, height);
+        gc.drawImage( GuiImagesMap.getImage("file:images/map/map" + map.getId() + ".png"), x, y, width, height);
     }
 
     private StackPane drawLootOnMap (Map map){
@@ -221,7 +231,7 @@ public class Gui extends Application{
                 y = baseY + j * deltaCellY;
                 if(map.getCell(i, j) != null) { //here X and Y are pointing at the top-left corner of the cell
                     for (Player p : map.getCell(i, j).getPawns()) {
-                        gc.drawImage(new Image(dirPawns + p.getCharacter().toString() + ".png"), x, y, size, size);
+                        gc.drawImage(GuiImagesMap.getImage(dirPawns + p.getCharacter().toString() + ".png"), x, y, size, size);
                         if (xNotY) {
                             x += size;
                             y = baseY + j * deltaCellY;
@@ -303,14 +313,14 @@ public class Gui extends Application{
         double height = 109 * dimMult;
         double x = 1044 * dimMult;
         double y = 65 * dimMult;
-        gc.drawImage(new Image("file:images/power/powerBackPile.png"), x, y, width, height);
+        gc.drawImage(GuiImagesMap.getImage("file:images/power/powerBackPile.png"), x, y, width, height);
 
         //WeaponsDeck
         width = 100 * dimMult;
         height = 174 * dimMult;
         x = 1018 * dimMult;
         y = 252 * dimMult;
-        gc.drawImage(new Image("file:images/weapon/weaponBackPile.png"), x, y, width, height);
+        gc.drawImage(GuiImagesMap.getImage("file:images/weapon/weaponBackPile.png"), x, y, width, height);
     }
 
     private void drawAllPlayersBoards(List<Player> players, boolean adrenalineMode){
@@ -347,12 +357,12 @@ public class Gui extends Application{
         t.setFill(javafx.scene.paint.Color.WHITE);
         pane.getChildren().add(t);*/
 
-        gc.drawImage( new Image(dirPlayerboard + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
+        gc.drawImage( GuiImagesMap.getImage(dirPlayerboard + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
 
         //damages
         for(int i=0; i<12; i++){
             if(player.getReceivedDamage()[i] != null)
-                gc.drawImage( new Image(dirDrops + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+                gc.drawImage( GuiImagesMap.getImage(dirDrops + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
 
             xDrop += deltaX;
         }
@@ -363,7 +373,7 @@ public class Gui extends Application{
         deltaX = widthDrop * 1.1; //put just a little bit of space, we don't know how many marks a player will get
         for(String p: player.getReceivedMarks()){
             if(p != null)
-                gc.drawImage( new Image(dirDrops + Player.fighterFromNick(players, p) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+                gc.drawImage( GuiImagesMap.getImage(dirDrops + Player.fighterFromNick(players, p) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
 
             xDrop += deltaX;
         }
@@ -427,9 +437,9 @@ public class Gui extends Application{
         double deltaX = 43 * dimMult;
         double deltaY = 36 * dimMult;
 
-        Image blue = new Image("file:images/loot/blue.png");
-        Image red = new Image("file:images/loot/red.png");
-        Image yellow = new Image("file:images/loot/yellow.png");
+        Image blue = GuiImagesMap.getImage("file:images/loot/blue.png");
+        Image red = GuiImagesMap.getImage("file:images/loot/red.png");
+        Image yellow = GuiImagesMap.getImage("file:images/loot/yellow.png");
 
         for(int i=0; i<ammo.getBlue(); i++){
             gc.drawImage(blue, x, y, width, width);

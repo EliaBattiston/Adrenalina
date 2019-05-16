@@ -20,7 +20,7 @@ public class GuiCard extends Canvas {
         super((rotation==0?width:height), (rotation==0?height:width));
         this.data = weapon;
 
-        img = new Image( "file:images/weapon/weapon" + weapon.getId() + ".png" );
+        img = GuiImagesMap.getImage( "file:images/weapon/weapon" + weapon.getId() + ".png" );
 
         if(rotation != 0){
             ImageView iv = new ImageView(img);
@@ -49,7 +49,7 @@ public class GuiCard extends Canvas {
     public GuiCard(it.polimi.ingsw.model.Loot loot, double size){
         super(size, size);
         this.data = loot;
-        img = new Image( "file:images/loot/" + loot.getContentAsString() + ".png" );
+        img = GuiImagesMap.getImage( "file:images/loot/" + loot.getContentAsString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
 
@@ -61,7 +61,7 @@ public class GuiCard extends Canvas {
     public GuiCard(it.polimi.ingsw.model.Power power, double width, double height){
         super(width, height);
         this.data = power;
-        img = new Image( "file:images/power/power" + (power.getId()<=12 ? power.getId() : power.getId()/2) + ".png" );
+        img = GuiImagesMap.getImage( "file:images/power/power" + (power.getId()<=12 ? power.getId() : power.getId()/2) + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, width, height);
 
