@@ -8,3 +8,4 @@
 !javadoc/
 !others/
 src/main/java/META-INF/*
+src/main/resources/META-INF/*

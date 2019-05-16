@@ -40,8 +40,8 @@ public class JsonTest {
 
     @Test
     public void TestJsonBaseGame() throws EmptyDeckException {
-        String baseGame = "resources/baseGame.json";
-        String map1 = "resources/map1.json";
+        String baseGame = "baseGame.json";
+        String map1 = "map1.json";
 
         try {
             Game g = Game.jsonDeserialize(baseGame);

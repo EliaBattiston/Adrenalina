@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -388,63 +389,51 @@ public class CLInterface implements UserInterface {
                         println("Cella non presente nella mappa");
                     break;
                 case 2:
-                    try{
-                        JsonReader reader = new JsonReader(new FileReader("resources/baseGame.json"));
-                        Gson gson = new Gson();
-                        Game baseGame = gson.fromJson(reader, Game.class);
-                        List<Weapon> weaplist = new ArrayList<>();
-                        while(weaplist.size() < 21) {
-                            weaplist.add(baseGame.getWeaponsDeck().draw());
-                        }
-                        Collections.sort(weaplist, new Comparator<Weapon>() {
-                            @Override
-                            public int compare(Weapon o1, Weapon o2) {
-                                return o1.getName().compareToIgnoreCase(o2.getName());
-                            }
-                        });
-                        for(int i = 0; i < weaplist.size() - (weaplist.size() % 2); i += 2) {
-                            println(String.format("[%2d] %-23s [%2d] %-23s", i+1, weaplist.get(i).getName(), i+2, weaplist.get(i+1).getName()));
-                        }
-                        if(weaplist.size() % 2 == 1) {
-                            println(String.format("[%2d] %-23s", weaplist.size(), weaplist.get(weaplist.size()-1).getName()));
-                        }
-                        int sel2;
-                        do {
-                            print("Selezione [1-" + weaplist.size() + "]: ");
-                            sel2 = scanInt();
-                        }while (sel2 < 1 || sel2 > weaplist.size());
-                        sel2--;
-                        printWeapon(weaplist.get(sel2));
+                    JsonReader reader = new JsonReader(new InputStreamReader(Game.class.getClassLoader().getResourceAsStream("baseGame.json")));
+                    Gson gson = new Gson();
+                    Game baseGame = gson.fromJson(reader, Game.class);
+                    List<Weapon> weaplist = new ArrayList<>();
+                    while(weaplist.size() < 21) {
+                        weaplist.add(baseGame.getWeaponsDeck().draw());
                     }
-                    catch(FileNotFoundException e){
-                        Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-                        println("Error! Error!");
+                    Collections.sort(weaplist, new Comparator<Weapon>() {
+                        @Override
+                        public int compare(Weapon o1, Weapon o2) {
+                            return o1.getName().compareToIgnoreCase(o2.getName());
+                        }
+                    });
+                    for(int i = 0; i < weaplist.size() - (weaplist.size() % 2); i += 2) {
+                        println(String.format("[%2d] %-23s [%2d] %-23s", i+1, weaplist.get(i).getName(), i+2, weaplist.get(i+1).getName()));
                     }
+                    if(weaplist.size() % 2 == 1) {
+                        println(String.format("[%2d] %-23s", weaplist.size(), weaplist.get(weaplist.size()-1).getName()));
+                    }
+                    int sel2;
+                    do {
+                        print("Selezione [1-" + weaplist.size() + "]: ");
+                        sel2 = scanInt();
+                    }while (sel2 < 1 || sel2 > weaplist.size());
+                    sel2--;
+                    printWeapon(weaplist.get(sel2));
                     break;
                 case 3:
-                    try{
-                        JsonReader reader = new JsonReader(new FileReader("resources/baseGame.json"));
-                        Gson gson = new Gson();
-                        Game baseGame = gson.fromJson(reader, Game.class);
-                        List<Power> powlist = new ArrayList<>();
-                        while(powlist.size() < 4) {
-                            powlist.add(baseGame.getPowersDeck().draw());
-                        }
-                        for(int i = 0; i < powlist.size(); i++) {
-                            println("[" + (i + 1) + "] " + powlist.get(i).getName());
-                        }
-                        int sel2;
-                        do {
-                            print("Selezione [1-" + powlist.size() + "]: ");
-                            sel2 = scanInt();
-                        }while (sel2 < 1 || sel2 > powlist.size());
-                        sel2--;
-                        println(ANSI_BOLD + powlist.get(sel2).getName() + ANSI_RESET + ": " + powlist.get(sel2).getBase().getDescription());
+                    JsonReader readerb = new JsonReader(new InputStreamReader(Game.class.getClassLoader().getResourceAsStream("basGame.json")));
+                    Gson gsonb = new Gson();
+                    Game baseGameb = gsonb.fromJson(readerb, Game.class);
+                    List<Power> powlist = new ArrayList<>();
+                    while(powlist.size() < 4) {
+                        powlist.add(baseGameb.getPowersDeck().draw());
                     }
-                    catch(FileNotFoundException e){
-                        Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-                        println("Error! Error!");
+                    for(int i = 0; i < powlist.size(); i++) {
+                        println("[" + (i + 1) + "] " + powlist.get(i).getName());
                     }
+                    int sel3;
+                    do {
+                        print("Selezione [1-" + powlist.size() + "]: ");
+                        sel3 = scanInt();
+                    }while (sel3 < 1 || sel3 > powlist.size());
+                    sel3--;
+                    println(ANSI_BOLD + powlist.get(sel3).getName() + ANSI_RESET + ": " + powlist.get(sel3).getBase().getDescription());
                     break;
                 case 4:
                     println("Punti accumulati: " + view.getMyPlayer().getPoints());

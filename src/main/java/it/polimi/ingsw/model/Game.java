@@ -6,8 +6,7 @@ import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.view.GameView;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,7 +154,7 @@ public class Game {
      */
     public static Game jsonDeserialize(String pathJsonFile) throws FileNotFoundException
     {
-        JsonReader reader = new JsonReader(new FileReader(pathJsonFile));
+        JsonReader reader = new JsonReader(new InputStreamReader(Game.class.getClassLoader().getResourceAsStream(pathJsonFile)));
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());

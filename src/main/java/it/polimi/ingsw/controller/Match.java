@@ -81,7 +81,7 @@ public class Match implements Runnable
         this.skullsNum = skullsNum;
         this.turnNumber = 0;
 
-        game = Game.jsonDeserialize("resources/baseGame.json");
+        game = Game.jsonDeserialize("baseGame.json");
         game.getPowersDeck().shuffle();
         game.getWeaponsDeck().shuffle();
         game.getAmmoDeck().shuffle();

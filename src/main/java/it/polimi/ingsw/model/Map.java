@@ -7,6 +7,7 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,7 +70,7 @@ public class Map implements Serializable {
         try{
             if(mapNumber >= 1 && mapNumber <= 4)
             {
-                return Map.jsonDeserialize("resources/map" + mapNumber + ".json");
+                return Map.jsonDeserialize("map" + mapNumber + ".json");
             }
             else
             {
@@ -88,7 +89,7 @@ public class Map implements Serializable {
      * @throws FileNotFoundException If there is a problem accessing the file
      */
     public static Map jsonDeserialize(String pathJsonFile) throws FileNotFoundException {
-        JsonReader reader = new JsonReader(new FileReader(pathJsonFile));
+        JsonReader reader = new JsonReader(new InputStreamReader(Map.class.getClassLoader().getResourceAsStream(pathJsonFile)));
 
         GsonBuilder gsonBilder = new GsonBuilder();
         gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
