@@ -9,6 +9,8 @@ import it.polimi.ingsw.model.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +32,11 @@ public class CLInterface implements UserInterface {
      * Instance of the match view (from which taking data)
      */
     private MatchView view;
+
+    /**
+     * Log messages
+     */
+    private List<String> log;
 
     /**
      *Color and symbol constants
@@ -81,6 +88,7 @@ public class CLInterface implements UserInterface {
     public CLInterface() {
         in = new Scanner(System.in);
         stdout = new PrintWriter(System.out);
+        log = new ArrayList<>();
     }
 
     /**
@@ -313,6 +321,7 @@ public class CLInterface implements UserInterface {
         view = matchView;
         println("");
         map(null, null);
+        logInfo();
         skullsInfo();
         frenzyInfo();
         playerInfo();
@@ -330,6 +339,7 @@ public class CLInterface implements UserInterface {
             println("[2] Informazioni su arma");
             println("[3] Informazioni su potenziamento");
             println("[4] Informazioni su armi/potenziamenti in mano");
+            println("[5] Log completo della partita");
             println("[0] Esci");
             print("Selezione: ");
             sel1 = scanInt();
@@ -434,7 +444,7 @@ public class CLInterface implements UserInterface {
                     if(view.getMyPlayer().getWeapons() != null && !view.getMyPlayer().getWeapons().isEmpty()) {
                         println("Armi in mano: ");
                         for (Weapon w : view.getMyPlayer().getWeapons()) {
-                            print(w.getName() + " (");
+                            print("\t" + w.getName() + " (");
                             if (w.isLoaded())
                                 print("carica");
                             else
@@ -443,16 +453,20 @@ public class CLInterface implements UserInterface {
                         }
                     }
                     else
-                        println("Nessuna arma in mano");
+                        println("\tNessuna arma in mano");
 
                     if(view.getMyPlayer().getPowers() != null && !view.getMyPlayer().getPowers().isEmpty()) {
                         println("Potenziamenti in mano: ");
                         for (Power p : view.getMyPlayer().getPowers()) {
-                            println(p.getName() + formatColorBox(p.getColor()));
+                            println("\t" + p.getName() + formatColorBox(p.getColor()));
                         }
                     }
                     else
-                        println("Nessun potenziamento in mano");
+                        println("\tNessun potenziamento in mano");
+                    break;
+                case 5:
+                    for(String s: log)
+                        println(s);
                     break;
                 default:
                     println("Scelta non presente in elenco, ripetere");
@@ -490,7 +504,8 @@ public class CLInterface implements UserInterface {
             }
 
 
-            print += background + stringFormat(p.getNick() + " - " + background + fighterToString(p.getCharacter()), 40) + ANSI_RESET;
+            print += background + stringFormat(p.getNick() + " - " + background + fighterToString(p.getCharacter()), 32) + ANSI_RESET;
+            print += "Morti: " + p.getSkulls() + "x" + SKULL;
             print += " Ammo: ";
             print += p.getAmmo(Color.BLUE) + "x" + formatColorBox(Color.BLUE) + " ";
             print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";
@@ -1109,6 +1124,7 @@ public class CLInterface implements UserInterface {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
         }
+        Collections.sort(options);
 
         map(null, destinations);
 
@@ -1190,6 +1206,7 @@ public class CLInterface implements UserInterface {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
         }
+        Collections.sort(options);
 
         println("\nScegli dove muovere il giocatore:");
 
@@ -1382,6 +1399,7 @@ public class CLInterface implements UserInterface {
             int point = disp.getY() * 4 + disp.getX() + 1;
             options.add(point);
         }
+        Collections.sort(options);
 
         println("\nScegli una cella della mappa:");
 
@@ -1588,5 +1606,20 @@ public class CLInterface implements UserInterface {
      */
     public void generalMessage(String message) {
         println("\n" + message);
+        String logMessage = "";
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        logMessage = dtf.format(now) + " " + message;
+        log.add(logMessage);
+    }
+
+    private void logInfo() {
+        println("--------------Log (ultimi messaggi)--------------");
+
+        for(int i = Math.max(0, log.size() - 10); i < log.size(); i++) {
+            println(log.get(i));
+        }
+
+        println("-------------------------------------------------");
     }
 }

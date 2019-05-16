@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+import it.polimi.ingsw.exceptions.EmptyDeckException;
 import javafx.scene.effect.Effect;
 
 import java.util.ArrayList;
@@ -185,7 +186,12 @@ public class SpawnCell extends Cell{
      */
     public void refill(Game game){
         while (getWeapons().size() < 3)
-            refillWeapon(game.getWeaponsDeck().draw());
+            try {
+                refillWeapon(game.getWeaponsDeck().draw());
+            }
+            catch(EmptyDeckException ex) {
+                Logger.getGlobal().log( Level.INFO, ex.toString(), ex );
+            }
     }
 
     /**
