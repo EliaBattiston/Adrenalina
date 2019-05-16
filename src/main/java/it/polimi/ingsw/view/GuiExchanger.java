@@ -8,6 +8,7 @@ public class GuiExchanger {
     private MatchView matchView;
     private Object request;
     private Object answer;
+    private boolean mustChoose;
 
     private GuiExchanger(){
         actualInteraction = Interaction.NONE;
@@ -50,5 +51,13 @@ public class GuiExchanger {
 
     public void setAnswer(Object answer) {
         this.answer = answer;
+    }
+
+    public boolean isMustChoose() {
+        return mustChoose;
+    }
+
+    public void setMustChoose(boolean mustChoose) {
+        this.mustChoose = mustChoose;
     }
 }

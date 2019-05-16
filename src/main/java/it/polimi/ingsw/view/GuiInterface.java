@@ -3,10 +3,18 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuiInterface implements UserInterface{
     private GuiExchanger exchanger;
+
+    public static void main(String[] args){
+        new GuiInterface(args);
+
+        while(true)
+            ;
+    }
 
     public GuiInterface(String[] args){
         exchanger = GuiExchanger.getInstance();
@@ -16,26 +24,23 @@ public class GuiInterface implements UserInterface{
         try {
             Thread.sleep(3000);
 
+            List<Weapon> chooseBetween = new ArrayList<>();
+
+            exchanger.setRequest(chooseBetween);
+            exchanger.setActualInteraction(Interaction.CHOOSEWEAPON);
+
+            while(exchanger.getActualInteraction() !=Interaction.NONE)
+                Thread.sleep(200);
+
             exchanger.setActualInteraction(Interaction.CHOOSEDIRECTION);
 
-            Thread.sleep(3000);
+            while(exchanger.getActualInteraction() !=Interaction.NONE)
+                Thread.sleep(200);
 
-            exchanger.setActualInteraction(Interaction.NONE);
-
-
-            Thread.sleep(3000);
-
-            exchanger.setActualInteraction(Interaction.CHOOSEDIRECTION);
+            exchanger.setActualInteraction(Interaction.CHOOSEPOSITION);
         }catch (InterruptedException e){
 
         }
-    }
-
-    public static void main(String[] args){
-        new GuiInterface(args);
-
-        while(true)
-            ;
     }
 
     /**

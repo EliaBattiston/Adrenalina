@@ -16,26 +16,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
 public class Gui extends Application{
+    private static String imgRoot = "file:images/";
+
+    //Data
     private MatchView match;
     private GameView game;
 
+    //View
     private Scene mainScene;
     private double backgroundWidth;
     private double backgroundHeight;
     private double dimMult;
     private static double positionFix = 35; //position fix for drawing the weapons on the map
-
-    private static String imgBackground = "file:images/background.png";
-    private static String dirPlayerboard = "file:images/playerBoard/";
-    private static String dirDrops = "file:images/drops/";
-    private static String dirPawns = "file:images/playerPawn/";
-
-    private Canvas fixedGraphics;
     private GraphicsContext gc;
+
+    //Canvases
+    private List<GuiCardWeapon> lootWeapons;
+    private List<GuiCardWeapon> myWeapons;
 
     public static void main(String[] args) {
         launch(args);
@@ -43,19 +45,14 @@ public class Gui extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        backgroundWidth = 1800;
+        backgroundWidth = 1280;
         backgroundHeight = backgroundWidth*9/16;
 
         dimMult = backgroundWidth/1920;
 
         initForTest();
 
-        //The background, map and decks never need to be updated
-        fixedGraphics = new Canvas(backgroundWidth, backgroundHeight);
-        gc = fixedGraphics.getGraphicsContext2D();
-        drawBackground();
-        drawMap(match.getGame().getMap());
-        drawDecks();
+
         mainScene = new Scene(drawGame());
 
         primaryStage.setTitle("Adrenalina");
@@ -75,27 +72,96 @@ public class Gui extends Application{
             if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
-
                 dimMult = backgroundWidth / 1920;
-                fixedGraphics = new Canvas(backgroundWidth, backgroundHeight);
-                gc = fixedGraphics.getGraphicsContext2D();
-                drawBackground();
-                drawMap(match.getGame().getMap());
+
                 drawDecks();
                 primaryStage.setScene(new Scene(drawGame()));
             }
         });
 
-        // primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> { });
+       //TODO use this for fixed ratio, find the good way to implement them
+        //primaryStage.minHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
+        //primaryStage.maxHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
+
+        // separate non-FX thread
+       new Thread(()->{
+            while(true)
+                if(GuiExchanger.getInstance().getActualInteraction() != Interaction.NONE) {
+                    System.out.println(GuiExchanger.getInstance().getActualInteraction().toString());
+                    switch (GuiExchanger.getInstance().getActualInteraction()) {
+                        case CHOOSEACTION:
+                            chooseDialog();
+                            break;
+                        case CHOOSEWEAPON:
+                            List<Weapon> goodW = new ArrayList<>();
+                            goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
+                            goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
+                            goodW.add(new Weapon(3, "", "", null, null, null, Color.RED));
+                            goodW.add(new Weapon(4, "", "", null, null, null, Color.RED));
+                            goodW.add(new Weapon(5, "", "", null, null, null, Color.RED));
+                            goodW.add(new Weapon(6, "", "", null, null, null, Color.RED));
+                            goodW.add(new Weapon(7, "", "", null, null, null, Color.RED));
+                            goodW.add(new Weapon(8, "", "", null, null, null, Color.RED));
+                            goodW.add(new Weapon(9, "", "", null, null, null, Color.RED));
+                            chooseWeaponCard(goodW);
+                            GuiExchanger.getInstance().setActualInteraction(Interaction.NONE);
+                            break;
+                        case GRABWEAPON:
+                        case DISCARDWEAPON:
+                        case RELOAD:
+
+                        case DISCARDPOWER:
+                        case CHOOSEPOWER:
+                            choosePowerCard();
+                            break;
+                        case MOVEPLAYER:
+                            chooseCell();
+                            break;
+                        case CHOOSETARGET:
+                            chooseEnemy();
+                            break;
+                        case MOVEENEMY:
+                            break;
+                        case CHOOSEROOM:
+                        case CHOOSEDIRECTION:
+                        case CHOOSEPOSITION:
+                        case CHOOSEMAP:
+                        case CHOOSEFRENZY:
+                            chooseDialog();
+                            break;
+                        case GETNICKNAME:
+                        case GETPHRASE:
+                        case GETFIGHTER:
+                        case GETSKULLSNUM:
+                            chooseUserSettings();
+                            break;
+                        case UPDATEVIEW:
+                            break;
+                        case NONE:
+                        default:
+                            break;
+                    }
+                }
+       }).start();
     }
 
     private Pane drawGame(){
         Pane masterPane;
         Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        Canvas fixedGraphics;
         StackPane a, b, c, d;
 
         masterPane = new Pane();
 
+        //The background, map and decks never need to be updated they can be run just when the window's dimensions change,
+        // to do so, move also the fixedGraphics canvas
+        fixedGraphics = new Canvas(backgroundWidth, backgroundHeight);
+        gc = fixedGraphics.getGraphicsContext2D();
+        drawBackground();
+        drawMap(match.getGame().getMap());
+        drawDecks();
+
+        //weapons, powers, loot
         gc = canvas.getGraphicsContext2D(); //from now on the global gc will be the one for the dynamics data
 
         drawPawnsOnMap(match.getGame().getMap());
@@ -119,7 +185,7 @@ public class Gui extends Application{
     }
 
     private void drawBackground(){
-        gc.drawImage( GuiImagesMap.getImage(imgBackground), 0, 0, backgroundWidth, backgroundHeight);
+        gc.drawImage( GuiImagesMap.getImage(imgRoot + "background.png"), 0, 0, backgroundWidth, backgroundHeight);
     }
 
     private void drawMap(Map map){
@@ -143,63 +209,63 @@ public class Gui extends Application{
         if(map.getCell(0, 0) != null) {
             x = 310 * dimMult;
             y = 325 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(0, 0)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(0, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
         if(map.getCell(1, 0) != null) {
             x = 526 * dimMult;
             y = 325 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(1, 0)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(1, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
         if(map.getCell(3, 0) != null) {
             x = 900 * dimMult;
             y = 900 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(3, 0)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(3, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
         if(map.getCell(1, 1) != null) {
             x = 526 * dimMult;
             y = 530 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(1, 1)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(1, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
         if(map.getCell(2, 1) != null) {
             x = 725 * dimMult;
             y = 530 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(2, 1)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(2, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
         if(map.getCell(3, 1) != null) {
             x = 900 * dimMult;
             y = 530 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(3, 1)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(3, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
         if(map.getCell(0, 2) != null) {
             x = 335 * dimMult;
             y = 730 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(0, 2)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(0, 2)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
         if(map.getCell(1, 2) != null) {
             x = 526 * dimMult;
             y = 730 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(1, 2)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(1, 2)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
         if(map.getCell(2, 2) != null) {
             x = 725 * dimMult;
             y = 730 * dimMult;
-            GuiCard card = new GuiCard(((RegularCell)map.getCell(2,2)).getLoot(), size);
+            GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(2,2)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
@@ -225,7 +291,7 @@ public class Gui extends Application{
                 y = baseY + j * deltaCellY;
                 if(map.getCell(i, j) != null) { //here X and Y are pointing at the top-left corner of the cell
                     for (Player p : map.getCell(i, j).getPawns()) {
-                        gc.drawImage(GuiImagesMap.getImage(dirPawns + p.getCharacter().toString() + ".png"), x, y, size, size);
+                        gc.drawImage(GuiImagesMap.getImage(imgRoot + "playerPawn/" + p.getCharacter().toString() + ".png"), x, y, size, size);
                         if (xNotY) {
                             x += size;
                             y = baseY + j * deltaCellY;
@@ -243,6 +309,7 @@ public class Gui extends Application{
 
     private StackPane drawWeaponsLoot(Map map){
         StackPane root = new StackPane();
+        GuiCardWeapon card;
 
         //dimensions are the same
         double width = 104 * dimMult;
@@ -254,10 +321,12 @@ public class Gui extends Application{
         double deltaX = 126 * dimMult;
         double deltaY = deltaX;
 
+        lootWeapons = new ArrayList<>();
         //First the blue spawn
         SpawnCell c = (SpawnCell) map.getCell(2,0);
         for(Weapon w:c.getWeapons()){
-            GuiCard card = new GuiCard(w, width, height, 0);
+            card = new GuiCardWeapon(w, width, height, 0);
+            lootWeapons.add(card);
 
             card.setPickOnBounds(false);
             card.setTranslateX(x);
@@ -273,7 +342,9 @@ public class Gui extends Application{
         //Red spawn
         c = (SpawnCell) map.getCell(0, 1);
         for(Weapon w:c.getWeapons()){
-            GuiCard card = new GuiCard(w, width, height, -90);
+            card = new GuiCardWeapon(w, width, height, -90);
+
+            lootWeapons.add(card);
 
             card.setPickOnBounds(false);
             card.setTranslateX(x);
@@ -289,12 +360,14 @@ public class Gui extends Application{
         //Yellow spawn
         c = (SpawnCell) map.getCell(3, 2);
         for(Weapon w:c.getWeapons()){
-            GuiCard card = new GuiCard(w, width, height, +90);
-            root.getChildren().add(card);
+            card = new GuiCardWeapon(w, width, height, +90);
+
+            lootWeapons.add(card);
 
             card.setPickOnBounds(false);
             card.setTranslateX(x);
             card.setTranslateY(y);
+            root.getChildren().add(card);
 
             y += deltaY;
         }
@@ -351,12 +424,12 @@ public class Gui extends Application{
         t.setFill(javafx.scene.paint.Color.WHITE);
         pane.getChildren().add(t);*/
 
-        gc.drawImage( GuiImagesMap.getImage(dirPlayerboard + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
+        gc.drawImage( GuiImagesMap.getImage(imgRoot + "playerBoard/" + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
 
         //damages
         for(int i=0; i<12; i++){
             if(player.getReceivedDamage()[i] != null)
-                gc.drawImage( GuiImagesMap.getImage(dirDrops + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+                gc.drawImage( GuiImagesMap.getImage(imgRoot + "drops/" + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
 
             xDrop += deltaX;
         }
@@ -367,7 +440,7 @@ public class Gui extends Application{
         deltaX = widthDrop * 1.1; //put just a little bit of space, we don't know how many marks a player will get
         for(String p: player.getReceivedMarks()){
             if(p != null)
-                gc.drawImage( GuiImagesMap.getImage(dirDrops + Player.fighterFromNick(players, p) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+                gc.drawImage( GuiImagesMap.getImage(imgRoot + "drops/" + Player.fighterFromNick(players, p) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
 
             xDrop += deltaX;
         }
@@ -385,8 +458,10 @@ public class Gui extends Application{
         //calculate distance from board to board
         double deltaX = 136 * dimMult;
 
+        myWeapons = new ArrayList<>();
         for(Weapon w : weapons){
-            GuiCard card = new GuiCard(w, width, height, 0);
+            GuiCardWeapon card = new GuiCardWeapon(w, width, height, 0);
+            myWeapons.add(card);
             root.getChildren().add(card);
 
             card.setPickOnBounds(false);
@@ -412,7 +487,7 @@ public class Gui extends Application{
         double deltaX = 102 * dimMult;
 
         for(Power p : powers){
-            GuiCard card = new GuiCard(p, width, height);
+            GuiCardPower card = new GuiCardPower(p, width, height);
             card.setPosition(x, y);
             root.getChildren().add(card);
             x += deltaX;
@@ -472,12 +547,21 @@ public class Gui extends Application{
     /**
      * Used for: getNickname, getPhrase, getFighter, getSkulls
      */
-    private void askUserSettings(){}
+    private void chooseUserSettings(){}
 
     /**
      * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
      */
-    private void chooseWeaponCard(){}
+    private void chooseWeaponCard(List<Weapon> choosable){
+        List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
+
+        for(GuiCardWeapon c : cards){
+            c.setOnMousePressed(e -> {
+                System.out.println("Clicked a super-weapon " + c.getWeapon().getName());
+            });
+            c.setOnMouseEntered(e -> c.setStyle("-fx-effect: innershadow(gaussian, #ff1315, 10, 0.5, 0, 0);"));
+        }
+    }
 
     /**
      * Used for: discardPower, choosePower
