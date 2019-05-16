@@ -1,19 +1,19 @@
 package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.controller.GamePhase;
-import it.polimi.ingsw.controller.SocketConn;
-import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.Map;
+import it.polimi.ingsw.model.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * CLI implementation of the user interface
@@ -32,6 +32,11 @@ public class CLInterface implements UserInterface {
      * Instance of the match view (from which taking data)
      */
     private MatchView view;
+
+    /**
+     * Log messages
+     */
+    private List<String> log;
 
     /**
      *Color and symbol constants
@@ -62,6 +67,7 @@ public class CLInterface implements UserInterface {
     private static final String[] ANSI_BACKGROUNDS = {ANSI_RED_BACKGROUND, ANSI_BLUE_BACKGROUND, ANSI_YELLOW_BACKGROUND, ANSI_WHITE_BACKGROUND, ANSI_PURPLE_BACKGROUND, ANSI_GREEN_BACKGROUND, ANSI_CYAN_BACKGROUND, ANSI_BLACK_BACKGROUND};
 
     private static final String BOX = "◼";//"\u25FC";
+    private static final String SKULL = "\uD83D\uDC80";
 
     private static final String SPACE = "\u0020";
 
@@ -76,103 +82,13 @@ public class CLInterface implements UserInterface {
     private static final String L_VERT = "|";
 
 
-    public static void main(String[] args) throws IOException {
-        List<Action> list = new ArrayList<>();
-        List<Color> cost = new ArrayList<>();
-        List<Weapon> weaplist = new ArrayList<>();
-        List<Power> powlist = new ArrayList<>();
-        List<Point> pointlist = new ArrayList<>();
-        List<Player> playerlist = new ArrayList<>();
-        cost.add(Color.BLUE);
-        cost.add(Color.YELLOW);
-        cost.add(Color.BLUE);
-        cost.add(Color.BLUE);
-        cost.add(Color.RED);
-        cost.add(Color.RED);
-        list.add(new Action("Prova1", "Desc1", cost, null));
-        list.add(new Action("Prova2", "Desc2", cost, null));
-        list.add(new Action("Prova3", "Desc3", cost, null));
-        weaplist.add(new Weapon(0, "Weapon1", "Notes1",new Action("WeapAct", "", cost, null), null, null, Color.BLUE));
-        weaplist.add(new Weapon(1, "Weapon2", "Notes2",new Action("WeapAct", "", cost, null), null, null, Color.RED));
-        weaplist.add(new Weapon(2, "Weapon3", "Notes3",new Action("WeapAct", "", cost, null), null, null, Color.YELLOW));
-        powlist.add(new Power(0, "Power1", new Action("PowAct", "", cost, null), Color.BLUE));
-        powlist.add(new Power(1, "Power2", new Action("PowAct", "", cost, null), Color.YELLOW));
-        powlist.add(new Power(2, "Power3", new Action("PowAct", "", cost, null), Color.RED));
-        pointlist.add(new Point(0,0));
-        pointlist.add(new Point(1,2));
-        pointlist.add(new Point(0,2));
-        pointlist.add(new Point(3,0));
-        pointlist.add(new Point(3,2));
-        Player p1 = new Player("Player1", "", Fighter.DSTRUTTOR3);
-        playerlist.add(p1);
-        Player p2 = new Player("Player2", "", Fighter.DOZER);
-        playerlist.add(p2);
-        Player p3 = new Player("Player3", "", Fighter.BANSHEE);
-        playerlist.add(p3);
-
-        CLInterface inter = new CLInterface();
-        Game game = Game.jsonDeserialize("resources/baseGame.json");
-        MatchView matchView = new MatchView(new GameView(Map.jsonDeserialize(inter.chooseMap()), playerlist, null), p1, p2, 3, GamePhase.REGULAR, true, p3);
-        for(int x = 0; x < 4; x++) {
-            for(int y = 0; y < 3; y++) {
-                Cell c = matchView.getGame().getMap().getCell(x,y);
-                if(c != null)
-                    c.refill(game);
-            }
-        }
-
-        inter.updateGame(matchView);
-
-        /*
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseAction(list, true).getName() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseAction(list, true).getName() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseAction(list, false).getName() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseDirection(false).toString() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseFrenzy().toString() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseWeapon(weaplist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.getSkullNum().toString() + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.discardWeapon(weaplist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.grabWeapon(weaplist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.choosePower(powlist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.reload(weaplist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.choosePosition(pointlist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.discardPower(powlist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.movePlayer(pointlist, true) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseTarget(playerlist, false) + ANSI_RESET);
-
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.moveEnemy(p1, pointlist, false) + ANSI_RESET);
-        */
-
-        List<Integer> roomlist = new ArrayList<>();
-        roomlist.add(1);
-        roomlist.add(0);
-        roomlist.add(4);
-        System.out.println(ANSI_GREEN_BACKGROUND + inter.chooseRoom(roomlist, false) + ANSI_RESET);
-
-
-    }
-
-
     /**
      * Initialization of the interface, in particular instantiation of scanne and writer over System in and out
      */
     public CLInterface() {
         in = new Scanner(System.in);
         stdout = new PrintWriter(System.out);
+        log = new ArrayList<>();
     }
 
     /**
@@ -189,6 +105,25 @@ public class CLInterface implements UserInterface {
 
         String ret = toPrint;
         for(int i = 0; i < CELLDIM - 2 - copy.length(); i++) {
+            ret += " ";
+        }
+        return ret;
+    }
+
+    /**
+     *General text formatting (spacing insertion on the right of the text)
+     * @param toPrint Text to be formatted
+     * @return Formatted text
+     */
+    private String stringFormat(String toPrint, int totChar) {
+        String copy = toPrint.replace(ANSI_RESET, "");
+        for(String s: ANSI_COLORS)
+            copy = copy.replace(s, "");
+        for(String s: ANSI_BACKGROUNDS)
+            copy = copy.replace(s, "");
+
+        String ret = toPrint;
+        for(int i = 0; i < totChar - copy.length(); i++) {
             ret += " ";
         }
         return ret;
@@ -214,15 +149,26 @@ public class CLInterface implements UserInterface {
         return ret;
     }
 
+    /**
+     * Reads a string from System.in
+     * @return Read string
+     */
     private String scan() {
         try {
-            return in.nextLine();
+            String line = in.nextLine();
+            while(line.equals(""))
+                line = in.nextLine();
+            return line;
         }
         catch(NoSuchElementException e) {
-            return null;
+            return "";
         }
     }
 
+    /**
+     * Reads an integer from System.in
+     * @return Read integer
+     */
     private int scanInt() {
         int num = 0;
         try {
@@ -269,8 +215,67 @@ public class CLInterface implements UserInterface {
                 return ANSI_RED + BOX + ANSI_RESET;
             case YELLOW:
                 return ANSI_YELLOW + BOX + ANSI_RESET;
+            default:
+                return "";
         }
-        return "";
+    }
+
+    /**
+     * Formats a string to represent the name and colour of a Fighter
+     * @param fighter Fighter to be formatted
+     * @return Formatted Fighter string
+     */
+    private String fighterToString(Fighter fighter) {
+        String res;
+        switch (fighter) {
+            case BANSHEE:
+                res = ANSI_BLUE + "Banshee" + ANSI_RESET;
+                break;
+            case SPROG:
+                res = ANSI_GREEN + "Sprog" + ANSI_RESET;
+                break;
+            case DOZER:
+                res = ANSI_BLACK + "Dozer" + ANSI_RESET;
+                break;
+            case VIOLETTA:
+                res = ANSI_PURPLE + "Violetta" + ANSI_RESET;
+                break;
+            case DSTRUTTOR3:
+                res = ANSI_YELLOW + "Dstruttor3" + ANSI_RESET;
+                break;
+            default:
+                res = ANSI_RESET;
+        }
+        return res;
+    }
+
+    /**
+     * Formats a letter to represent the name and colour of a Fighter
+     * @param fighter Fighter to be formatted
+     * @return Formatted Fighter letter
+     */
+    private String fighterToLetter(Fighter fighter) {
+        String res;
+        switch (fighter) {
+            case BANSHEE:
+                res = ANSI_BLUE + "B" + ANSI_RESET;
+                break;
+            case SPROG:
+                res = ANSI_GREEN + "S" + ANSI_RESET;
+                break;
+            case DOZER:
+                res = ANSI_BLACK + "D" + ANSI_RESET;
+                break;
+            case VIOLETTA:
+                res = ANSI_PURPLE + "V" + ANSI_RESET;
+                break;
+            case DSTRUTTOR3:
+                res = ANSI_YELLOW + "3" + ANSI_RESET;
+                break;
+            default:
+                res = ANSI_RESET;
+        }
+        return res;
     }
 
     /**
@@ -278,6 +283,7 @@ public class CLInterface implements UserInterface {
      * @param weapon Weapon to print out info
      */
     private void printWeapon(Weapon weapon) {
+        println("");
         print(ANSI_BOLD + weapon.getName() + ANSI_RESET + " " + formatColorBox(weapon.getColor()) + " ");
         for(Color c: weapon.getBase().getCost()) {
             print(formatColorBox(c) + " ");
@@ -313,7 +319,10 @@ public class CLInterface implements UserInterface {
      */
     public void updateGame(MatchView matchView) {
         view = matchView;
+        println("");
         map(null, null);
+        logInfo();
+        skullsInfo();
         frenzyInfo();
         playerInfo();
     }
@@ -329,7 +338,8 @@ public class CLInterface implements UserInterface {
             println("[1] Oggetti presenti in una cella");
             println("[2] Informazioni su arma");
             println("[3] Informazioni su potenziamento");
-            println("[4] Informazioni su armi/potenziamenti in mano");
+            println("[4] Informazioni su armi/potenziamenti in mano e punti accumulati");
+            println("[5] Log completo della partita");
             println("[0] Esci");
             print("Selezione: ");
             sel1 = scanInt();
@@ -386,8 +396,14 @@ public class CLInterface implements UserInterface {
                         while(weaplist.size() < 21) {
                             weaplist.add(baseGame.getWeaponsDeck().draw());
                         }
+                        Collections.sort(weaplist, new Comparator<Weapon>() {
+                            @Override
+                            public int compare(Weapon o1, Weapon o2) {
+                                return o1.getName().compareToIgnoreCase(o2.getName());
+                            }
+                        });
                         for(int i = 0; i < weaplist.size() - (weaplist.size() % 2); i += 2) {
-                            println(String.format("[%2d] %-23s | [%2d] %-23s", i+1, weaplist.get(i).getName(), i+2, weaplist.get(i+1).getName()));
+                            println(String.format("[%2d] %-23s [%2d] %-23s", i+1, weaplist.get(i).getName(), i+2, weaplist.get(i+1).getName()));
                         }
                         if(weaplist.size() % 2 == 1) {
                             println(String.format("[%2d] %-23s", weaplist.size(), weaplist.get(weaplist.size()-1).getName()));
@@ -400,7 +416,8 @@ public class CLInterface implements UserInterface {
                         sel2--;
                         printWeapon(weaplist.get(sel2));
                     }
-                    catch(FileNotFoundException ex){
+                    catch(FileNotFoundException e){
+                        Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                         println("Error! Error!");
                     }
                     break;
@@ -424,15 +441,18 @@ public class CLInterface implements UserInterface {
                         sel2--;
                         println(ANSI_BOLD + powlist.get(sel2).getName() + ANSI_RESET + ": " + powlist.get(sel2).getBase().getDescription());
                     }
-                    catch(FileNotFoundException ex){
+                    catch(FileNotFoundException e){
+                        Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
                         println("Error! Error!");
                     }
                     break;
                 case 4:
+                    println("Punti accumulati: " + view.getMyPlayer().getPoints());
+
                     if(view.getMyPlayer().getWeapons() != null && !view.getMyPlayer().getWeapons().isEmpty()) {
                         println("Armi in mano: ");
                         for (Weapon w : view.getMyPlayer().getWeapons()) {
-                            print(w.getName() + " (");
+                            print("\t" + w.getName() + " (");
                             if (w.isLoaded())
                                 print("carica");
                             else
@@ -441,16 +461,20 @@ public class CLInterface implements UserInterface {
                         }
                     }
                     else
-                        println("Nessuna arma in mano");
+                        println("\tNessuna arma in mano");
 
                     if(view.getMyPlayer().getPowers() != null && !view.getMyPlayer().getPowers().isEmpty()) {
                         println("Potenziamenti in mano: ");
                         for (Power p : view.getMyPlayer().getPowers()) {
-                            println(p.getName() + formatColorBox(p.getColor()));
+                            println("\t" + p.getName() + " " + formatColorBox(p.getColor()));
                         }
                     }
                     else
-                        println("Nessun potenziamento in mano");
+                        println("\tNessun potenziamento in mano");
+                    break;
+                case 5:
+                    for(String s: log)
+                        println(s);
                     break;
                 default:
                     println("Scelta non presente in elenco, ripetere");
@@ -464,56 +488,112 @@ public class CLInterface implements UserInterface {
      * Prints out the Frenzy mode status
      */
     private void frenzyInfo() {
-        print("Modalità Frenesia: ");
+        print("\nModalità Frenesia: ");
         if(view.getPhase() == GamePhase.FRENZY)
-            print(ANSI_GREEN);
+            print(ANSI_GREEN + "SI");
         else
-            print(ANSI_RED);
-        println(BOX + ANSI_RESET);
+            print(ANSI_RED + "NO");
+        println(ANSI_RESET);
     }
 
     /**
      * Prints out players' general informations (connection, playing player, ammos)
      */
     private void playerInfo() {
-        println("Giocatori: ");
+        println("\nGiocatori: ");
         for(Player p: view.getGame().getPlayers()) {
-            String print;
-            if(p.getConn() != null)
-                print = ANSI_GREEN;
-            else
-                print = ANSI_YELLOW;
-
-            print += BOX + ANSI_RESET + " ";
-            if(p.equals(view.getMyPlayer())) {
+            String print = "";
+            String background = "";
+            if(p.getNick().equals(view.getMyPlayer().getNick())) {
                 print += ANSI_BOLD;
             }
-            if(p.equals(view.getActive())) {
-                print += ANSI_CYAN_BACKGROUND;
+            if(view.getActive() != null && p.getNick().equals(view.getActive().getNick())) {
+                background = ANSI_CYAN_BACKGROUND;
             }
 
-            print += String.format("%-25s", p.getNick()) + ANSI_RESET;
+
+            print += background + stringFormat(p.getNick() + " - " + background + fighterToString(p.getCharacter()), 32) + ANSI_RESET;
+            print += "Morti: " + p.getSkulls() + "x" + SKULL;
             print += " Ammo: ";
             print += p.getAmmo(Color.BLUE) + "x" + formatColorBox(Color.BLUE) + " ";
             print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";
             print += p.getAmmo(Color.RED) + "x" + formatColorBox(Color.RED) + " ";
+            print += "Danni: ";
+            for(int i = 0; i < p.getReceivedDamage().length; i++) {
+                boolean found = false;
+                for(Player pl: view.getGame().getPlayers()) {
+                    if (p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(pl.getNick())) {
+                        print += fighterToLetter(pl.getCharacter());
+                        found = true;
+                    }
+                }
+                if(!found)
+                    print += "-";
+            }
+            print += " Marchi: ";
+            if(p.getReceivedMarks().isEmpty())
+                print += "-";
+            else {
+                for (String mark : p.getReceivedMarks()) {
+                    for (Player pl : view.getGame().getPlayers())
+                        if (mark.equals(pl.getNick()))
+                            print += fighterToLetter(pl.getCharacter());
+                }
+            }
+
             println(print);
         }
     }
 
+    public void skullsInfo() {
+        print("\nTeschi: ");
+        for(Kill k: view.getGame().getSkullsBoard()) {
+            if(k.isUsed()) {
+                if(k.getSkull())
+                    print(SKULL + " ");
+                else {
+                    print(fighterToLetter(k.getKiller().getCharacter()));
+                    if(k.getOverkill())
+                        print("(" + fighterToLetter(k.getKiller().getCharacter()) + ")");
+                    print(" ");
+                }
+            }
+            else
+                print("- ");
+        }
+    }
+
     private int generalMenu(List<String> options, int starting) {
+        return generalMenu(options, starting, true);
+    }
+
+    private int generalMenu(List<String> options, int starting, boolean gameInfo) {
         int choose;
-        for(String opt: options)
-            println(opt);
-        println("[?] Informazioni sul gioco");
 
         do {
-            print("Qual è la tua scelta? [" + starting + "-" + (options.size() - 1) + "]: ");
-            choose = scanInt();
-            if(choose == -1)
-                generalInfo();
+            println("");
+            for (String opt : options)
+                println(opt);
+
+            if (gameInfo)
+                println("[?] Informazioni sul gioco");
+
+            int end;
+            if(starting == 0)
+                end = options.size() - 2;
+            else
+                end = options.size() - 1;
+
+            do {
+                print("Qual è la tua scelta? [" + starting + "-" + end + "]: ");
+                choose = scanInt();
+                if (choose == -1 && gameInfo)
+                    generalInfo();
+            }
+            while (choose != -1 && (choose < starting || choose > end));
         }
-        while (choose < starting || choose > options.size() - 1);
+        while(choose == -1);
+
         return choose;
     }
 
@@ -551,8 +631,7 @@ public class CLInterface implements UserInterface {
      * @return Cell part formatted string
      */
     private String printCell(int x, int y, int row, List<Player> marked, List<Point> highlighted) {
-        Map m = view.getGame().getMap();
-        Cell c = m.getCell(x,y);
+        Cell c = view.getGame().getMap().getCell(x,y);
         String ret = "";
         String highlight = "";
         if(highlighted != null) {
@@ -582,6 +661,8 @@ public class CLInterface implements UserInterface {
                         for(int i = 0; i < CELLDIM - 2; i++)
                             ret += L_HOR;
                         break;
+                    default:
+                        break;
                 }
                 ret += corner(x,y,true, false) + ANSI_RESET;
                 break;
@@ -610,22 +691,25 @@ public class CLInterface implements UserInterface {
                 }
                 else {
                     RegularCell rc = (RegularCell) c;
-                    for(Color color : rc.getLoot().getContent()) {
-                        switch (color) {
-                            case BLUE:
-                                loot += highlight + ANSI_BLUE + BOX;
-                                break;
-                            case YELLOW:
-                                loot += highlight + ANSI_YELLOW + BOX;
-                                break;
-                            case RED:
-                                loot += highlight + ANSI_RED + BOX;
-                                break;
-                            case POWER:
-                                loot += highlight + ANSI_BLACK + BOX;
-                                break;
+                    if(rc.getLoot() != null)
+                    {
+                        for(Color color : rc.getLoot().getContent()) {
+                            switch (color) {
+                                case BLUE:
+                                    loot += highlight + ANSI_BLUE + BOX;
+                                    break;
+                                case YELLOW:
+                                    loot += highlight + ANSI_YELLOW + BOX;
+                                    break;
+                                case RED:
+                                    loot += highlight + ANSI_RED + BOX;
+                                    break;
+                                case POWER:
+                                    loot += highlight + ANSI_BLACK + BOX;
+                                    break;
+                            }
+                            loot += SPACE;
                         }
-                        loot += SPACE;
                     }
                 }
                 ret += highlight + innerCellFormatRight(loot) + ANSI_RESET;
@@ -649,7 +733,7 @@ public class CLInterface implements UserInterface {
                 }
                 if(c.getPawns().size() >= 1) {
                     Player p = c.getPawns().get(0);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -657,7 +741,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -682,7 +766,7 @@ public class CLInterface implements UserInterface {
                 }
                 if(c.getPawns().size() >= 2) {
                     Player p = c.getPawns().get(1);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -690,7 +774,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -715,7 +799,7 @@ public class CLInterface implements UserInterface {
                 }
                 if(c.getPawns().size() >= 3) {
                     Player p = c.getPawns().get(2);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -723,7 +807,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -741,7 +825,7 @@ public class CLInterface implements UserInterface {
 
                 if(c.getPawns().size() >= 4) {
                     Player p = c.getPawns().get(3);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -749,7 +833,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -767,7 +851,7 @@ public class CLInterface implements UserInterface {
 
                 if(c.getPawns().size() >= 5) {
                     Player p = c.getPawns().get(4);
-                    String bgd = null;
+                    String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
                             if (p.equals(mark)) {
@@ -775,7 +859,7 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick() + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
@@ -822,8 +906,7 @@ public class CLInterface implements UserInterface {
      * @return Formatted corner string
      */
     private String corner(int x, int y, boolean north, boolean west) {
-        Map m = view.getGame().getMap();
-        Cell center = m.getCell(x,y);
+        Cell center = view.getGame().getMap().getCell(x,y);
         String ret = null;
         if(north) {
             if(west) {
@@ -909,7 +992,7 @@ public class CLInterface implements UserInterface {
      */
     public Action chooseAction(List<Action> available, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Azioni disponibili:");
+        options.add("\nAzioni disponibili:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -944,7 +1027,7 @@ public class CLInterface implements UserInterface {
      */
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Armi disponibili:");
+        options.add("\nArmi disponibili:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -973,7 +1056,7 @@ public class CLInterface implements UserInterface {
      */
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Armi disponibili nella cella:");
+        options.add("\nArmi disponibili nella cella:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1003,7 +1086,7 @@ public class CLInterface implements UserInterface {
      */
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Armi ricaricabili:");
+        options.add("\nArmi ricaricabili:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1037,27 +1120,42 @@ public class CLInterface implements UserInterface {
      * @return Point where the player will be when he's done moving
      */
     public Point movePlayer(List<Point> destinations, boolean mustChoose) {
-        map(null, destinations);
-        List<String> options = new ArrayList<>();
-        options.add("Movimenti possibili:");
-        int i = 0;
-        int starting = 1;
-        int choose;
-        if(!mustChoose) {
-            starting = 0;
-            options.add("[0] Non muoverti");
-        }
+        List<Integer> options = new ArrayList<>();
+        int choose, actPos;
+        actPos = -1;
+        if(!mustChoose)
+            destinations.add(view.getActive().getPosition());
         for(Point disp: destinations) {
-            i++;
-            options.add("[" + i + "] " + (disp.getY() * 4 + disp.getX() + 1));
+            int point = disp.getY() * 4 + disp.getX() + 1;
+            options.add(point);
         }
+        Collections.sort(options);
 
-        choose = generalMenu(options, starting);
+        map(null, destinations);
 
-        if(choose == 0)
+        print("\nMovimenti possibili:");
+        for(Integer point: options) {
+            print(point + " ");
+        }
+        println("");
+        do {
+            print("Scelta: ");
+            choose = scanInt();
+        }
+        while (!options.contains(choose));
+
+        if(choose == actPos)
             return null;
-        else
-            return destinations.get(choose - 1);
+        else {
+            choose--;
+            Point eqP = new Point(choose % 4, choose / 4);
+            Point retP = null;
+            for(Point p: destinations) {
+                if(p.getX() == eqP.getX() && p.getY() == eqP.getY())
+                    retP = p;
+            }
+            return retP;
+        }
     }
 
     /**
@@ -1069,7 +1167,7 @@ public class CLInterface implements UserInterface {
     public Player chooseTarget(List<Player> targets, boolean mustChoose) {
         map(targets, null);
         List<String> options = new ArrayList<>();
-        options.add("Scegli un bersaglio:");
+        options.add("\nScegli un bersaglio:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1099,28 +1197,49 @@ public class CLInterface implements UserInterface {
      */
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) {
         List<Player> plist = new ArrayList<>();
-        List<String> options = new ArrayList<>();
+        List<Integer> options = new ArrayList<>();
         plist.add(enemy);
-        map(plist, destinations);
-        options.add("Scegli dove muovere il giocatore:");
-        int i = 0;
-        int starting = 1;
-        int choose;
-        if(!mustChoose) {
-            starting = 0;
-            options.add("[0] Non muoverti");
-        }
+
+        int choose, actPos;
+        actPos = -1;
+        if(!mustChoose)
+            destinations.add(view.getActive().getPosition());
         for(Point disp: destinations) {
-            i++;
-            options.add("[" + i + "] " + (disp.getY() * 4 + disp.getX() + 1));
+            int point = disp.getY() * 4 + disp.getX() + 1;
+            options.add(point);
+        }
+        Collections.sort(options);
+
+        println("\nScegli dove muovere il giocatore:");
+
+        map(plist, destinations);
+
+        print("Posizioni (celle) possibili: ");
+        for(Integer point: options) {
+            print(point + " ");
         }
 
-        choose = generalMenu(options, starting);
 
-        if(choose == 0)
+
+        println("");
+        do {
+            print("Scelta: ");
+            choose = scanInt();
+        }
+        while (!options.contains(choose));
+
+        if(choose == actPos)
             return null;
-        else
-            return destinations.get(choose - 1);
+        else {
+            choose--;
+            Point eqP = new Point(choose % 4, choose / 4);
+            Point retP = null;
+            for(Point p: destinations) {
+                if(p.getX() == eqP.getX() && p.getY() == eqP.getY())
+                    retP = p;
+            }
+            return retP;
+        }
     }
 
     /**
@@ -1131,7 +1250,7 @@ public class CLInterface implements UserInterface {
      */
     public Power discardPower(List<Power> powers, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Scegli quale carta potenziamento scartare:");
+        options.add("\nScegli quale carta potenziamento scartare:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1141,7 +1260,7 @@ public class CLInterface implements UserInterface {
         }
         for(Power pow: powers) {
             i++;
-            options.add("[" + i + "] " + pow.getName() + ", costo: " + formatColorBox(pow.getColor()) + " ");
+            options.add("[" + i + "] " + pow.getName() + ", colore: " + formatColorBox(pow.getColor()) + " ");
         }
 
         choose = generalMenu(options, starting);
@@ -1160,7 +1279,7 @@ public class CLInterface implements UserInterface {
      */
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Scegli una stanza:");
+        options.add("\nScegli una stanza:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1208,8 +1327,8 @@ public class CLInterface implements UserInterface {
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose) {
-        println("Scegli una direzione:");
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
+        println("\nScegli una direzione:");
         int i = 0;
         int starting = 1;
         String choose;
@@ -1218,16 +1337,36 @@ public class CLInterface implements UserInterface {
             println("0 - Nessuna scelta");
         }
 
-        println("N - Nord");
-        println("E - Est");
-        println("S - Sud");
-        println("W - Ovest");
+        List<String> possibleString = new ArrayList<>();
+        for(Direction d: possible) {
+            switch (d) {
+                case NORTH:
+                    println("N - Nord");
+                    possibleString.add("n");
+                    break;
+                case EAST:
+                    println("E - Est");
+                    possibleString.add("e");
+                    break;
+                case SOUTH:
+                    println("S - Sud");
+                    possibleString.add("s");
+                    break;
+                case WEST:
+                    println("W - Ovest");
+                    possibleString.add("w");
+                    break;
+                default:
+                    return null;
+            }
+        }
+
         println("[?] Informazioni sul gioco");
 
         do {
             print("La tua scelta: ");
             choose = scan();
-        }while (!choose.equalsIgnoreCase("N") && !choose.equalsIgnoreCase("W") && !choose.equalsIgnoreCase("S") && !choose.equalsIgnoreCase("E") && !choose.equalsIgnoreCase("0") && !choose.equalsIgnoreCase("?"));
+        }while (!choose.equalsIgnoreCase("0") && !choose.equalsIgnoreCase("?") && !possibleString.contains(choose));
 
         switch (choose.toUpperCase()) {
             case "N":
@@ -1250,27 +1389,44 @@ public class CLInterface implements UserInterface {
      * @return chosen position
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose) {
-        map(null, positions);
-        List<String> options = new ArrayList<>();
-        options.add("Scegli una cella della mappa:");
-        int i = 0;
-        int starting = 1;
-        int choose;
-        if(!mustChoose) {
-            starting = 0;
-            options.add("[0] Non scegliere");
-        }
+        List<Integer> options = new ArrayList<>();
+        int choose, actPos;
+        actPos = -1;
+        if(!mustChoose)
+            positions.add(view.getActive().getPosition());
         for(Point disp: positions) {
-            i++;
-            options.add("[" + i + "] " + (disp.getY() * 4 + disp.getX()));
+            int point = disp.getY() * 4 + disp.getX() + 1;
+            options.add(point);
         }
+        Collections.sort(options);
 
-        choose = generalMenu(options, starting);
+        println("\nScegli una cella della mappa:");
 
-        if(choose == 0)
+        map(null, positions);
+
+        print("\nCelle disponibili:");
+        for(Integer point: options) {
+            print(point + " ");
+        }
+        println("");
+        do {
+            print("Scelta: ");
+            choose = scanInt();
+        }
+        while (!options.contains(choose));
+
+        if(choose == actPos)
             return null;
-        else
-            return positions.get(choose - 1);
+        else {
+            choose--;
+            Point eqP = new Point(choose % 4, choose / 4);
+            Point retP = null;
+            for(Point p: positions) {
+                if(p.getX() == eqP.getX() && p.getY() == eqP.getY())
+                    retP = p;
+            }
+            return retP;
+        }
     }
 
     /**
@@ -1279,7 +1435,7 @@ public class CLInterface implements UserInterface {
      */
     public String getNickname() {
         String nick;
-        print("Il tuo nickname: ");
+        print("\nIl tuo nickname: ");
         nick = scan();
         return nick;
     }
@@ -1289,29 +1445,44 @@ public class CLInterface implements UserInterface {
      * @return user's effect phrase
      */
     public String getPhrase() {
-        print("La tua esclamazione: ");
+        print("\nLa tua esclamazione: ");
         return scan();
     }
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      */
-    public Fighter getFighter() {
-        println("[1] Dstruttor3");
-        println("[2] Banshee");
-        println("[3] Dozer");
-        println("[4] Violetta");
-        println("[5] Sprog");
+    public Fighter getFighter(List<Fighter> available) {
 
-        int chosen = 0;
-        while(chosen < 1 || chosen > 5)
-        {
-            print("Scegli il tuo personaggio [1-5]: ");
-            chosen = scanInt();
+        List<String> options = new ArrayList<>();
+        options.add("\nScegli il tuo Fighter");
+        int i = 1;
+        for(Fighter f: available) {
+            switch (f) {
+                case DSTRUTTOR3:
+                    options.add("[" + i + "] Dstruttor3");
+                    break;
+                case VIOLETTA:
+                    options.add("[" + i + "] Violetta");
+                    break;
+                case DOZER:
+                    options.add("[" + i + "] Dozer");
+                    break;
+                case SPROG:
+                    options.add("[" + i + "] Sprog");
+                    break;
+                case BANSHEE:
+                    options.add("[" + i + "] Banshee");
+                    break;
+            }
+            i++;
         }
 
-        return Fighter.values()[chosen-1];
+        int chosen = generalMenu(options, 1, false);
+
+        return available.get(chosen - 1);
     }
 
     /**
@@ -1321,7 +1492,7 @@ public class CLInterface implements UserInterface {
     public Integer getSkullNum() {
         int num;
         do {
-            print("Scegli con quanti teschi vuoi giocare [5-8]: ");
+            print("\nScegli con quanti teschi vuoi giocare [5-8]: ");
             num = scanInt();
         }
         while(num < 5 || num > 8);
@@ -1336,7 +1507,7 @@ public class CLInterface implements UserInterface {
      */
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Scegli un'arma da scartare:");
+        options.add("\nScegli un'arma da scartare:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1376,13 +1547,13 @@ public class CLInterface implements UserInterface {
     public Integer chooseMap() {
         int map;
         List<String> options = new ArrayList<>();
-        options.add("Scegli la mappa da utilizzare:");
+        options.add("\nScegli la mappa da utilizzare:");
         options.add("[1] Ottima per iniziare");
         options.add("[2] Ottima per 3 o 4 giocatori");
         options.add("[3] Ottima per qualsiasi numero di giocatori");
         options.add("[4] Ottima per 4 o 5 giocatori");
 
-        return generalMenu(options, 1);
+        return generalMenu(options, 1, false);
     }
 
     /**
@@ -1392,11 +1563,11 @@ public class CLInterface implements UserInterface {
     public Boolean chooseFrenzy() {
         String ans;
         do {
-            print("Vuoi la modalità Frenesia a fine partita? [S/N]: ");
+            print("\nVuoi la modalità Frenesia a fine partita? [S/N]: ");
             ans = scan();
         }
         while(!ans.equalsIgnoreCase("s") && !ans.equalsIgnoreCase("n"));
-        return ans.toLowerCase() == "s";
+        return ans.toLowerCase().equals("s");
     }
 
     /**
@@ -1407,7 +1578,7 @@ public class CLInterface implements UserInterface {
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
         List<String> options = new ArrayList<>();
-        options.add("Scegli un potenziamento da usare:");
+        options.add("\nScegli un potenziamento da usare:");
         int i = 0;
         int starting = 1;
         int choose;
@@ -1426,5 +1597,28 @@ public class CLInterface implements UserInterface {
             return null;
         else
             return inHand.get(choose - 1);
+    }
+
+    /**
+     * Prints out a general message to the client interface
+     * @param message Message to be printed
+     */
+    public void generalMessage(String message) {
+        println("\n" + message);
+        String logMessage = "";
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        logMessage = dtf.format(now) + " " + message;
+        log.add(logMessage);
+    }
+
+    private void logInfo() {
+        println("--------------Log (ultimi messaggi)--------------");
+
+        for(int i = Math.max(0, log.size() - 10); i < log.size(); i++) {
+            println(log.get(i));
+        }
+
+        println("-------------------------------------------------");
     }
 }

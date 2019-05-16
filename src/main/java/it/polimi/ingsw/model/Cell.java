@@ -1,12 +1,15 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The class represent the single cell of the board
  */
-public abstract class Cell {
+public abstract class Cell implements Serializable {
     /**
      * The attribute represents the sides of the cell (wall, door or nothing), ordered NORTH-EAST-SOUTH-WEST
      */
@@ -89,7 +92,7 @@ public abstract class Cell {
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public abstract void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck);
+    public abstract void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException;
 
     /**
      * Refill the cell's items if needed

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import it.polimi.ingsw.controller.Match;
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,7 +73,7 @@ public class RegularCell extends Cell {
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
+    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         Loot picked = pickLoot();
 
@@ -87,12 +87,19 @@ public class RegularCell extends Cell {
 
                     if(Arrays.stream(powers).noneMatch(Objects::isNull))
                     {
-                        System.out.println(pl.getNick() + " deve scartare un potenziamento");
                         List<Power> inHand = new ArrayList<>(Arrays.asList(powers));
                         inHand.add(newPower);
-                        discarded = pl.getConn().discardPower(inHand, true);
+                        try {
+                            discarded = pl.getConn().discardPower(inHand, true);
+                        }
+                        catch(ClientDisconnectedException e) {
+                            Match.disconnectPlayer(pl, messageReceivers);
+                            discarded = inHand.get(new Random().nextInt(inHand.size()));
+                        }
 
                         powersDeck.scrapCard(discarded);
+
+                        Match.broadcastMessage(pl.getNick() + " scarta " + discarded.getName() + " per pescare un nuovo potenziamento", messageReceivers);
                     }
 
                     int empty = Arrays.asList(powers).indexOf(discarded);
@@ -106,7 +113,7 @@ public class RegularCell extends Cell {
         }));
         lootDeck.scrapCard(picked);
 
-        System.out.println(pl.getNick() + " ha raccolto un loot");
+        Match.broadcastMessage(pl.getNick() + " raccoglie delle munizioni", messageReceivers);
     }
 
     /**

@@ -1,12 +1,14 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.exceptions.WrongPointException;
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class containing every information needed for the execution of a single match
@@ -59,6 +61,11 @@ public class Match implements Runnable
     private int skullsNum;
 
     /**
+     * Number of the current turn
+     */
+    private int turnNumber;
+
+    /**
      * Creates a new empty match
      * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
@@ -72,6 +79,7 @@ public class Match implements Runnable
         this.firstFrenzy = null;
         this.frenzyKills = new ArrayList<>();
         this.skullsNum = skullsNum;
+        this.turnNumber = 0;
 
         game = Game.jsonDeserialize("resources/baseGame.json");
         game.getPowersDeck().shuffle();
@@ -82,14 +90,18 @@ public class Match implements Runnable
 
     /**
      *  Executes the operations needed before the start of the game
-     * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
      */
-    private void initialize(int skullsNum) throws FileNotFoundException
+    private void initialize() throws FileNotFoundException, ClientDisconnectedException
     {
         //Ask the user which maps he wants to use and if he wants to use frenzy mode
-        game.loadMap(game.getPlayers().get(0).getConn().chooseMap());
+        int mapNum = game.getPlayers().get(0).getConn().chooseMap();
+        game.loadMap(mapNum);
+        broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di usare la mappa " + mapNum, game.getPlayers());
+
         useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
+        broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di" +  ( useFrenzy ? "" : " non" ) + " usare la modalità Frenesia", game.getPlayers());
+
 
         refillMap();
     }
@@ -108,59 +120,34 @@ public class Match implements Runnable
      */
     public void run()
     {
-        int turnNum = 0;
-
         try
         {
-            initialize(skullsNum);
+            initialize();
+        }
+        catch (ClientDisconnectedException e) {
+            disconnectPlayer(game.getPlayers().get(0), game.getPlayers());
         }
         catch(FileNotFoundException e)
         {
-            ;
+            Logger.getGlobal().log(Level.SEVERE, "Map not found (Match.java)");
         }
 
-        //Defining needed variables
-        List<Action> availableActions; //Actions the user can currently do
-        List<Action> feasible = new ArrayList<>();
+        updateViews();
 
         //The first turn is played by the player in the first position of the list
         active = game.getPlayers().get(0);
         actionsNumber = 2;
 
+        broadcastMessage("Partita avviata, è il turno di " + active.getNick(), game.getPlayers());
+
         while(phase != GamePhase.ENDED)
         {
-            //Check if spawning is needed
-            if(active.getPosition() == null)
-            {
-                spawnPlayer(active);
-            }
+            //TODO add check if there are less than 3 players
 
-            //Let players use their actions
-            for( ; actionsNumber>0 ; actionsNumber--)
-            {
-                //Check what the player can do right now
-                availableActions = activities.getAvailable(
-                        (int) Arrays.stream(active.getReceivedDamage()).filter(Objects::nonNull).count(),
-                        phase == GamePhase.FRENZY,
-                        firstFrenzy != null && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy)
-                );
-
-                //Determine which are feasible
-                feasible.clear();
-                for(Action a : availableActions)
-                {
-                    if(a.isFeasible(active, game.getMap(), game))
-                    {
-                        feasible.add(a);
-                    }
-                }
-
-                active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
-            }
-
-            //Reload weapons
-            if(FeasibleLambdaMap.possibleReload(active))
-                ActionLambdaMap.reload(active);
+            if(active.getConn() != null)
+                playerTurn();
+            else
+                broadcastMessage(active.getNick() + " non esegue mosse poichè non è connesso", game.getPlayers());
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
@@ -177,6 +164,8 @@ public class Match implements Runnable
 
             //When the active player's turn finishes, we pick the next active player
             active = game.getNextPlayer(active);
+
+            broadcastMessage("È il turno di " + active.getNick(), game.getPlayers());
 
             if(phase == GamePhase.FRENZY)
             {
@@ -207,8 +196,84 @@ public class Match implements Runnable
                 endGame();
             }
 
-            System.out.println("\u001B[31mFine turno " + turnNum + "\u001B[0m");
-            turnNum++;
+            updateViews();
+
+            System.out.println("\u001B[31mFine turno " + turnNumber + "\u001B[0m");
+            turnNumber++;
+        }
+    }
+
+    private void playerTurn()
+    {
+        //Defining needed variables
+        List<Action> availableActions; //Actions the user can currently do
+        List<Action> feasible = new ArrayList<>();
+
+        //Check if spawning is needed
+        if(!active.isSpawned())
+        {
+            spawnPlayer(active);
+        }
+
+        //Let players use their actions
+        for( ; actionsNumber>0 ; actionsNumber--)
+        {
+            //Check what the player can do right now
+            availableActions = activities.getAvailable(
+                    (int) Arrays.stream(active.getReceivedDamage()).filter(Objects::nonNull).count(),
+                    phase == GamePhase.FRENZY,
+                    firstFrenzy != null && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy)
+            );
+
+            //Determine which are feasible
+            feasible.clear();
+            for(Action a : availableActions)
+            {
+                if(a.isFeasible(active, game.getMap(), game))
+                {
+                    feasible.add(a);
+                }
+            }
+
+            try {
+                active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
+            }
+            catch(ClientDisconnectedException e) {
+                disconnectPlayer(active, game.getPlayers());
+                return;
+            }
+
+            updateViews();
+        }
+
+        //Reload weapons
+        if(FeasibleLambdaMap.possibleReload(active)) {
+            try {
+                ActionLambdaMap.reload(active, game.getPlayers());
+            }
+            catch(ClientDisconnectedException e) {
+                disconnectPlayer(active, game.getPlayers());
+            }
+        }
+    }
+
+    /**
+     * Updates game data on every client
+     */
+    private void updateViews()
+    {
+        for(Player p: game.getPlayers())
+        {
+            if(p.getConn() != null)
+            {
+                try{
+                    p.getConn().updateGame(getMatchView(p));
+                }
+                catch(ClientDisconnectedException e)
+                {
+                    disconnectPlayer(p, game.getPlayers());
+                }
+            }
         }
     }
 
@@ -216,7 +281,7 @@ public class Match implements Runnable
      * Does every step needed to spawn a player
      * @param pl Player who needs to be spawned
      */
-    private void spawnPlayer(Player pl) throws WrongPointException
+    private void spawnPlayer(Player pl)
     {
         //Draw powers if not enough to choose
         switch(pl.getPowers().size())
@@ -244,33 +309,39 @@ public class Match implements Runnable
                 break;
         }
 
-
         //Choose power
-        Power chosen = pl.getConn().discardPower(pl.getPowers(), true);
+        Power chosen;
+
+        if(pl.getConn() != null)
+        {
+            try
+            {
+                pl.getConn().sendMessage("Scegli un potenziamento da scartare, il colore del potenziamento scartato determinerà la cella di spawn");
+                chosen = pl.getConn().discardPower(pl.getPowers(), true);
+            }
+            catch(ClientDisconnectedException e)
+            {
+                chosen = pl.getPowers().get(new Random().nextInt(pl.getPowers().size()));
+                disconnectPlayer(pl, game.getPlayers());
+            }
+        }
+        else //If the player is disconnected we have to choose a random card to make him respawn
+        {
+            chosen = pl.getPowers().get(new Random().nextInt(pl.getPowers().size()));
+        }
+
         Color spawnColor = chosen.getColor();
         //Discard the power
-        pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-            for(int i = 0; i < 3; i++)
-            {
-                if(powers[i] == chosen)
-                {
-                    game.getPowersDeck().scrapCard(powers[i]);
-                    powers[i] = null;
-                }
-            }
-        }));
+        pl.applyEffects(EffectsLambda.removePower(chosen, game.getPowersDeck()));
 
         boolean found = false;
         int spawnX = 0;
         int spawnY = 0;
 
         //Move in the correct position
-        for(int x = 0; x < 4 && !found; x++)
-        {
-            for(int y = 0; y < 3 && !found; y++)
-            {
-                if(game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor))
-                {
+        for (int x = 0; x < 4 && !found; x++) {
+            for (int y = 0; y < 3 && !found; y++) {
+                if (game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor)) {
                     spawnX = x;
                     spawnY = y;
                     found = true;
@@ -280,13 +351,16 @@ public class Match implements Runnable
 
         final Point spawnPoint = new Point(spawnX, spawnY);
 
-        if(found)
-        {
+        if (found) {
             pl.applyEffects(EffectsLambda.move(pl, spawnPoint, game.getMap()));
         }
         //If not found the map is incorrect
 
-        System.out.println(pl.getNick() + " è respawnato in " + spawnX + "," + spawnY);
+        broadcastMessage(pl.getNick() + " scarta " + chosen.getName() + " e spawna nella cella " + ((spawnY*4)+spawnX+1), game.getPlayers() );
+
+        pl.setSpawned(true);
+
+        updateViews();
     }
 
     /**
@@ -307,7 +381,7 @@ public class Match implements Runnable
             }
         }
 
-        System.out.println("Riempita la mappa con gli oggetti mancanti");
+        broadcastMessage("Gli oggetti mancanti dalla mappa sono stati posizionati", game.getPlayers());
     }
 
     /**
@@ -395,6 +469,8 @@ public class Match implements Runnable
                 game.getPlayer(killed.getReceivedDamage()[11]).applyEffects(EffectsLambda.marks(1, killed));
             }
 
+            broadcastMessage(killed.getNick() + " è stato ucciso da " + game.getPlayer(killed.getReceivedDamage()[10]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[10]).getActionPhrase(), game.getPlayers());
+
             //Reset damages
             for (int i = 0; i < 12; i++)
             {
@@ -417,7 +493,7 @@ public class Match implements Runnable
                 frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[10] ) );
         }
 
-        System.out.println(killed.getNick() + " è stato ucciso");
+        killed.setSpawned(false);
     }
 
     /**
@@ -557,9 +633,37 @@ public class Match implements Runnable
         }
 
         System.out.println("\u001b[34mIl gioco è terminato\u001B[0m");
+        broadcastMessage("La partita è terminata!", game.getPlayers()); //TODO add winner
     }
 
     public MatchView getMatchView(Player viewer){
         return new MatchView(game.getGameView(viewer), active, viewer, actionsNumber, phase, useFrenzy, firstFrenzy);
     }
+
+    public static void broadcastMessage(String message, List<Player> players)
+    {
+        System.out.println(message);
+        for(Player p: players)
+        {
+            if(p.getConn() != null)
+            {
+                try{
+                    p.getConn().sendMessage(message);
+                }
+                catch(ClientDisconnectedException e)
+                {
+                    disconnectPlayer(p, players);
+                }
+            }
+        }
+    }
+
+    public static void disconnectPlayer(Player pl, List<Player> players)
+    {
+        Logger.getGlobal().log( Level.SEVERE, pl.getNick()+" si è disconnesso" );
+        pl.setConn(null);
+
+        broadcastMessage(pl.getNick() + "Si è disconnesso", players);
+    }
+
 }

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import it.polimi.ingsw.exceptions.EmptyDeckException;
 
+import java.util.ArrayList;
+
 public class CardsTest {
     /**
      * Check POWER Class: check the functionality of the constructor
@@ -95,7 +97,7 @@ public class CardsTest {
         assertTrue(dP.getCards().contains(p3));
 
         //check the clone function
-        Deck<Power> dP2 = dP.clone();
+        Deck<Power> dP2 = new Deck<>(dP);
         assertTrue(dP.getCards().equals(dP2.getCards()));
 
         //check the shuffle function: try tree times to shuffle, if none of them change the order, there's probably a problem

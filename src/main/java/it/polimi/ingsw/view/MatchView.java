@@ -1,15 +1,14 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.GamePhase;
-import it.polimi.ingsw.model.Activities;
 import it.polimi.ingsw.model.Player;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * From the controller.Match are missing: frenzyKills
  */
-public class MatchView {
+public class MatchView implements Serializable {
     /**
      * Model of the match's game, containing all relevant information
      */
@@ -45,6 +44,16 @@ public class MatchView {
      */
     private Player firstFrenzy;
 
+    /**
+     * Instances a new MatchView object with current parameters
+     * @param game Active game
+     * @param active Active player
+     * @param viewer Player who calls the view method
+     * @param actionsNumber Number of remaining actions for the currently active player
+     * @param phase Game phase
+     * @param useFrenzy true in case of Frenzy turn, false otherwise
+     * @param firstFrenzy First Frenzy player
+     */
     public MatchView(GameView game, Player active, Player viewer, int actionsNumber, GamePhase phase, boolean useFrenzy, Player firstFrenzy) {
         this.game = game;
         this.active = active;
@@ -55,59 +64,51 @@ public class MatchView {
         this.firstFrenzy = firstFrenzy;
     }
 
+    /**
+     * Returns the GameView instance of the game
+     * @return GameView instance referred to the match
+     */
     public GameView getGame() {
         return game;
     }
 
+    /**
+     * Sets the GameView instance of the object
+     * @param game GameView instance
+     */
     public void setGame(GameView game) {
         this.game = game;
     }
 
+    /**
+     * Returns active player
+     * @return Active player
+     */
     public Player getActive() {
         return active;
     }
 
+    /**
+     * Set the active player in the view
+     * @param active Active player to be set
+     */
     public void setActive(Player active) {
         this.active = active;
     }
 
+    /**
+     * Returns the Player viewer instance
+     * @return Player viewer instance
+     */
     public Player getMyPlayer() {
         return myPlayer;
     }
 
-    public void setMyPlayer(Player myPlayer) {
-        this.myPlayer = myPlayer;
-    }
-
-    public int getActionsNumber() {
-        return actionsNumber;
-    }
-
-    public void setActionsNumber(int actionsNumber) {
-        this.actionsNumber = actionsNumber;
-    }
-
+    /**
+     * Return the actual game phase
+     * @return Actual game phase
+     */
     public GamePhase getPhase() {
         return phase;
-    }
-
-    public void setPhase(GamePhase phase) {
-        this.phase = phase;
-    }
-
-    public boolean isUseFrenzy() {
-        return useFrenzy;
-    }
-
-    public void setUseFrenzy(boolean useFrenzy) {
-        this.useFrenzy = useFrenzy;
-    }
-
-    public Player getFirstFrenzy() {
-        return firstFrenzy;
-    }
-
-    public void setFirstFrenzy(Player firstFrenzy) {
-        this.firstFrenzy = firstFrenzy;
     }
 }

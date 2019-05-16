@@ -1,13 +1,12 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.exceptions.WrongPointException;
-import it.polimi.ingsw.model.*;
-
-import java.rmi.*;
-import java.rmi.registry.*;
-import java.rmi.server.*;
+import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,17 +18,19 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
     /**
      * Local binding registry
      */
-    Registry registry;
+    private Registry registry;
     /**
      * List of new connections waiting to be handled by the game main thread
      */
-    ArrayList<RMIConn> newConn = new ArrayList<>();
+    private ArrayList<RMIConn> newConn;
 
     /**
      * Instantiates the RMI server object, creating the main bind needed by clients to connect to the server
      * @throws RemoteException in case of binding errors
      */
     RMIServer() throws RemoteException {
+        newConn = new ArrayList<>();
+
         try {
             registry = LocateRegistry.createRegistry(1099);
             registry.bind("AM06", this);
@@ -51,7 +52,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
         Client clientInterface = (Client)registry.lookup(registryBind);
         RMIConn clientConn = new RMIConn(clientInterface, registryBind);
         newConn.add(clientConn);
-        notify();
+        notifyAll();
     }
 
     /**
@@ -61,11 +62,14 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
     public synchronized Connection getConnection()
     {
         try {
-            while (newConn.isEmpty()) wait();
+            while (newConn.isEmpty())
+                wait();
+
             return newConn.remove(0);
         }
         catch (InterruptedException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            Thread.currentThread().interrupt(); //sonarqube
             return null;
         }
 
@@ -75,10 +79,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
         try {
             registry.unbind("AM06-"+nickname);
         }
-        catch (RemoteException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-        }
-        catch (NotBoundException e) {
+        catch (Exception e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
         }
     }

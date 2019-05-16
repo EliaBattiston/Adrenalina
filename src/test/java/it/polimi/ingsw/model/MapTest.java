@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapTest {
     /**

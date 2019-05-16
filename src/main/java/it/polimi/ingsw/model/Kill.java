@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serializable;
+
 /**
  * One box of the killshot track. It can contain a skull or players' tokens
  */
-public class Kill {
+public class Kill implements Serializable {
     /**
      * If true, the kill is still to be done
      */

@@ -10,8 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Game {
     /**
@@ -134,7 +132,7 @@ public class Game {
         return ammoDeck;
     }
 
-    public Kill[] getSkulls() { return skullsBoard; };
+    public Kill[] getSkulls() { return skullsBoard; }
 
     /**
      * Serializes the content of the class (which contains every important aspect of the match) in json
@@ -159,9 +157,9 @@ public class Game {
     {
         JsonReader reader = new JsonReader(new FileReader(pathJsonFile));
 
-        GsonBuilder gsonBilder = new GsonBuilder();
-        gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
-        Gson gson = gsonBilder.create();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        Gson gson = gsonBuilder.create();
 
         return gson.fromJson(reader, Game.class);
     }
@@ -197,20 +195,18 @@ public class Game {
      * @return GameView of this game
      */
     public GameView getGameView(Player viewer){
-        try {
-            Game cleanable = Game.jsonDeserialize(this.jsonSerialize());
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        Gson gson = gsonBuilder.create();
 
-            for(Player p : cleanable.players){
-                if(p!=viewer)
-                    p.clearForView();
-            }
+        Game cleanable = gson.fromJson( this.jsonSerialize(), Game.class );
 
-            return new GameView(map, players, skullsBoard);
-        }catch(FileNotFoundException e){
-            Logger.getGlobal().log(Level.SEVERE, "Error while extracting the game view");
+        for(Player p : cleanable.players){
+            if(p!=viewer)
+                p.clearForView();
         }
 
-        return  null;
+        return new GameView(map, cleanable.players, skullsBoard);
     }
 
     /**

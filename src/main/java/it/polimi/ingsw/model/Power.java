@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serializable;
+
 /**
  * Represent one of the four kind of powers inside the game and show it's values
  */
-public class Power extends Card{
+public class Power extends Card implements Serializable {
     private final int id;
     private final String name;
     private final Action base;

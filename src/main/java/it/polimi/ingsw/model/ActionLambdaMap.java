@@ -1,8 +1,13 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.Match;
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -14,7 +19,7 @@ public class ActionLambdaMap {
     private HashMap<String, ActionLambda> data;
     private static ActionLambdaMap instance = null;
 
-    private ActionLambdaMap(){
+    private ActionLambdaMap() {
         data = new HashMap<>();
 
     //Base weapon lambdas
@@ -101,8 +106,7 @@ public class ActionLambdaMap {
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
-                if(p!=pl)
-                    if(pointsAll.contains(p.getPosition()))
+                if(p!=pl && pointsAll.contains(p.getPosition()))
                         targets.add(p);
 
             Player chosen = pl.getConn().chooseTarget(targets, true);
@@ -699,19 +703,21 @@ public class ActionLambdaMap {
 
     //Activities lambdas
         data.put("a-p", (pl, map, memory)->{
-            System.out.println(pl.getNick() + " sceglie un potenziamento");
             Power chosen;
 
-            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4").filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+            List<Power> inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID().equals("p2") || power.getBase().getLambdaID().equals("p4")).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
             if(!inHand.isEmpty())
             {
                 chosen = pl.getConn().choosePower(inHand, true);
                 while (!inHand.isEmpty() && chosen != null)
                 {
                     chosen.getBase().execute(pl, map, null);
+
+                    Match.broadcastMessage(pl.getNick() + " usa il potenziamento " + chosen.getName(), ((Game)memory).getPlayers());
+
                     pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
 
-                    inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID() == "p2" || power.getBase().getLambdaID() == "p4").filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
+                    inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID().equals("p2") || power.getBase().getLambdaID().equals("p4")).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
                     if(!inHand.isEmpty())
                         chosen = pl.getConn().choosePower(inHand, false);
                 }
@@ -719,47 +725,47 @@ public class ActionLambdaMap {
 
         });
 
-        data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true) );
+        data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true, ((Game)memory).getPlayers()) );
 
         data.put("a-b2", (pl, map, memory)->{
-            runToLoot(pl, map,1);
-            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
+            runToLoot(pl, map,1, ((Game)memory).getPlayers());
+            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(),((Game)memory).getPlayers());
         });
 
-        data.put("a-b3",(pl, map, memory) -> shoot(pl, map) );
+        data.put("a-b3",(pl, map, memory) -> shoot(pl, map, ((Game)memory).getPlayers()) );
 
         data.put("a-a1", (pl, map, memory)->{
-            runToLoot(pl, map,2);
-            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
+            runToLoot(pl, map,2, ((Game)memory).getPlayers());
+            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(), ((Game)memory).getPlayers());
         });
 
         data.put("a-a2", (pl, map, memory)->{
-            runToShoot(pl, map,1);
-            shoot(pl, map);
+            runToShoot(pl, map,1, ((Game)memory).getPlayers());
+            shoot(pl, map, ((Game)memory).getPlayers());
         });
 
         data.put("a-f1", (pl, map, memory)->{
-            runToShoot(pl, map,1);
-            reload(pl);
-            shoot(pl, map);
+            runToShoot(pl, map,1, ((Game)memory).getPlayers());
+            reload(pl, ((Game)memory).getPlayers());
+            shoot(pl, map, ((Game)memory).getPlayers());
         });
 
-        data.put("a-f2", (pl, map, memory)-> run(pl, map,4,true) );
+        data.put("a-f2", (pl, map, memory)-> run(pl, map,4,true, ((Game)memory).getPlayers()) );
 
         data.put("a-f3", (pl, map, memory)->{
-            runToLoot(pl, map,2);
-            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
+            runToLoot(pl, map,2, ((Game)memory).getPlayers());
+            pick(pl, map,((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(), ((Game)memory).getPlayers());
         });
 
         data.put("a-f4", (pl, map, memory)->{
-            runToShoot(pl, map,2);
-            reload(pl);
-            shoot(pl, map);
+            runToShoot(pl, map,2, ((Game)memory).getPlayers());
+            reload(pl, ((Game)memory).getPlayers());
+            shoot(pl, map, ((Game)memory).getPlayers());
         });
 
         data.put("a-f5", (pl, map, memory)->{
-            runToLoot(pl, map,3);
-            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
+            runToLoot(pl, map,3, ((Game)memory).getPlayers());
+            pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(), ((Game)memory).getPlayers());
         });
     }
 
@@ -768,7 +774,7 @@ public class ActionLambdaMap {
      * @param lambdaName the name of the lambda you're looking for
      * @return the lambda you searched or null if it doesn't exists
      */
-    public static ActionLambda getLambda(String lambdaName){
+    public static ActionLambda getLambda(String lambdaName) {
         if(instance == null)
             instance = new ActionLambdaMap();
 
@@ -781,15 +787,17 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      * @param mustChoose False if the player doesn't have to run
+     * @param messageReceivers Players to receive the broadcasted message of the action
      */
-    private static void run(Player pl, Map map, int steps, boolean mustChoose)
+    private static void run(Player pl, Map map, int steps, boolean mustChoose, List<Player> messageReceivers) throws ClientDisconnectedException
     {
-        System.out.println(pl.getNick() + " corre");
         List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
         Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+
+        Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
     }
 
     /**
@@ -798,9 +806,8 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      */
-    private static void runToLoot(Player pl, Map map, int steps)
+    private static void runToLoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
-        System.out.println(pl.getNick() + " corre per raccogliere");
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
@@ -815,7 +822,11 @@ public class ActionLambdaMap {
         Point chosen = pl.getConn().movePlayer(destinations, false);
 
         if(chosen != null)
+        {
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+            Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
+        }
+
     }
 
     /**
@@ -824,10 +835,8 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      */
-    private static void runToShoot(Player pl, Map map, int steps)
+    private static void runToShoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
-        System.out.println(pl.getNick() + " corre per sparare");
-
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
         List<Point> destinations = new ArrayList<>(possible);
 
@@ -839,11 +848,9 @@ public class ActionLambdaMap {
             pl.applyEffects(EffectsLambda.move(pl, p, map));
 
             //If no weapon has suitable action, we can't propose to move to this position
-            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) )
-                if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
-                {
+            if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) &&
+                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
                     destinations.remove(p);
-                }
         }
 
         //Return the player to its real position
@@ -853,6 +860,8 @@ public class ActionLambdaMap {
 
         if(chosen != null)
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
+
+        Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
     }
 
     /**
@@ -862,10 +871,10 @@ public class ActionLambdaMap {
      * @param lootDeck Deck where to scrap the picked loot card
      * @param powersDeck Deck for picking a power card
      */
-    private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
+    private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         Cell current = map.getCell(pl.getPosition());
-        current.pickItem(pl, lootDeck, powersDeck);
+        current.pickItem(pl, lootDeck, powersDeck, messageReceivers);
     }
 
     /**
@@ -873,16 +882,13 @@ public class ActionLambdaMap {
      * @param pl Lambda's player
      * @param map Lambda's map
      */
-    private static void shoot(Player pl, Map map)
+    private static void shoot(Player pl, Map map, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         //Only loaded weapons
         List<Weapon> loaded = pl.getWeapons().stream()
                 .filter(Weapon::isLoaded)
                 .filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)))
                 .collect(Collectors.toList());
-
-
-        System.out.println(pl.getNick() + " sceglie l'arma" );
 
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
 
@@ -894,8 +900,8 @@ public class ActionLambdaMap {
             weaponActions.add(chosen.getAlternative());
 
         //Ask the user which one he wants to use
-        System.out.println(pl.getNick() + " sceglie l'azione di " + chosen.getName() );
         Action toExecute = pl.getConn().chooseAction(weaponActions, true);
+
         Object mem;
         switch (toExecute.getLambdaID())
         {
@@ -917,6 +923,8 @@ public class ActionLambdaMap {
         }
         toExecute.execute(pl, map, mem);
 
+        Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
+
         if(toExecute.getLambdaID().contains("-b")) //Base action
         {
             //Additional actions management
@@ -925,17 +933,20 @@ public class ActionLambdaMap {
                 weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
 
             if(!weaponActions.isEmpty()){
-                System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
                 toExecute.execute(pl, map, mem);
 
+                Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
+
+                weaponActions.clear();
                 weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
                 weaponActions.remove(toExecute);
                 if(!weaponActions.isEmpty())
                 {
-                    System.out.println(pl.getNick() + " sceglie l'addizionale di " + chosen.getName() );
                     toExecute = pl.getConn().chooseAction(weaponActions, false);
                     toExecute.execute(pl, map, mem);
+
+                    Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
                 }
             }
         }
@@ -952,7 +963,7 @@ public class ActionLambdaMap {
      * Basic reload action
      * @param pl Lambda's player
      */
-    public static void reload(Player pl)
+    public static void reload(Player pl, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         List<Weapon> unloaded = pl.getWeapons().stream().filter(weapon -> !weapon.isLoaded()).collect(Collectors.toList());
         List<Weapon> reloadable =  new ArrayList<>(unloaded); //Only the weapons the player can currently reload
@@ -979,7 +990,7 @@ public class ActionLambdaMap {
 
         while(!reloadable.isEmpty() && chosen != null)
         {
-            chosen = pl.getConn().chooseWeapon(reloadable, false);
+            chosen = pl.getConn().reload(reloadable, false);
 
             if(chosen != null)
             {
@@ -993,6 +1004,8 @@ public class ActionLambdaMap {
                 pl.applyEffects(EffectsLambda.payAmmo(cost));
 
                 unloaded.remove(chosen);
+
+                Match.broadcastMessage(pl.getNick() + " ha ricaricato " + chosen.getName(), messageReceivers);
             }
 
             reloadable.clear();

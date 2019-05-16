@@ -91,7 +91,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(boolean mustChoose);
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose);
 
     /**
      * Asks the user to choose a precise position on the map
@@ -115,9 +115,10 @@ public interface UserInterface
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      */
-    public Fighter getFighter();
+    public Fighter getFighter(List<Fighter> available);
 
     /**
      * Asks the user how many skulls he wants in the play
@@ -152,4 +153,10 @@ public interface UserInterface
      * @return Chosen power
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose);
+
+    /**
+     * Prints out a general message to the client interface
+     * @param message Message to be printed
+     */
+    public void generalMessage(String message);
 }

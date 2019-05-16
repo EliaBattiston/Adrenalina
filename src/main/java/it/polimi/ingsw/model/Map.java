@@ -5,17 +5,20 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * this class represents the map or board of the actual game
  */
-public class Map {
+public class Map implements Serializable {
     /**
      * Matrix of cells representing the map
      */
@@ -73,6 +76,7 @@ public class Map {
                 return null;
             }
         }catch(FileNotFoundException ex){
+            Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
             return null;
         }
     }
@@ -152,8 +156,8 @@ public class Map {
         //Get all the people in those rooms
         for(int i=0; i<=3;i++)
             for(int j=0; j<=2; j++)
-                if(map.getCell(i,j) != null)
-                    if(visRooms.contains(map.getCell(i,j).getRoomNumber()))
+                if(map.getCell(i,j) != null &&
+                    visRooms.contains(map.getCell(i,j).getRoomNumber()))
                         visibles.addAll(map.getCell(i, j).getPawns());
 
         //remove the player itself
@@ -176,8 +180,8 @@ public class Map {
         //Get all the people in those rooms
         for(int i=0; i<=3;i++)
             for(int j=0; j<=2; j++)
-                if(map.getCell(i,j) != null)
-                    if(visRooms.contains(map.getCell(i,j).getRoomNumber()))
+                if(map.getCell(i,j) != null &&
+                    visRooms.contains(map.getCell(i,j).getRoomNumber()))
                         visibles.addAll(map.getCell(i, j).getPawns());
 
         return visibles;
@@ -415,7 +419,7 @@ public class Map {
             if(map.getCell(p) != null)
                 return p;
         }catch(WrongPointException e){
-            ;
+            Logger.getGlobal().log(Level.INFO, "Expected behavior");
         }
         return null;
     }
@@ -435,8 +439,8 @@ public class Map {
         //Get all the visible points
         for(int i=0; i<=3;i++)
             for(int j=0; j<=2; j++)
-                if(map.getCell(i,j) != null)
-                    if(visRooms.contains(map.getCell(i,j).getRoomNumber()))
+                if(map.getCell(i,j) != null &&
+                    visRooms.contains(map.getCell(i,j).getRoomNumber()))
                         points.add(new Point(i,j));
 
         if(notVisDist > 0){

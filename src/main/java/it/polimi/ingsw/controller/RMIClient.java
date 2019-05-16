@@ -1,31 +1,32 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.GameView;
 import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
-import java.io.Serializable;
-import java.net.NetworkInterface;
-import java.rmi.*;
-import java.rmi.registry.*;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RMIClient extends UnicastRemoteObject implements Client, Serializable
+//TODO check that it doesn't need to be serializable
+public class RMIClient extends UnicastRemoteObject implements Client
 {
     /**
      * Remote registry instance used to bind the client interface
      */
-    Registry registry;
+    private Registry registry;
     /**
      * User gui/cli interface
      */
-    UserInterface user;
+    private UserInterface user;
 
     /**
      * CLient RMI constructor, it gets the Server interface and binds its interface to the server registry
@@ -33,7 +34,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param userint gui/cli user interface
      * @throws RemoteException in case of connection error
      */
-    public RMIClient(String host, UserInterface userint) throws RemoteException
+    public RMIClient(String host, UserInterface userint) throws RemoteException, ServerNotFoundException
     {
         try {
             registry = LocateRegistry.getRegistry(host);
@@ -43,10 +44,10 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
             RMIServer.newConnection(bindName);
             user = userint;
         }
-        catch(NotBoundException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+        catch (java.rmi.UnknownHostException e) {
+            throw new ServerNotFoundException();
         }
-        catch(AlreadyBoundException e) {
+        catch(Exception e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
         }
     }
@@ -154,7 +155,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return user.chooseDirection(mustChoose); }
+    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) { return user.chooseDirection(possible, mustChoose); }
 
     /**
      * Asks the user to choose a precise position on the map
@@ -192,10 +193,11 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
 
     /**
      * Asks the user fot the fighter
+     * @param available List of available fighters
      * @return user's fighter
      */
-    public Fighter getFighter() {
-        return user.getFighter();
+    public Fighter getFighter(List<Fighter> available) {
+        return user.getFighter(available);
     }
 
     /**
@@ -228,6 +230,14 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      */
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
         return user.choosePower(inHand, mustChoose);
+    }
+
+    /**
+     * Sends a general message to the user to be displayed
+     * @param payload Message payload
+     */
+    public void sendMessage(String payload) {
+        user.generalMessage(payload);
     }
 }
 

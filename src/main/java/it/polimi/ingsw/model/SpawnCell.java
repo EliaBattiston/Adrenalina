@@ -1,8 +1,14 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.Match;
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+import it.polimi.ingsw.exceptions.EmptyDeckException;
+import javafx.scene.effect.Effect;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -118,7 +124,7 @@ public class SpawnCell extends Cell{
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck)
+    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         List<Weapon> available = getWeapons();
         List<Weapon> purchasable = new ArrayList<>(available);
@@ -146,19 +152,7 @@ public class SpawnCell extends Cell{
         {
             Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
 
-            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                int pos = Arrays.asList(weapons).indexOf(discard);
-                if(pos>-1 && pos<=3)
-                {
-                    weapons[pos].setLoaded(false);
-                    refillWeapon(weapons[pos]);
-                    weapons[pos] = null;
-                }
-                else
-                {
-                    Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player's hand", pl);
-                }
-            }));
+            pl.applyEffects(EffectsLambda.removeWeapon(discard, this));
         }
 
         //Pay for the weapon's price
@@ -179,11 +173,11 @@ public class SpawnCell extends Cell{
             }
             else
             {
-                Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player's hand", pl);
+                Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in player\'s hand", pl);
             }
         }));
 
-        System.out.println(pl.getNick() + " ha comprato " + picked.getName());
+        Match.broadcastMessage(pl.getNick() + " ha comprato " + picked.getName(), messageReceivers);
     }
 
     /**
@@ -192,7 +186,12 @@ public class SpawnCell extends Cell{
      */
     public void refill(Game game){
         while (getWeapons().size() < 3)
-            refillWeapon(game.getWeaponsDeck().draw());
+            try {
+                refillWeapon(game.getWeaponsDeck().draw());
+            }
+            catch(EmptyDeckException ex) {
+                Logger.getGlobal().log( Level.INFO, ex.toString(), ex );
+            }
     }
 
     /**

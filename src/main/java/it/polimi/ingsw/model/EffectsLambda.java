@@ -102,12 +102,39 @@ public class EffectsLambda {
         });
     }
 
+    /**
+     * Make the player pay the due amount of ammunition
+     * @param cost List of coloured ammunition
+     * @return Desired lambda function
+     */
     public static PlayerLambda payAmmo(List<Color> cost)
     {
         return ((damage, marks, position, weapons, powers, ammo) -> {
             ammo.useRed( (int)cost.stream().filter(c -> c == Color.RED).count() );
             ammo.useBlue( (int)cost.stream().filter(c -> c == Color.BLUE).count() );
             ammo.useYellow( (int)cost.stream().filter(c -> c == Color.YELLOW).count() );
+        });
+    }
+
+    /**
+     * Remove weapon card from the player's hand
+     * @param toRemove Card to remove
+     * @return Desired lambda function
+     */
+    public static PlayerLambda removeWeapon(Weapon toRemove, SpawnCell cell)
+    {
+        return ((damage, marks, position, weapons, powers, ammo) -> {
+            int pos = Arrays.asList(weapons).indexOf(toRemove);
+            if(pos>-1 && pos<=3)
+            {
+                weapons[pos].setLoaded(false);
+                cell.refillWeapon(weapons[pos]);
+                weapons[pos] = null;
+            }
+            else
+            {
+                Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player\'s hand");
+            }
         });
     }
 }

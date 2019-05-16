@@ -1,10 +1,10 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.exceptions.ServerDisconnectedException;
+import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -16,17 +16,6 @@ import java.util.logging.Logger;
 public class CMain
 {
     /**
-     * Client's representation of the game data
-     */
-    private Game game;
-
-    /**
-     * Connection to the server
-     */
-    private Client connection;
-
-
-    /**
      * Endpoint for interface control
      */
     private UserInterface ui;
@@ -37,6 +26,8 @@ public class CMain
      */
     public CMain(boolean gui)
     {
+        Client connection;
+
         //Temporary test for the login
 
         String buffer = "";
@@ -54,38 +45,44 @@ public class CMain
         }
 
         //RMI or Socket?
-        while (!buffer.toLowerCase().equals("r") && !buffer.toLowerCase().equals("s"))
+        while (!buffer.equalsIgnoreCase("r") && !buffer.equalsIgnoreCase("s"))
         {
             System.out.print("Connessione con [S]ocket o con [R]mi? ");
             buffer = stdin.nextLine();
         }
 
-        if(buffer.toLowerCase() == "r")
+        if(buffer.equalsIgnoreCase("r"))
             socket = false;
 
-        //Ask for IP address
-        System.out.print("Indirizzo IP del server: ");
-        buffer = stdin.nextLine();
-        //TODO check if IP is correctly written
-        ip = buffer;
+        boolean instanced = false;
+        do {
+            //Ask for IP address
+            System.out.print("Indirizzo IP del server: ");
+            buffer = stdin.nextLine();
+            //TODO check if IP is correctly written
+            ip = buffer;
 
-        ip = "localhost";
-
-        if(socket)
-        {
-            connection = new SocketClient(ip, 1906, ui);
-        }
-        else
-        {
-            try
-            {
-                connection = new RMIClient(ip, ui);
+            try {
+                if (socket)
+                    connection = new SocketClient(ip, 1906, ui);
+                else
+                    connection = new RMIClient(ip, ui);
+                instanced = true;
+                ui.generalMessage("Connesso al server Adrenalina");
             }
-            catch(RemoteException e)
-            {
+            catch (ServerNotFoundException e) {
+                ui.generalMessage("Server non trovato, riprova\n");
+            }
+            catch (ServerDisconnectedException e) {
+                ui.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
+                return;
+            }
+            catch (RemoteException e) {
                 Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
             }
+
         }
+        while (!instanced);
     }
 
 }
