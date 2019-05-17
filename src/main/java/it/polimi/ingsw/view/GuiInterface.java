@@ -23,21 +23,25 @@ public class GuiInterface implements UserInterface{
 
         try {
             Thread.sleep(3000);
+            System.out.println("Start test gui");
 
-            List<Weapon> chooseBetween = new ArrayList<>();
+            List<Weapon> goodW = new ArrayList<>();
+            goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(3, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(4, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(5, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(6, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(7, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(8, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(9, "", "", null, null, null, Color.RED));
 
-            exchanger.setRequest(chooseBetween);
-            exchanger.setActualInteraction(Interaction.CHOOSEWEAPON);
+            Weapon w = chooseWeapon(goodW, false);
 
-            while(exchanger.getActualInteraction() !=Interaction.NONE)
-                Thread.sleep(200);
+            Thread.sleep(200);
 
-            exchanger.setActualInteraction(Interaction.CHOOSEDIRECTION);
 
-            while(exchanger.getActualInteraction() !=Interaction.NONE)
-                Thread.sleep(200);
-
-            exchanger.setActualInteraction(Interaction.CHOOSEPOSITION);
+            System.out.println("Done, chosen weapon: " + w.getName());
         }catch (InterruptedException e){
 
         }
@@ -50,8 +54,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public void updateGame(MatchView matchView) {
-        exchanger.setActualInteraction(Interaction.UPDATEVIEW);
-        exchanger.setMatchView(matchView);
+        exchanger.setRequest(Interaction.UPDATEVIEW, "Updating view...", matchView, false);
     }
 
     /**
@@ -115,7 +118,15 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma", available, mustChoose);
+
+        try {
+            while (!exchanger.isFreeToUse())
+                Thread.sleep(150);
+        }catch (InterruptedException e){
+        }
+
+        return (Weapon)exchanger.getAnswer();
     }
 
     /**

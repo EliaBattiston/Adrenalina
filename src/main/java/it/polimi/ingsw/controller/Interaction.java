@@ -21,5 +21,6 @@ public enum Interaction {
     GETFIGHTER,
     GETSKULLSNUM,
     UPDATEVIEW,
-    NONE
+    NONE,
+    WAITINGUSER
 }

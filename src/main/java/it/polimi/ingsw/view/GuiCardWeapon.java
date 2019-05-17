@@ -29,11 +29,21 @@ public class GuiCardWeapon extends GuiCard {
         else
             getGraphicsContext2D().drawImage( img, 0, 0, width, height);
 
-        setOnMousePressed(e ->{
-            System.out.println("Clicked " + weapon.getName());
-        });
+        resetEventsStyle();
+    }
+
+    public void resetEventsStyle(){
+        setOnMousePressed(e -> System.out.println("Clicked " + weapon.getName()));
         setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 10, 0.5, 0, 0);"));
         setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 0, 0, 0, 0);") );
+
+        setStyle("-fx-effect: innershadow(gaussian, #ffffff, 0, 0, 0, 0);");
+    }
+
+    public void setEventsChoosable(){
+        setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0);");
+        setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 30, 0.5, 0, 0);"));
+        setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0)"));
     }
 
     /*public boolean equalsWeapon(Weapon obj) {

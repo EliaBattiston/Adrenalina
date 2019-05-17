@@ -26,6 +26,7 @@ public class Gui extends Application{
     //Data
     private MatchView match;
     private GameView game;
+    private GuiExchanger exchanger;
 
     //View
     private Scene mainScene;
@@ -84,27 +85,20 @@ public class Gui extends Application{
         //primaryStage.maxHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
 
         // separate non-FX thread
+        //TODO decide how to handle the possibility of a resize while a request in in action. we can:
+        // a) reset the actualInteraction so this code will re-run FAST
+        // b) not re-paint all the stuffs but just move&resize them CLEANER
        new Thread(()->{
+           exchanger = GuiExchanger.getInstance();
             while(true)
-                if(GuiExchanger.getInstance().getActualInteraction() != Interaction.NONE) {
-                    System.out.println(GuiExchanger.getInstance().getActualInteraction().toString());
-                    switch (GuiExchanger.getInstance().getActualInteraction()) {
+                if(exchanger.guiRequestIncoming()) {
+                    System.out.println(exchanger.getActualInteraction().toString());
+                    switch (exchanger.getActualInteraction()) {
                         case CHOOSEACTION:
-                            chooseDialog();
+                            chooseAction();
                             break;
                         case CHOOSEWEAPON:
-                            List<Weapon> goodW = new ArrayList<>();
-                            goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
-                            goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
-                            goodW.add(new Weapon(3, "", "", null, null, null, Color.RED));
-                            goodW.add(new Weapon(4, "", "", null, null, null, Color.RED));
-                            goodW.add(new Weapon(5, "", "", null, null, null, Color.RED));
-                            goodW.add(new Weapon(6, "", "", null, null, null, Color.RED));
-                            goodW.add(new Weapon(7, "", "", null, null, null, Color.RED));
-                            goodW.add(new Weapon(8, "", "", null, null, null, Color.RED));
-                            goodW.add(new Weapon(9, "", "", null, null, null, Color.RED));
-                            chooseWeaponCard(goodW);
-                            GuiExchanger.getInstance().setActualInteraction(Interaction.NONE);
+                            chooseWeaponCard((List<Weapon>) exchanger.getRequest());
                             break;
                         case GRABWEAPON:
                         case DISCARDWEAPON:
@@ -542,7 +536,10 @@ public class Gui extends Application{
         return s;
     }
 
-    //chooseAction???
+    /**
+     * chooseAction
+     */
+    private void chooseAction(){}
 
     /**
      * Used for: getNickname, getPhrase, getFighter, getSkulls
@@ -558,9 +555,16 @@ public class Gui extends Application{
         for(GuiCardWeapon c : cards){
             c.setOnMousePressed(e -> {
                 System.out.println("Clicked a super-weapon " + c.getWeapon().getName());
+                exchanger.setAnswer(c.getWeapon());
+                exchanger.setActualInteraction(Interaction.NONE);
+                //After finishing the click event, reset all the events to the original option
+                for(GuiCardWeapon c2 : cards)
+                    c2.resetEventsStyle();
             });
-            c.setOnMouseEntered(e -> c.setStyle("-fx-effect: innershadow(gaussian, #ff1315, 10, 0.5, 0, 0);"));
+            c.setEventsChoosable();
         }
+
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
     }
 
     /**
