@@ -457,4 +457,33 @@ public class Map implements Serializable {
         return points;
     }
 
+    /**
+     * Corrects references of pawns in cells after the game gets deserialized
+     * @param players List of up to date players references
+     */
+    public void fixPawns(List<Player> players)
+    {
+        Cell selectedCell = null;
+        List<Player> pawnsList = null;
+
+        for(int x = 0; x < 4; x++)
+        {
+            for(int y = 0; y < 3; y++)
+            {
+                //Don't check if the cell is unused
+                selectedCell = getCell(x, y);
+                if(selectedCell != null)
+                {
+                    pawnsList = selectedCell.getPawns();
+                    for(Player p : pawnsList)
+                    {
+                        selectedCell.removePawn(p);
+                        selectedCell.addPawn(
+                                players.stream().filter(player -> player.getNick().equals(p.getNick())).findFirst().orElse(null)
+                        );
+                    }
+                }
+            }
+        }
+    }
 }

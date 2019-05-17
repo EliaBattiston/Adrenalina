@@ -68,7 +68,7 @@ public class CLInterface implements UserInterface {
     private static final String[] ANSI_BACKGROUNDS = {ANSI_RED_BACKGROUND, ANSI_BLUE_BACKGROUND, ANSI_YELLOW_BACKGROUND, ANSI_WHITE_BACKGROUND, ANSI_PURPLE_BACKGROUND, ANSI_GREEN_BACKGROUND, ANSI_CYAN_BACKGROUND, ANSI_BLACK_BACKGROUND};
 
     private static final String BOX = "◼";//"\u25FC";
-    private static final String SKULL = "\uD83D\uDC80";
+    private static final String SKULL = "☠";
 
     private static final String SPACE = "\u0020";
 

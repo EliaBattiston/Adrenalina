@@ -1,10 +1,12 @@
 package it.polimi.ingsw.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -67,6 +69,11 @@ public class Match implements Runnable
     private int turnNumber;
 
     /**
+     * Gson instance used to save persistance files
+     */
+    private transient Gson gson;
+
+    /**
      * Creates a new empty match
      * @param skullsNum Number of skulls to be used in the game
      * @throws FileNotFoundException If the file is not found in the filesystem
@@ -81,6 +88,7 @@ public class Match implements Runnable
         this.frenzyKills = new ArrayList<>();
         this.skullsNum = skullsNum;
         this.turnNumber = 0;
+        this.gson = new GsonBuilder().create();
 
         game = Game.jsonDeserialize("baseGame.json");
         game.getPowersDeck().shuffle();
@@ -103,6 +111,8 @@ public class Match implements Runnable
         useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
         broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di" +  ( useFrenzy ? "" : " non" ) + " usare la modalità Frenesia", game.getPlayers());
 
+        //Make folder for persistance files
+        new File("matches").mkdirs();
 
         refillMap();
     }
@@ -204,6 +214,14 @@ public class Match implements Runnable
 
             System.out.println("\u001B[31mFine turno " + turnNumber + "\u001B[0m");
             turnNumber++;
+
+            try (PrintWriter out = new PrintWriter("matches/" + this.hashCode() + ".adr")) {
+                out.println(gson.toJson(this));
+            }
+            catch(FileNotFoundException e)
+            {
+                Logger.getGlobal().log(Level.SEVERE, "Error in writing persistance file", e);
+            }
         }
     }
 
@@ -640,10 +658,20 @@ public class Match implements Runnable
         broadcastMessage("La partita è terminata!", game.getPlayers()); //TODO add winner
     }
 
+    /**
+     * Gives a representation of the match which is suitable to be sent to a client
+     * @param viewer Player whose perspective will be reflected in the MatchView
+     * @return View of the match, ready to be serialized and sent
+     */
     public MatchView getMatchView(Player viewer){
         return new MatchView(game.getGameView(viewer), active, viewer, actionsNumber, phase, useFrenzy, firstFrenzy);
     }
 
+    /**
+     * Send a message to every player and show it in stdout
+     * @param message Message to be displayed
+     * @param players List of players to receive the message
+     */
     public static void broadcastMessage(String message, List<Player> players)
     {
         System.out.println(message);
@@ -662,6 +690,11 @@ public class Match implements Runnable
         }
     }
 
+    /**
+     * Manage the disconnection of a player
+     * @param pl Disconnected player
+     * @param players Players who'll receive an announcement of the disconnection
+     */
     public static void disconnectPlayer(Player pl, List<Player> players)
     {
         Logger.getGlobal().log( Level.SEVERE, pl.getNick()+" si è disconnesso" );
@@ -670,6 +703,10 @@ public class Match implements Runnable
         broadcastMessage(pl.getNick() + "Si è disconnesso", players);
     }
 
+    /**
+     * Gets the active player of the match
+     * @return Currently active player
+     */
     public Player getActive()
     {
         return active;

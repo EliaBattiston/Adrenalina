@@ -48,7 +48,7 @@ public abstract class Cell implements Serializable {
      * @return list of players in the cell
      */
     public List<Player> getPawns() {
-        return pawns;
+        return new ArrayList<>(pawns);
     }
 
     /**
@@ -65,7 +65,8 @@ public abstract class Cell implements Serializable {
      */
     public void addPawn(Player pl)
     {
-        pawns.add(pl);
+        if(pl != null)
+            pawns.add(pl);
     }
 
     /**
