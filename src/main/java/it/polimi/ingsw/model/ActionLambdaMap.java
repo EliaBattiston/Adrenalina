@@ -936,6 +936,8 @@ public class ActionLambdaMap {
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
                 toExecute.execute(pl, map, mem);
 
+                pl.applyEffects(EffectsLambda.payAmmo(toExecute.getCost()));
+
                 Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
 
                 weaponActions.clear();
@@ -945,6 +947,8 @@ public class ActionLambdaMap {
                 {
                     toExecute = pl.getConn().chooseAction(weaponActions, false);
                     toExecute.execute(pl, map, mem);
+
+                    pl.applyEffects(EffectsLambda.payAmmo(toExecute.getCost()));
 
                     Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
                 }

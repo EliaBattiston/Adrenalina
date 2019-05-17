@@ -7,6 +7,7 @@ import it.polimi.ingsw.view.MatchView;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,7 +146,10 @@ public class Match implements Runnable
             //TODO add check if there are less than 3 players
 
             if(active.getConn() != null)
-                playerTurn();
+            {
+                //Run the player's turn until the timeout runs out
+                new Timeout(2, TimeUnit.MINUTES, this);
+            }
             else
                 broadcastMessage(active.getNick() + " non esegue mosse poichè non è connesso", game.getPlayers());
 
@@ -203,7 +207,7 @@ public class Match implements Runnable
         }
     }
 
-    private void playerTurn()
+    public void playerTurn()
     {
         //Defining needed variables
         List<Action> availableActions; //Actions the user can currently do
@@ -666,4 +670,8 @@ public class Match implements Runnable
         broadcastMessage(pl.getNick() + "Si è disconnesso", players);
     }
 
+    public Player getActive()
+    {
+        return active;
+    }
 }
