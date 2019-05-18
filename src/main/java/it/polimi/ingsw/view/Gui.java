@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import static java.lang.Math.abs;
 
 public class Gui extends Application{
-    private static String imgRoot = "file:images/";
+    public static String imgRoot = "file:images/";
     private static Executor uiExec = Platform::runLater ;
 
 
@@ -52,14 +52,11 @@ public class Gui extends Application{
     private List<GuiCardWeapon> lootWeapons;
     private List<GuiCardWeapon> myWeapons;
     private List<GuiCardPower> myPowers;
+    private List<GuiCardPawn> playersPawns;
     private Canvas run;
     private Canvas runGrab;
     private Canvas shoot;
     private Stage primaryS;
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -104,7 +101,7 @@ public class Gui extends Application{
         Pane masterPane;
         Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
         Canvas fixedGraphics;
-        StackPane a, b, c, d;
+        StackPane a, b, c, d, e;
 
         masterPane = new Pane();
 
@@ -119,8 +116,6 @@ public class Gui extends Application{
         //weapons, powers, loot
         gc = canvas.getGraphicsContext2D(); //from now on the global gc will be the one for the dynamics data
 
-        drawPawnsOnMap(match.getGame().getMap());
-
         drawAllPlayersBoards(match.getGame().getPlayers(),false); //FRENZY?
         drawMyAmmo(match.getMyPlayer().getAmmo());
 
@@ -128,13 +123,15 @@ public class Gui extends Application{
         b = drawMyPowers(match.getMyPlayer().getPowers());
         c = drawWeaponsLoot(match.getGame().getMap());
         d = drawLootOnMap(match.getGame().getMap());
+        e = drawPawnsOnMap(match.getGame().getMap());
 
         a.setPickOnBounds(false);
         b.setPickOnBounds(false);
         c.setPickOnBounds(false);
         d.setPickOnBounds(false);
+        e.setPickOnBounds(false);
         masterPane.setPickOnBounds(false);
-        masterPane.getChildren().addAll( fixedGraphics, canvas,  a, b, c, d);
+        masterPane.getChildren().addAll( fixedGraphics, canvas,  a, b, c, d, e);
 
         return masterPane;
     }
@@ -228,7 +225,8 @@ public class Gui extends Application{
         return root;
     }
 
-    private void drawPawnsOnMap (Map map){
+    private StackPane drawPawnsOnMap (Map map){
+        StackPane root = new StackPane();
         double size = 50 * dimMult;
         double baseX = 224 * dimMult;
         double baseY = 224 * dimMult;
@@ -239,6 +237,7 @@ public class Gui extends Application{
         boolean xNotY;
 
         //FIXME actually it print a max of 3 players in a single cell because of the wrong managing of the xNotY, find a better way
+        playersPawns = new ArrayList<>();
         for(int j=0; j<3; j++){
             for(int i=0; i<4; i++){
                 xNotY = true;
@@ -246,7 +245,12 @@ public class Gui extends Application{
                 y = baseY + j * deltaCellY;
                 if(map.getCell(i, j) != null) { //here X and Y are pointing at the top-left corner of the cell
                     for (Player p : map.getCell(i, j).getPawns()) {
-                        gc.drawImage(GuiImagesMap.getImage(imgRoot + "playerPawn/" + p.getCharacter().toString() + ".png"), x, y, size, size);
+                        GuiCardPawn pawn = new GuiCardPawn(p, size);
+                        pawn.setPosition(x, y);
+
+                        playersPawns.add(pawn);
+                        root.getChildren().add(pawn);
+
                         if (xNotY) {
                             x += size;
                             y = baseY + j * deltaCellY;
@@ -254,12 +258,13 @@ public class Gui extends Application{
                             y += size;
                             x = baseX + i * (deltaCellX +(i==3?10:0));
                         }
-
                         xNotY = !xNotY;
                     }
                 }
             }
         }
+
+        return root;
     }
 
     private StackPane drawWeaponsLoot(Map map){
@@ -547,7 +552,7 @@ public class Gui extends Application{
                         chooseCell();//todo
                         break;
                     case CHOOSETARGET:
-                        chooseEnemy();//todo
+                        chooseEnemy((List<Player>) exchanger.getRequest());
                         break;
                     case CHOOSEROOM:
                         showAlert(this::guiChooseRoom, exchanger.getMessage());
@@ -599,7 +604,7 @@ public class Gui extends Application{
      * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
      */
     private void chooseWeaponCard(List<Weapon> choosable){
-        showAlert(this::guiShowInfo, "Scegli un'arma");
+        showAlert(this::guiShowInfo, exchanger.getMessage());
 
         List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
         cards.addAll(myWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList())); //add also my cards
@@ -623,6 +628,8 @@ public class Gui extends Application{
      * Used for: discardPower, choosePower
      */
     private void choosePowerCard(List<Power> choosable){
+        showAlert(this::guiShowInfo, exchanger.getMessage());
+
         List<GuiCardPower> cards = myPowers.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
         for(GuiCardPower c : cards){
@@ -641,14 +648,32 @@ public class Gui extends Application{
     }
 
     /**
-     * Used for: movePlayer, choosePosition
+     * Used for: movePlayer, choosePosition, moveEnemy
      */
     private void chooseCell(){}
 
     /**
-     * Used for: chooseTarget, moveEnemy
+     * Used for: chooseTarget
      */
-    private void chooseEnemy(){}
+    private void chooseEnemy(List<Player> choosable){
+        showAlert(this::guiShowInfo, exchanger.getMessage());
+
+        List<GuiCardPawn> pawns = playersPawns.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
+
+        for(GuiCardPawn p : pawns){
+            p.setOnMousePressed(e -> {
+                System.out.println("Clicked player: " + p.getPlayer().getNick());
+                exchanger.setAnswer(p.getPlayer());
+                exchanger.setActualInteraction(Interaction.NONE);
+                //After finishing the click event, reset all the events to the original option
+                for(GuiCardPawn p2 : pawns)
+                    p2.resetEventsStyle();
+            });
+            p.setEventsChoosable();
+        }
+
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+    }
 
     /**
      * It's the enter point for all the alerts/dialogs. It sets the executor for the next task

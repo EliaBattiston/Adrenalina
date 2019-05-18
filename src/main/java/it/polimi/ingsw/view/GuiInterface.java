@@ -43,9 +43,9 @@ public class GuiInterface implements UserInterface{
             System.out.println("Done, chosen weapon: " + w.getName());*/
 
             Thread.sleep(500);
-            getFighter();
+            //getFighter();
 
-            getNickname();
+            //getNickname();
 
             /*List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
@@ -55,6 +55,13 @@ public class GuiInterface implements UserInterface{
             Integer choosen = chooseRoom(rooms, false);
 
             chooseFrenzy();*/
+
+            List<Player> players = new ArrayList<>();
+            players.add(new Player("aaa", "yay", Fighter.SPROG));
+            players.add(new Player("aaa", "yay", Fighter.DOZER));
+
+            chooseTarget(players, true);
+
         }catch (InterruptedException e){
 
         }
@@ -264,7 +271,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Player chooseTarget(List<Player> targets, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSETARGET, "Scegli un nemico", targets, mustChoose);
+        goToWait();
+        return (Player) exchanger.getAnswer();
     }
 
     /**

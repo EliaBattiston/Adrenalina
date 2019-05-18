@@ -1,22 +1,21 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.model.Loot;
+import it.polimi.ingsw.model.Player;
 
 import java.util.List;
-import java.util.logging.Logger;
 
-public class GuiCardLoot extends GuiCard {
-    private Loot loot;
+public class GuiCardPawn extends GuiCard {
+    private Player pl;
 
-    public GuiCardLoot(Loot loot, double size){
+    public GuiCardPawn(Player pl, double size){
         super(size, size);
-        this.loot = loot;
-        img = GuiImagesMap.getImage( Gui.imgRoot +"loot/" + loot.getContentAsString() + ".png" );
+        this.pl = pl;
+        img = GuiImagesMap.getImage( Gui.imgRoot + "playerPawn/" + pl.getCharacter().toString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
 
         setOnMousePressed(e ->{
-            System.out.println("Clicked " + loot.getContentAsString());
+            System.out.println("Clicked " + pl.getCharacter().toString());
         });
         setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 10, 0.5, 0, 0);"));
         setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 0, 0, 0, 0);") );
@@ -28,11 +27,15 @@ public class GuiCardLoot extends GuiCard {
      * @param list of possible matches
      * @return true if in the list
      */
-    public boolean inList(List<Loot> list){
-        for(Loot l:list)
-            if(l.getId() == this.loot.getId())
+    public boolean inList(List<Player> list){
+        for(Player p:list)
+            if(p.getCharacter() == this.pl.getCharacter())
                 return true;
 
         return false;
+    }
+
+    public Player getPlayer() {
+        return pl;
     }
 }
