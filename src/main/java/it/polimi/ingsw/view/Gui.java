@@ -11,9 +11,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
+import javafx.stage.StageStyle;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -518,6 +520,8 @@ public class Gui extends Application{
         //TODO decide how to handle the possibility of a resize while a request in in action. we can:
         // a) reset the actualInteraction so this code will re-run FAST
         // b) not re-paint all the stuffs but just move&resize them CLEANER
+
+        //TODO implement the mustChoose for the ones that need it
         //On my linux (Andrea) I need to wait a while the javafx app before starting the tests
         try{Thread.sleep(1500);}catch (InterruptedException e){ ; }
 
@@ -546,24 +550,28 @@ public class Gui extends Application{
                         chooseEnemy();//todo
                         break;
                     case CHOOSEROOM:
-                        showAlert((String) exchanger.getMessage(), this::guiChooseRoom);
+                        showAlert(this::guiChooseRoom, exchanger.getMessage());
                         break;
                     case CHOOSEDIRECTION:
-                        showAlert((String) exchanger.getMessage(), this::guiChooseDirection); //TODO implement chooseDirection
+                        showAlert(this::guiChooseDirection, exchanger.getMessage());
                         break;
                     case CHOOSEPOSITION:
-                        chooseCell(); //todo
+                        //chooseCell(); //todo
                     case CHOOSEMAP:
-                        showAlert((String) exchanger.getMessage(), this::guiChooseMap);
+                        showAlert(this::guiChooseMap, exchanger.getMessage());
                         break;
                     case CHOOSEFRENZY:
-                        showAlert((String) exchanger.getMessage(), this::guiChooseFrenzy);
+                        showAlert(this::guiChooseFrenzy, exchanger.getMessage());
                         break;
                     case GETNICKNAME:
                     case GETPHRASE:
-                    case GETFIGHTER:
+                        showAlert(this::guiAskAString, exchanger.getMessage());
+                        break;
                     case GETSKULLSNUM:
-                        chooseUserSettings();//todo
+                        showAlert(this::guiChooseSkulls, exchanger.getMessage());
+                        break;
+                    case GETFIGHTER:
+                        showAlert(this::guiChooseFighter, exchanger.getMessage());
                         break;
                     case UPDATEVIEW://todo test this
                         primaryS.setScene(new Scene(drawGame()));
@@ -586,16 +594,12 @@ public class Gui extends Application{
      */
     private void chooseAction(){}
 
-    /**
-     * Used for: getNickname, getPhrase, getFighter, getSkulls
-     */
-    private void chooseUserSettings(){}
 
     /**
      * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
      */
     private void chooseWeaponCard(List<Weapon> choosable){
-        showAlert("Scegli un'arma", this::guiShowInfo);
+        showAlert(this::guiShowInfo, "Scegli un'arma");
 
         List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
         cards.addAll(myWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList())); //add also my cards
@@ -647,15 +651,18 @@ public class Gui extends Application{
     private void chooseEnemy(){}
 
     /**
+     * It's the enter point for all the alerts/dialogs. It sets the executor for the next task
      * Used for: information messages, chooseRoom(List<Integer>), chooseDirection(List<Direction>), chooseMap<Listint>->Integet, chooseFrenzy bool
+     * @param dialog the method that handle the dialog you want to show
      */
-    private void showAlert(String message, Consumer<String> dialog){
+    private void showAlert(Consumer<String> dialog, String message){
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
         uiExec.execute(() -> dialog.accept(message));
     }
 
     private void guiShowInfo(String message){
         Alert alert = new Alert(Alert.AlertType.NONE, message, ButtonType.OK);
+        alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Adrenalina");
         alert.showAndWait().ifPresent(rs -> {
             if (rs == ButtonType.OK)
@@ -664,51 +671,126 @@ public class Gui extends Application{
     }
 
     /**
-     *
-     * @param message
+     * Used for: getNickname, getPhrase
      */
-    private void guiChooseRoom(String message){
-        //TODO find a way to show just the possible options
-        ButtonType bt1 = new ButtonType("Rossa", ButtonBar.ButtonData.OK_DONE);
-        ButtonType bt2 = new ButtonType("Verde", ButtonBar.ButtonData.OK_DONE);
-        ButtonType bt3 = new ButtonType("Blu", ButtonBar.ButtonData.OK_DONE);
-        ButtonType bt4 = new ButtonType("Gialla", ButtonBar.ButtonData.OK_DONE);
-        ButtonType bt5 = new ButtonType("Bianca", ButtonBar.ButtonData.OK_DONE);
-        ButtonType bt6 = new ButtonType("Viola", ButtonBar.ButtonData.OK_DONE);
-        Alert alert = new Alert(Alert.AlertType.NONE, message, bt1, bt2, bt3, bt4, bt5, bt6);
-        alert.setTitle("Adrenalina");
+    private void guiAskAString(String message){
+        TextInputDialog dialog = new TextInputDialog(" ");
+        dialog.setTitle("Adrenalina");
+        dialog.initStyle(StageStyle.UNDECORATED);
+        dialog.setContentText(message);
 
-        //TODO set the right value for each room (ex red==1)
-        alert.showAndWait().ifPresent(rs -> {
-            System.out.println(rs.getText());
-            switch (rs.getText()){
-                case "Rossa":
-                    exchanger.setAnswer(1);
-                    break;
-                case "Verde":
-                    exchanger.setAnswer(2);
-                    break;
-                case "Blu":
-                    exchanger.setAnswer(3);
-                    break;
-                case "Gialla":
-                    exchanger.setAnswer(4);
-                    break;
-                case "Bianca":
-                    exchanger.setAnswer(5);
-                    break;
-                case "Viola":
-                    exchanger.setAnswer(6);
-                    break;
-                default:
-                    Logger.getGlobal().log(Level.SEVERE, "Error while choosing the room");
-            }
-
+        dialog.showAndWait().ifPresent(answer -> {
+            System.out.println("Answer: " + answer);
+            exchanger.setAnswer(answer);
             exchanger.setActualInteraction(Interaction.NONE);
         });
     }
 
-    private void guiChooseDirection(String message){ }
+    private void guiChooseFighter(String message){
+        List<Fighter> available = (List<Fighter>) exchanger.getRequest();
+        List<ButtonType> btns = new ArrayList<>();
+
+        for(Fighter f:available)
+            btns.add(new ButtonType(f.toString(), ButtonBar.ButtonData.OK_DONE));
+
+        Alert alert = new Alert(Alert.AlertType.NONE, message);
+        alert.getButtonTypes().setAll(btns);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.setTitle("Adrenalina");
+
+        alert.showAndWait().ifPresent(rs -> {
+            System.out.println(rs.getText());
+            exchanger.setAnswer(Fighter.valueOf(rs.getText()));
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
+    }
+
+    private void guiChooseSkulls(String message){
+        List<ButtonType> btns = new ArrayList<>();
+
+        for(int i=5; i<=8; i++)
+            btns.add(new ButtonType(Integer.toString(i), ButtonBar.ButtonData.OK_DONE));
+
+        Alert alert = new Alert(Alert.AlertType.NONE, message);
+        alert.getButtonTypes().setAll(btns);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.setTitle("Adrenalina");
+
+        alert.showAndWait().ifPresent(rs -> {
+            System.out.println(rs.getText());
+            exchanger.setAnswer(Integer.valueOf(rs.getText()));
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
+    }
+
+    private void guiChooseRoom(String message){
+        List<Integer> rooms = (List<Integer>) exchanger.getRequest();
+        List<ButtonType> btns = new ArrayList<>();
+
+        if(rooms.contains(0))
+            btns.add(new ButtonType("Rossa", ButtonBar.ButtonData.OK_DONE));
+        if(rooms.contains(1))
+            btns.add(new ButtonType("Bianca", ButtonBar.ButtonData.OK_DONE));
+        if(rooms.contains(2))
+            btns.add(new ButtonType("Blu", ButtonBar.ButtonData.OK_DONE));
+        if(rooms.contains(3))
+            btns.add(new ButtonType("Viola", ButtonBar.ButtonData.OK_DONE));
+        if(rooms.contains(4))
+            btns.add(new ButtonType("Verde", ButtonBar.ButtonData.OK_DONE));
+        if(rooms.contains(5))
+            btns.add(new ButtonType("Gialla", ButtonBar.ButtonData.OK_DONE));
+
+        Alert alert = new Alert(Alert.AlertType.NONE, message);
+        alert.getButtonTypes().setAll(btns);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.setTitle("Adrenalina");
+
+        alert.showAndWait().ifPresent(rs -> {
+            System.out.println(rs.getText());
+            switch (rs.getText()){
+                case "Rossa":
+                    exchanger.setAnswer(0);
+                    break;
+                case "Bianca":
+                    exchanger.setAnswer(1);
+                    break;
+                case "Blu":
+                    exchanger.setAnswer(2);
+                    break;
+                case "Viola":
+                    exchanger.setAnswer(3);
+                    break;
+                case "Verde":
+                    exchanger.setAnswer(4);
+                    break;
+                case "Gialla":
+                    exchanger.setAnswer(5);
+                    break;
+                default:
+                    Logger.getGlobal().log(Level.SEVERE, "Error while choosing the room");
+            }
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
+    }
+
+    private void guiChooseDirection(String message){
+        List<Direction> dirs = (List<Direction>) exchanger.getRequest();
+        List<ButtonType> btns = new ArrayList<>();
+
+        for(Direction d:dirs)
+            btns.add(new ButtonType(d.toString(), ButtonBar.ButtonData.OK_DONE));
+
+        Alert alert = new Alert(Alert.AlertType.NONE, message);
+        alert.getButtonTypes().setAll(btns);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.setTitle("Adrenalina");
+
+        alert.showAndWait().ifPresent(rs -> {
+            System.out.println(rs.getText());
+            exchanger.setAnswer(Direction.valueOf(rs.getText()));
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
+    }
 
     private void guiChooseMap(String message){
         ButtonType m1 = new ButtonType("Mappa 1", ButtonBar.ButtonData.OK_DONE);
@@ -716,6 +798,7 @@ public class Gui extends Application{
         ButtonType m3 = new ButtonType("Mappa 3", ButtonBar.ButtonData.OK_DONE);
         ButtonType m4 = new ButtonType("Mappa 4", ButtonBar.ButtonData.OK_DONE);
         Alert alert = new Alert(Alert.AlertType.NONE, message, m1, m2, m3, m4);
+        alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Adrenalina");
 
         alert.showAndWait().ifPresent(rs -> {
@@ -744,6 +827,7 @@ public class Gui extends Application{
         ButtonType frenzy = new ButtonType("Con frenesia", ButtonBar.ButtonData.OK_DONE);
         ButtonType noFrenzy = new ButtonType("Senza frenesia", ButtonBar.ButtonData.OK_DONE);
         Alert alert = new Alert(Alert.AlertType.NONE, message, frenzy, noFrenzy);
+        alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Adrenalina");
 
         alert.showAndWait().ifPresent(rs -> {

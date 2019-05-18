@@ -3,6 +3,7 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuiInterface implements UserInterface{
@@ -42,15 +43,18 @@ public class GuiInterface implements UserInterface{
             System.out.println("Done, chosen weapon: " + w.getName());*/
 
             Thread.sleep(500);
+            getFighter();
+
+            getNickname();
 
             /*List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
             rooms.add(2);
             rooms.add(3);
 
-            Integer choosen = chooseRoom(rooms, false);*/
+            Integer choosen = chooseRoom(rooms, false);
 
-            chooseFrenzy();
+            chooseFrenzy();*/
         }catch (InterruptedException e){
 
         }
@@ -74,7 +78,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public String getNickname() {
-        return null;
+        exchanger.setRequest(Interaction.GETNICKNAME, "Inserisci il tuo nickname", null, true);
+        goToWait();
+        return (String)exchanger.getAnswer();
     }
 
     /**
@@ -84,7 +90,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public String getPhrase() {
-        return null;
+        exchanger.setRequest(Interaction.GETPHRASE, "Inserisci la tua frase di battaglia", null, true);
+        goToWait();
+        return (String)exchanger.getAnswer();
     }
 
     /**
@@ -94,7 +102,12 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Fighter getFighter() {
-        return null;
+        List<Fighter> ava = new ArrayList<>();
+        ava.add(Fighter.BANSHEE);
+        ava.add(Fighter.DSTRUTTOR3);
+        exchanger.setRequest(Interaction.GETFIGHTER, "Scegli il tuo combattente", ava, true); //todo (after merge) fix the request
+        goToWait();
+        return (Fighter) exchanger.getAnswer();
     }
 
     /**
@@ -104,7 +117,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer getSkullNum() {
-        return null;
+        exchanger.setRequest(Interaction.GETFIGHTER, "Scegli il numero di teschi da usare nella partita", null, true); //todo (after merge) fix the request
+        goToWait();
+        return (Integer) exchanger.getAnswer();
     }
 
     /**
@@ -274,7 +289,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Direction chooseDirection(boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEDIRECTION, "Scegli una direzione cardinale", null, mustChoose); //todo (after merge) fix the request
+        goToWait();
+        return (Direction) exchanger.getAnswer();
     }
 
     /**

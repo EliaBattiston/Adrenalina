@@ -14,7 +14,7 @@ public class GuiExchanger {
         actualInteraction = Interaction.NONE;
     }
 
-    public synchronized static GuiExchanger getInstance(){
+    public static synchronized GuiExchanger getInstance(){
         if(instance==null)
             instance = new GuiExchanger();
 
