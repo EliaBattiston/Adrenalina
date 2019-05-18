@@ -3,7 +3,6 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GuiInterface implements UserInterface{
@@ -25,7 +24,7 @@ public class GuiInterface implements UserInterface{
             //Thread.sleep(3000);
             System.out.println("Start test gui");
 
-            List<Weapon> goodW = new ArrayList<>();
+            /*List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(3, "", "", null, null, null, Color.RED));
@@ -40,16 +39,18 @@ public class GuiInterface implements UserInterface{
 
             Thread.sleep(200);
 
-            System.out.println("Done, chosen weapon: " + w.getName());
+            System.out.println("Done, chosen weapon: " + w.getName());*/
 
             Thread.sleep(500);
 
-            List<Integer> rooms = new ArrayList<>();
+            /*List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
             rooms.add(2);
             rooms.add(3);
 
-            Integer choosen = chooseRoom(rooms, false);
+            Integer choosen = chooseRoom(rooms, false);*/
+
+            chooseFrenzy();
         }catch (InterruptedException e){
 
         }
@@ -63,6 +64,7 @@ public class GuiInterface implements UserInterface{
     @Override
     public void updateGame(MatchView matchView) {
         exchanger.setRequest(Interaction.UPDATEVIEW, "Updating view...", matchView, false);
+        goToWait();
     }
 
     /**
@@ -127,13 +129,7 @@ public class GuiInterface implements UserInterface{
     @Override
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) {
         exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma", available, mustChoose);
-
-        try {
-            while (!exchanger.isFreeToUse())
-                Thread.sleep(150);
-        }catch (InterruptedException e){
-        }
-
+        goToWait();
         return (Weapon)exchanger.getAnswer();
     }
 
@@ -256,13 +252,7 @@ public class GuiInterface implements UserInterface{
     @Override
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) {
         exchanger.setRequest(Interaction.CHOOSEROOM, "Scegli una stanza", rooms, mustChoose);
-
-        try {
-            while (!exchanger.isFreeToUse())
-                Thread.sleep(150);
-        }catch (InterruptedException e){
-        }
-
+        goToWait();
         return (Integer)exchanger.getAnswer();
     }
 
@@ -294,6 +284,16 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Boolean chooseFrenzy() {
-        return false;
+        exchanger.setRequest(Interaction.CHOOSEFRENZY, "Vuoi usare la modalità frenesia?", null, true);
+        goToWait();
+        return (boolean)exchanger.getAnswer();
+    }
+
+    private void goToWait(){
+        try {
+            while (!exchanger.isFreeToUse())
+                Thread.sleep(150);
+        }catch (InterruptedException e){
+        }
     }
 }

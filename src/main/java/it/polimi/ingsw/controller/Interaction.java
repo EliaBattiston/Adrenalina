@@ -22,5 +22,7 @@ public enum Interaction {
     GETSKULLSNUM,
     UPDATEVIEW,
     NONE,
-    WAITINGUSER
+    WAITINGUSER,
+    SHOWINGMESSAGE,
+    CLOSEAPP
 }

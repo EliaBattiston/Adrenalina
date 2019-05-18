@@ -4,12 +4,13 @@ import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
@@ -19,12 +20,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
 public class Gui extends Application{
     private static String imgRoot = "file:images/";
+    private static Executor uiExec = Platform::runLater ;
+
 
     //Data
     private MatchView match;
@@ -46,6 +53,7 @@ public class Gui extends Application{
     private Canvas run;
     private Canvas runGrab;
     private Canvas shoot;
+    private Stage primaryS;
 
     public static void main(String[] args) {
         launch(args);
@@ -53,6 +61,8 @@ public class Gui extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        primaryS = primaryStage;
+
         backgroundWidth = 1280;
         backgroundHeight = backgroundWidth*9/16;
 
@@ -68,13 +78,8 @@ public class Gui extends Application{
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
-       /* while(true){
-            if(GuiExchanger.getInstance().getActualInteraction() != Interaction.NONE)
-                System.out.println(GuiExchanger.getInstance().getActualInteraction().toString());
-        }*/
-
         //Event handlers
-       primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
             if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
@@ -89,65 +94,8 @@ public class Gui extends Application{
         //primaryStage.minHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
         //primaryStage.maxHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
 
-        // separate non-FX thread
-        //TODO decide how to handle the possibility of a resize while a request in in action. we can:
-        // a) reset the actualInteraction so this code will re-run FAST
-        // b) not re-paint all the stuffs but just move&resize them CLEANER
-       new Thread(()->{
-
-           //On my linux (Andrea) I need to wait a while the javafx app before starting the tests
-           try{
-                    Thread.sleep(1500);
-           }catch (InterruptedException e){
-           }
-
-           exchanger = GuiExchanger.getInstance();
-            while(true)
-                if(exchanger.guiRequestIncoming()) {
-                    System.out.println(exchanger.getActualInteraction().toString());
-                    switch (exchanger.getActualInteraction()) {
-                        case CHOOSEACTION:
-                            chooseAction();
-                            break;
-                        case CHOOSEWEAPON:
-                        case GRABWEAPON:
-                        case DISCARDWEAPON:
-                        case RELOAD:
-                            chooseWeaponCard((List<Weapon>) exchanger.getRequest());
-                            break;
-                        case DISCARDPOWER:
-                        case CHOOSEPOWER:
-                            choosePowerCard((List<Power>) exchanger.getRequest());
-                            break;
-                        case MOVEPLAYER:
-                            chooseCell();
-                            break;
-                        case CHOOSETARGET:
-                            chooseEnemy();
-                            break;
-                        case MOVEENEMY:
-                            break;
-                        case CHOOSEROOM:
-                        case CHOOSEDIRECTION:
-                        case CHOOSEPOSITION:
-                        case CHOOSEMAP:
-                        case CHOOSEFRENZY:
-                            chooseDialog((String) exchanger.getMessage());
-                            break;
-                        case GETNICKNAME:
-                        case GETPHRASE:
-                        case GETFIGHTER:
-                        case GETSKULLSNUM:
-                            chooseUserSettings();
-                            break;
-                        case UPDATEVIEW:
-                            break;
-                        case NONE:
-                        default:
-                            break;
-                    }
-                }
-       }).start();
+        //Run the thread that handles the connection with the GuiInterface
+        new Thread(this::listenRequests).start();
     }
 
     private Pane drawGame(){
@@ -561,6 +509,78 @@ public class Gui extends Application{
         return s;
     }
 
+    //
+    //
+    //
+    //
+
+    private void listenRequests(){
+        //TODO decide how to handle the possibility of a resize while a request in in action. we can:
+        // a) reset the actualInteraction so this code will re-run FAST
+        // b) not re-paint all the stuffs but just move&resize them CLEANER
+        //On my linux (Andrea) I need to wait a while the javafx app before starting the tests
+        try{Thread.sleep(1500);}catch (InterruptedException e){ ; }
+
+        exchanger = GuiExchanger.getInstance();
+        while(exchanger.getActualInteraction()!=Interaction.CLOSEAPP) {
+            if (exchanger.guiRequestIncoming()) {
+                System.out.println(exchanger.getActualInteraction().toString());
+                switch (exchanger.getActualInteraction()) {
+                    case CHOOSEACTION:
+                        chooseAction();//todo
+                        break;
+                    case CHOOSEWEAPON:
+                    case GRABWEAPON:
+                    case DISCARDWEAPON:
+                    case RELOAD:
+                        chooseWeaponCard((List<Weapon>) exchanger.getRequest());
+                        break;
+                    case DISCARDPOWER:
+                    case CHOOSEPOWER:
+                        choosePowerCard((List<Power>) exchanger.getRequest());
+                        break;
+                    case MOVEPLAYER:
+                        chooseCell();//todo
+                        break;
+                    case CHOOSETARGET:
+                        chooseEnemy();//todo
+                        break;
+                    case CHOOSEROOM:
+                        showAlert((String) exchanger.getMessage(), this::guiChooseRoom);
+                        break;
+                    case CHOOSEDIRECTION:
+                        showAlert((String) exchanger.getMessage(), this::guiChooseDirection); //TODO implement chooseDirection
+                        break;
+                    case CHOOSEPOSITION:
+                        chooseCell(); //todo
+                    case CHOOSEMAP:
+                        showAlert((String) exchanger.getMessage(), this::guiChooseMap);
+                        break;
+                    case CHOOSEFRENZY:
+                        showAlert((String) exchanger.getMessage(), this::guiChooseFrenzy);
+                        break;
+                    case GETNICKNAME:
+                    case GETPHRASE:
+                    case GETFIGHTER:
+                    case GETSKULLSNUM:
+                        chooseUserSettings();//todo
+                        break;
+                    case UPDATEVIEW://todo test this
+                        primaryS.setScene(new Scene(drawGame()));
+                        //or
+                        //uiExec.execute(() -> primaryS.setScene(new Scene(drawGame())));
+                        break;
+                    case MOVEENEMY: //Nothing to do, not used in this context
+                    case NONE:
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //TODO here close the javafx app
+    }
+
     /**
      * chooseAction
      */
@@ -575,6 +595,8 @@ public class Gui extends Application{
      * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
      */
     private void chooseWeaponCard(List<Weapon> choosable){
+        showAlert("Scegli un'arma", this::guiShowInfo);
+
         List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
         cards.addAll(myWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList())); //add also my cards
 
@@ -625,21 +647,110 @@ public class Gui extends Application{
     private void chooseEnemy(){}
 
     /**
-     * Used for: chooseRoom, chooseDirection, chooseMap, chooseFrenzy
+     * Used for: information messages, chooseRoom(List<Integer>), chooseDirection(List<Direction>), chooseMap<Listint>->Integet, chooseFrenzy bool
      */
-    private void chooseDialog(String message){
-        /*Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Message Here...");
-        alert.setHeaderText("Look, an Information Dialog");
-        alert.setContentText("I have a great message for you!\n"+message);
-        alert.showAndWait().ifPresent(rs -> {
-            if (rs == ButtonType.OK) {
-                System.out.println("Pressed OK.");
-                exchanger.setActualInteraction(Interaction.NONE);
-            }
-        });
+    private void showAlert(String message, Consumer<String> dialog){
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+        uiExec.execute(() -> dialog.accept(message));
+    }
 
-        exchanger.setActualInteraction(Interaction.WAITINGUSER);*/
+    private void guiShowInfo(String message){
+        Alert alert = new Alert(Alert.AlertType.NONE, message, ButtonType.OK);
+        alert.setTitle("Adrenalina");
+        alert.showAndWait().ifPresent(rs -> {
+            if (rs == ButtonType.OK)
+                exchanger.setActualInteraction(Interaction.WAITINGUSER);
+        });
+    }
+
+    /**
+     *
+     * @param message
+     */
+    private void guiChooseRoom(String message){
+        //TODO find a way to show just the possible options
+        ButtonType bt1 = new ButtonType("Rossa", ButtonBar.ButtonData.OK_DONE);
+        ButtonType bt2 = new ButtonType("Verde", ButtonBar.ButtonData.OK_DONE);
+        ButtonType bt3 = new ButtonType("Blu", ButtonBar.ButtonData.OK_DONE);
+        ButtonType bt4 = new ButtonType("Gialla", ButtonBar.ButtonData.OK_DONE);
+        ButtonType bt5 = new ButtonType("Bianca", ButtonBar.ButtonData.OK_DONE);
+        ButtonType bt6 = new ButtonType("Viola", ButtonBar.ButtonData.OK_DONE);
+        Alert alert = new Alert(Alert.AlertType.NONE, message, bt1, bt2, bt3, bt4, bt5, bt6);
+        alert.setTitle("Adrenalina");
+
+        //TODO set the right value for each room (ex red==1)
+        alert.showAndWait().ifPresent(rs -> {
+            System.out.println(rs.getText());
+            switch (rs.getText()){
+                case "Rossa":
+                    exchanger.setAnswer(1);
+                    break;
+                case "Verde":
+                    exchanger.setAnswer(2);
+                    break;
+                case "Blu":
+                    exchanger.setAnswer(3);
+                    break;
+                case "Gialla":
+                    exchanger.setAnswer(4);
+                    break;
+                case "Bianca":
+                    exchanger.setAnswer(5);
+                    break;
+                case "Viola":
+                    exchanger.setAnswer(6);
+                    break;
+                default:
+                    Logger.getGlobal().log(Level.SEVERE, "Error while choosing the room");
+            }
+
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
+    }
+
+    private void guiChooseDirection(String message){ }
+
+    private void guiChooseMap(String message){
+        ButtonType m1 = new ButtonType("Mappa 1", ButtonBar.ButtonData.OK_DONE);
+        ButtonType m2 = new ButtonType("Mappa 2", ButtonBar.ButtonData.OK_DONE);
+        ButtonType m3 = new ButtonType("Mappa 3", ButtonBar.ButtonData.OK_DONE);
+        ButtonType m4 = new ButtonType("Mappa 4", ButtonBar.ButtonData.OK_DONE);
+        Alert alert = new Alert(Alert.AlertType.NONE, message, m1, m2, m3, m4);
+        alert.setTitle("Adrenalina");
+
+        alert.showAndWait().ifPresent(rs -> {
+            System.out.println(rs.getText());
+            switch (rs.getText()){
+                case "Mappa 1":
+                    exchanger.setAnswer(1);
+                    break;
+                case "Mappa 2":
+                    exchanger.setAnswer(2);
+                    break;
+                case "Mappa 3":
+                    exchanger.setAnswer(3);
+                    break;
+                case "Mappa 4":
+                    exchanger.setAnswer(4);
+                    break;
+                default:
+                    break;
+            }
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
+    }
+
+    private void guiChooseFrenzy(String message){
+        ButtonType frenzy = new ButtonType("Con frenesia", ButtonBar.ButtonData.OK_DONE);
+        ButtonType noFrenzy = new ButtonType("Senza frenesia", ButtonBar.ButtonData.OK_DONE);
+        Alert alert = new Alert(Alert.AlertType.NONE, message, frenzy, noFrenzy);
+        alert.setTitle("Adrenalina");
+
+        alert.showAndWait().ifPresent(rs -> {
+            System.out.println(rs.getText());
+            exchanger.setAnswer(rs == frenzy);
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
     }
 
     private void initForTest() throws FileNotFoundException {

@@ -38,7 +38,7 @@ public class GuiExchanger {
 
     public synchronized boolean isFreeToUse(){ return actualInteraction == Interaction.NONE; }
 
-    public synchronized boolean guiRequestIncoming(){return actualInteraction != Interaction.NONE && actualInteraction != Interaction.WAITINGUSER; }
+    public synchronized boolean guiRequestIncoming(){return actualInteraction != Interaction.NONE && actualInteraction != Interaction.WAITINGUSER && actualInteraction !=Interaction.SHOWINGMESSAGE; }
 
     public synchronized Object getRequest() {
         return request;
