@@ -128,7 +128,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma", available, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma con cui sparare", available, mustChoose);
         goToWait();
         return (Weapon)exchanger.getAnswer();
     }
@@ -142,7 +142,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma da raccogliere", grabbable, mustChoose);
+        goToWait();
+        return (Weapon)exchanger.getAnswer();
     }
 
     /**
@@ -154,7 +156,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma da ricaricare", reloadable, mustChoose);
+        goToWait();
+        return (Weapon)exchanger.getAnswer();
     }
 
     /**
@@ -166,7 +170,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma da scartare", inHand, mustChoose);
+        goToWait();
+        return (Weapon)exchanger.getAnswer();
     }
 
     /**
@@ -178,7 +184,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEPOWER, "Segli una power da usare", inHand, mustChoose);
+        goToWait();
+        return (Power)exchanger.getAnswer();
     }
 
     /**
@@ -190,7 +198,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power discardPower(List<Power> powers, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEPOWER, "Segli una power da scartare", powers, mustChoose);
+        goToWait();
+        return (Power)exchanger.getAnswer();
     }
 
     /**
@@ -274,7 +284,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer chooseMap() {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEROOM, "Con quale mappa vuoi giocare?", null, true);
+        goToWait();
+        return (Integer) exchanger.getAnswer();
     }
 
     /**
