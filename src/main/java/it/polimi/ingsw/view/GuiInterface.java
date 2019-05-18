@@ -22,7 +22,7 @@ public class GuiInterface implements UserInterface{
         new Thread(()-> javafx.application.Application.launch(Gui.class, args)).start();
 
         try {
-            Thread.sleep(3000);
+            //Thread.sleep(3000);
             System.out.println("Start test gui");
 
             List<Weapon> goodW = new ArrayList<>();
@@ -40,8 +40,16 @@ public class GuiInterface implements UserInterface{
 
             Thread.sleep(200);
 
-
             System.out.println("Done, chosen weapon: " + w.getName());
+
+            Thread.sleep(500);
+
+            List<Integer> rooms = new ArrayList<>();
+            rooms.add(1);
+            rooms.add(2);
+            rooms.add(3);
+
+            Integer choosen = chooseRoom(rooms, false);
         }catch (InterruptedException e){
 
         }
@@ -247,7 +255,15 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEROOM, "Scegli una stanza", rooms, mustChoose);
+
+        try {
+            while (!exchanger.isFreeToUse())
+                Thread.sleep(150);
+        }catch (InterruptedException e){
+        }
+
+        return (Integer)exchanger.getAnswer();
     }
 
     /**

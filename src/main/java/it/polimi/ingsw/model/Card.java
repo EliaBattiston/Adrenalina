@@ -5,4 +5,7 @@ package it.polimi.ingsw.model;
  * It's useful for the description of the Decks that can only be made of Cards
  */
 public abstract class Card {
+    protected int id;
+
+    public int getId() { return id; }
 }

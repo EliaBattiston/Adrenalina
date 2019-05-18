@@ -4,7 +4,7 @@ package it.polimi.ingsw.model;
  * Represent one of the four kind of powers inside the game and show it's values
  */
 public class Power extends Card{
-    private final int id;
+    //private final int id; now in card
     private final String name;
     private final Action base;
     private final Color color;
@@ -21,10 +21,6 @@ public class Power extends Card{
         this.name = name;
         this.base = base;
         this.color = color;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {

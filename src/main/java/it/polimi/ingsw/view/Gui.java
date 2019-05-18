@@ -7,6 +7,9 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
@@ -39,6 +42,10 @@ public class Gui extends Application{
     //Canvases
     private List<GuiCardWeapon> lootWeapons;
     private List<GuiCardWeapon> myWeapons;
+    private List<GuiCardPower> myPowers;
+    private Canvas run;
+    private Canvas runGrab;
+    private Canvas shoot;
 
     public static void main(String[] args) {
         launch(args);
@@ -53,7 +60,6 @@ public class Gui extends Application{
 
         initForTest();
 
-
         mainScene = new Scene(drawGame());
 
         primaryStage.setTitle("Adrenalina");
@@ -61,7 +67,6 @@ public class Gui extends Application{
         primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
         primaryStage.show();
-
 
        /* while(true){
             if(GuiExchanger.getInstance().getActualInteraction() != Interaction.NONE)
@@ -89,6 +94,13 @@ public class Gui extends Application{
         // a) reset the actualInteraction so this code will re-run FAST
         // b) not re-paint all the stuffs but just move&resize them CLEANER
        new Thread(()->{
+
+           //On my linux (Andrea) I need to wait a while the javafx app before starting the tests
+           try{
+                    Thread.sleep(1500);
+           }catch (InterruptedException e){
+           }
+
            exchanger = GuiExchanger.getInstance();
             while(true)
                 if(exchanger.guiRequestIncoming()) {
@@ -98,15 +110,14 @@ public class Gui extends Application{
                             chooseAction();
                             break;
                         case CHOOSEWEAPON:
-                            chooseWeaponCard((List<Weapon>) exchanger.getRequest());
-                            break;
                         case GRABWEAPON:
                         case DISCARDWEAPON:
                         case RELOAD:
-
+                            chooseWeaponCard((List<Weapon>) exchanger.getRequest());
+                            break;
                         case DISCARDPOWER:
                         case CHOOSEPOWER:
-                            choosePowerCard();
+                            choosePowerCard((List<Power>) exchanger.getRequest());
                             break;
                         case MOVEPLAYER:
                             chooseCell();
@@ -121,7 +132,7 @@ public class Gui extends Application{
                         case CHOOSEPOSITION:
                         case CHOOSEMAP:
                         case CHOOSEFRENZY:
-                            chooseDialog();
+                            chooseDialog((String) exchanger.getMessage());
                             break;
                         case GETNICKNAME:
                         case GETPHRASE:
@@ -438,6 +449,18 @@ public class Gui extends Application{
 
             xDrop += deltaX;
         }
+
+        //for my player I need to ahve the actions clickable
+        if(player.getNick() == match.getMyPlayer().getNick()){
+            double actionsY = 53 / 225 * height;
+            double actionsHeight = 47/225*height;
+            double actionsWidth = 69/1121*width;
+
+            run = new Canvas(actionsWidth, actionsHeight);
+            run.setPickOnBounds(false);
+            run.setTranslateX(x+0);
+            run.setTranslateY(y+actionsY);
+        }
     }
 
     private StackPane drawMyWeapons(List<Weapon> weapons){
@@ -480,8 +503,10 @@ public class Gui extends Application{
         //calculate distance from board to board
         double deltaX = 102 * dimMult;
 
+        myPowers = new ArrayList<>();
         for(Power p : powers){
             GuiCardPower card = new GuiCardPower(p, width, height);
+            myPowers.add(card);
             card.setPosition(x, y);
             root.getChildren().add(card);
             x += deltaX;
@@ -551,6 +576,7 @@ public class Gui extends Application{
      */
     private void chooseWeaponCard(List<Weapon> choosable){
         List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
+        cards.addAll(myWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList())); //add also my cards
 
         for(GuiCardWeapon c : cards){
             c.setOnMousePressed(e -> {
@@ -570,7 +596,23 @@ public class Gui extends Application{
     /**
      * Used for: discardPower, choosePower
      */
-    private void choosePowerCard(){}
+    private void choosePowerCard(List<Power> choosable){
+        List<GuiCardPower> cards = myPowers.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
+
+        for(GuiCardPower c : cards){
+            c.setOnMousePressed(e -> {
+                System.out.println("Clicked a super-weapon " + c.getPower().getName());
+                exchanger.setAnswer(c.getPower());
+                exchanger.setActualInteraction(Interaction.NONE);
+                //After finishing the click event, reset all the events to the original option
+                for(GuiCardPower c2 : cards)
+                    c2.resetEventsStyle();
+            });
+            c.setEventsChoosable();
+        }
+
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+    }
 
     /**
      * Used for: movePlayer, choosePosition
@@ -585,7 +627,20 @@ public class Gui extends Application{
     /**
      * Used for: chooseRoom, chooseDirection, chooseMap, chooseFrenzy
      */
-    private void chooseDialog(){}
+    private void chooseDialog(String message){
+        /*Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Message Here...");
+        alert.setHeaderText("Look, an Information Dialog");
+        alert.setContentText("I have a great message for you!\n"+message);
+        alert.showAndWait().ifPresent(rs -> {
+            if (rs == ButtonType.OK) {
+                System.out.println("Pressed OK.");
+                exchanger.setActualInteraction(Interaction.NONE);
+            }
+        });
+
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);*/
+    }
 
     private void initForTest() throws FileNotFoundException {
         //Settings for testing

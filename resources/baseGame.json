@@ -674,53 +674,53 @@
         "scraps": [],
         "cards": [
 
-            {"content": ["BLUE", "RED", "RED"]},
-            {"content": ["BLUE", "RED", "RED"]},
-            {"content": ["BLUE", "RED", "RED"]},
+            {"id":1, "content": ["BLUE", "RED", "RED"]},
+            {"id":2, "content": ["BLUE", "RED", "RED"]},
+            {"id":3, "content": ["BLUE", "RED", "RED"]},
 
-            {"content": ["BLUE", "YELLOW", "YELLOW"]},
-            {"content": ["BLUE", "YELLOW", "YELLOW"]},
-            {"content": ["BLUE", "YELLOW", "YELLOW"]},
+            {"id":4, "content": ["BLUE", "YELLOW", "YELLOW"]},
+            {"id":5, "content": ["BLUE", "YELLOW", "YELLOW"]},
+            {"id":6, "content": ["BLUE", "YELLOW", "YELLOW"]},
 
-            {"content": ["POWER", "BLUE", "BLUE"]},
-            {"content": ["POWER", "BLUE", "BLUE"]},
+            {"id":7, "content": ["POWER", "BLUE", "BLUE"]},
+            {"id":8, "content": ["POWER", "BLUE", "BLUE"]},
 
-            {"content": ["POWER", "RED", "BLUE"]},
-            {"content": ["POWER", "RED", "BLUE"]},
-            {"content": ["POWER", "RED", "BLUE"]},
-            {"content": ["POWER", "RED", "BLUE"]},
+            {"id":9, "content": ["POWER", "RED", "BLUE"]},
+            {"id":10, "content": ["POWER", "RED", "BLUE"]},
+            {"id":11, "content": ["POWER", "RED", "BLUE"]},
+            {"id":12, "content": ["POWER", "RED", "BLUE"]},
 
-            {"content": ["POWER", "RED", "RED"]},
-            {"content": ["POWER", "RED", "RED"]},
+            {"id":13, "content": ["POWER", "RED", "RED"]},
+            {"id":14, "content": ["POWER", "RED", "RED"]},
 
-            {"content": ["POWER", "YELLOW", "BLUE"]},
-            {"content": ["POWER", "YELLOW", "BLUE"]},
-            {"content": ["POWER", "YELLOW", "BLUE"]},
-            {"content": ["POWER", "YELLOW", "BLUE"]},
+            {"id":15, "content": ["POWER", "YELLOW", "BLUE"]},
+            {"id":16, "conntent": ["POWER", "YELLOW", "BLUE"]},
+            {"id":17, "conntent": ["POWER", "YELLOW", "BLUE"]},
+            {"id":18, "conntent": ["POWER", "YELLOW", "BLUE"]},
 
-            {"content": ["POWER", "YELLOW", "RED"]},
-            {"content": ["POWER", "YELLOW", "RED"]},
-            {"content": ["POWER", "YELLOW", "RED"]},
-            {"content": ["POWER", "YELLOW", "RED"]},
+            {"id":19, "conntent": ["POWER", "YELLOW", "RED"]},
+            {"id":20, "conntent": ["POWER", "YELLOW", "RED"]},
+            {"id":21, "conntent": ["POWER", "YELLOW", "RED"]},
+            {"id":22, "conntent": ["POWER", "YELLOW", "RED"]},
 
-            {"content": ["POWER", "YELLOW", "YELLOW"]},
-            {"content": ["POWER", "YELLOW", "YELLOW"]},
+            {"id":23, "conntent": ["POWER", "YELLOW", "YELLOW"]},
+            {"id":24, "conntent": ["POWER", "YELLOW", "YELLOW"]},
 
-            {"content": ["RED", "BLUE", "BLUE"]},
-            {"content": ["RED", "BLUE", "BLUE"]},
-            {"content": ["RED", "BLUE", "BLUE"]},
+            {"id":25, "conntent": ["RED", "BLUE", "BLUE"]},
+            {"id":26, "conntent": ["RED", "BLUE", "BLUE"]},
+            {"id":27, "conntent": ["RED", "BLUE", "BLUE"]},
 
-            {"content": ["RED", "YELLOW", "YELLOW"]},
-            {"content": ["RED", "YELLOW", "YELLOW"]},
-            {"content": ["RED", "YELLOW", "YELLOW"]},
+            {"id":28, "conntent": ["RED", "YELLOW", "YELLOW"]},
+            {"id":29, "conntent": ["RED", "YELLOW", "YELLOW"]},
+            {"id":30, "conntent": ["RED", "YELLOW", "YELLOW"]},
 
-            {"content": ["YELLOW", "BLUE", "BLUE"]},
-            {"content": ["YELLOW", "BLUE", "BLUE"]},
-            {"content": ["YELLOW", "BLUE", "BLUE"]},
+            {"id":31, "conntent": ["YELLOW", "BLUE", "BLUE"]},
+            {"id":32, "conntent": ["YELLOW", "BLUE", "BLUE"]},
+            {"id":33, "conntent": ["YELLOW", "BLUE", "BLUE"]},
 
-            {"content": ["YELLOW", "RED", "RED"]},
-            {"content": ["YELLOW", "RED", "RED"]},
-            {"content": ["YELLOW", "RED", "RED"]}
+            {"id":34, "conntent": ["YELLOW", "RED", "RED"]},
+            {"id":35, "conntent": ["YELLOW", "RED", "RED"]},
+            {"id":36, "conntent": ["YELLOW", "RED", "RED"]}
         ]
     }
 }
