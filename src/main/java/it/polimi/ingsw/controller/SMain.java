@@ -153,7 +153,10 @@ public class SMain
                 player.setConn(connection);
                 println("Il giocatore " + player.getNick() + " si è riconnesso.");
                 player.getConn().sendMessage("Bentornato in Adrenalina! La tua partita è ancora in corso, aspetta il caricamento dalla mappa");
-            } else {
+                ClientConnThread clientT = new ClientConnThread(this, player);
+                new Thread(clientT).start();
+            }
+            else {
                 int skulls = connection.getSkullNum();
                 int index = skulls - MINSKULLS;
 
@@ -173,6 +176,8 @@ public class SMain
                 }
                 player = new Player(nickname, phrase, fighter);
                 player.setConn(connection);
+                ClientConnThread clientT = new ClientConnThread(this, player);
+                new Thread(clientT).start();
 
                 if (waiting[index] == null) {
                     try {
@@ -210,12 +215,16 @@ public class SMain
             boolean found = false;
             int i;
             for (i = 0; i < waiting.length && !found; i++) {
-                for (Player p : waiting[i].getGame().getPlayers()) {
-                    if (p.getNick().equals(nickname)) {
-                        String nick = p.getNick();
-                        println("Giocatore " + nick + " disconnesso");
-                        waiting[i].getGame().removePlayer(p);
-                        found = true;
+                if(waiting[i] != null) {
+                    for (Player p : waiting[i].getGame().getPlayers()) {
+                        if (p.getNick().equals(nickname)) {
+                            String nick = p.getNick();
+                            println("Giocatore " + nick + " disconnesso");
+                            waiting[i].getGame().removePlayer(p);
+                            if (waiting[i].getGame().getPlayers().size() == 2)
+                                cancelTimer(i + MINSKULLS);
+                            found = true;
+                        }
                     }
                 }
             }
@@ -234,13 +243,17 @@ public class SMain
     }
 
     private void cancelTimer(int skulls) {
-        timer[skulls - MINSKULLS].cancel();
-        timer[skulls - MINSKULLS].purge();
-        timer[skulls - MINSKULLS] = null;
+        int index = skulls - MINSKULLS;
+        timer[index].cancel();
+        timer[index].purge();
+        timer[index] = null;
+        startedTimer[index] = false;
+        waiting[index].broadcastMessage("Avvio partita annullato", waiting[index].getGame().getPlayers());
+
     }
 
     private void matchTimer(int skulls) {
-        long seconds = 60;
+        long seconds = 10;
         //TODO make configuration file to set waiting time
         timer[skulls - MINSKULLS] = new Timer();
         timer[skulls - MINSKULLS].schedule(new TimerTask() {

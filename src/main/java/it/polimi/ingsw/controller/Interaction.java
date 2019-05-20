@@ -21,5 +21,6 @@ public enum Interaction {
     CHOOSEFRENZY,
     CHOOSEPOWER,
     UPDATEVIEW,
-    MESSAGE
+    MESSAGE,
+    PING
 }

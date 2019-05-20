@@ -405,6 +405,20 @@ public class RMIConn implements Connection
     }
 
     /**
+     * Returns true indifferently, needed from the server to ping the client
+     * @return True
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
+     */
+    public void clientPing() throws ClientDisconnectedException {
+        try {
+            client.clientPing();
+        }
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
+        }
+    }
+
+    /**
      * Cancels current connection
      */
     public void cancelConnection() {

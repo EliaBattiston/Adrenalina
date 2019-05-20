@@ -250,6 +250,12 @@ public class SocketClient implements Client {
         user.generalMessage(payload);
     }
 
+    /**
+     * Returns true indifferently, needed from the server to ping the client
+     * @return True
+     */
+    public boolean clientPing() { return true; }
+
 
     /**
      * Opens the writer and sends the message to the server, then closes the writer
@@ -462,6 +468,8 @@ public class SocketClient implements Client {
                     sendMessage(param);
                     break;
                 }
+                case PING:
+                    answer.setType(Interaction.PING);
                 default:
                     answer.setType(null);
             }

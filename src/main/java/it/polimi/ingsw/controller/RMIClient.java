@@ -236,5 +236,11 @@ public class RMIClient extends UnicastRemoteObject implements Client
     public void sendMessage(String payload) {
         user.generalMessage(payload);
     }
+
+    /**
+     * Returns true indifferently, needed from the server to ping the client
+     * @return True
+     */
+    public boolean clientPing() { return true; }
 }
 

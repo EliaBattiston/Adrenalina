@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 /**
@@ -187,4 +188,10 @@ public interface Client extends Remote
      * @throws RemoteException If something goes wrong with the connection
      */
     public void sendMessage(String payload) throws RemoteException;
+
+    /**
+     * Returns true indifferently, needed from the server to ping the client
+     * @return True
+     */
+    public boolean clientPing();
 }

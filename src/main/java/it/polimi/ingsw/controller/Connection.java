@@ -188,6 +188,12 @@ public interface Connection extends Remote
     public void sendMessage(String payload) throws ClientDisconnectedException;
 
     /**
+     * Returns true indifferently, needed from the server to ping the client
+     * @return True
+     */
+    public void clientPing() throws ClientDisconnectedException;
+
+    /**
      * Cancels current connection
      */
     public void cancelConnection();
