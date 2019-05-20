@@ -6,6 +6,9 @@ import java.util.logging.Logger;
 
 public class Timeout
 {
+    final ExecutorService executor;
+    final Future future;
+
     public Timeout(long timeout, TimeUnit unit, Match m)
     {
         final Runnable stuffToDo = new Thread() {
@@ -15,8 +18,8 @@ public class Timeout
             }
         };
 
-        final ExecutorService executor = Executors.newSingleThreadExecutor();
-        final Future future = executor.submit(stuffToDo);
+        executor = Executors.newSingleThreadExecutor();
+        future = executor.submit(stuffToDo);
         executor.shutdown();
 
         try {
@@ -29,6 +32,7 @@ public class Timeout
             Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly");
         }
         catch (TimeoutException te) {
+            Match.broadcastMessage(m.getActive() + " è stato troppo lento, il turno è terminato", m.getGame().getPlayers());
             Match.disconnectPlayer(m.getActive(), m.getGame().getPlayers());
         }
 

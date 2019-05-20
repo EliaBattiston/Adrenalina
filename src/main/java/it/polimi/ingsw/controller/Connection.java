@@ -186,4 +186,9 @@ public interface Connection extends Remote
      * @throws ClientDisconnectedException
      */
     public void sendMessage(String payload) throws ClientDisconnectedException;
+
+    /**
+     * Cancels current connection
+     */
+    public void cancelConnection();
 }

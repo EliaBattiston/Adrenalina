@@ -489,4 +489,15 @@ public class SocketConn implements Connection {
         return gson.fromJson(response, Payload.class);
     }
 
+    /**
+     * Cancels current connection
+     */
+    public void cancelConnection() {
+        try {
+            playerSocket.close();
+        }
+        catch (IOException e) {
+            ;
+        }
+    }
 }

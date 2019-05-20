@@ -50,7 +50,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
     public synchronized void newConnection(String registryBind) throws RemoteException, AlreadyBoundException, NotBoundException
     {
         Client clientInterface = (Client)registry.lookup(registryBind);
-        RMIConn clientConn = new RMIConn(clientInterface, registryBind);
+        RMIConn clientConn = new RMIConn(clientInterface, registryBind, registry);
         newConn.add(clientConn);
         notifyAll();
     }
@@ -73,14 +73,5 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
             return null;
         }
 
-    }
-
-    public void removeBinding(String nickname) {
-        try {
-            registry.unbind("AM06-"+nickname);
-        }
-        catch (Exception e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-        }
     }
 }

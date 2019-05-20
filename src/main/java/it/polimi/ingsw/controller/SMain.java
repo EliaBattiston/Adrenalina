@@ -126,8 +126,13 @@ public class SMain
                             if (p.getNick().equals(nickname)) {
                                 if (p.getConn() != null)
                                     acceptedNick = false;
-                                else
+                                else {
                                     player = p;
+                                    List<Player> broadcast = new ArrayList<>();
+                                    broadcast.addAll(m.getGame().getPlayers());
+                                    broadcast.remove(p);
+                                    m.broadcastMessage(p.getNick() + " si è riconnesso", broadcast);
+                                }
                             }
                         }
                     }
@@ -146,8 +151,8 @@ public class SMain
 
             if (player != null) {
                 player.setConn(connection);
-
                 println("Il giocatore " + player.getNick() + " si è riconnesso.");
+                player.getConn().sendMessage("Bentornato in Adrenalina! La tua partita è ancora in corso, aspetta il caricamento dalla mappa");
             } else {
                 int skulls = connection.getSkullNum();
                 int index = skulls - MINSKULLS;
@@ -176,16 +181,13 @@ public class SMain
                         Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
                     }
                 }
-                for(Player p: waiting[skulls - MINSKULLS].getGame().getPlayers()) {
-                    try {
-                        p.getConn().sendMessage("Utenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size());
-                    }
-                    catch (ClientDisconnectedException e) {
-                        cancelConnection(p.getNick());
-                    }
-                }
                 waiting[index].getGame().addPlayer(player);
-                player.getConn().sendMessage("Benvenuto in Adrenalina!\nUtenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size());
+                player.getConn().sendMessage("Benvenuto in Adrenalina!");
+
+                waiting[index].broadcastMessage("Utenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size(), waiting[index].getGame().getPlayers());
+
+                println("Il giocatore " + player.getNick() + " si è connesso.");
+
                 if (waiting[index].getGame().getPlayers().size() >= 3) {
                     if (!startedTimer[index]) {
                         matchTimer(skulls);
@@ -195,8 +197,6 @@ public class SMain
                         startMatch(skulls);
                     }
                 }
-
-                println("Il giocatore " + player.getNick() + " si è connesso.");
             }
         }
         catch (ClientDisconnectedException e) {
@@ -224,6 +224,7 @@ public class SMain
                     for (Player p : m.getGame().getPlayers()) {
                         if (p.getNick().equals(nickname)) {
                             println("Giocatore " + p.getNick() + " rimosso dalla lista di attesa");
+                            p.getConn().cancelConnection();
                             p.setConn(null);
                         }
                     }
@@ -256,6 +257,7 @@ public class SMain
                 cancelConnection(p.getNick());
             }
         }
+        println("Timer partita avviato");
     }
 
     private void startMatch(int skulls) {
@@ -282,14 +284,7 @@ public class SMain
             }
             else {
                 println("Ripristino - giocatori insufficienti");
-                for(Player p: waiting[index].getGame().getPlayers()) {
-                    try {
-                        p.getConn().sendMessage("Errore - troppi utenti disconnessi. Ripristino a stanza di attesa");
-                    }
-                    catch (ClientDisconnectedException e) {
-                        cancelConnection(p.getNick());
-                    }
-                }
+                waiting[index].broadcastMessage("Errore - troppi utenti disconnessi. Ripristino a stanza di attesa", waiting[index].getGame().getPlayers());
             }
         }
     }

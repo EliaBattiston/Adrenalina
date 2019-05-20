@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 import java.util.List;
 
 public class RMIConn implements Connection
@@ -19,9 +20,15 @@ public class RMIConn implements Connection
      */
     String registryID;
 
-    RMIConn(Client client, String ID) {
+    /**
+     * Local binding registry instance
+     */
+    private Registry registry;
+
+    RMIConn(Client client, String ID, Registry registry) {
         this.client = client;
         registryID = ID;
+        this.registry = registry;
     }
 
     /**
@@ -394,6 +401,18 @@ public class RMIConn implements Connection
         }
         catch (Exception e) {
             throw new ClientDisconnectedException();
+        }
+    }
+
+    /**
+     * Cancels current connection
+     */
+    public void cancelConnection() {
+        try {
+            registry.unbind(registryID);
+        }
+        catch (Exception e) {
+            ;
         }
     }
 

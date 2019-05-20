@@ -236,7 +236,8 @@ public class Match implements Runnable
         //Check if spawning is needed
         if(!active.isSpawned())
         {
-            spawnPlayer(active);
+            if(!spawnPlayer(active))
+                return;
         }
 
         //Let players use their actions
@@ -304,9 +305,11 @@ public class Match implements Runnable
     /**
      * Does every step needed to spawn a player
      * @param pl Player who needs to be spawned
+     * @return True if the player didn't disconnect while spawning
      */
-    private void spawnPlayer(Player pl)
+    private boolean spawnPlayer(Player pl)
     {
+        boolean spawned = false;
         //Draw powers if not enough to choose
         switch(pl.getPowers().size())
         {
@@ -342,6 +345,7 @@ public class Match implements Runnable
             {
                 pl.getConn().sendMessage("Scegli un potenziamento da scartare, il colore del potenziamento scartato determinerà la cella di spawn");
                 chosen = pl.getConn().discardPower(pl.getPowers(), true);
+                spawned = true;
             }
             catch(ClientDisconnectedException e)
             {
@@ -385,6 +389,7 @@ public class Match implements Runnable
         pl.setSpawned(true);
 
         updateViews();
+        return spawned;
     }
 
     /**
@@ -699,10 +704,11 @@ public class Match implements Runnable
      */
     public static void disconnectPlayer(Player pl, List<Player> players)
     {
-        Logger.getGlobal().log( Level.SEVERE, pl.getNick()+" si è disconnesso" );
+        Logger.getGlobal().log( Level.INFO, pl.getNick()+" si è disconnesso" );
+        pl.getConn().cancelConnection();
         pl.setConn(null);
 
-        broadcastMessage(pl.getNick() + "Si è disconnesso", players);
+        broadcastMessage(pl.getNick() + " si è disconnesso", players);
     }
 
     /**
