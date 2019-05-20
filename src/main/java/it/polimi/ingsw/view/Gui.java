@@ -632,28 +632,19 @@ public class Gui extends Application{
         double xButton = 894 * dimMult;
         double yButton = 569 * dimMult;
 
-        double halfHeight = backgroundHeight/2;
-        double halfWidth = backgroundWidth/2;
-
         Label l = new Label(message);
-        //l.setTranslateX(xText-halfWidth);
-        //l.setTranslateY(yText-halfHeight);
-        l.setTranslateY(-50);
+        l.setLayoutX(xText);
+        l.setLayoutY(yText);
 
         TextField field = new TextField(message);
-        System.out.println("before: " + field.getTranslateX() + "   " + field.getTranslateY());
         field.setMaxWidth(maxWidth);
-        field.getText();
-        field.setAlignment(Pos.TOP_LEFT);
-        //field.setTranslateX(xText-halfWidth);
-        //field.setTranslateY(yBox-halfHeight);
-        field.setTranslateY(-10);
-        System.out.println("after: " + field.getPadding().toString() + "   " + field.getTranslateX() + "   " + field.getTranslateY());
+        field.setLayoutX(xText);
+        field.setLayoutY(yBox);
 
 
         Button submit = new Button("Conferma");
-        //submit.setTranslateX(xButton-halfWidth);
-        //submit.setTranslateY(yButton-halfHeight);
+        submit.setLayoutX(xButton);
+        submit.setLayoutY(yButton);
         submit.setTranslateY(+25);
 
         submit.setOnAction((e)->{
@@ -679,23 +670,23 @@ public class Gui extends Application{
         double yButton = 569 * dimMult;
 
         Label l = new Label(message);
-        l.setTranslateX(xText);
-        l.setTranslateY(yText);
+        l.setLayoutX(xText);
+        l.setLayoutY(yText);
 
         ToggleGroup group = new ToggleGroup();
         RadioButton button1 = new RadioButton("Socket");
         button1.setToggleGroup(group);
         button1.setSelected(true);
-        button1.setTranslateX(xText);
-        button1.setTranslateY(yBox);
+        button1.setLayoutX(xText);
+        button1.setLayoutY(yBox);
         RadioButton button2 = new RadioButton("RMI");
         button2.setToggleGroup(group);
-        button2.setTranslateX(xText + (maxWidth/2));
-        button2.setTranslateY(yBox);
+        button2.setLayoutX(xText);
+        button2.setLayoutY(yBox);
 
         Button submit = new Button("Conferma");
-        submit.setTranslateX(xButton);
-        submit.setTranslateY(yButton);
+        submit.setLayoutX(xButton);
+        submit.setLayoutY(yButton);
 
         submit.setOnAction((e)->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
