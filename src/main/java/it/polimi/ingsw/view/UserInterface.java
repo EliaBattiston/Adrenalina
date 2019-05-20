@@ -159,4 +159,16 @@ public interface UserInterface
      * @param message Message to be printed
      */
     public void generalMessage(String message);
+
+    /**
+     * Asks the user to choose between TCP and RMI connection
+     * @return true in case of RMI connection, false elsewhere
+     */
+    public boolean useRMI();
+
+    /**
+     * Asks the user for the IP address of the server
+     * @return Server's IP address
+     */
+    public String getIPAddress();
 }

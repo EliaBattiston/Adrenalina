@@ -45,22 +45,12 @@ public class CMain
         }
 
         //RMI or Socket?
-        while (!buffer.equalsIgnoreCase("r") && !buffer.equalsIgnoreCase("s"))
-        {
-            System.out.print("Connessione con [S]ocket o con [R]mi? ");
-            buffer = stdin.nextLine();
-        }
-
-        if(buffer.equalsIgnoreCase("r"))
-            socket = false;
+        socket = !ui.useRMI();
 
         boolean instanced = false;
         do {
-            //Ask for IP address
-            System.out.print("Indirizzo IP del server: ");
-            buffer = stdin.nextLine();
-            //TODO check if IP is correctly written
-            ip = buffer;
+
+            ip = ui.getIPAddress();
 
             try {
                 if (socket)

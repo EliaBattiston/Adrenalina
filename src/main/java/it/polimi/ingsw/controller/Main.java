@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
         List<String> flags = Arrays.asList(args);
         if(flags.contains("-c")) {
             boolean gui = false;

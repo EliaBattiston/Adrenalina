@@ -1601,6 +1601,59 @@ public class CLInterface implements UserInterface {
         log.add(logMessage);
     }
 
+    /**
+     * Asks the user to choose between TCP and RMI connection
+     * @return true in case of RMI connection, false elsewhere
+     */
+    public boolean useRMI() {
+        String buffer;
+        do
+        {
+            print("Connessione con [S]ocket o con [R]mi? ");
+            buffer = scan();
+        }
+        while (!buffer.equalsIgnoreCase("r") && !buffer.equalsIgnoreCase("s"));
+
+        if(buffer.equalsIgnoreCase("r"))
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Asks the user for the IP address of the server
+     * @return Server's IP address
+     */
+    public String getIPAddress() {
+        String buffer;
+        //Ask for IP address
+        print("Indirizzo IP del server: ");
+        buffer = scan();
+        while(!checkIP(buffer)) {
+            println("IP non corretto, reinserici");
+            print("Indirizzo IP del server: ");
+            buffer = scan();
+        }
+        return buffer;
+    }
+
+    private boolean checkIP(String ip) {
+        String pieces[];
+        pieces = ip.split(".");
+        if(ip.equals("localhost"))
+            return true;
+        else {
+            if(pieces.length != 4)
+                return false;
+            for(String piece: pieces) {
+                int n = Integer.parseInt(piece);
+                if(n > 255)
+                    return false;
+            }
+            return true;
+        }
+    }
+
     private void logInfo() {
         println("--------------Log (ultimi messaggi)--------------");
 
