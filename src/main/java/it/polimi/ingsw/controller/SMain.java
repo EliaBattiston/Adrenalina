@@ -176,7 +176,16 @@ public class SMain
                         Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
                     }
                 }
+                for(Player p: waiting[skulls - MINSKULLS].getGame().getPlayers()) {
+                    try {
+                        p.getConn().sendMessage("Utenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size());
+                    }
+                    catch (ClientDisconnectedException e) {
+                        cancelConnection(p.getNick());
+                    }
+                }
                 waiting[index].getGame().addPlayer(player);
+                player.getConn().sendMessage("Benvenuto in Adrenalina!\nUtenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size());
                 if (waiting[index].getGame().getPlayers().size() >= 3) {
                     if (!startedTimer[index]) {
                         matchTimer(skulls);
@@ -189,7 +198,6 @@ public class SMain
 
                 println("Il giocatore " + player.getNick() + " si è connesso.");
             }
-            player.getConn().sendMessage("Benvenuto in Adrenalina!");
         }
         catch (ClientDisconnectedException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
@@ -231,6 +239,7 @@ public class SMain
     }
 
     private void matchTimer(int skulls) {
+        long seconds = 60;
         //TODO make configuration file to set waiting time
         timer[skulls - MINSKULLS] = new Timer();
         timer[skulls - MINSKULLS].schedule(new TimerTask() {
@@ -238,7 +247,15 @@ public class SMain
             public void run() {
                 startMatch(skulls);
             }
-        }, ((long)10)*1000);
+        }, seconds*1000);
+        for(Player p: waiting[skulls - MINSKULLS].getGame().getPlayers()) {
+            try {
+                p.getConn().sendMessage("La partita si avvierà fra " + seconds + " secondi");
+            }
+            catch (ClientDisconnectedException e) {
+                cancelConnection(p.getNick());
+            }
+        }
     }
 
     private void startMatch(int skulls) {

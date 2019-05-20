@@ -1630,7 +1630,7 @@ public class CLInterface implements UserInterface {
         print("Indirizzo IP del server: ");
         buffer = scan();
         while(!checkIP(buffer)) {
-            println("IP non corretto, reinserici");
+            println("IP in formato non corretto, reinseriscilo");
             print("Indirizzo IP del server: ");
             buffer = scan();
         }
@@ -1639,7 +1639,7 @@ public class CLInterface implements UserInterface {
 
     private boolean checkIP(String ip) {
         String pieces[];
-        pieces = ip.split(".");
+        pieces = ip.split("\\.");
         if(ip.equals("localhost"))
             return true;
         else {
