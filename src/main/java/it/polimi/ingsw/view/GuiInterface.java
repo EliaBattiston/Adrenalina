@@ -22,8 +22,13 @@ public class GuiInterface implements UserInterface{
         new Thread(()-> javafx.application.Application.launch(Gui.class, args)).start();
 
         try {
-            //Thread.sleep(3000);
+            Thread.sleep(1000);
             System.out.println("Start test gui");
+
+            String ip = getIPAddress();
+            boolean isRMI = this.useRMI();
+
+            System.out.println("IP choosen: " + ip + ", RMI: " + isRMI);
 
             /*List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
@@ -56,11 +61,11 @@ public class GuiInterface implements UserInterface{
 
             chooseFrenzy();*/
 
-            List<Player> players = new ArrayList<>();
+            /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));
             players.add(new Player("aaa", "yay", Fighter.DOZER));
 
-            chooseTarget(players, true);
+            chooseTarget(players, true);*/
 
         }catch (InterruptedException e){
 
@@ -325,6 +330,26 @@ public class GuiInterface implements UserInterface{
         exchanger.setRequest(Interaction.CHOOSEFRENZY, "Vuoi usare la modalità frenesia?", null, true);
         goToWait();
         return (boolean)exchanger.getAnswer();
+    }
+
+    /**
+     * Asks the user to choose between TCP and RMI connection
+     * @return true in case of RMI connection, false elsewhere
+     */
+    public boolean useRMI(){
+        exchanger.setRequest(Interaction.RMIORSOCKET, "Vuoi usare RMI o Socket?", null, true);
+        goToWait();
+        return (boolean)exchanger.getAnswer();
+    }
+
+    /**
+     * Asks the user for the IP address of the server
+     * @return Server's IP address
+     */
+    public String getIPAddress(){
+        exchanger.setRequest(Interaction.SERVERIP, "Inserisci l'IP del server.", null, true);
+        goToWait();
+        return (String)exchanger.getAnswer();
     }
 
     private void goToWait(){

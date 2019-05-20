@@ -24,5 +24,7 @@ public enum Interaction {
     NONE,
     WAITINGUSER,
     SHOWINGMESSAGE,
-    CLOSEAPP
+    CLOSEAPP,
+    RMIORSOCKET,
+    SERVERIP
 }

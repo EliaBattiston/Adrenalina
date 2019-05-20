@@ -5,14 +5,14 @@ import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.stage.StageStyle;
@@ -34,7 +34,6 @@ public class Gui extends Application{
     public static String imgRoot = "file:images/";
     private static Executor uiExec = Platform::runLater ;
 
-
     //Data
     private MatchView match;
     private GameView game;
@@ -54,39 +53,44 @@ public class Gui extends Application{
     private List<GuiCardPower> myPowers;
     private List<GuiCardPawn> playersPawns;
     private Canvas run;
-    private Canvas runGrab;
-    private Canvas shoot;
+    private Canvas fixedGraphics;
+    //private Canvas shoot;
     private Stage primaryS;
+
+    //x and y of the user boaard
+    private double xPlayerBoard;
+    private double yPlayerBoard;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryS = primaryStage;
 
-        backgroundWidth = 1280;
+        backgroundWidth = 960;
         backgroundHeight = backgroundWidth*9/16;
 
         dimMult = backgroundWidth/1920;
 
         initForTest();
 
-        mainScene = new Scene(drawGame());
+        //mainScene = new Scene(drawGame());
 
         primaryStage.setTitle("Adrenalina");
-        primaryStage.setScene(mainScene);
-        primaryStage.setResizable(true);
+        primaryStage.setScene(new Scene(settingsBackground()));
+        //primaryStage.setScene(mainScene);
+        //primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
         //Event handlers
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
-            if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
+            /*if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
                 dimMult = backgroundWidth / 1920;
 
                 drawDecks();
                 primaryStage.setScene(new Scene(drawGame()));
-            }
+            }*/
         });
 
        //TODO use this for fixed ratio, find the good way to implement them
@@ -97,10 +101,21 @@ public class Gui extends Application{
         new Thread(this::listenRequests).start();
     }
 
+    private Pane settingsBackground(){
+        //socket+rmi and ip
+        StackPane root = new StackPane();
+        Canvas c = new Canvas(backgroundWidth, backgroundHeight);
+        GraphicsContext gc = c.getGraphicsContext2D();
+
+        gc.drawImage(GuiImagesMap.getImage(imgRoot + "adrenalina.jpg"), 0, 0, backgroundWidth, backgroundHeight);
+
+        root.getChildren().addAll(c);
+        return root;
+    }
+
     private Pane drawGame(){
         Pane masterPane;
         Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
-        Canvas fixedGraphics;
         StackPane a, b, c, d, e;
 
         masterPane = new Pane();
@@ -340,7 +355,7 @@ public class Gui extends Application{
         double height = 109 * dimMult;
         double x = 1044 * dimMult;
         double y = 65 * dimMult;
-        gc.drawImage(GuiImagesMap.getImage("file:images/power/powerBackPile.png"), x, y, width, height);
+        gc.drawImage(GuiImagesMap.getImage(imgRoot + "power/powerBackPile.png"), x, y, width, height);
 
         //WeaponsDeck
         width = 100 * dimMult;
@@ -384,6 +399,12 @@ public class Gui extends Application{
         t.setFill(javafx.scene.paint.Color.WHITE);
         pane.getChildren().add(t);*/
 
+        if(player.getNick().equals(match.getMyPlayer().getNick())){
+            xPlayerBoard = x;
+            yPlayerBoard = y;
+            setActionsClickable();//TODO just for text, remove it later
+        }
+
         gc.drawImage( GuiImagesMap.getImage(imgRoot + "playerBoard/" + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
 
         //damages
@@ -416,6 +437,9 @@ public class Gui extends Application{
             run.setTranslateX(x+0);
             run.setTranslateY(y+actionsY);
         }
+    }
+
+    private void setActionsClickable(){
     }
 
     private StackPane drawMyWeapons(List<Weapon> weapons){
@@ -568,9 +592,13 @@ public class Gui extends Application{
                     case CHOOSEFRENZY:
                         showAlert(this::guiChooseFrenzy, exchanger.getMessage());
                         break;
+                    case SERVERIP:
                     case GETNICKNAME:
                     case GETPHRASE:
-                        showAlert(this::guiAskAString, exchanger.getMessage());
+                        showAlert(this::askSetting, exchanger.getMessage());
+                        break;
+                    case RMIORSOCKET:
+                        showAlert(this::askRMI, exchanger.getMessage());
                         break;
                     case GETSKULLSNUM:
                         showAlert(this::guiChooseSkulls, exchanger.getMessage());
@@ -592,6 +620,94 @@ public class Gui extends Application{
         }
 
         //TODO here close the javafx app
+    }
+
+
+    private void askSetting(String message){
+        Pane root = settingsBackground();
+        double xText = 712 * dimMult;
+        double yText = 434 * dimMult;
+        double yBox = 500 * dimMult;
+        double maxWidth = 480 * dimMult;
+        double xButton = 894 * dimMult;
+        double yButton = 569 * dimMult;
+
+        double halfHeight = backgroundHeight/2;
+        double halfWidth = backgroundWidth/2;
+
+        Label l = new Label(message);
+        //l.setTranslateX(xText-halfWidth);
+        //l.setTranslateY(yText-halfHeight);
+        l.setTranslateY(-50);
+
+        TextField field = new TextField(message);
+        System.out.println("before: " + field.getTranslateX() + "   " + field.getTranslateY());
+        field.setMaxWidth(maxWidth);
+        field.getText();
+        field.setAlignment(Pos.TOP_LEFT);
+        //field.setTranslateX(xText-halfWidth);
+        //field.setTranslateY(yBox-halfHeight);
+        field.setTranslateY(-10);
+        System.out.println("after: " + field.getPadding().toString() + "   " + field.getTranslateX() + "   " + field.getTranslateY());
+
+
+        Button submit = new Button("Conferma");
+        //submit.setTranslateX(xButton-halfWidth);
+        //submit.setTranslateY(yButton-halfHeight);
+        submit.setTranslateY(+25);
+
+        submit.setOnAction((e)->{
+            String answer = field.getText();
+            System.out.println(answer);
+            exchanger.setAnswer(answer);
+            exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(settingsBackground()));
+        });
+
+        root.getChildren().addAll(l, field, submit);
+
+        primaryS.setScene(new Scene(root));
+    }
+
+    private void askRMI(String message){
+        Pane root = settingsBackground();
+        double xText = 712 * dimMult;
+        double yText = 434 * dimMult;
+        double yBox = 500 * dimMult;
+        double maxWidth = 480 * dimMult;
+        double xButton = 894 * dimMult;
+        double yButton = 569 * dimMult;
+
+        Label l = new Label(message);
+        l.setTranslateX(xText);
+        l.setTranslateY(yText);
+
+        ToggleGroup group = new ToggleGroup();
+        RadioButton button1 = new RadioButton("Socket");
+        button1.setToggleGroup(group);
+        button1.setSelected(true);
+        button1.setTranslateX(xText);
+        button1.setTranslateY(yBox);
+        RadioButton button2 = new RadioButton("RMI");
+        button2.setToggleGroup(group);
+        button2.setTranslateX(xText + (maxWidth/2));
+        button2.setTranslateY(yBox);
+
+        Button submit = new Button("Conferma");
+        submit.setTranslateX(xButton);
+        submit.setTranslateY(yButton);
+
+        submit.setOnAction((e)->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
+            System.out.println(answer);
+            exchanger.setAnswer(answer.equalsIgnoreCase("RMI"));
+            exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(settingsBackground()));
+        });
+
+        root.getChildren().addAll(l, button1, button2, submit);
+
+        primaryS.setScene(new Scene(root));
     }
 
     /**
@@ -709,6 +825,15 @@ public class Gui extends Application{
             exchanger.setAnswer(answer);
             exchanger.setActualInteraction(Interaction.NONE);
         });
+    }
+
+    private void guiChooseRMIorSocket(String message){
+        ToggleGroup group = new ToggleGroup();
+        RadioButton button1 = new RadioButton("Socket");
+        button1.setToggleGroup(group);
+        button1.setSelected(true);
+        RadioButton button2 = new RadioButton("RMI");
+        button2.setToggleGroup(group);
     }
 
     private void guiChooseFighter(String message){
