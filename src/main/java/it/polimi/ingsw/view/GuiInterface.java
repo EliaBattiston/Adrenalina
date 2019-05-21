@@ -25,12 +25,21 @@ public class GuiInterface implements UserInterface{
             Thread.sleep(1000);
             System.out.println("Start test gui");
 
-            List<Action> a = new ArrayList<>();
+            List<Point> dest = new ArrayList<>();
+            dest.add(new Point(0,0));
+            dest.add(new Point(0,1));
+            dest.add(new Point(2,0));
+
+            Point chosenP = movePlayer(dest, true);
+            System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
+
+
+            /*List<Action> a = new ArrayList<>();
             a.addAll(Activities.getInstance().getAvailable(4, false, false));
 
             Action cho = chooseAction(a, true);
 
-            System.out.println(cho.getName());
+            System.out.println(cho.getName());*/
             /*String ip = getIPAddress();
             boolean isRMI = this.useRMI();
             String nick = getNickname();
@@ -44,7 +53,7 @@ public class GuiInterface implements UserInterface{
 
             this.updateGame(null);
 
-            /*List<Weapon> goodW = new ArrayList<>();
+            List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(3, "", "", null, null, null, Color.RED));
@@ -59,7 +68,7 @@ public class GuiInterface implements UserInterface{
 
             Thread.sleep(200);
 
-            System.out.println("Done, chosen weapon: " + w.getName());*/
+            System.out.println("Done, chosen weapon: " + w.getName());
 
             Thread.sleep(500);
             //getFighter();
@@ -183,7 +192,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma con cui sparare", available, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Scegli un'arma con cui sparare", available, mustChoose);
         goToWait();
         return (Weapon)exchanger.getAnswer();
     }
@@ -197,7 +206,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma da raccogliere", grabbable, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Scegli un'arma da raccogliere", grabbable, mustChoose);
         goToWait();
         return (Weapon)exchanger.getAnswer();
     }
@@ -211,7 +220,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma da ricaricare", reloadable, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Scegli un'arma da ricaricare", reloadable, mustChoose);
         goToWait();
         return (Weapon)exchanger.getAnswer();
     }
@@ -225,7 +234,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Segli un'arma da scartare", inHand, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Scegli un'arma da scartare", inHand, mustChoose);
         goToWait();
         return (Weapon)exchanger.getAnswer();
     }
@@ -239,7 +248,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEPOWER, "Segli una power da usare", inHand, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEPOWER, "Scegli una power da usare", inHand, mustChoose);
         goToWait();
         return (Power)exchanger.getAnswer();
     }
@@ -253,7 +262,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power discardPower(List<Power> powers, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEPOWER, "Segli una power da scartare", powers, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEPOWER, "Scegli una power da scartare", powers, mustChoose);
         goToWait();
         return (Power)exchanger.getAnswer();
     }
@@ -267,7 +276,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Point movePlayer(List<Point> destinations, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.MOVEPLAYER, "Scegli dove muoverti", destinations, mustChoose);
+        goToWait();
+        return (Point) exchanger.getAnswer();
     }
 
     /**
@@ -279,7 +290,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Point choosePosition(List<Point> positions, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.CHOOSEPOSITION, "Scegli una posizione", positions, mustChoose);
+        goToWait();
+        return (Point) exchanger.getAnswer();
     }
 
     /**
@@ -292,7 +305,9 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) {
-        return null;
+        exchanger.setRequest(Interaction.MOVEENEMY, "Scegli dove muovere il nemico", destinations, mustChoose);
+        goToWait();
+        return (Point) exchanger.getAnswer();
     }
 
     /**

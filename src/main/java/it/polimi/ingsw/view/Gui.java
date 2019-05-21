@@ -55,20 +55,19 @@ public class Gui extends Application{
     private List<GuiCardPawn> playersPawns;
 
     //Actions -> we handle the clicks on these Canvases
-    private GuiCardAction runAction;
-    private GuiCardAction pickAction;
-    private GuiCardAction shootAction;
-    private GuiCardAction adrPickAction;
-    private GuiCardAction adrShootAction;
+    private GuiCardClickableArea runAction;
+    private GuiCardClickableArea pickAction;
+    private GuiCardClickableArea shootAction;
+    private GuiCardClickableArea adrPickAction;
+    private GuiCardClickableArea adrShootAction;
+    private GuiCardClickableArea[][] mapOfCells = new GuiCardClickableArea[4][3];
 
-    //
+    //Canvases
     private Canvas fixedGraphics;
-    //private Canvas shoot;
-    private Stage primaryS;
+    private Canvas infoTextCanvas; //canvas where we write the infos for the users
 
-    //x and y of the user boaard
-    private double xPlayerBoard;
-    private double yPlayerBoard;
+    //Stage
+    private Stage primaryS;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -163,7 +162,17 @@ public class Gui extends Application{
         d.setPickOnBounds(false);
         e.setPickOnBounds(false);
         masterPane.setPickOnBounds(false);
-        masterPane.getChildren().addAll( fixedGraphics, canvas,  a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction);
+
+        //canvas for text
+        infoTextCanvas = new Canvas(backgroundWidth, backgroundHeight);
+        infoTextCanvas.setPickOnBounds(false);
+
+        masterPane.getChildren().addAll( fixedGraphics, canvas,  a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction, infoTextCanvas);
+
+        for(GuiCardClickableArea[] t:mapOfCells)
+            for(GuiCardClickableArea s:t)
+                if(s!=null)
+                    masterPane.getChildren().add(s);
 
         return masterPane;
     }
@@ -179,6 +188,23 @@ public class Gui extends Application{
         double y = x;
 
         gc.drawImage( GuiImagesMap.getImage("file:images/map/map" + map.getId() + ".png"), x, y, width, height);
+
+        //get position of the first cell
+        x = ((double)500)/2545 * width;
+        y = ((double)480)/1928 * height;
+        double distX = ((double)430)/2545 * width;//here because after we reuse the width and height
+        double distY = ((double)450)/1928 * height;
+        width = ((double)330)/2545 * width;
+        height = ((double)360)/1928 * height;
+
+        for(int xC=0; xC<4; xC++) {
+            for (int yC = 0; yC < 3; yC++) {
+                if(map.getCell(xC, yC) != null) {
+                    mapOfCells[xC][yC] = new GuiCardClickableArea(x+ distX*xC, y + distY*yC, width, height);
+                }
+            }
+        }
+
     }
 
     private StackPane drawLootOnMap (Map map){
@@ -411,12 +437,6 @@ public class Gui extends Application{
         gc.setFont(new Font("Verdana",18*dimMult));
         gc.fillText(player.getNick() + " - " + player.getCharacter().toString(), x, y-(8*dimMult));
 
-        if(player.getNick().equals(match.getMyPlayer().getNick())){
-            xPlayerBoard = x;
-            yPlayerBoard = y;
-            setActionsClickable();//TODO just for text, remove it later
-        }
-
         gc.drawImage( GuiImagesMap.getImage(imgRoot + "playerBoard/" + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
 
         //damages
@@ -445,17 +465,14 @@ public class Gui extends Application{
             double actionsHeight = ((float)42)/270*height;
             double actionsWidth = ((float)69)/1121*width;
 
-            runAction = new GuiCardAction(x, y+actionsY, actionsWidth, actionsHeight);
-            pickAction = new GuiCardAction(x, y + 2*actionsY, actionsWidth, actionsHeight);
-            shootAction = new GuiCardAction(x, y + 3*actionsY, actionsWidth, actionsHeight);
+            runAction = new GuiCardClickableArea(x, y+actionsY, actionsWidth, actionsHeight);
+            pickAction = new GuiCardClickableArea(x, y + 2*actionsY, actionsWidth, actionsHeight);
+            shootAction = new GuiCardClickableArea(x, y + 3*actionsY, actionsWidth, actionsHeight);
 
             actionsY = ((float)56)/ 270 * height;
-            adrPickAction = new GuiCardAction(x + ((float)230)/1121*width, y+actionsY, actionsWidth, actionsHeight);
-            adrShootAction = new GuiCardAction(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
+            adrPickAction = new GuiCardClickableArea(x + ((float)230)/1121*width, y+actionsY, actionsWidth, actionsHeight);
+            adrShootAction = new GuiCardClickableArea(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
         }
-    }
-
-    private void setActionsClickable(){
     }
 
     private StackPane drawMyWeapons(List<Weapon> weapons){
@@ -586,8 +603,10 @@ public class Gui extends Application{
                         choosePowerCard((List<Power>) exchanger.getRequest());
                         break;
                     case MOVEPLAYER:
+                    case MOVEENEMY:
                     case CHOOSEPOSITION:
-                        chooseCell();//todo
+                        //showInfoOnMap(exchanger.getMessage());
+                        chooseCell();
                         break;
                     case CHOOSETARGET:
                         chooseEnemy((List<Player>) exchanger.getRequest());
@@ -622,12 +641,13 @@ public class Gui extends Application{
                         uiExec.execute(() -> primaryS.setScene(new Scene(drawGame())));
                         exchanger.setActualInteraction(Interaction.NONE);
                         break;
-                    case MOVEENEMY: //Nothing to do, not used in this context
                     case NONE:
                     default:
                         break;
                 }
             }
+            //else
+               // clearInfoOnMap();
         }
 
         //TODO here close the javafx app
@@ -689,7 +709,8 @@ public class Gui extends Application{
      * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
      */
     private void chooseWeaponCard(List<Weapon> choosable){
-        showAlert(this::alertShowInfo, exchanger.getMessage());
+        //showAlert(this::showInfoOnMap, exchanger.getMessage());
+        //showInfoOnMap(exchanger.getMessage());
 
         List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
         cards.addAll(myWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList())); //add also my cards
@@ -712,7 +733,9 @@ public class Gui extends Application{
      * Used for: discardPower, choosePower
      */
     private void choosePowerCard(List<Power> choosable){
-        showAlert(this::alertShowInfo, exchanger.getMessage());
+        //showAlert(this::showInfoOnMap, exchanger.getMessage());
+        //showInfoOnMap(exchanger.getMessage());
+
 
         List<GuiCardPower> cards = myPowers.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
@@ -733,13 +756,30 @@ public class Gui extends Application{
     /**
      * Used for: movePlayer, choosePosition, moveEnemy
      */
-    private void chooseCell(){}
+    private void chooseCell(){
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+
+        List<Point> possible = (List<Point>) exchanger.getRequest();
+
+        for(Point p:possible) {
+            if (mapOfCells[p.getX()][p.getY()] != null) {
+                mapOfCells[p.getX()][p.getY()].setOnMousePressed(e -> {
+                    exchanger.setAnswer(p);
+                    exchanger.setActualInteraction(Interaction.NONE);
+                    //After finishing the click event, reset all the events to the original option -> just call the redraw game
+                });
+                mapOfCells[p.getX()][p.getY()].setEventsChoosable();
+            }
+        }
+    }
 
     /**
      * Used for: chooseTarget
      */
     private void chooseEnemy(List<Player> choosable){
-        showAlert(this::alertShowInfo, exchanger.getMessage());
+        //showAlert(this::showInfoOnMap, exchanger.getMessage());
+       // showInfoOnMap(exchanger.getMessage());
+
 
         List<GuiCardPawn> pawns = playersPawns.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
@@ -933,10 +973,22 @@ public class Gui extends Application{
     }
 
     private void showInfoOnMap(String message) {
+        //infoTextCanvas = new Canvas(backgroundWidth, backgroundHeight);//we use always the same canvas
+        infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);
+        double x = 40 * dimMult;
+        double y = 822 * dimMult;
 
+        infoTextCanvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.WHITE);
+        infoTextCanvas.getGraphicsContext2D().setFont(new Font("Verdana",28*dimMult));
+        infoTextCanvas.getGraphicsContext2D().fillText(message, x, y);
+        infoTextCanvas.setPickOnBounds(false);
     }
 
-    private void alertShowInfo(String message){
+    private void clearInfoOnMap(){
+        infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);
+    }
+
+    /*private void alertShowInfo(String message){
         Alert alert = new Alert(Alert.AlertType.NONE, message, ButtonType.OK);
         alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Adrenalina");
@@ -944,7 +996,7 @@ public class Gui extends Application{
             if (rs == ButtonType.OK)
                 exchanger.setActualInteraction(Interaction.WAITINGUSER);
         });
-    }
+    }*/
 
     private void guiChooseRoom(String message){
         List<Integer> rooms = (List<Integer>) exchanger.getRequest();
