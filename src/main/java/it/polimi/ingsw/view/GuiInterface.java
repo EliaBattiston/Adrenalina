@@ -1,10 +1,14 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class GuiInterface implements UserInterface{
     private GuiExchanger exchanger;
@@ -25,33 +29,33 @@ public class GuiInterface implements UserInterface{
             Thread.sleep(1000);
             System.out.println("Start test gui");
 
-            /*List<Point> dest = new ArrayList<>();
-            dest.add(new Point(0,0));
-            dest.add(new Point(0,1));
-            dest.add(new Point(2,0));
-
-            Point chosenP = movePlayer(dest, true);
-            System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
-*/
-
-            /*List<Action> a = new ArrayList<>();
-            a.addAll(Activities.getInstance().getAvailable(4, false, false));
-
-            Action cho = chooseAction(a, true);
-
-            System.out.println(cho.getName());*/
-            /*String ip = getIPAddress();
+            String ip = getIPAddress();
             boolean isRMI = this.useRMI();
             String nick = getNickname();
             String phrase = getPhrase();
             Fighter f= getFighter();
             int s = getSkullNum();
 
-            //System.out.println("IP choosen: " + ip + ", RMI: " + isRMI);
+            System.out.println("IP choosen: " + ip + ", RMI: " + isRMI + "  " + nick + "   " + phrase);
 
-            System.out.println(f.toString() + "  " + s);*/
+            System.out.println(f.toString() + "  " + s);
 
-            this.updateGame(null);
+            this.updateGame(initForTest());
+
+            List<Action> a = new ArrayList<>();
+            a.addAll(Activities.getInstance().getAvailable(4, false, false));
+
+            Action cho = chooseAction(a, true);
+
+            System.out.println(cho.getName());
+
+            List<Point> dest = new ArrayList<>();
+            dest.add(new Point(0,0));
+            dest.add(new Point(0,1));
+            dest.add(new Point(2,0));
+
+            Point chosenP = movePlayer(dest, true);
+            System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
 
             List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
@@ -93,6 +97,64 @@ public class GuiInterface implements UserInterface{
         }catch (InterruptedException e){
 
         }
+    }
+
+    private MatchView initForTest() {
+        //Settings for testing
+        try {
+            Game allGame = Game.jsonDeserialize("resources/baseGame.json");
+            ArrayList<Player> players = new ArrayList<>();
+            players.add(new Player("p1", "!", Fighter.VIOLETTA));
+            players.add(new Player("p2", "!", Fighter.DSTRUTTOR3));
+            players.add(new Player("p3", "!", Fighter.SPROG));
+            players.add(new Player("p4", "!", Fighter.BANSHEE));
+            players.add(new Player("p5", "!", Fighter.DOZER));
+
+            Player me = players.get(0);
+
+            me.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                allGame.getWeaponsDeck().shuffle();
+                weapons[0] = allGame.getWeaponsDeck().draw();
+                weapons[1] = allGame.getWeaponsDeck().draw();
+
+                allGame.getPowersDeck().shuffle();
+                powers[0] = allGame.getPowersDeck().draw();
+                powers[1] = allGame.getPowersDeck().draw();
+
+                ammo.add(Color.YELLOW, 2);
+                ammo.add(Color.BLUE, 1);
+
+                damage[0] = "p2";
+                damage[1] = "p2";
+                damage[2] = "p3";
+
+                marks.addAll(Arrays.asList("p2", "p3", "p3"));
+                marks.addAll(Arrays.asList("p4", "p5", "p4"));
+            }));
+
+            allGame.loadMap(1);
+
+            for(int x = 0; x < 4; x++)
+                for(int y = 0; y < 3; y++)
+                    if(allGame.getMap().getCell(x, y) != null)
+                        allGame.getMap().getCell(x, y).refill(allGame);
+
+            //it's just for test
+            for(Player p:players){
+                int x, y;
+                do {
+                    x = new Random().nextInt(4);
+                    y = new Random().nextInt(3);
+                }while(allGame.getMap().getCell(x, y) == null);
+
+                allGame.getMap().getCell(x, y).addPawn(p);
+            }
+
+            return new MatchView(new GameView(allGame.getMap(), players, null), me, me, 3, GamePhase.REGULAR, true, me);
+        }catch (Exception ex){
+            ;
+        }
+        return null;
     }
 
     /**
@@ -155,7 +217,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer getSkullNum() {
-        exchanger.setRequest(Interaction.GETSKULLSNUM, "Scegli il numero di teschi da usare nella partita", null, true); //todo (after merge) fix the request
+        exchanger.setRequest(Interaction.GETSKULLSNUM, "Scegli il numero di teschi da usare", null, true); //todo (after merge) fix the request
         goToWait();
         return (Integer) exchanger.getAnswer();
     }

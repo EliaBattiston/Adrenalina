@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
@@ -17,11 +16,8 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.stage.StageStyle;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -29,23 +25,21 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.floorDiv;
 
+
+//TODO check inputs like the ip
 public class Gui extends Application{
-    public static String imgRoot = "file:images/";
+    static String imgRoot = "file:images/";//for the entire package only
     private static Executor uiExec = Platform::runLater ;
 
     //Data
     private MatchView match;
-    private GameView game;
     private GuiExchanger exchanger;
 
     //View
-    private Scene mainScene;
     private double backgroundWidth;
     private double backgroundHeight;
     private double dimMult;
-    private static double positionFix = 35; //position fix for drawing the weapons on the map
     private GraphicsContext gc;
 
     //Canvases
@@ -60,6 +54,8 @@ public class Gui extends Application{
     private GuiCardClickableArea shootAction;
     private GuiCardClickableArea adrPickAction;
     private GuiCardClickableArea adrShootAction;
+
+    //Move in cells
     private GuiCardClickableArea[][] mapOfCells = new GuiCardClickableArea[4][3];
 
     //Canvases
@@ -69,7 +65,7 @@ public class Gui extends Application{
     private Stage primaryS;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage){
         primaryS = primaryStage;
 
         backgroundWidth = 960;
@@ -77,13 +73,11 @@ public class Gui extends Application{
 
         dimMult = backgroundWidth/1920;
 
-        initForTest();
-
-        mainScene = new Scene(drawGame());
-
         primaryStage.setTitle("Adrenalina");
-        //primaryStage.setScene(new Scene(settingsBackground()));
-        primaryStage.setScene(mainScene);
+        Canvas loading = new Canvas(backgroundWidth, backgroundHeight);
+        loading.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(imgRoot + "background/adrenalina.jpg"), 0, 0, backgroundWidth, backgroundHeight);
+        primaryStage.setScene(new Scene(new StackPane(loading)));
+        //primaryStage.setScene(new Scene(drawGame()));
         primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
         primaryStage.show();
@@ -115,21 +109,17 @@ public class Gui extends Application{
         new Thread(this::listenRequests).start();
     }
 
-    private StackPane settingsBackground(){
-        //socket+rmi and ip
+    private StackPane initializerBackground(){
         StackPane root = new StackPane();
         Canvas c = new Canvas(backgroundWidth, backgroundHeight);
-        GraphicsContext gc = c.getGraphicsContext2D();
-
-        gc.drawImage(GuiImagesMap.getImage(imgRoot + "adrenalina.jpg"), 0, 0, backgroundWidth, backgroundHeight);
-
+        c.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(imgRoot + "background/adrenalinaWithBox.jpg"), 0, 0, backgroundWidth, backgroundHeight);
         root.getChildren().addAll(c);
         return root;
     }
 
     private Pane drawGame(){
         Pane masterPane;
-        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        Canvas canvas;
         StackPane a, b, c, d, e;
 
         masterPane = new Pane();
@@ -137,7 +127,7 @@ public class Gui extends Application{
         canvas = new Canvas(backgroundWidth, backgroundHeight);
         gc = canvas.getGraphicsContext2D();
 
-        gc.drawImage( GuiImagesMap.getImage(imgRoot + "background.png"), 0, 0, backgroundWidth, backgroundHeight);
+        gc.drawImage( GuiImagesMap.getImage(imgRoot + "background/gameBoard.png"), 0, 0, backgroundWidth, backgroundHeight);
         drawMap(match.getGame().getMap());
         drawDecks();
 
@@ -165,7 +155,8 @@ public class Gui extends Application{
         infoTextCanvas = new Canvas(backgroundWidth, backgroundHeight);
         infoTextCanvas.setPickOnBounds(false);
 
-        masterPane.getChildren().addAll( canvas,   a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction, infoTextCanvas);
+        //infoTextCanvas needs to be before the clickable ones because the PickOnBounds doesn't work
+        masterPane.getChildren().addAll( canvas, infoTextCanvas,  a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction);
 
         for(GuiCardClickableArea[] t:mapOfCells)
             for(GuiCardClickableArea s:t)
@@ -326,6 +317,7 @@ public class Gui extends Application{
         //dimensions are the same
         double width = 104 * dimMult;
         double height = 174 * dimMult;
+        double positionFix = 35; //position fix for drawing the weapons on the map
         double x = (624 - positionFix)* dimMult;
         double y = 4 * dimMult;
 
@@ -584,26 +576,25 @@ public class Gui extends Application{
                 System.out.println(exchanger.getActualInteraction().toString());
                 switch (exchanger.getActualInteraction()) {
                     case CHOOSEBASEACTION:
-                        chooseBaseAction();//todo
+                        chooseBaseAction();
                         break;
                     case CHOOSEWEAPON:
                     case GRABWEAPON:
                     case DISCARDWEAPON:
                     case RELOAD:
-                        chooseWeaponCard((List<Weapon>) exchanger.getRequest());
+                        chooseWeaponCard();
                         break;
                     case DISCARDPOWER:
                     case CHOOSEPOWER:
-                        choosePowerCard((List<Power>) exchanger.getRequest());
+                        choosePowerCard();
                         break;
                     case MOVEPLAYER:
                     case MOVEENEMY:
                     case CHOOSEPOSITION:
-                        //showInfoOnMap(exchanger.getMessage());
                         chooseCell();
                         break;
                     case CHOOSETARGET:
-                        chooseEnemy((List<Player>) exchanger.getRequest());
+                        chooseEnemy();
                         break;
                     case CHOOSEROOM:
                         showAlert(this::guiChooseRoom, exchanger.getMessage());
@@ -612,10 +603,10 @@ public class Gui extends Application{
                         showAlert(this::guiChooseDirection, exchanger.getMessage());
                         break;
                     case CHOOSEMAP:
-                        showAlert(this::guiChooseMap, exchanger.getMessage());
+                        showAlert(this::askMap, exchanger.getMessage());
                         break;
                     case CHOOSEFRENZY:
-                        showAlert(this::guiChooseFrenzy, exchanger.getMessage());
+                        showAlert(this::askFrenzy, exchanger.getMessage());
                         break;
                     case SERVERIP:
                     case GETNICKNAME:
@@ -632,19 +623,20 @@ public class Gui extends Application{
                         showAlert(this::askFighter, exchanger.getMessage());
                         break;
                     case UPDATEVIEW://todo get the new match
-                        uiExec.execute(() -> primaryS.setScene(new Scene(drawGame())));
-                        exchanger.setActualInteraction(Interaction.NONE);
+                        uiExec.execute(() -> {
+                            match = (MatchView) exchanger.getRequest();
+                            primaryS.setScene(new Scene(drawGame()));
+                            exchanger.setActualInteraction(Interaction.NONE);
+                        });
+                        exchanger.setActualInteraction(Interaction.WAITINGUSER);
                         break;
                     case NONE:
                     default:
                         break;
                 }
             }
-            //else
-               // clearInfoOnMap();
         }
-
-        //TODO here close the javafx app
+        Platform.exit();
     }
 
     /**
@@ -702,9 +694,10 @@ public class Gui extends Application{
     /**
      * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
      */
-    private void chooseWeaponCard(List<Weapon> choosable){
-        //showAlert(this::showInfoOnMap, exchanger.getMessage());
-        //showInfoOnMap(exchanger.getMessage());
+    private void chooseWeaponCard(){
+        showInfoOnMap(exchanger.getMessage());
+
+        List<Weapon> choosable = (List<Weapon>) exchanger.getRequest();
 
         List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
         cards.addAll(myWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList())); //add also my cards
@@ -713,6 +706,7 @@ public class Gui extends Application{
             c.setOnMousePressed(e -> {
                 exchanger.setAnswer(c.getWeapon());
                 exchanger.setActualInteraction(Interaction.NONE);
+                clearInfoOnMap();
                 //After finishing the click event, reset all the events to the original option
                 for(GuiCardWeapon c2 : cards)
                     c2.resetEventsStyle();
@@ -726,10 +720,10 @@ public class Gui extends Application{
     /**
      * Used for: discardPower, choosePower
      */
-    private void choosePowerCard(List<Power> choosable){
-        //showAlert(this::showInfoOnMap, exchanger.getMessage());
-        //showInfoOnMap(exchanger.getMessage());
+    private void choosePowerCard(){
+        showInfoOnMap(exchanger.getMessage());
 
+        List<Power> choosable = (List<Power>) exchanger.getRequest();
 
         List<GuiCardPower> cards = myPowers.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
@@ -737,6 +731,7 @@ public class Gui extends Application{
             c.setOnMousePressed(e -> {
                 exchanger.setAnswer(c.getPower());
                 exchanger.setActualInteraction(Interaction.NONE);
+                clearInfoOnMap();
                 //After finishing the click event, reset all the events to the original option
                 for(GuiCardPower c2 : cards)
                     c2.resetEventsStyle();
@@ -751,6 +746,7 @@ public class Gui extends Application{
      * Used for: movePlayer, choosePosition, moveEnemy
      */
     private void chooseCell(){
+        showInfoOnMap(exchanger.getMessage()); //fixme in the chooseCell it doesn't work!!!
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
 
         List<Point> possible = (List<Point>) exchanger.getRequest();
@@ -760,7 +756,12 @@ public class Gui extends Application{
                 mapOfCells[p.getX()][p.getY()].setOnMousePressed(e -> {
                     exchanger.setAnswer(p);
                     exchanger.setActualInteraction(Interaction.NONE);
-                    //After finishing the click event, reset all the events to the original option -> just call the redraw game
+                    clearInfoOnMap();
+                    //After finishing the click event, reset all the events to the original option
+                    for(GuiCardClickableArea[] t:mapOfCells)
+                        for(GuiCardClickableArea s:t)
+                            if(s!=null)
+                                s.resetEventsStyle();
                 });
                 mapOfCells[p.getX()][p.getY()].setEventsChoosable();
             }
@@ -770,10 +771,10 @@ public class Gui extends Application{
     /**
      * Used for: chooseTarget
      */
-    private void chooseEnemy(List<Player> choosable){
-        //showAlert(this::showInfoOnMap, exchanger.getMessage());
-       // showInfoOnMap(exchanger.getMessage());
+    private void chooseEnemy(){
+        showInfoOnMap(exchanger.getMessage());
 
+        List<Player> choosable = (List<Player>) exchanger.getRequest();
 
         List<GuiCardPawn> pawns = playersPawns.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
@@ -782,6 +783,7 @@ public class Gui extends Application{
                 System.out.println("Clicked player: " + p.getPlayer().getNick());
                 exchanger.setAnswer(p.getPlayer());
                 exchanger.setActualInteraction(Interaction.NONE);
+                clearInfoOnMap();
                 //After finishing the click event, reset all the events to the original option
                 for(GuiCardPawn p2 : pawns)
                     p2.resetEventsStyle();
@@ -823,7 +825,7 @@ public class Gui extends Application{
      * @param message
      */
     private void askSetting(String message){
-        StackPane root = settingsBackground();
+        StackPane root = initializerBackground();
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
@@ -838,8 +840,9 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(answer);
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(settingsBackground()));
+            primaryS.setScene(new Scene(initializerBackground()));
         });
+        submit.setDefaultButton(true);
 
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
@@ -852,12 +855,8 @@ public class Gui extends Application{
         primaryS.setScene(new Scene(root));
     }
 
-    /**
-     * Used for: rmi/socket, players, skulls
-     * @param message
-     */
     private void askRMI(String message){
-        Pane root = settingsBackground();
+        Pane root = initializerBackground();
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
@@ -878,8 +877,9 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(answer.equalsIgnoreCase("RMI"));
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(settingsBackground()));
+            primaryS.setScene(new Scene(initializerBackground()));
         });
+        submit.setDefaultButton(true);
 
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
@@ -894,7 +894,7 @@ public class Gui extends Application{
     }
 
     private void askFighter(String message){
-        Pane root = settingsBackground();
+        Pane root = initializerBackground();
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
@@ -911,6 +911,8 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(f.toString());
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            if(row==1)
+                radio.setSelected(true);
 
             grid.add(radio,0,row);
             row++;
@@ -923,6 +925,7 @@ public class Gui extends Application{
             exchanger.setAnswer(Fighter.valueOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
         });
+        submit.setDefaultButton(true);
         GridPane.setHalignment(submit, HPos.CENTER);
         grid.add(submit,0,row);
 
@@ -932,7 +935,7 @@ public class Gui extends Application{
     }
 
     private void askSkulls(String message){
-        Pane root = settingsBackground();
+        Pane root = initializerBackground();
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
@@ -947,6 +950,8 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(Integer.toString(i));
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            if(row==1)
+                radio.setSelected(true);
             grid.add(radio,0,row);
             row++;
         }
@@ -958,6 +963,7 @@ public class Gui extends Application{
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);
         });
+        submit.setDefaultButton(true);
         GridPane.setHalignment(submit, HPos.CENTER);
         grid.add(submit,0,row);
 
@@ -968,7 +974,7 @@ public class Gui extends Application{
 
     private void showInfoOnMap(String message) {
         double x = 40 * dimMult;
-        double y = 822 * dimMult;
+        double y = 845 * dimMult;
 
         infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);//we use always the same canvas
 
@@ -982,14 +988,57 @@ public class Gui extends Application{
         infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);
     }
 
-    /*private void alertShowInfo(String message){
-        Alert alert = new Alert(Alert.AlertType.NONE, message, ButtonType.OK);
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.setTitle("Adrenalina");
-        alert.showAndWait().ifPresent(rs -> {
-            if (rs == ButtonType.OK)
-                exchanger.setActualInteraction(Interaction.WAITINGUSER);
+   /* half work done
+   private void askRoom(String message){
+        Pane root = initializerBackground();
+        GridPane grid = gridMaker();
+
+        List<Integer> rooms = (List<Integer>) exchanger.getRequest();
+
+        Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
+
+        ToggleGroup radioGroup = new ToggleGroup();
+
+        int row = 1;
+        List<String> roomsNames = new ArrayList<>();
+
+        if(rooms.contains(0))
+            roomsNames.add("Rossa");
+        if(rooms.contains(1))
+            roomsNames.add("Bianca");
+        if(rooms.contains(2))
+            roomsNames.add("Blu");
+        if(rooms.contains(3))
+            roomsNames.add("Viola");
+        if(rooms.contains(4))
+            roomsNames.add("Verde");
+        if(rooms.contains(5))
+            roomsNames.add("Gialla");
+        for(String s : roomsNames){
+            RadioButton radio = new RadioButton(s);
+            radio.setToggleGroup(radioGroup);
+            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            grid.add(radio,0,row);
+            row++;
+        }
+
+        //continue here
+        Button submit = new Button("Conferma");
+        submit.setOnAction(rs -> {
+            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+            System.out.println(answer);
+            exchanger.setAnswer(Integer.parseInt(answer));
+            exchanger.setActualInteraction(Interaction.NONE);
         });
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,row);
+
+        root.getChildren().addAll(grid);
+
+        primaryS.setScene(new Scene(root));
     }*/
 
     private void guiChooseRoom(String message){
@@ -1061,103 +1110,79 @@ public class Gui extends Application{
         });
     }
 
-    private void guiChooseMap(String message){
-        ButtonType m1 = new ButtonType("Mappa 1", ButtonBar.ButtonData.OK_DONE);
-        ButtonType m2 = new ButtonType("Mappa 2", ButtonBar.ButtonData.OK_DONE);
-        ButtonType m3 = new ButtonType("Mappa 3", ButtonBar.ButtonData.OK_DONE);
-        ButtonType m4 = new ButtonType("Mappa 4", ButtonBar.ButtonData.OK_DONE);
-        Alert alert = new Alert(Alert.AlertType.NONE, message, m1, m2, m3, m4);
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.setTitle("Adrenalina");
+    private void askMap(String message){
+        Pane root = initializerBackground();
+        GridPane grid = gridMaker();
 
-        alert.showAndWait().ifPresent(rs -> {
-            System.out.println(rs.getText());
-            switch (rs.getText()){
-                case "Mappa 1":
-                    exchanger.setAnswer(1);
-                    break;
-                case "Mappa 2":
-                    exchanger.setAnswer(2);
-                    break;
-                case "Mappa 3":
-                    exchanger.setAnswer(3);
-                    break;
-                case "Mappa 4":
-                    exchanger.setAnswer(4);
-                    break;
-                default:
-                    break;
-            }
-            exchanger.setActualInteraction(Interaction.NONE);
-        });
-    }
+        Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
-    private void guiChooseFrenzy(String message){
-        ButtonType frenzy = new ButtonType("Con frenesia", ButtonBar.ButtonData.OK_DONE);
-        ButtonType noFrenzy = new ButtonType("Senza frenesia", ButtonBar.ButtonData.OK_DONE);
-        Alert alert = new Alert(Alert.AlertType.NONE, message, frenzy, noFrenzy);
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.setTitle("Adrenalina");
-
-        alert.showAndWait().ifPresent(rs -> {
-            System.out.println(rs.getText());
-            exchanger.setAnswer(rs == frenzy);
-            exchanger.setActualInteraction(Interaction.NONE);
-        });
-    }
-
-    private void initForTest() throws FileNotFoundException {
-        //Settings for testing
-        Game allGame = Game.jsonDeserialize("resources/baseGame.json");
-        ArrayList<Player> players = new ArrayList<>();
-        players.add(new Player("p1", "!", Fighter.VIOLETTA));
-        players.add(new Player("p2", "!", Fighter.DSTRUTTOR3));
-        players.add(new Player("p3", "!", Fighter.SPROG));
-        players.add(new Player("p4", "!", Fighter.BANSHEE));
-        players.add(new Player("p5", "!", Fighter.DOZER));
-
-        Player me = players.get(0);
-
-        me.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-            allGame.getWeaponsDeck().shuffle();
-            weapons[0] = allGame.getWeaponsDeck().draw();
-            weapons[1] = allGame.getWeaponsDeck().draw();
-
-            allGame.getPowersDeck().shuffle();
-            powers[0] = allGame.getPowersDeck().draw();
-            powers[1] = allGame.getPowersDeck().draw();
-
-            ammo.add(Color.YELLOW, 2);
-            ammo.add(Color.BLUE, 1);
-
-            damage[0] = "p2";
-            damage[1] = "p2";
-            damage[2] = "p3";
-
-            marks.addAll(Arrays.asList("p2", "p3", "p3"));
-            marks.addAll(Arrays.asList("p4", "p5", "p4"));
-        }));
-
-        allGame.loadMap(1);
-
-        for(int x = 0; x < 4; x++)
-            for(int y = 0; y < 3; y++)
-                if(allGame.getMap().getCell(x, y) != null)
-                    allGame.getMap().getCell(x, y).refill(allGame);
-
-        //it's just for test
-        for(Player p:players){
-            int x, y;
-            do {
-                x = new Random().nextInt(4);
-                y = new Random().nextInt(3);
-            }while(allGame.getMap().getCell(x, y) == null);
-
-            allGame.getMap().getCell(x, y).addPawn(p);
+        int row = 1;
+        ToggleGroup radioGroup = new ToggleGroup();
+        for(int i = 5; i<=8; i++){
+            RadioButton radio = new RadioButton("Mappa " + (i-4));
+            radio.setToggleGroup(radioGroup);
+            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            grid.add(radio,0,row);
+            row++;
         }
 
-        game = new GameView(allGame.getMap(), players, null);
+        Button submit = new Button("Conferma");
+        submit.setOnAction((e)->{
+            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+            answer = answer.substring(5);
+            System.out.println(answer);
+            exchanger.setAnswer(Integer.parseInt(answer));
+            exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(initializerBackground()));
+        });
+        submit.setDefaultButton(true);
 
-        match = new MatchView(game, me, me, 3, GamePhase.REGULAR, true, me);
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,row);
+
+        root.getChildren().addAll(grid);
+
+        primaryS.setScene(new Scene(root));
+    }
+
+    private void askFrenzy(String message){
+        Pane root = initializerBackground();
+        GridPane grid = gridMaker();
+
+        Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+
+        ToggleGroup group = new ToggleGroup();
+        RadioButton radio1 = new RadioButton("Con frenesia");
+        radio1.setToggleGroup(group);
+        radio1.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        radio1.setSelected(true);
+        RadioButton radio2 = new RadioButton("Senza frenesia");
+        radio2.setToggleGroup(group);
+        radio2.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+
+        Button submit = new Button("Conferma");
+        submit.setOnAction((e)->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
+            System.out.println(answer);
+            exchanger.setAnswer(answer.equalsIgnoreCase("Con frenesia"));
+            exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(initializerBackground()));
+        });
+        submit.setDefaultButton(true);
+
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
+        grid.add(radio1,0,1);
+        grid.add(radio2,0,2);
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,3);
+
+        root.getChildren().addAll(grid);
+
+        primaryS.setScene(new Scene(root));
     }
 }

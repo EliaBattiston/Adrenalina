@@ -20,4 +20,10 @@ public class GuiCardClickableArea extends GuiCard {
         getGraphicsContext2D().strokeRect(0,0,w, h);
         super.setEventsChoosable();
     }
+
+    @Override
+    public void resetEventsStyle() {
+        getGraphicsContext2D().clearRect(0,0,w,h);
+        super.resetEventsStyle();
+    }
 }
