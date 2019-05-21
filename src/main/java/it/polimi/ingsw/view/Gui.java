@@ -6,15 +6,13 @@ import it.polimi.ingsw.model.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.stage.StageStyle;
@@ -31,6 +29,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.floorDiv;
 
 public class Gui extends Application{
     public static String imgRoot = "file:images/";
@@ -54,7 +53,15 @@ public class Gui extends Application{
     private List<GuiCardWeapon> myWeapons;
     private List<GuiCardPower> myPowers;
     private List<GuiCardPawn> playersPawns;
-    private Canvas run;
+
+    //Actions -> we handle the clicks on these Canvases
+    private GuiCardAction runAction;
+    private GuiCardAction pickAction;
+    private GuiCardAction shootAction;
+    private GuiCardAction adrPickAction;
+    private GuiCardAction adrShootAction;
+
+    //
     private Canvas fixedGraphics;
     //private Canvas shoot;
     private Stage primaryS;
@@ -74,26 +81,33 @@ public class Gui extends Application{
 
         initForTest();
 
-        //mainScene = new Scene(drawGame());
+        mainScene = new Scene(drawGame());
 
         primaryStage.setTitle("Adrenalina");
-        primaryStage.setScene(new Scene(settingsBackground()));
-        //primaryStage.setScene(mainScene);
-        //primaryStage.setResizable(true);
+        //primaryStage.setScene(new Scene(settingsBackground()));
+        primaryStage.setScene(mainScene);
+        primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
         //Event handlers
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
-            /*if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
+            if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
                 dimMult = backgroundWidth / 1920;
 
                 drawDecks();
                 primaryStage.setScene(new Scene(drawGame()));
-            }*/
+            }
         });
+
+        //OnClose
+        primaryStage.setOnCloseRequest((t)->{
+            Platform.exit();
+            System.exit(0);
+        });
+
 
        //TODO use this for fixed ratio, find the good way to implement them
         //primaryStage.minHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
@@ -122,7 +136,7 @@ public class Gui extends Application{
 
         masterPane = new Pane();
 
-        //The background, map and decks never need to be updated they can be run just when the window's dimensions change,
+        //The background, map and decks never need to be updated they can be runAction just when the window's dimensions change,
         // to do so, move also the fixedGraphics canvas
         fixedGraphics = new Canvas(backgroundWidth, backgroundHeight);
         gc = fixedGraphics.getGraphicsContext2D();
@@ -135,6 +149,7 @@ public class Gui extends Application{
 
         drawAllPlayersBoards(match.getGame().getPlayers(),false); //FRENZY?
         drawMyAmmo(match.getMyPlayer().getAmmo());
+        drawPoints(10);
 
         a = drawMyWeapons(match.getMyPlayer().getWeapons());
         b = drawMyPowers(match.getMyPlayer().getPowers());
@@ -148,7 +163,7 @@ public class Gui extends Application{
         d.setPickOnBounds(false);
         e.setPickOnBounds(false);
         masterPane.setPickOnBounds(false);
-        masterPane.getChildren().addAll( fixedGraphics, canvas,  a, b, c, d, e);
+        masterPane.getChildren().addAll( fixedGraphics, canvas,  a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction);
 
         return masterPane;
     }
@@ -392,14 +407,9 @@ public class Gui extends Application{
 
         double deltaX = (adrenalineMode?61:63) * pbMult;
 
-        //FIXME it stays in the middle of the window, find a way to move it
-        //y - 30 -> write the name of the player
-        /*Text t = new Text(backgroundWidth, backgroundHeight, player.getNick() + " - " + player.getCharacter().toString());
-        t.setX(x);
-        t.setY(y);
-        t.setFont(Font.font ("Verdana", 20));
-        t.setFill(javafx.scene.paint.Color.WHITE);
-        pane.getChildren().add(t);*/
+        gc.setFill(javafx.scene.paint.Color.WHITE);
+        gc.setFont(new Font("Verdana",18*dimMult));
+        gc.fillText(player.getNick() + " - " + player.getCharacter().toString(), x, y-(8*dimMult));
 
         if(player.getNick().equals(match.getMyPlayer().getNick())){
             xPlayerBoard = x;
@@ -429,15 +439,19 @@ public class Gui extends Application{
         }
 
         //for my player I need to ahve the actions clickable
-        if(player.getNick() == match.getMyPlayer().getNick()){
-            double actionsY = 53 / 225 * height;
-            double actionsHeight = 47/225*height;
-            double actionsWidth = 69/1121*width;
+        //todo do the finalfrenzy too
+        if(player.getNick().equals(match.getMyPlayer().getNick())){
+            double actionsY = ((float)48)/ 270 * height;
+            double actionsHeight = ((float)42)/270*height;
+            double actionsWidth = ((float)69)/1121*width;
 
-            run = new Canvas(actionsWidth, actionsHeight);
-            run.setPickOnBounds(false);
-            run.setTranslateX(x+0);
-            run.setTranslateY(y+actionsY);
+            runAction = new GuiCardAction(x, y+actionsY, actionsWidth, actionsHeight);
+            pickAction = new GuiCardAction(x, y + 2*actionsY, actionsWidth, actionsHeight);
+            shootAction = new GuiCardAction(x, y + 3*actionsY, actionsWidth, actionsHeight);
+
+            actionsY = ((float)56)/ 270 * height;
+            adrPickAction = new GuiCardAction(x + ((float)230)/1121*width, y+actionsY, actionsWidth, actionsHeight);
+            adrShootAction = new GuiCardAction(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
         }
     }
 
@@ -530,16 +544,13 @@ public class Gui extends Application{
         }
     }
 
-    private StackPane drawPoints(int points){
-
-        StackPane s = new StackPane();
+    private void drawPoints(int points){
         double x = 1055 * dimMult;
         double y = 970 * dimMult;
 
-        //FIXME show points @ the right pos like players' names
-        //s.getChildren().add(new Text(x, y, Integer.toString(points)));
-
-        return s;
+        gc.setFont(new Font("Verdana",18*dimMult));
+        gc.setFill(javafx.scene.paint.Color.WHITE); //FIXME it draws the points in black
+        gc.strokeText(Integer.toString(points), x, y);
     }
 
     //
@@ -549,7 +560,7 @@ public class Gui extends Application{
 
     private void listenRequests(){
         //TODO decide how to handle the possibility of a resize while a request in in action. we can:
-        // a) reset the actualInteraction so this code will re-run FAST
+        // a) reset the actualInteraction so this code will re-runAction FAST
         // b) not re-paint all the stuffs but just move&resize them CLEANER
 
         //TODO implement the mustChoose for the ones that need it
@@ -561,8 +572,8 @@ public class Gui extends Application{
             if (exchanger.guiRequestIncoming()) {
                 System.out.println(exchanger.getActualInteraction().toString());
                 switch (exchanger.getActualInteraction()) {
-                    case CHOOSEACTION:
-                        chooseAction();//todo
+                    case CHOOSEBASEACTION:
+                        chooseBaseAction();//todo
                         break;
                     case CHOOSEWEAPON:
                     case GRABWEAPON:
@@ -575,6 +586,7 @@ public class Gui extends Application{
                         choosePowerCard((List<Power>) exchanger.getRequest());
                         break;
                     case MOVEPLAYER:
+                    case CHOOSEPOSITION:
                         chooseCell();//todo
                         break;
                     case CHOOSETARGET:
@@ -586,8 +598,6 @@ public class Gui extends Application{
                     case CHOOSEDIRECTION:
                         showAlert(this::guiChooseDirection, exchanger.getMessage());
                         break;
-                    case CHOOSEPOSITION:
-                        //chooseCell(); //todo
                     case CHOOSEMAP:
                         showAlert(this::guiChooseMap, exchanger.getMessage());
                         break;
@@ -623,6 +633,141 @@ public class Gui extends Application{
         //TODO here close the javafx app
     }
 
+    /**
+     * chooseBaseAction
+     */
+    private void chooseBaseAction(){
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+        List<Action> possible = (List<Action>) exchanger.getRequest();
+
+        for(Action a:possible){
+            switch (a.getLambdaID()){
+                case "a-b1":
+                    runAction.setOnMousePressed(e -> {
+                        exchanger.setAnswer(a);
+                        exchanger.setActualInteraction(Interaction.NONE);
+                        //After finishing the click event, reset all the events to the original option -> just call the redraw game
+                    });
+                    runAction.setEventsChoosable();
+                    break;
+                case "a-b2":
+                    pickAction.setOnMousePressed(e -> {
+                        exchanger.setAnswer(a);
+                        exchanger.setActualInteraction(Interaction.NONE);
+                    });
+                    pickAction.setEventsChoosable();
+                    break;
+                case "a-b3":
+                    shootAction.setOnMousePressed(e -> {
+                        exchanger.setAnswer(a);
+                        exchanger.setActualInteraction(Interaction.NONE);
+                    });
+                    shootAction.setEventsChoosable();
+                    break;
+                case "a-a1":
+                    adrPickAction.setOnMousePressed(e -> {
+                        exchanger.setAnswer(a);
+                        exchanger.setActualInteraction(Interaction.NONE);
+                    });
+                    adrPickAction.setEventsChoosable();
+                    break;
+                case "a-a2":
+                    adrShootAction.setOnMousePressed(e -> {
+                        exchanger.setAnswer(a);
+                        exchanger.setActualInteraction(Interaction.NONE);
+                    });
+                    adrShootAction.setEventsChoosable();
+                    break;
+                default:
+                    break;
+                //todo add the finalfrenzy ones
+            }
+        }
+    }
+
+    /**
+     * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
+     */
+    private void chooseWeaponCard(List<Weapon> choosable){
+        showAlert(this::alertShowInfo, exchanger.getMessage());
+
+        List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
+        cards.addAll(myWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList())); //add also my cards
+
+        for(GuiCardWeapon c : cards){
+            c.setOnMousePressed(e -> {
+                exchanger.setAnswer(c.getWeapon());
+                exchanger.setActualInteraction(Interaction.NONE);
+                //After finishing the click event, reset all the events to the original option
+                for(GuiCardWeapon c2 : cards)
+                    c2.resetEventsStyle();
+            });
+            c.setEventsChoosable();
+        }
+
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+    }
+
+    /**
+     * Used for: discardPower, choosePower
+     */
+    private void choosePowerCard(List<Power> choosable){
+        showAlert(this::alertShowInfo, exchanger.getMessage());
+
+        List<GuiCardPower> cards = myPowers.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
+
+        for(GuiCardPower c : cards){
+            c.setOnMousePressed(e -> {
+                exchanger.setAnswer(c.getPower());
+                exchanger.setActualInteraction(Interaction.NONE);
+                //After finishing the click event, reset all the events to the original option
+                for(GuiCardPower c2 : cards)
+                    c2.resetEventsStyle();
+            });
+            c.setEventsChoosable();
+        }
+
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+    }
+
+    /**
+     * Used for: movePlayer, choosePosition, moveEnemy
+     */
+    private void chooseCell(){}
+
+    /**
+     * Used for: chooseTarget
+     */
+    private void chooseEnemy(List<Player> choosable){
+        showAlert(this::alertShowInfo, exchanger.getMessage());
+
+        List<GuiCardPawn> pawns = playersPawns.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
+
+        for(GuiCardPawn p : pawns){
+            p.setOnMousePressed(e -> {
+                System.out.println("Clicked player: " + p.getPlayer().getNick());
+                exchanger.setAnswer(p.getPlayer());
+                exchanger.setActualInteraction(Interaction.NONE);
+                //After finishing the click event, reset all the events to the original option
+                for(GuiCardPawn p2 : pawns)
+                    p2.resetEventsStyle();
+            });
+            p.setEventsChoosable();
+        }
+
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+    }
+
+    /**
+     * It's the enter point for all the alerts/dialogs. It sets the executor for the next task
+     * Used for: information messages, chooseRoom(List<Integer>), chooseDirection(List<Direction>), chooseMap<Listint>->Integet, chooseFrenzy bool
+     * @param dialog the method that handle the dialog you want to show
+     */
+    private void showAlert(Consumer<String> dialog, String message){
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+        uiExec.execute(() -> dialog.accept(message));
+    }
+
     private GridPane gridMaker(){
         GridPane grid = new GridPane();
         double maxWidth = 480 * dimMult;
@@ -639,11 +784,16 @@ public class Gui extends Application{
         return grid;
     }
 
+    /**
+     * Used for IP, nick, phrase
+     * @param message
+     */
     private void askSetting(String message){
         StackPane root = settingsBackground();
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         TextField field = new TextField();
         //field.setMaxWidth(maxWidth);
@@ -677,13 +827,16 @@ public class Gui extends Application{
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         ToggleGroup group = new ToggleGroup();
         RadioButton radio1 = new RadioButton("Socket");
         radio1.setToggleGroup(group);
+        radio1.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         radio1.setSelected(true);
         RadioButton radio2 = new RadioButton("RMI");
         radio2.setToggleGroup(group);
+        radio2.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         Button submit = new Button("Conferma");
         submit.setOnAction((e)->{
@@ -711,6 +864,7 @@ public class Gui extends Application{
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
 
@@ -722,6 +876,8 @@ public class Gui extends Application{
         for(Fighter f:available){
             RadioButton radio = new RadioButton(f.toString());
             radio.setToggleGroup(radioGroup);
+            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+
             grid.add(radio,0,row);
             row++;
         }
@@ -746,6 +902,7 @@ public class Gui extends Application{
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
 
@@ -755,6 +912,7 @@ public class Gui extends Application{
         for(int i = 5; i<=8; i++){
             RadioButton radio = new RadioButton(Integer.toString(i));
             radio.setToggleGroup(radioGroup);
+            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
             grid.add(radio,0,row);
             row++;
         }
@@ -774,166 +932,17 @@ public class Gui extends Application{
         primaryS.setScene(new Scene(root));
     }
 
-    /**
-     * chooseAction
-     */
-    private void chooseAction(){}
+    private void showInfoOnMap(String message) {
 
-
-    /**
-     * Used for: chooseWeapon, grapWeapon, reload, discardWeapon
-     */
-    private void chooseWeaponCard(List<Weapon> choosable){
-        showAlert(this::guiShowInfo, exchanger.getMessage());
-
-        List<GuiCardWeapon> cards = lootWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
-        cards.addAll(myWeapons.stream().filter(c->c.inList(choosable)).collect(Collectors.toList())); //add also my cards
-
-        for(GuiCardWeapon c : cards){
-            c.setOnMousePressed(e -> {
-                System.out.println("Clicked a super-weapon " + c.getWeapon().getName());
-                exchanger.setAnswer(c.getWeapon());
-                exchanger.setActualInteraction(Interaction.NONE);
-                //After finishing the click event, reset all the events to the original option
-                for(GuiCardWeapon c2 : cards)
-                    c2.resetEventsStyle();
-            });
-            c.setEventsChoosable();
-        }
-
-        exchanger.setActualInteraction(Interaction.WAITINGUSER);
     }
 
-    /**
-     * Used for: discardPower, choosePower
-     */
-    private void choosePowerCard(List<Power> choosable){
-        showAlert(this::guiShowInfo, exchanger.getMessage());
-
-        List<GuiCardPower> cards = myPowers.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
-
-        for(GuiCardPower c : cards){
-            c.setOnMousePressed(e -> {
-                System.out.println("Clicked a super-weapon " + c.getPower().getName());
-                exchanger.setAnswer(c.getPower());
-                exchanger.setActualInteraction(Interaction.NONE);
-                //After finishing the click event, reset all the events to the original option
-                for(GuiCardPower c2 : cards)
-                    c2.resetEventsStyle();
-            });
-            c.setEventsChoosable();
-        }
-
-        exchanger.setActualInteraction(Interaction.WAITINGUSER);
-    }
-
-    /**
-     * Used for: movePlayer, choosePosition, moveEnemy
-     */
-    private void chooseCell(){}
-
-    /**
-     * Used for: chooseTarget
-     */
-    private void chooseEnemy(List<Player> choosable){
-        showAlert(this::guiShowInfo, exchanger.getMessage());
-
-        List<GuiCardPawn> pawns = playersPawns.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
-
-        for(GuiCardPawn p : pawns){
-            p.setOnMousePressed(e -> {
-                System.out.println("Clicked player: " + p.getPlayer().getNick());
-                exchanger.setAnswer(p.getPlayer());
-                exchanger.setActualInteraction(Interaction.NONE);
-                //After finishing the click event, reset all the events to the original option
-                for(GuiCardPawn p2 : pawns)
-                    p2.resetEventsStyle();
-            });
-            p.setEventsChoosable();
-        }
-
-        exchanger.setActualInteraction(Interaction.WAITINGUSER);
-    }
-
-    /**
-     * It's the enter point for all the alerts/dialogs. It sets the executor for the next task
-     * Used for: information messages, chooseRoom(List<Integer>), chooseDirection(List<Direction>), chooseMap<Listint>->Integet, chooseFrenzy bool
-     * @param dialog the method that handle the dialog you want to show
-     */
-    private void showAlert(Consumer<String> dialog, String message){
-        exchanger.setActualInteraction(Interaction.WAITINGUSER);
-        uiExec.execute(() -> dialog.accept(message));
-    }
-
-    private void guiShowInfo(String message){
+    private void alertShowInfo(String message){
         Alert alert = new Alert(Alert.AlertType.NONE, message, ButtonType.OK);
         alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Adrenalina");
         alert.showAndWait().ifPresent(rs -> {
             if (rs == ButtonType.OK)
                 exchanger.setActualInteraction(Interaction.WAITINGUSER);
-        });
-    }
-
-    /**
-     * Used for: getNickname, getPhrase
-     */
-    private void guiAskAString(String message){
-        TextInputDialog dialog = new TextInputDialog(" ");
-        dialog.setTitle("Adrenalina");
-        dialog.initStyle(StageStyle.UNDECORATED);
-        dialog.setContentText(message);
-
-        dialog.showAndWait().ifPresent(answer -> {
-            System.out.println("Answer: " + answer);
-            exchanger.setAnswer(answer);
-            exchanger.setActualInteraction(Interaction.NONE);
-        });
-    }
-
-    private void guiChooseRMIorSocket(String message){
-        ToggleGroup group = new ToggleGroup();
-        RadioButton button1 = new RadioButton("Socket");
-        button1.setToggleGroup(group);
-        button1.setSelected(true);
-        RadioButton button2 = new RadioButton("RMI");
-        button2.setToggleGroup(group);
-    }
-
-    private void guiChooseFighter(String message){
-        List<Fighter> available = (List<Fighter>) exchanger.getRequest();
-        List<ButtonType> btns = new ArrayList<>();
-
-        for(Fighter f:available)
-            btns.add(new ButtonType(f.toString(), ButtonBar.ButtonData.OK_DONE));
-
-        Alert alert = new Alert(Alert.AlertType.NONE, message);
-        alert.getButtonTypes().setAll(btns);
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.setTitle("Adrenalina");
-
-        alert.showAndWait().ifPresent(rs -> {
-            System.out.println(rs.getText());
-            exchanger.setAnswer(Fighter.valueOf(rs.getText()));
-            exchanger.setActualInteraction(Interaction.NONE);
-        });
-    }
-
-    private void guiChooseSkulls(String message){
-        List<ButtonType> btns = new ArrayList<>();
-
-        for(int i=5; i<=8; i++)
-            btns.add(new ButtonType(Integer.toString(i), ButtonBar.ButtonData.OK_DONE));
-
-        Alert alert = new Alert(Alert.AlertType.NONE, message);
-        alert.getButtonTypes().setAll(btns);
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.setTitle("Adrenalina");
-
-        alert.showAndWait().ifPresent(rs -> {
-            System.out.println(rs.getText());
-            exchanger.setAnswer(Integer.valueOf(rs.getText()));
-            exchanger.setActualInteraction(Interaction.NONE);
         });
     }
 

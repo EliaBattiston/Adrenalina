@@ -698,6 +698,7 @@ public class ActionLambdaMap {
         });
 
     //Activities lambdas
+        //choose a powerup
         data.put("a-p", (pl, map, memory)->{
             System.out.println(pl.getNick() + " sceglie un potenziamento");
             Power chosen;
@@ -719,13 +720,16 @@ public class ActionLambdaMap {
 
         });
 
+        //run
         data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true) );
 
+        //pick
         data.put("a-b2", (pl, map, memory)->{
             runToLoot(pl, map,1);
             pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck());
         });
 
+        //shoot
         data.put("a-b3",(pl, map, memory) -> shoot(pl, map) );
 
         data.put("a-a1", (pl, map, memory)->{

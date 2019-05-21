@@ -30,7 +30,7 @@ public abstract class GuiCard extends Canvas {
 
 
     public void resetEventsStyle(){
-        setOnMousePressed(e -> System.out.println("Clicked a card"));
+        //setOnMousePressed(e -> System.out.println("Clicked a card"));
         setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 10, 0.5, 0, 0);"));
         setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 0, 0, 0, 0);") );
 

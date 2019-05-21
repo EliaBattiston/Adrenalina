@@ -26,5 +26,6 @@ public enum Interaction {
     SHOWINGMESSAGE,
     CLOSEAPP,
     RMIORSOCKET,
-    SERVERIP
+    SERVERIP,
+    CHOOSEBASEACTION
 }

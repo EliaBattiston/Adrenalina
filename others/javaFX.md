@@ -60,3 +60,8 @@ __stage__
 __scene__
 * Scene scene = new Scene(component, w, h); //in order to be visible you must add it to a stage
 
+
+
+Rectangel2d
+
+ract.contains(points)

@@ -25,16 +25,22 @@ public class GuiInterface implements UserInterface{
             Thread.sleep(1000);
             System.out.println("Start test gui");
 
-            //String ip = getIPAddress();
-            //boolean isRMI = this.useRMI();
-            //String nick = getNickname();
-            //String phrase = getPhrase();
+            List<Action> a = new ArrayList<>();
+            a.addAll(Activities.getInstance().getAvailable(4, false, false));
+
+            Action cho = chooseAction(a, true);
+
+            System.out.println(cho.getName());
+            /*String ip = getIPAddress();
+            boolean isRMI = this.useRMI();
+            String nick = getNickname();
+            String phrase = getPhrase();
             Fighter f= getFighter();
             int s = getSkullNum();
 
             //System.out.println("IP choosen: " + ip + ", RMI: " + isRMI);
 
-            System.out.println(f.toString() + "  " + s);
+            System.out.println(f.toString() + "  " + s);*/
 
             this.updateGame(null);
 
@@ -125,6 +131,9 @@ public class GuiInterface implements UserInterface{
         List<Fighter> ava = new ArrayList<>();
         ava.add(Fighter.BANSHEE);
         ava.add(Fighter.DSTRUTTOR3);
+        ava.add(Fighter.SPROG);
+        ava.add(Fighter.VIOLETTA);
+        ava.add(Fighter.DOZER);
         exchanger.setRequest(Interaction.GETFIGHTER, "Scegli il tuo combattente", ava, true); //todo (after merge) fix the request
         goToWait();
         return (Fighter) exchanger.getAnswer();
@@ -151,7 +160,18 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Action chooseAction(List<Action> available, boolean mustChoose) {
+        //if id "a-*" -> run, shoot...
+        if(available.get(0).getLambdaID().contains("a-")) {
+            exchanger.setRequest(Interaction.CHOOSEBASEACTION, "Scegli un'azione di base", available, true);
+            goToWait();
+            return (Action) exchanger.getAnswer();
+        }
+
         return null;
+        //if "p-" power
+
+        //if w- action of weapon
+
     }
 
     /**
