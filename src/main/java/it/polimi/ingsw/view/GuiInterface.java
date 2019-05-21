@@ -25,10 +25,18 @@ public class GuiInterface implements UserInterface{
             Thread.sleep(1000);
             System.out.println("Start test gui");
 
-            String ip = getIPAddress();
-            boolean isRMI = this.useRMI();
+            //String ip = getIPAddress();
+            //boolean isRMI = this.useRMI();
+            //String nick = getNickname();
+            //String phrase = getPhrase();
+            Fighter f= getFighter();
+            int s = getSkullNum();
 
-            System.out.println("IP choosen: " + ip + ", RMI: " + isRMI);
+            //System.out.println("IP choosen: " + ip + ", RMI: " + isRMI);
+
+            System.out.println(f.toString() + "  " + s);
+
+            this.updateGame(null);
 
             /*List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
@@ -129,7 +137,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer getSkullNum() {
-        exchanger.setRequest(Interaction.GETFIGHTER, "Scegli il numero di teschi da usare nella partita", null, true); //todo (after merge) fix the request
+        exchanger.setRequest(Interaction.GETSKULLSNUM, "Scegli il numero di teschi da usare nella partita", null, true); //todo (after merge) fix the request
         goToWait();
         return (Integer) exchanger.getAnswer();
     }

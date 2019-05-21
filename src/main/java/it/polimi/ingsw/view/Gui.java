@@ -603,15 +603,14 @@ public class Gui extends Application{
                         showAlert(this::askRMI, exchanger.getMessage());
                         break;
                     case GETSKULLSNUM:
-                        showAlert(this::guiChooseSkulls, exchanger.getMessage());
+                        showAlert(this::askSkulls, exchanger.getMessage());
                         break;
                     case GETFIGHTER:
-                        showAlert(this::guiChooseFighter, exchanger.getMessage());
+                        showAlert(this::askFighter, exchanger.getMessage());
                         break;
-                    case UPDATEVIEW://todo test this
-                        primaryS.setScene(new Scene(drawGame()));
-                        //or
-                        //uiExec.execute(() -> primaryS.setScene(new Scene(drawGame())));
+                    case UPDATEVIEW://todo get the new match
+                        uiExec.execute(() -> primaryS.setScene(new Scene(drawGame())));
+                        exchanger.setActualInteraction(Interaction.NONE);
                         break;
                     case MOVEENEMY: //Nothing to do, not used in this context
                     case NONE:
@@ -624,45 +623,32 @@ public class Gui extends Application{
         //TODO here close the javafx app
     }
 
-
-    private void askSetting(String message){
-        StackPane root = settingsBackground();
-        Group pippo = new Group();
-        double xText = 712 * dimMult;
-        double yText = 434 * dimMult;
-        double yBox = 500 * dimMult;
-        double maxWidth = 480 * dimMult;
-        double xButton = 894 * dimMult;
-        double yButton = 569 * dimMult;
-        double magicDelta = 150 * dimMult;
-
-        Label l = new Label(message);
-        l.setLayoutX(xText-magicDelta);
-        l.setLayoutY(yText);
-        l.setPadding(Insets.EMPTY);
-
-        TextField field = new TextField();
-        field.setMaxWidth(maxWidth);
-        //field.setLayoutX(xText-magicDelta);
-//        field.setLayoutY(yBox);
-
-
-        Button submit = new Button("Conferma");
-  //      submit.setLayoutX(xButton-magicDelta);
-    //    submit.setLayoutY(yButton);
-
+    private GridPane gridMaker(){
         GridPane grid = new GridPane();
+        double maxWidth = 480 * dimMult;
+
         grid.setAlignment(Pos.CENTER);
         //grid.setHgap(10);
         grid.setVgap(10);
-        //grid.setPadding(new Insets(25, 25, 25, 25));
         grid.setMaxWidth(maxWidth);
         grid.setMinWidth(maxWidth);
 
         ColumnConstraints cc = new ColumnConstraints();
         cc.setMinWidth(maxWidth);
         grid.getColumnConstraints().add(cc);
+        return grid;
+    }
 
+    private void askSetting(String message){
+        StackPane root = settingsBackground();
+        GridPane grid = gridMaker();
+
+        Label l = new Label(message);
+
+        TextField field = new TextField();
+        //field.setMaxWidth(maxWidth);
+
+        Button submit = new Button("Conferma");
         submit.setOnAction((e)->{
             String answer = field.getText();
             System.out.println(answer);
@@ -670,8 +656,6 @@ public class Gui extends Application{
             exchanger.setActualInteraction(Interaction.NONE);
             primaryS.setScene(new Scene(settingsBackground()));
         });
-
-        //pippo.getChildren().addAll(l, field, submit);
 
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
@@ -684,34 +668,24 @@ public class Gui extends Application{
         primaryS.setScene(new Scene(root));
     }
 
+    /**
+     * Used for: rmi/socket, players, skulls
+     * @param message
+     */
     private void askRMI(String message){
         Pane root = settingsBackground();
-        double xText = 712 * dimMult;
-        double yText = 434 * dimMult;
-        double yBox = 500 * dimMult;
-        double maxWidth = 480 * dimMult;
-        double xButton = 894 * dimMult;
-        double yButton = 569 * dimMult;
+        GridPane grid = gridMaker();
 
         Label l = new Label(message);
-        l.setLayoutX(xText);
-        l.setLayoutY(yText);
 
         ToggleGroup group = new ToggleGroup();
-        RadioButton button1 = new RadioButton("Socket");
-        button1.setToggleGroup(group);
-        button1.setSelected(true);
-        button1.setLayoutX(xText);
-        button1.setLayoutY(yBox);
-        RadioButton button2 = new RadioButton("RMI");
-        button2.setToggleGroup(group);
-        button2.setLayoutX(xText + maxWidth/2);
-        button2.setLayoutY(yBox);
+        RadioButton radio1 = new RadioButton("Socket");
+        radio1.setToggleGroup(group);
+        radio1.setSelected(true);
+        RadioButton radio2 = new RadioButton("RMI");
+        radio2.setToggleGroup(group);
 
         Button submit = new Button("Conferma");
-        submit.setLayoutX(xButton);
-        submit.setLayoutY(yButton);
-
         submit.setOnAction((e)->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
@@ -720,7 +694,82 @@ public class Gui extends Application{
             primaryS.setScene(new Scene(settingsBackground()));
         });
 
-        root.getChildren().addAll(l, button1, button2, submit);
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
+        grid.add(radio1,0,1);
+        grid.add(radio2,0,2);
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,3);
+
+        root.getChildren().addAll(grid);
+
+        primaryS.setScene(new Scene(root));
+    }
+
+    private void askFighter(String message){
+        Pane root = settingsBackground();
+        GridPane grid = gridMaker();
+
+        Label l = new Label(message);
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
+
+        ToggleGroup radioGroup = new ToggleGroup();
+
+        List<Fighter> available = (List<Fighter>) exchanger.getRequest();
+
+        int row = 1;
+        for(Fighter f:available){
+            RadioButton radio = new RadioButton(f.toString());
+            radio.setToggleGroup(radioGroup);
+            grid.add(radio,0,row);
+            row++;
+        }
+
+        Button submit = new Button("Conferma");
+        submit.setOnAction(rs -> {
+            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+            System.out.println(answer);
+            exchanger.setAnswer(Fighter.valueOf(answer));
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,row);
+
+        root.getChildren().addAll(grid);
+
+        primaryS.setScene(new Scene(root));
+    }
+
+    private void askSkulls(String message){
+        Pane root = settingsBackground();
+        GridPane grid = gridMaker();
+
+        Label l = new Label(message);
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
+
+        ToggleGroup radioGroup = new ToggleGroup();
+
+        int row = 1;
+        for(int i = 5; i<=8; i++){
+            RadioButton radio = new RadioButton(Integer.toString(i));
+            radio.setToggleGroup(radioGroup);
+            grid.add(radio,0,row);
+            row++;
+        }
+
+        Button submit = new Button("Conferma");
+        submit.setOnAction(rs -> {
+            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+            System.out.println(answer);
+            exchanger.setAnswer(Integer.parseInt(answer));
+            exchanger.setActualInteraction(Interaction.NONE);
+        });
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,row);
+
+        root.getChildren().addAll(grid);
 
         primaryS.setScene(new Scene(root));
     }
