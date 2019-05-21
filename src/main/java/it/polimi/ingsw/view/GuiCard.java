@@ -39,7 +39,7 @@ public abstract class GuiCard extends Canvas {
 
     public void setEventsChoosable(){
         setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0);");
-        setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #a8ff22, 10, 0.7, 0, 0);"));//different green
+        setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #a8ff22, 30, 0.7, 0, 0);"));//different green
         setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0)"));
     }
 }

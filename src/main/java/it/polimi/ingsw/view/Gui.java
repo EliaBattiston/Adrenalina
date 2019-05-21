@@ -63,7 +63,6 @@ public class Gui extends Application{
     private GuiCardClickableArea[][] mapOfCells = new GuiCardClickableArea[4][3];
 
     //Canvases
-    private Canvas fixedGraphics;
     private Canvas infoTextCanvas; //canvas where we write the infos for the users
 
     //Stage
@@ -135,16 +134,15 @@ public class Gui extends Application{
 
         masterPane = new Pane();
 
-        //The background, map and decks never need to be updated they can be runAction just when the window's dimensions change,
-        // to do so, move also the fixedGraphics canvas
-        fixedGraphics = new Canvas(backgroundWidth, backgroundHeight);
-        gc = fixedGraphics.getGraphicsContext2D();
-        drawBackground();
+        canvas = new Canvas(backgroundWidth, backgroundHeight);
+        gc = canvas.getGraphicsContext2D();
+
+        gc.drawImage( GuiImagesMap.getImage(imgRoot + "background.png"), 0, 0, backgroundWidth, backgroundHeight);
         drawMap(match.getGame().getMap());
         drawDecks();
 
         //weapons, powers, loot
-        gc = canvas.getGraphicsContext2D(); //from now on the global gc will be the one for the dynamics data
+        //gc = canvas.getGraphicsContext2D(); //from now on the global gc will be the one for the dynamics data
 
         drawAllPlayersBoards(match.getGame().getPlayers(),false); //FRENZY?
         drawMyAmmo(match.getMyPlayer().getAmmo());
@@ -167,7 +165,7 @@ public class Gui extends Application{
         infoTextCanvas = new Canvas(backgroundWidth, backgroundHeight);
         infoTextCanvas.setPickOnBounds(false);
 
-        masterPane.getChildren().addAll( fixedGraphics, canvas,  a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction, infoTextCanvas);
+        masterPane.getChildren().addAll( canvas,   a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction, infoTextCanvas);
 
         for(GuiCardClickableArea[] t:mapOfCells)
             for(GuiCardClickableArea s:t)
@@ -175,10 +173,6 @@ public class Gui extends Application{
                     masterPane.getChildren().add(s);
 
         return masterPane;
-    }
-
-    private void drawBackground(){
-        gc.drawImage( GuiImagesMap.getImage(imgRoot + "background.png"), 0, 0, backgroundWidth, backgroundHeight);
     }
 
     private void drawMap(Map map){
@@ -973,13 +967,13 @@ public class Gui extends Application{
     }
 
     private void showInfoOnMap(String message) {
-        //infoTextCanvas = new Canvas(backgroundWidth, backgroundHeight);//we use always the same canvas
-        infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);
         double x = 40 * dimMult;
         double y = 822 * dimMult;
 
+        infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);//we use always the same canvas
+
         infoTextCanvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.WHITE);
-        infoTextCanvas.getGraphicsContext2D().setFont(new Font("Verdana",28*dimMult));
+        infoTextCanvas.getGraphicsContext2D().setFont(new Font("Verdana",34*dimMult));
         infoTextCanvas.getGraphicsContext2D().fillText(message, x, y);
         infoTextCanvas.setPickOnBounds(false);
     }

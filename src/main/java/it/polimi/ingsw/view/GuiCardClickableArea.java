@@ -7,6 +7,7 @@ public class GuiCardClickableArea extends GuiCard {
     public GuiCardClickableArea(double x, double y, double w, double h){
         super(w, h);
         setPosition(x, y);
+        setPickOnBounds(false);
 
         this.w = w;
         this.h = h;

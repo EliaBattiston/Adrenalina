@@ -25,14 +25,14 @@ public class GuiInterface implements UserInterface{
             Thread.sleep(1000);
             System.out.println("Start test gui");
 
-            List<Point> dest = new ArrayList<>();
+            /*List<Point> dest = new ArrayList<>();
             dest.add(new Point(0,0));
             dest.add(new Point(0,1));
             dest.add(new Point(2,0));
 
             Point chosenP = movePlayer(dest, true);
             System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
-
+*/
 
             /*List<Action> a = new ArrayList<>();
             a.addAll(Activities.getInstance().getAvailable(4, false, false));
