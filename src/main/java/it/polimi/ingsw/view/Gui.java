@@ -5,8 +5,10 @@ import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -101,7 +103,7 @@ public class Gui extends Application{
         new Thread(this::listenRequests).start();
     }
 
-    private Pane settingsBackground(){
+    private StackPane settingsBackground(){
         //socket+rmi and ip
         StackPane root = new StackPane();
         Canvas c = new Canvas(backgroundWidth, backgroundHeight);
@@ -624,28 +626,42 @@ public class Gui extends Application{
 
 
     private void askSetting(String message){
-        Pane root = settingsBackground();
+        StackPane root = settingsBackground();
+        Group pippo = new Group();
         double xText = 712 * dimMult;
         double yText = 434 * dimMult;
         double yBox = 500 * dimMult;
         double maxWidth = 480 * dimMult;
         double xButton = 894 * dimMult;
         double yButton = 569 * dimMult;
+        double magicDelta = 150 * dimMult;
 
         Label l = new Label(message);
-        l.setLayoutX(xText);
+        l.setLayoutX(xText-magicDelta);
         l.setLayoutY(yText);
+        l.setPadding(Insets.EMPTY);
 
-        TextField field = new TextField(message);
+        TextField field = new TextField();
         field.setMaxWidth(maxWidth);
-        field.setLayoutX(xText);
-        field.setLayoutY(yBox);
+        //field.setLayoutX(xText-magicDelta);
+//        field.setLayoutY(yBox);
 
 
         Button submit = new Button("Conferma");
-        submit.setLayoutX(xButton);
-        submit.setLayoutY(yButton);
-        submit.setTranslateY(+25);
+  //      submit.setLayoutX(xButton-magicDelta);
+    //    submit.setLayoutY(yButton);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        //grid.setHgap(10);
+        grid.setVgap(10);
+        //grid.setPadding(new Insets(25, 25, 25, 25));
+        grid.setMaxWidth(maxWidth);
+        grid.setMinWidth(maxWidth);
+
+        ColumnConstraints cc = new ColumnConstraints();
+        cc.setMinWidth(maxWidth);
+        grid.getColumnConstraints().add(cc);
 
         submit.setOnAction((e)->{
             String answer = field.getText();
@@ -655,7 +671,15 @@ public class Gui extends Application{
             primaryS.setScene(new Scene(settingsBackground()));
         });
 
-        root.getChildren().addAll(l, field, submit);
+        //pippo.getChildren().addAll(l, field, submit);
+
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
+        grid.add(field,0,1);
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,2);
+
+        root.getChildren().addAll(grid);
 
         primaryS.setScene(new Scene(root));
     }
@@ -681,7 +705,7 @@ public class Gui extends Application{
         button1.setLayoutY(yBox);
         RadioButton button2 = new RadioButton("RMI");
         button2.setToggleGroup(group);
-        button2.setLayoutX(xText);
+        button2.setLayoutX(xText + maxWidth/2);
         button2.setLayoutY(yBox);
 
         Button submit = new Button("Conferma");
