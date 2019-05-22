@@ -702,6 +702,7 @@ public class ActionLambdaMap {
         });
 
     //Activities lambdas
+        //choose a powerup
         data.put("a-p", (pl, map, memory)->{
             Power chosen;
 
@@ -727,6 +728,7 @@ public class ActionLambdaMap {
 
         data.put("a-b1", (pl, map, memory)-> run(pl, map, 3, true, ((Game)memory).getPlayers()) );
 
+        //pick
         data.put("a-b2", (pl, map, memory)->{
             runToLoot(pl, map,1, ((Game)memory).getPlayers());
             pick(pl, map, ((Game)memory).getAmmoDeck(), ((Game)memory).getPowersDeck(),((Game)memory).getPlayers());

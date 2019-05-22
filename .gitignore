@@ -7,5 +7,6 @@
 !Deliverables/
 !javadoc/
 !others/
+!images/
 src/main/java/META-INF/*
 src/main/resources/META-INF/*

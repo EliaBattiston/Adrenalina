@@ -5,8 +5,8 @@ import java.io.Serializable;
 /**
  * Represent one of the four kind of powers inside the game and show it's values
  */
-public class Power extends Card implements Serializable {
-    private final int id;
+public class Power extends Card implements Serializable{
+    //private final int id; now in card
     private final String name;
     private final Action base;
     private final Color color;
@@ -23,10 +23,6 @@ public class Power extends Card implements Serializable {
         this.name = name;
         this.base = base;
         this.color = color;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {

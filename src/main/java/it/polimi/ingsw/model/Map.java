@@ -21,9 +21,18 @@ import java.util.logging.Logger;
  */
 public class Map implements Serializable {
     /**
+     *
+     */
+    private int id;
+
+    /**
      * Matrix of cells representing the map
      */
     private Cell[][] cells;
+
+    public int getId() {
+        return id;
+    }
 
     /**
      * Returns the reference of a selected cell
@@ -73,9 +82,7 @@ public class Map implements Serializable {
                 return Map.jsonDeserialize("map" + mapNumber + ".json");
             }
             else
-            {
                 return null;
-            }
         }catch(FileNotFoundException ex){
             Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
             return null;

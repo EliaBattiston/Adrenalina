@@ -10,7 +10,7 @@ public interface UserInterface
      * Update the actual gameView to the client
      * @param matchView current game view
      */
-    public void updateGame(MatchView matchView);
+    void updateGame(MatchView matchView);
 
     /**
      * Asks the user to choose between a set of actions he can use
@@ -18,7 +18,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen action
      */
-    public Action chooseAction(List<Action> available, boolean mustChoose);
+    Action chooseAction(List<Action> available, boolean mustChoose);
 
     /**
      * Asks the user to choose between a set of his weapons
@@ -27,7 +27,7 @@ public interface UserInterface
      * @return Chosen weapon
      *
      */
-    public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose);
+    Weapon chooseWeapon(List<Weapon> available, boolean mustChoose);
 
     /**
      * Asks the user to choose which weapon he wants to buy from the SpawnCell
@@ -35,7 +35,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen weapon
      */
-    public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose);
+    Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose);
 
     /**
      * Asks the user which unloaded weapons located in his hand he wants to reload
@@ -43,7 +43,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Weapon to be reloaded
      */
-    public Weapon reload(List<Weapon> reloadable, boolean mustChoose);
+    Weapon reload(List<Weapon> reloadable, boolean mustChoose);
 
     /**
      * Asks the user where he wants to movePlayer
@@ -51,7 +51,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Point where the player will be when he's done moving
      */
-    public Point movePlayer(List<Point> destinations, boolean mustChoose);
+    Point movePlayer(List<Point> destinations, boolean mustChoose);
 
     /**
      * Asks the user which enemy he wants to target with an effect between a list of possible enemies
@@ -59,7 +59,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen target
      */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose);
+    Player chooseTarget(List<Player> targets, boolean mustChoose);
 
     /**
      * Asks the user where to movePlayer an enemy
@@ -68,7 +68,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Point where the enemy will be after being moved
      */
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose);
+    Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose);
 
     /**
      * Asks the user to discard one power card
@@ -76,7 +76,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Card to be discarded
      */
-    public Power discardPower(List<Power> powers, boolean mustChoose);
+    Power discardPower(List<Power> powers, boolean mustChoose);
 
     /**
      * Asks the user to choose a room
@@ -84,14 +84,14 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen room
      */
-    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose);
+    Integer chooseRoom(List<Integer> rooms, boolean mustChoose);
 
     /**
      * Asks the player to choose a direction
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
-    public Direction chooseDirection(List<Direction> possible, boolean mustChoose);
+    Direction chooseDirection(List<Direction> possible, boolean mustChoose);
 
     /**
      * Asks the user to choose a precise position on the map
@@ -99,32 +99,32 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen position
      */
-    public Point choosePosition(List<Point> positions, boolean mustChoose);
+    Point choosePosition(List<Point> positions, boolean mustChoose);
 
     /**
      * Asks the user for the nickname
      * @return user's nickname
      */
-    public String getNickname();
+    String getNickname();
 
     /**
      * Asks the user for the effect phrase
      * @return user's effect phrase
      */
-    public String getPhrase();
+    String getPhrase();
 
     /**
      * Asks the user fot the fighter
      * @param available List of available fighters
      * @return user's fighter
      */
-    public Fighter getFighter(List<Fighter> available);
+    Fighter getFighter(List<Fighter> available);
 
     /**
      * Asks the user how many skulls he wants in the play
      * @return skulls number
      */
-    public Integer getSkullNum();
+    Integer getSkullNum();
 
     /**
      * Asks the user to choose which weapon to discard
@@ -132,19 +132,19 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen weapon
      */
-    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose);
+    Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose);
 
     /**
      * Asks the user to choose which map he wants to use
      * @return Number of the chosen map
      */
-    public Integer chooseMap();
+    Integer chooseMap();
 
     /**
      * Asks the user about the Frenzy mode for the starting match
      * @return True for final Frenzy mode, false elsewhere
      */
-    public Boolean chooseFrenzy();
+    Boolean chooseFrenzy();
 
     /**
      * Asks the user to choose a power to use
@@ -152,29 +152,29 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen power
      */
-    public Power choosePower(List<Power> inHand, boolean mustChoose);
+    Power choosePower(List<Power> inHand, boolean mustChoose);
 
     /**
      * Prints out a general message to the client interface
      * @param message Message to be printed
      */
-    public void generalMessage(String message);
+    void generalMessage(String message);
 
     /**
      * Asks the user to choose between TCP and RMI connection
      * @return true in case of RMI connection, false elsewhere
      */
-    public boolean useRMI();
+    boolean useRMI();
 
     /**
      * Asks the user for the IP address of the server
      * @return Server's IP address
      */
-    public String getIPAddress();
+    String getIPAddress();
 
     /**
      * Asks the user for the IP address of the local machine
      * @return Server's IP address
      */
-    public String getLocalAddress(List<String> possibleIP);
+    String getLocalAddress(List<String> possibleIP);
 }
