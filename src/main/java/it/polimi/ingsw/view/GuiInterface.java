@@ -236,7 +236,9 @@ public class GuiInterface implements UserInterface{
             return (Action) exchanger.getAnswer();
         }
 
-        return null;
+        //todo implement the powers and weapons
+
+        return available.get(new Random().nextInt(available.size()));
         //if "p-" power
 
         //if w- action of weapon

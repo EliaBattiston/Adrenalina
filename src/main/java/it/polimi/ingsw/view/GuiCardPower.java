@@ -10,7 +10,7 @@ public class GuiCardPower extends GuiCard {
     public GuiCardPower(Power power, double width, double height){
         super(width, height);
         this.power = power;
-        img = GuiImagesMap.getImage( "file:images/power/power" + (power.getId()<=12 ? power.getId() : power.getId()/2) + ".png" );
+        img = GuiImagesMap.getImage( Gui.imgRoot + "power/power" + (power.getId()<=12 ? power.getId() : power.getId()-12) + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, width, height);
 

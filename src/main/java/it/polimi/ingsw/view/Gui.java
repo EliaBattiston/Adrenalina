@@ -29,7 +29,7 @@ import static java.lang.Math.abs;
 
 //TODO check inputs like the ip
 public class Gui extends Application{
-    static String imgRoot = "file:images/";//for the entire package only
+    static String imgRoot = "/images/";//for the entire package only
     private static Executor uiExec = Platform::runLater ;
 
     //Data
@@ -68,7 +68,7 @@ public class Gui extends Application{
     public void start(Stage primaryStage){
         primaryS = primaryStage;
 
-        backgroundWidth = 960;
+        backgroundWidth = 1920;
         backgroundHeight = backgroundWidth*9/16;
 
         dimMult = backgroundWidth/1920;
@@ -172,7 +172,7 @@ public class Gui extends Application{
         double x = 18 * dimMult;
         double y = x;
 
-        gc.drawImage( GuiImagesMap.getImage("file:images/map/map" + map.getId() + ".png"), x, y, width, height);
+        gc.drawImage( GuiImagesMap.getImage(imgRoot + "map/map" + map.getId() + ".png"), x, y, width, height);
 
         //get position of the first cell
         x = ((double)500)/2545 * width;
@@ -391,7 +391,7 @@ public class Gui extends Application{
         height = 174 * dimMult;
         x = 1018 * dimMult;
         y = 252 * dimMult;
-        gc.drawImage(GuiImagesMap.getImage("file:images/weapon/weaponBackPile.png"), x, y, width, height);
+        gc.drawImage(GuiImagesMap.getImage(imgRoot + "weapon/weaponBackPile.png"), x, y, width, height);
     }
 
     private void drawAllPlayersBoards(List<Player> players, boolean adrenalineMode){
@@ -523,9 +523,9 @@ public class Gui extends Application{
         double deltaX = 43 * dimMult;
         double deltaY = 36 * dimMult;
 
-        Image blue = GuiImagesMap.getImage("file:images/loot/blue.png");
-        Image red = GuiImagesMap.getImage("file:images/loot/red.png");
-        Image yellow = GuiImagesMap.getImage("file:images/loot/yellow.png");
+        Image blue = GuiImagesMap.getImage(imgRoot + "loot/blue.png");
+        Image red = GuiImagesMap.getImage(imgRoot + "loot/red.png");
+        Image yellow = GuiImagesMap.getImage(imgRoot + "loot/yellow.png");
 
         for(int i=0; i<ammo.getBlue(); i++){
             gc.drawImage(blue, x, y, width, width);

@@ -13,6 +13,7 @@ public class GuiImagesMap {
 
         if(map.get(imgPath) == null)
             map.put(imgPath, new Image(imgPath));
+        //map.put(imgPath, new Image(new FileInputStream(Game.class.getClassLoader().getResourceAsStream(imgPath))));
 
         return map.get(imgPath);
     }
