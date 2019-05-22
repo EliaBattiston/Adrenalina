@@ -1,10 +1,17 @@
 package it.polimi.ingsw.controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
+import it.polimi.ingsw.model.Cell;
+import it.polimi.ingsw.model.CellAdapter;
 import it.polimi.ingsw.model.Fighter;
 import it.polimi.ingsw.model.Player;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -101,7 +108,27 @@ public class SMain
 
             socket = new SocketServer(1906);
             rmi = new RMIServer();
+            //TODO load saved matches
             matches = new ArrayList<>();
+
+            //Persistency
+            /*Gson gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
+            JsonReader reader;
+            File matchesDir = new File("matches/");
+            File[] listOfMatches = matchesDir.listFiles();
+
+            for (File file : listOfMatches) {
+                if (file.isFile()) {
+                    reader = new JsonReader(new FileReader(file));
+                    matches.add(gson.fromJson(reader, Match.class));
+                }
+            }
+
+            for(Match m : matches)
+            {
+                m.getGame().getMap().fixPawns(m.getGame().getPlayers());
+            }*/
+
             stop = false;
 
             waiting = new Match[8 - MINSKULLS + 1];
@@ -298,7 +325,6 @@ public class SMain
 
     private void matchTimer(int skulls) {
         long seconds = Configuration.getInstance().getStartMatchSeconds();
-        //TODO make configuration file to set waiting time
         timer[skulls - MINSKULLS] = new Timer();
         timer[skulls - MINSKULLS].schedule(new TimerTask() {
             @Override

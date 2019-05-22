@@ -69,6 +69,11 @@ public class Match implements Runnable
     private int turnNumber;
 
     /**
+     * True if the match has already been initialized
+     */
+    private boolean initialized;
+
+    /**
      * Gson instance used to save persistance files
      */
     private transient Gson gson;
@@ -88,7 +93,8 @@ public class Match implements Runnable
         this.frenzyKills = new ArrayList<>();
         this.skullsNum = skullsNum;
         this.turnNumber = 0;
-        this.gson = new GsonBuilder().create();
+        this.initialized = false;
+        this.gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
 
         game = Game.jsonDeserialize("baseGame.json");
         game.getPowersDeck().shuffle();
@@ -99,37 +105,31 @@ public class Match implements Runnable
 
     /**
      *  Executes the operations needed before the start of the game
-     * @throws FileNotFoundException If the file is not found in the filesystem
+     * @throws ClientDisconnectedException If the file is not found in the filesystem
      */
-    public void initialize() throws FileNotFoundException
+    private void initialize() throws ClientDisconnectedException
     {
+
+        //Ask the user which maps he wants to use and if he wants to use frenzy mode
+        int mapNum = game.getPlayers().get(0).getConn().chooseMap();
         try
         {
-            //Ask the user which maps he wants to use and if he wants to use frenzy mode
-            int mapNum = game.getPlayers().get(0).getConn().chooseMap();
             game.loadMap(mapNum);
-            broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di usare la mappa " + mapNum, game.getPlayers());
-
-            useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
-            broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di" +  ( useFrenzy ? "" : " non" ) + " usare la modalità Frenesia", game.getPlayers());
-
-            //Make folder for persistance files
-            new File("matches").mkdirs();
-
-            refillMap();
         }
-        catch (ClientDisconnectedException e) {
-            disconnectPlayer(game.getPlayers().get(0), game.getPlayers());
-            if(game.getMap() == null)
-            {
-                int mapNum = new Random().nextInt(4) + 1;
-                game.loadMap(mapNum);
-                broadcastMessage("Il server ha scelto di usare la mappa " + mapNum, game.getPlayers());
-            }
-
-            useFrenzy = true;
-            broadcastMessage("Il server ha scelto di" +  ( useFrenzy ? "" : " non" ) + " usare la modalità Frenesia", game.getPlayers());
+        catch(FileNotFoundException f)
+        {
+            Logger.getGlobal().log(Level.SEVERE, "Map file not found");
         }
+        broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di usare la mappa " + mapNum, game.getPlayers());
+
+        useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
+        broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di" +  ( useFrenzy ? "" : " non" ) + " usare la modalità Frenesia", game.getPlayers());
+
+        //Make folder for persistance files
+        new File("matches").mkdirs();
+
+        refillMap();
+
 
         updateViews();
 
@@ -138,6 +138,8 @@ public class Match implements Runnable
         actionsNumber = 2;
 
         broadcastMessage("Partita avviata, è il turno di " + active.getNick(), game.getPlayers());
+
+        this.initialized = true;
     }
 
     /**
@@ -154,6 +156,37 @@ public class Match implements Runnable
      */
     public void run()
     {
+        if(!initialized)
+        {
+            try
+            {
+                initialize();
+            } catch (ClientDisconnectedException e)
+            {
+                disconnectPlayer(game.getPlayers().get(0), game.getPlayers());
+                if (game.getMap() == null)
+                {
+                    int mapNum = new Random().nextInt(4) + 1;
+                    try
+                    {
+                        game.loadMap(mapNum);
+                    } catch (FileNotFoundException f)
+                    {
+                        Logger.getGlobal().log(Level.SEVERE, "Map file not found");
+                    }
+                    broadcastMessage("Il server ha scelto di usare la mappa " + mapNum, game.getPlayers());
+                }
+
+                useFrenzy = true;
+                broadcastMessage("Il server ha scelto di" + (useFrenzy ? "" : " non") + " usare la modalità Frenesia", game.getPlayers());
+            }
+        }
+
+        if(gson == null)
+        {
+            this.gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
+        }
+
         while(phase != GamePhase.ENDED)
         {
             //TODO add check if there are less than 3 players
@@ -226,6 +259,12 @@ public class Match implements Runnable
             {
                 Logger.getGlobal().log(Level.SEVERE, "Error in writing persistance file", e);
             }
+        }
+
+        if(phase == GamePhase.ENDED)
+        {
+            File saved = new File("matches/" + this.hashCode() + ".adr");
+            saved.delete();
         }
     }
 
@@ -680,11 +719,9 @@ public class Match implements Runnable
                     p.getConn().endGame(winners);
             }
             catch (ClientDisconnectedException e) {
-                //disconnectPlayer(p, null);
             }
         }
         System.out.println("\u001b[34mIl gioco è terminato\u001B[0m");
-        //broadcastMessage("La partita è terminata!", game.getPlayers()); //TODO add winner
     }
 
     /**
