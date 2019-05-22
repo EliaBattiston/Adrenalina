@@ -5,7 +5,13 @@ import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,15 +56,50 @@ public class CMain
         boolean instanced = false;
         do {
 
-            ip = ui.getIPAddress();
-
             try {
-                if (socket)
+                if (socket) {
+                    ip = ui.getIPAddress();
                     connection = new SocketClient(ip, 1906, ui);
-                else
+                }
+                else {
+
+                    List<String> addresses = new ArrayList<>();
+                    String localIP;
+
+                    Enumeration<NetworkInterface> nInterfaces = NetworkInterface.getNetworkInterfaces();
+                    while (nInterfaces.hasMoreElements()) {
+                        Enumeration<InetAddress> inetAddresses = nInterfaces
+                                .nextElement().getInetAddresses();
+                        while (inetAddresses.hasMoreElements()) {
+                            String address = inetAddresses.nextElement()
+                                    .getHostAddress();
+                            if (address.contains(".")) {
+                                String[] split = address.split("\\.");
+                                if(!split[0].equals("127") && !split[0].equals("169"))
+                                    addresses.add(address);
+                            }
+                        }
+                    }
+
+                    if(addresses.size() > 1) {
+                        localIP = ui.getLocalAddress(addresses);
+                    }
+                    else {
+                        localIP = addresses.get(0);
+                    }
+
+                    System.setProperty("java.rmi.server.hostname", localIP);
+
+                    ip = ui.getIPAddress();
+
                     connection = new RMIClient(ip, ui);
+                }
                 instanced = true;
                 ui.generalMessage("Connesso al server Adrenalina");
+            }
+            catch (SocketException e) {
+                ui.generalMessage("Impossibile trovate interfacce di rete, riprova\n");
+                return;
             }
             catch (ServerNotFoundException e) {
                 ui.generalMessage("Server non trovato, riprova\n");

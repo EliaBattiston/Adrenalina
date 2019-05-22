@@ -16,9 +16,8 @@ public class ClientConnThread implements Runnable {
         try {
             while(player.getConn() != null) {
                 player.getConn().clientPing();
-                wait(1000);
+                wait(2000);
             }
-            throw new ClientDisconnectedException();
         }
         catch (ClientDisconnectedException e) {
             main.cancelConnection(player.getNick());

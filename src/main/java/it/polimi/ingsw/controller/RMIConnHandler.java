@@ -7,5 +7,5 @@ import java.rmi.RemoteException;
 
 public interface RMIConnHandler extends Remote
 {
-    void newConnection(String registryBind) throws RemoteException, AlreadyBoundException, NotBoundException;
+    void newConnection(Client clientInterface) throws RemoteException, AlreadyBoundException, NotBoundException;
 }

@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -193,5 +194,5 @@ public interface Client extends Remote
      * Returns true indifferently, needed from the server to ping the client
      * @return True
      */
-    public boolean clientPing();
+    public Boolean clientPing() throws RemoteException;
 }

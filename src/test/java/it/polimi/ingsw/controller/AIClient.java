@@ -240,7 +240,7 @@ public class AIClient implements Client {
      * Returns true indifferently, needed from the server to ping the client
      * @return True
      */
-    public boolean clientPing() { return true; }
+    public Boolean clientPing() { return true; }
 
 
     /**

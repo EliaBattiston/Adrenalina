@@ -1,19 +1,25 @@
 package it.polimi.ingsw.controller;
 
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.rmi.AlreadyBoundException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * RMI implementation of the server interface, it handles the RMI connections of all the game
  */
-public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHandler
+public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHandler, Serializable
 {
     /**
      * Local binding registry
@@ -35,22 +41,32 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
             registry = LocateRegistry.createRegistry(1099);
             registry.bind("AM06", this);
         }
-        catch(AlreadyBoundException e) {
+        catch(Exception e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
         }
+
+
+        Runtime.getRuntime().addShutdownHook(
+        new Thread("app-shutdown-hook") {
+            @Override
+            public void run() {
+                try {
+                    UnicastRemoteObject.unexportObject(registry, true);
+                }
+                catch (NoSuchObjectException e) { ; }
+            }
+        });
     }
 
     /**
      * Remote method invoked by the clients to match with the server. Clients create a bind with their own remote interface, so the server can interact with.
-     * @param registryBind registry name of the client remote interface
      * @throws RemoteException in case of binding error
      * @throws AlreadyBoundException in case of already existing binding name
      * @throws NotBoundException If the RMI binding has been unsuccessful
      */
-    public synchronized void newConnection(String registryBind) throws RemoteException, AlreadyBoundException, NotBoundException
+    public synchronized void newConnection(Client clientInterface) throws RemoteException, AlreadyBoundException, NotBoundException
     {
-        Client clientInterface = (Client)registry.lookup(registryBind);
-        RMIConn clientConn = new RMIConn(clientInterface, registryBind, registry);
+        RMIConn clientConn = new RMIConn(clientInterface);
         newConn.add(clientConn);
         notifyAll();
     }

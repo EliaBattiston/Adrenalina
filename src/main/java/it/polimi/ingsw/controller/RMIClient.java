@@ -5,24 +5,23 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
-import java.net.ConnectException;
-import java.net.UnknownHostException;
+import java.io.Serializable;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//TODO check that it doesn't need to be serializable
-public class RMIClient extends UnicastRemoteObject implements Client
+public class RMIClient extends UnicastRemoteObject implements Client, Serializable
 {
     /**
-     * Remote registry instance used to bind the client interface
+     * Remote registry instance used to connect to the server
      */
-    private Registry registry;
+    private Registry hostRegistry;
+
     /**
      * User gui/cli interface
      */
@@ -37,14 +36,15 @@ public class RMIClient extends UnicastRemoteObject implements Client
     public RMIClient(String host, UserInterface userint) throws RemoteException, ServerNotFoundException
     {
         try {
-            registry = LocateRegistry.getRegistry(host);
-            RMIConnHandler RMIServer = (RMIConnHandler) registry.lookup("AM06");
-            String bindName = "AM06-" + new Random().nextInt();
-            registry.bind(bindName, this);
-            RMIServer.newConnection(bindName);
+            //System.setProperty("java.rmi.server.hostname", "192.168.1.2");
+            hostRegistry = LocateRegistry.getRegistry(host, 1099);
+            RMIConnHandler RMIServer = (RMIConnHandler) hostRegistry.lookup("AM06");
+
+            RMIServer.newConnection(this);
             user = userint;
         }
-        catch (Exception e) {
+        catch (Exception ex) {
+            Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
             throw new ServerNotFoundException();
         }
     }
@@ -241,6 +241,6 @@ public class RMIClient extends UnicastRemoteObject implements Client
      * Returns true indifferently, needed from the server to ping the client
      * @return True
      */
-    public boolean clientPing() { return true; }
+    public Boolean clientPing() { return true; }
 }
 

@@ -171,4 +171,10 @@ public interface UserInterface
      * @return Server's IP address
      */
     public String getIPAddress();
+
+    /**
+     * Asks the user for the IP address of the local machine
+     * @return Server's IP address
+     */
+    public String getLocalAddress(List<String> possibleIP);
 }

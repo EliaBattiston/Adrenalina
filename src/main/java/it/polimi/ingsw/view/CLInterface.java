@@ -1663,4 +1663,23 @@ public class CLInterface implements UserInterface {
 
         println("-------------------------------------------------");
     }
+
+    /**
+     * Asks the user for the IP address of the local machine
+     * @return Server's IP address
+     */
+    public String getLocalAddress(List<String> possibleIP) {
+        int pos;
+
+        println("Seleziona l'IP della macchina");
+        for(int i = 0; i < possibleIP.size(); i++) {
+            println("[" + (i + 1) + "] " + possibleIP.get(i));
+        }
+        do {
+            print("Selezione [1-" + possibleIP.size() + "]: ");
+            pos = scanInt() - 1;
+        }
+        while (pos < 0 || pos >= possibleIP.size());
+        return possibleIP.get(pos);
+    }
 }

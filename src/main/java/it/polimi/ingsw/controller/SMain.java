@@ -6,7 +6,9 @@ import it.polimi.ingsw.model.Player;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
@@ -57,6 +59,46 @@ public class SMain
         }
 
         try {
+
+            List<String> addresses = new ArrayList<>();
+            String localIP;
+
+            Enumeration<NetworkInterface> nInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (nInterfaces.hasMoreElements()) {
+                Enumeration<InetAddress> inetAddresses = nInterfaces
+                        .nextElement().getInetAddresses();
+                while (inetAddresses.hasMoreElements()) {
+                    String address = inetAddresses.nextElement()
+                            .getHostAddress();
+                    if (address.contains(".")) {
+                        String[] split = address.split("\\.");
+                        if(!split[0].equals("127") && !split[0].equals("169"))
+                            addresses.add(address);
+                    }
+                }
+            }
+
+            if(addresses.size() > 1) {
+                System.out.println("Seleziona l'IP della macchina");
+                for(int i = 0; i < addresses.size(); i++) {
+                    System.out.println("[" + (i + 1) + "] " + addresses.get(i));
+                }
+                Scanner in = new Scanner(System.in);
+                int pos;
+                do {
+                    System.out.print("Selezione [1-" + addresses.size() + "]: ");
+                    localIP = in.nextLine();
+                    pos = Integer.parseInt(localIP) - 1;
+                }
+                while (pos < 0 || pos >= addresses.size());
+                localIP = addresses.get(pos);
+            }
+            else {
+                localIP = addresses.get(0);
+            }
+
+            System.setProperty("java.rmi.server.hostname", localIP);
+
             socket = new SocketServer(1906);
             rmi = new RMIServer();
             matches = new ArrayList<>();
@@ -70,19 +112,22 @@ public class SMain
                 timer[i] = new Timer();
                 startedTimer[i] = false;
             }
-            System.out.println("Adrenalina Server ready");
-            System.out.println("Server IP: " + Inet4Address.getLocalHost().getHostAddress());
+            println("Adrenalina Server ready");
+
             listen();
+        }
+        catch (SocketException e) {
+            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
+            System.out.println("Impossibile trovate interfacce di rete, riprova");
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            System.out.println("Errore nell'avvio del server RMI");
+            println("Errore nell'avvio del server RMI");
         }
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            System.out.println("Errore nell'avvio del server Socket");
+            println("Errore nell'avvio del server Socket");
         }
-        listen();
     }
 
     private void println(String payload) {
@@ -205,7 +250,6 @@ public class SMain
             }
         }
         catch (ClientDisconnectedException e) {
-            Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
             println("Nuova connessione annullata");
         }
     }

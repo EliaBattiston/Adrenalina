@@ -12,6 +12,7 @@ import it.polimi.ingsw.view.UserInterface;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ConnectException;
+import java.net.NoRouteToHostException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class SocketClient implements Client {
                 serverSocket = new Socket(ipAddr, port);
                 instanced = true;
             }
-            catch (UnknownHostException | ConnectException e) {
+            catch (UnknownHostException | ConnectException | NoRouteToHostException e) {
                 throw new ServerNotFoundException();
             }
             catch (IOException e) {
@@ -254,7 +255,7 @@ public class SocketClient implements Client {
      * Returns true indifferently, needed from the server to ping the client
      * @return True
      */
-    public boolean clientPing() { return true; }
+    public Boolean clientPing() { return true; }
 
 
     /**
