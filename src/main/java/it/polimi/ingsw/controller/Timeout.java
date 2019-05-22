@@ -32,7 +32,8 @@ public class Timeout
             Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly");
         }
         catch (TimeoutException te) {
-            Match.broadcastMessage(m.getActive() + " è stato troppo lento, il turno è terminato", m.getGame().getPlayers());
+            Match.disconnectPlayer(m.getActive(), m.getGame().getPlayers());
+            Match.broadcastMessage(m.getActive().getNick() + " è stato troppo lento, il turno è terminato", m.getGame().getPlayers());
         }
 
         if (!executor.isTerminated())
