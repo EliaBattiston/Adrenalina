@@ -1,12 +1,15 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.io.Serializable;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -14,6 +17,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.lang.Thread.sleep;
 
 public class RMIClient extends UnicastRemoteObject implements Client, Serializable
 {
@@ -36,14 +41,27 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
     public RMIClient(String host, UserInterface userint) throws RemoteException, ServerNotFoundException
     {
         try {
-            //System.setProperty("java.rmi.server.hostname", "192.168.1.2");
             hostRegistry = LocateRegistry.getRegistry(host, 1099);
             RMIConnHandler RMIServer = (RMIConnHandler) hostRegistry.lookup("AM06");
 
             RMIServer.newConnection(this);
             user = userint;
+
+            Thread t = new Thread(()-> {
+                try {
+                    while(RMIServer.ping()) {
+                        sleep(2000);
+                    }
+                }
+                catch (Exception e) {
+                }
+                user.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
+                System.exit(0);
+            });
+            t.start();
+
         }
-        catch (Exception ex) {
+        catch (AlreadyBoundException | NotBoundException ex) {
             Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
             throw new ServerNotFoundException();
         }

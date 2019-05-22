@@ -90,4 +90,8 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
         }
 
     }
+
+    public boolean ping() {
+        return true;
+    }
 }

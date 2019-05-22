@@ -35,13 +35,8 @@ public class CMain
     {
         Client connection;
 
-        //Temporary test for the login
-
-        String buffer = "";
         String ip;
-        boolean socket = true;
-
-        Scanner stdin = new Scanner(System.in);
+        boolean socket;
 
         if(!gui) {
             ui = new CLInterface();
