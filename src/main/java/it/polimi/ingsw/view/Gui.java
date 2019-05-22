@@ -78,12 +78,12 @@ public class Gui extends Application{
         loading.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(imgRoot + "background/adrenalina.jpg"), 0, 0, backgroundWidth, backgroundHeight);
         primaryStage.setScene(new Scene(new StackPane(loading)));
         //primaryStage.setScene(new Scene(drawGame()));
-        primaryStage.setResizable(true);
+        //primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
         //Event handlers
-        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+        /*primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
             if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
@@ -92,7 +92,7 @@ public class Gui extends Application{
                 drawDecks();
                 primaryStage.setScene(new Scene(drawGame()));
             }
-        });
+        });*/
 
         //OnClose
         primaryStage.setOnCloseRequest((t)->{
@@ -201,63 +201,63 @@ public class Gui extends Application{
         double y;
 
         //Manually add for each cell because they haven't the same dim. Create row by row from the top one
-        if(map.getCell(0, 0) != null) {
+        if(map.getCell(0, 0) != null && ((RegularCell)map.getCell(0, 0)).getLoot() != null) {
             x = 310 * dimMult;
             y = 325 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(0, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(1, 0) != null) {
+        if(map.getCell(1, 0) != null && ((RegularCell)map.getCell(1, 0)).getLoot() != null) {
             x = 526 * dimMult;
             y = 325 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(1, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(3, 0) != null) {
+        if(map.getCell(3, 0) != null && ((RegularCell)map.getCell(3, 0)).getLoot() != null) {
             x = 900 * dimMult;
             y = 900 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(3, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(1, 1) != null) {
+        if(map.getCell(1, 1) != null && ((RegularCell)map.getCell(1, 1)).getLoot() != null) {
             x = 526 * dimMult;
             y = 530 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(1, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(2, 1) != null) {
+        if(map.getCell(2, 1) != null && ((RegularCell)map.getCell(2, 1)).getLoot() != null) {
             x = 725 * dimMult;
             y = 530 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(2, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(3, 1) != null) {
+        if(map.getCell(3, 1) != null && ((RegularCell)map.getCell(3, 1)).getLoot() != null) {
             x = 900 * dimMult;
             y = 530 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(3, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(0, 2) != null) {
+        if(map.getCell(0, 2) != null && ((RegularCell)map.getCell(0, 2)).getLoot() != null) {
             x = 335 * dimMult;
             y = 730 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(0, 2)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(1, 2) != null) {
+        if(map.getCell(1, 2) != null && ((RegularCell)map.getCell(1, 2)).getLoot() != null) {
             x = 526 * dimMult;
             y = 730 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(1, 2)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(2, 2) != null) {
+        if(map.getCell(2, 2) != null && ((RegularCell)map.getCell(2, 2)).getLoot() != null) {
             x = 725 * dimMult;
             y = 730 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(2,2)).getLoot(), size);

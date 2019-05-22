@@ -336,6 +336,8 @@ public class Match implements Runnable
                 break;
         }
 
+        updateViews();
+
         //Choose power
         Power chosen;
 
@@ -705,7 +707,8 @@ public class Match implements Runnable
     public static void disconnectPlayer(Player pl, List<Player> players)
     {
         Logger.getGlobal().log( Level.INFO, pl.getNick()+" si è disconnesso" );
-        pl.getConn().cancelConnection();
+        if(pl.getConn() != null)
+            pl.getConn().cancelConnection();
         pl.setConn(null);
 
         broadcastMessage(pl.getNick() + " si è disconnesso", players);

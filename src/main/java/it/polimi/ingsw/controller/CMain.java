@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.view.CLInterface;
+import it.polimi.ingsw.view.GuiInterface;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.net.InetAddress;
@@ -47,7 +48,7 @@ public class CMain
         }
         else {
             //TODO Instance GUI Interface
-            ui = null;
+            ui = new GuiInterface();
         }
 
         //RMI or Socket?
