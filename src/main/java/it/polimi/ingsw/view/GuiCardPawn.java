@@ -15,7 +15,7 @@ public class GuiCardPawn extends GuiCard {
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
 
         setOnMousePressed(e ->{
-            System.out.println("Clicked " + pl.getCharacter().toString());
+            System.out.println(e.getX() + "   " + e.getY() + "Clicked " + pl.getCharacter().toString() + getLayoutX()  + "  " + getLayoutY() + "  " + size);
         });
         setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 10, 0.5, 0, 0);"));
         setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 0, 0, 0, 0);") );

@@ -161,10 +161,14 @@ public class Gui extends Application{
         //infoTextCanvas needs to be before the clickable ones because the PickOnBounds doesn't work
         masterPane.getChildren().addAll( canvas, infoTextCanvas,  a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction);
 
+        //FIXME the players are not clickable because the click cell area is blocking them
+
         for(GuiCardClickableArea[] t:mapOfCells)
             for(GuiCardClickableArea s:t)
-                if(s!=null)
+                if(s!=null) {
+                    s.setPickOnBounds(false);
                     masterPane.getChildren().add(s);
+                }
 
         return masterPane;
     }
@@ -574,6 +578,7 @@ public class Gui extends Application{
         try{Thread.sleep(1500);}catch (InterruptedException e){ ; }
 
         exchanger = GuiExchanger.getInstance();
+        //todo implement a wait / notify way like for the NONE
         while(exchanger.getActualInteraction()!=Interaction.CLOSEAPP) {
             if (exchanger.guiRequestIncoming()) {
                 System.out.println(exchanger.getActualInteraction().toString());
@@ -777,7 +782,7 @@ public class Gui extends Application{
      * Used for: chooseTarget
      */
     private void chooseEnemy(){
-        showInfoOnMap(exchanger.getMessage());
+       showInfoOnMap(exchanger.getMessage());
 
         List<Player> choosable = (List<Player>) exchanger.getRequest();
 
