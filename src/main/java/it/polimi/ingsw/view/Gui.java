@@ -644,44 +644,37 @@ public class Gui extends Application{
      */
     private void chooseBaseAction(){
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
+        showInfoOnMap(exchanger.getMessage());
         List<Action> possible = (List<Action>) exchanger.getRequest();
 
+        javafx.event.EventHandler<javafx.scene.input.MouseEvent> onClick;
+
         for(Action a:possible){
+            onClick = (e ->{
+                exchanger.setAnswer(a);
+                clearAllActions();
+                exchanger.setActualInteraction(Interaction.NONE);
+                //After finishing the click event, reset all the events to the original option -> just call the redraw game
+            });
             switch (a.getLambdaID()){
                 case "a-b1":
-                    runAction.setOnMousePressed(e -> {
-                        exchanger.setAnswer(a);
-                        exchanger.setActualInteraction(Interaction.NONE);
-                        //After finishing the click event, reset all the events to the original option -> just call the redraw game
-                    });
+                    runAction.setOnMousePressed(onClick);
                     runAction.setEventsChoosable();
                     break;
                 case "a-b2":
-                    pickAction.setOnMousePressed(e -> {
-                        exchanger.setAnswer(a);
-                        exchanger.setActualInteraction(Interaction.NONE);
-                    });
+                    pickAction.setOnMousePressed(onClick);
                     pickAction.setEventsChoosable();
                     break;
                 case "a-b3":
-                    shootAction.setOnMousePressed(e -> {
-                        exchanger.setAnswer(a);
-                        exchanger.setActualInteraction(Interaction.NONE);
-                    });
+                    shootAction.setOnMousePressed(onClick);
                     shootAction.setEventsChoosable();
                     break;
                 case "a-a1":
-                    adrPickAction.setOnMousePressed(e -> {
-                        exchanger.setAnswer(a);
-                        exchanger.setActualInteraction(Interaction.NONE);
-                    });
+                    adrPickAction.setOnMousePressed(onClick);
                     adrPickAction.setEventsChoosable();
                     break;
                 case "a-a2":
-                    adrShootAction.setOnMousePressed(e -> {
-                        exchanger.setAnswer(a);
-                        exchanger.setActualInteraction(Interaction.NONE);
-                    });
+                    adrShootAction.setOnMousePressed(onClick);
                     adrShootAction.setEventsChoosable();
                     break;
                 default:
@@ -689,6 +682,15 @@ public class Gui extends Application{
                 //todo add the finalfrenzy ones
             }
         }
+    }
+
+    public void clearAllActions(){
+        runAction.resetEventsStyle();
+        pickAction.resetEventsStyle();
+        shootAction.resetEventsStyle();
+        adrPickAction.resetEventsStyle();
+        adrShootAction.resetEventsStyle();
+        //todo add the frenzy
     }
 
     /**

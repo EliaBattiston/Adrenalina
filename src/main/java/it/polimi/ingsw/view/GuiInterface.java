@@ -36,6 +36,9 @@ public class GuiInterface implements UserInterface{
             Fighter f= getFighter();
             int s = getSkullNum();
 
+            chooseFrenzy();
+
+
             System.out.println("IP choosen: " + ip + ", RMI: " + isRMI + "  " + nick + "   " + phrase);
 
             System.out.println(f.toString() + "  " + s);
@@ -79,14 +82,13 @@ public class GuiInterface implements UserInterface{
 
             //getNickname();
 
-            /*List<Integer> rooms = new ArrayList<>();
+            List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
             rooms.add(2);
             rooms.add(3);
 
             Integer choosen = chooseRoom(rooms, false);
 
-            chooseFrenzy();*/
 
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));
