@@ -33,7 +33,6 @@ public class Timeout
         }
         catch (TimeoutException te) {
             Match.broadcastMessage(m.getActive() + " è stato troppo lento, il turno è terminato", m.getGame().getPlayers());
-            Match.disconnectPlayer(m.getActive(), m.getGame().getPlayers());
         }
 
         if (!executor.isTerminated())

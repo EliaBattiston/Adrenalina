@@ -139,9 +139,9 @@ public class Game {
      */
     public String jsonSerialize()
     {
-        GsonBuilder gsonBilder = new GsonBuilder();
-        gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
-        Gson gson = gsonBilder.create();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        Gson gson = gsonBuilder.create();
 
         return gson.toJson(this);
     }
