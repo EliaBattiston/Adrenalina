@@ -28,8 +28,11 @@ import static java.lang.Math.abs;
 
 
 //TODO check inputs like the ip
+//TODO font and scale for the settings
 public class Gui extends Application{
     static String imgRoot = "/images/";//for the entire package only
+    final static String MYFONT = "Verdana";
+    final static double SETTINGSFONTDIM = 28;
     private static Executor uiExec = Platform::runLater ;
 
     //Data
@@ -68,7 +71,7 @@ public class Gui extends Application{
     public void start(Stage primaryStage){
         primaryS = primaryStage;
 
-        backgroundWidth = 1920;
+        backgroundWidth = 960;
         backgroundHeight = backgroundWidth*9/16;
 
         dimMult = backgroundWidth/1920;
@@ -684,7 +687,7 @@ public class Gui extends Application{
         }
     }
 
-    public void clearAllActions(){
+    private void clearAllActions(){
         runAction.resetEventsStyle();
         pickAction.resetEventsStyle();
         shootAction.resetEventsStyle();
@@ -781,6 +784,7 @@ public class Gui extends Application{
         List<GuiCardPawn> pawns = playersPawns.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
         for(GuiCardPawn p : pawns){
+            System.out.println(p.getPlayer().getCharacter().toString());//debug
             p.setOnMousePressed(e -> {
                 System.out.println("Clicked player: " + p.getPlayer().getNick());
                 exchanger.setAnswer(p.getPlayer());
@@ -862,18 +866,22 @@ public class Gui extends Application{
         GridPane grid = gridMaker();
 
         Label l = new Label(message);
+        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         ToggleGroup group = new ToggleGroup();
         RadioButton radio1 = new RadioButton("Socket");
         radio1.setToggleGroup(group);
         radio1.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        radio1.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         radio1.setSelected(true);
         RadioButton radio2 = new RadioButton("RMI");
         radio2.setToggleGroup(group);
         radio2.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        radio2.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
 
         Button submit = new Button("Conferma");
+        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         submit.setOnAction((e)->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
