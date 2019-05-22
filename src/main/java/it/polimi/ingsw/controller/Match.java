@@ -211,11 +211,12 @@ public class Match implements Runnable
             {
                 endGame();
             }
+            else {
+                updateViews();
 
-            updateViews();
-
-            System.out.println("\u001B[31mFine turno " + turnNumber + "\u001B[0m");
-            turnNumber++;
+                System.out.println("\u001B[31mFine turno " + turnNumber + "\u001B[0m");
+                turnNumber++;
+            }
 
             try (PrintWriter out = new PrintWriter("matches/" + this.hashCode() + ".adr")) {
                 out.println(gson.toJson(this));
@@ -663,8 +664,26 @@ public class Match implements Runnable
             }
         }
 
+        List<Player> winners = new ArrayList<>(game.getPlayers());
+
+        Collections.sort(winners, new Comparator<Player>() {
+            @Override
+            public int compare(Player o1, Player o2) {
+                return o2.getPoints() - o1.getPoints();
+            }
+        });
+
+        for(Player p: game.getPlayers()) {
+            try {
+                if(p.getConn() != null)
+                    p.getConn().endGame(winners);
+            }
+            catch (ClientDisconnectedException e) {
+                //disconnectPlayer(p, null);
+            }
+        }
         System.out.println("\u001b[34mIl gioco è terminato\u001B[0m");
-        broadcastMessage("La partita è terminata!", game.getPlayers()); //TODO add winner
+        //broadcastMessage("La partita è terminata!", game.getPlayers()); //TODO add winner
     }
 
     /**

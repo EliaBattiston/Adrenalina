@@ -296,6 +296,14 @@ public class GuiInterface implements UserInterface{
     }
 
     /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     */
+    public void endGame(List<Player> winnerList) {
+        exchanger.setActualInteraction(Interaction.CLOSEAPP);
+    }
+
+    /**
      * Prints out a general message to the client interface
      * @param message Message to be printed
      */

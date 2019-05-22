@@ -248,6 +248,14 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
     }
 
     /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     */
+    public void endGame(List<Player> winnerList) {
+        user.endGame(winnerList);
+    }
+
+    /**
      * Sends a general message to the user to be displayed
      * @param payload Message payload
      */

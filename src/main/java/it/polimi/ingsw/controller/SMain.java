@@ -263,7 +263,7 @@ public class SMain
                     for (Player p : waiting[i].getGame().getPlayers()) {
                         if (p.getNick().equals(nickname)) {
                             String nick = p.getNick();
-                            println("Giocatore " + nick + " disconnesso");
+                            println("Giocatore " + nick + " rimosso dalla lista di attesa");
                             waiting[i].getGame().removePlayer(p);
                             if (waiting[i].getGame().getPlayers().size() == 2)
                                 cancelTimer(i + MINSKULLS);
@@ -276,7 +276,7 @@ public class SMain
                 for (Match m : matches) {
                     for (Player p : m.getGame().getPlayers()) {
                         if (p.getNick().equals(nickname)) {
-                            println("Giocatore " + p.getNick() + " rimosso dalla lista di attesa");
+                            println("Giocatore " + p.getNick() + " disconnesso");
                             p.getConn().cancelConnection();
                             p.setConn(null);
                         }
@@ -333,10 +333,23 @@ public class SMain
 
             if(waiting[index].getGame().getPlayers().size() >= 3) {
                 println("Partita avviata");
-                matches.add(waiting[index]);
-                Thread matchThread = new Thread (matches.get(matches.indexOf(waiting[index])));
-                matchThread.start();
+                Match match = waiting[index];
                 waiting[index] = null;
+                matches.add(match);
+                Thread matchThread = new Thread (matches.get(matches.indexOf(match)));
+                matchThread.start();
+
+                Thread waitingComplete = new Thread(() -> {
+                    try {
+                        matchThread.join();
+                        matches.remove(match);
+                    }
+                    catch (InterruptedException e) {
+                        ;
+                    }
+                });
+                waitingComplete.start();
+
                 startedTimer[index] = false;
             }
             else {

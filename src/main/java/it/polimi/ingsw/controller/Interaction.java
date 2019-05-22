@@ -29,5 +29,6 @@ public enum Interaction {
     SERVERIP,
     CHOOSEBASEACTION,
     MESSAGE,
-    PING
+    PING,
+    ENDGAME
 }

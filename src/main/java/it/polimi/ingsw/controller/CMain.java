@@ -42,7 +42,6 @@ public class CMain
             ui = new CLInterface();
         }
         else {
-            //TODO Instance GUI Interface
             ui = new GuiInterface();
         }
 

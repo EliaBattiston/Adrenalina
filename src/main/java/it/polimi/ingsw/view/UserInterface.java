@@ -155,6 +155,12 @@ public interface UserInterface
     Power choosePower(List<Power> inHand, boolean mustChoose);
 
     /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     */
+    public void endGame(List<Player> winnerList);
+
+    /**
      * Prints out a general message to the client interface
      * @param message Message to be printed
      */

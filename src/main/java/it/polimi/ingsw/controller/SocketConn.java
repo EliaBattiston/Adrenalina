@@ -481,6 +481,22 @@ public class SocketConn implements Connection {
     }
 
     /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     * @throws ClientDisconnectedException In case of client unexpected disconnection
+     */
+    public void endGame(List<Player> winnerList) throws ClientDisconnectedException {
+        synchronized (lock) {
+            Payload load = new Payload();
+            load.setType(Interaction.ENDGAME);
+            load.setParameters(gson.toJson(winnerList));
+            send(gson.toJson(load));
+            //Needed to complete the connection protocol
+            receive();
+        }
+    }
+
+    /**
      * Sends a general message to the user to be displayed
      * @param payload Message payload
      * @throws ClientDisconnectedException in case of client unexpected disconnection

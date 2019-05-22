@@ -44,6 +44,7 @@ public class CLInterface implements UserInterface {
      */
     private static final int CELLDIM = 20;
     private static final int DOORDIM = 4;
+    private static final int TOPSPACE = 50;
 
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BOLD = "\u001B[1m";
@@ -90,6 +91,13 @@ public class CLInterface implements UserInterface {
         in = new Scanner(System.in);
         stdout = new PrintWriter(System.out);
         log = new ArrayList<>();
+
+        println("    ___       __                      ___                ___    __  _______  _____");
+        println("   /   | ____/ /_______  ____  ____ _/ (_)___  ____ _   /   |  /  |/  / __ \\/ ___/");
+        println("  / /| |/ __  / ___/ _ \\/ __ \\/ __ `/ / / __ \\/ __ `/  / /| | / /|_/ / / / / __ \\ ");
+        println(" / ___ / /_/ / /  /  __/ / / / /_/ / / / / / / /_/ /  / ___ |/ /  / / /_/ / /_/ / ");
+        println("/_/  |_\\__,_/_/   \\___/_/ /_/\\__,_/_/_/_/ /_/\\__,_/  /_/  |_/_/  /_/\\____/\\____/  ");
+        println("");
     }
 
     /**
@@ -320,7 +328,8 @@ public class CLInterface implements UserInterface {
      */
     public void updateGame(MatchView matchView) {
         view = matchView;
-        println("");
+        for(int i = 0; i < TOPSPACE; i++)
+            println("");
         map(null, null);
         logInfo();
         skullsInfo();
@@ -1681,5 +1690,25 @@ public class CLInterface implements UserInterface {
         }
         while (pos < 0 || pos >= possibleIP.size());
         return possibleIP.get(pos);
+    }
+
+    /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     */
+    public void endGame(List<Player> winnerList) {
+        for(int i = 0; i < TOPSPACE; i++)
+            println("");
+        println("----------------- La partità è terminata --------------------\n");
+        println(ANSI_BOLD + "                         Classifica" + ANSI_RESET);
+        println(String.format("Pos.    %-40s Punti", "Giocatore"));
+        for(int i = 0; i < winnerList.size(); i++) {
+            String bold = "";
+            if(winnerList.get(i).getNick().equals(view.getMyPlayer().getNick()))
+                bold = ANSI_BOLD;
+            println(bold + String.format("%4d° - %-40s %5d", (i + 1), winnerList.get(i).getNick(), winnerList.get(i).getPoints()) + ANSI_RESET);
+        }
+        println("\n\nAlla prossima!");
+        System.exit(0);
     }
 }

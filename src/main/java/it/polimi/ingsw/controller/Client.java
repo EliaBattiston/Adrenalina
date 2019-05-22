@@ -184,6 +184,13 @@ public interface Client extends Remote
     public Power choosePower(List<Power> inHand, boolean mustChoose) throws RemoteException;
 
     /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     * @throws RemoteException If something goes wrong with the connection
+     */
+    public void endGame(List<Player> winnerList) throws RemoteException;
+
+    /**
      * Sends a general message to the user to be displayed
      * @param payload Message payload
      * @throws RemoteException If something goes wrong with the connection

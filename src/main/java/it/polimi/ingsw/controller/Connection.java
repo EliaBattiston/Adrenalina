@@ -181,6 +181,13 @@ public interface Connection extends Remote
     public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException;
 
     /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     * @throws ClientDisconnectedException In case of client unexpected disconnection
+     */
+    public void endGame(List<Player> winnerList) throws ClientDisconnectedException;
+
+    /**
      * Sends a general message to the user to be displayed
      * @param payload Message payload
      * @throws ClientDisconnectedException

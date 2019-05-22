@@ -244,6 +244,14 @@ public class SocketClient implements Client {
     }
 
     /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     */
+    public void endGame(List<Player> winnerList) {
+        user.endGame(winnerList);
+    }
+
+    /**
      * Sends a general message to the user to be displayed
      * @param payload Message payload
      */
@@ -471,6 +479,10 @@ public class SocketClient implements Client {
                 }
                 case PING:
                     answer.setType(Interaction.PING);
+                    break;
+                case ENDGAME:
+                    ArrayList<Player> param = gson.fromJson(message.getParameters(), new TypeToken<List<Player>>() {}.getType());
+                    endGame(param);
                 default:
                     answer.setType(null);
             }

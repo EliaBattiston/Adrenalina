@@ -6,7 +6,7 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.view.UserInterface;
 
 /**
- * Main class for the AIClient
+ * Main class for the AInterface
  */
 public class AIMain
 {

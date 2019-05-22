@@ -379,6 +379,20 @@ public class RMIConn implements Connection, Serializable
     }
 
     /**
+     * Sends to the client the list of players in winning order and notifies the end of the game
+     * @param winnerList Ordered players' list
+     * @throws ClientDisconnectedException In case of client unexpected disconnection
+     */
+    public void endGame(List<Player> winnerList) throws ClientDisconnectedException {
+        try {
+            client.endGame(winnerList);
+        }
+        catch (Exception e) {
+            throw new ClientDisconnectedException();
+        }
+    }
+
+    /**
      * Sends a general message to the user to be displayed
      * @param payload Message payload
      * @throws ClientDisconnectedException
