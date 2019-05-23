@@ -9,14 +9,13 @@ import it.polimi.ingsw.model.CellAdapter;
 import it.polimi.ingsw.model.Fighter;
 import it.polimi.ingsw.model.Player;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,6 +43,11 @@ public class SMain
      * List containing all currently active matches
      */
     private List<Match> matches;
+
+    /**
+     * List of matches saved from precedent session
+     */
+    private List<Match> loadedMatches;
 
     private boolean stop;
     private Timer[] timer;
@@ -110,24 +114,37 @@ public class SMain
             rmi = new RMIServer();
             //TODO load saved matches
             matches = new ArrayList<>();
+            loadedMatches = new ArrayList<>();
 
             //Persistency
-            /*Gson gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
+            Gson gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
+            println("gson creato");
             JsonReader reader;
             File matchesDir = new File("matches/");
+            println(matchesDir.toString());
             File[] listOfMatches = matchesDir.listFiles();
+            println( Integer.toString(listOfMatches.length) );
+            println(listOfMatches.toString());
 
-            for (File file : listOfMatches) {
-                if (file.isFile()) {
-                    reader = new JsonReader(new FileReader(file));
-                    matches.add(gson.fromJson(reader, Match.class));
+            if(listOfMatches != null) {
+                for (File file : listOfMatches) {
+                    if (file.isFile()) {
+                        try {
+                            reader = new JsonReader(new FileReader(file));
+                            loadedMatches.add(gson.fromJson(reader, Match.class));
+                            reader.close();
+                            file.delete();
+                        }
+                        catch(Exception e){
+                            Logger.getGlobal().log(Level.SEVERE, file.getName() + " is corrupted");
+                        }
+                    }
+                }
+
+                for (Match m : loadedMatches) {
+                    m.getGame().getMap().fixPawns(m.getGame().getPlayers());
                 }
             }
-
-            for(Match m : matches)
-            {
-                m.getGame().getMap().fixPawns(m.getGame().getPlayers());
-            }*/
 
             stop = false;
 
@@ -140,6 +157,21 @@ public class SMain
                 startedTimer[i] = false;
             }
             println("Adrenalina Server ready");
+
+            Runtime.getRuntime().addShutdownHook(
+                new Thread("app-shutdown-hook") {
+                    @Override
+                    public void run() {
+                        Gson gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
+                        for(Match m: loadedMatches) {
+                            try (PrintWriter out = new PrintWriter("matches/" + m.hashCode() + ".adr")) {
+                                out.println(gson.toJson(m));
+                            } catch (FileNotFoundException e) {
+                                Logger.getGlobal().log(Level.SEVERE, "Error in writing persistance file", e);
+                            }
+                        }
+                    }
+                });
 
             listen();
         }
@@ -193,6 +225,23 @@ public class SMain
                     acceptedNick = true;
 
                     nickname = connection.getNickname();
+
+                    for (Match m : loadedMatches) {
+                        for (Player p : m.getGame().getPlayers()) {
+                            if (p.getNick().equals(nickname)) {
+                                if (p.getConn() != null)
+                                    acceptedNick = false;
+                                else {
+                                    player = p;
+                                    List<Player> broadcast = new ArrayList<>();
+                                    broadcast.addAll(m.getGame().getPlayers());
+                                    broadcast.remove(p);
+                                    m.broadcastMessage(p.getNick() + " si è riconnesso", broadcast);
+                                }
+                            }
+                        }
+                    }
+
                     for (Match m : matches) {
                         for (Player p : m.getGame().getPlayers()) {
                             if (p.getNick().equals(nickname)) {
@@ -223,6 +272,23 @@ public class SMain
 
             if (player != null) {
                 player.setConn(connection);
+
+                for(int i = 0; i < loadedMatches.size(); i++) {
+                    Match m = loadedMatches.get(i);
+                    Boolean complete = true;
+                    for(Player p: m.getGame().getPlayers()) {
+                        if(p.getConn() == null)
+                            complete = false;
+                    }
+                    if(complete) {
+                        matches.add(m);
+                        Thread matchThread = new Thread (m);
+                        matchThread.start();
+                        loadedMatches.remove(m);
+                        i--;
+                    }
+                }
+
                 println("Il giocatore " + player.getNick() + " si è riconnesso.");
                 player.getConn().sendMessage("Bentornato in Adrenalina! La tua partita è ancora in corso, aspetta il caricamento dalla mappa");
                 ClientConnThread clientT = new ClientConnThread(this, player);
@@ -362,7 +428,7 @@ public class SMain
                 Match match = waiting[index];
                 waiting[index] = null;
                 matches.add(match);
-                Thread matchThread = new Thread (matches.get(matches.indexOf(match)));
+                Thread matchThread = new Thread (match);
                 matchThread.start();
 
                 Thread waitingComplete = new Thread(() -> {

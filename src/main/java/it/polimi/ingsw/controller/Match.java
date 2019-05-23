@@ -273,6 +273,7 @@ public class Match implements Runnable
         //Defining needed variables
         List<Action> availableActions; //Actions the user can currently do
         List<Action> feasible = new ArrayList<>();
+        Action chosen;
 
         //Check if spawning is needed
         if(!active.isSpawned())
@@ -302,7 +303,11 @@ public class Match implements Runnable
             }
 
             try {
-                active.getConn().chooseAction(feasible, true).execute(active, game.getMap(), game);
+                chosen = active.getConn().chooseAction(feasible, true);
+                chosen.execute(active, game.getMap(), game);
+
+                if(chosen.getLambdaID().equals("a-p"))
+                    actionsNumber++;
             }
             catch(ClientDisconnectedException e) {
                 disconnectPlayer(active, game.getPlayers());
