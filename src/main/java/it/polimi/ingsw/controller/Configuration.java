@@ -13,8 +13,9 @@ import java.io.FileReader;
  */
 public class Configuration
 {
-    private int startMatchSeconds;
-    private int playerTurnSeconds;
+    private final int startMatchSeconds;
+    private final int playerTurnSeconds;
+    private final int minPlayers;
 
     private static Configuration instance;
 
@@ -42,15 +43,7 @@ public class Configuration
     {
         startMatchSeconds = 60;
         playerTurnSeconds = 120;
-    }
-
-    public static void main(String[] args)
-    {
-        Configuration c = Configuration.getInstance();
-
-        System.out.println(c.getStartMatchSeconds());
-        System.out.println(c.getPlayerTurnSeconds());
-
+        minPlayers = 3;
     }
 
     public int getStartMatchSeconds()
@@ -61,5 +54,9 @@ public class Configuration
     public int getPlayerTurnSeconds()
     {
         return playerTurnSeconds;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
     }
 }

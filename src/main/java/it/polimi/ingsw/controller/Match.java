@@ -189,7 +189,8 @@ public class Match implements Runnable
 
         while(phase != GamePhase.ENDED)
         {
-            //TODO add check if there are less than 3 players
+            if(game.getPlayers().stream().map(p->p.getConn()).filter(Objects::nonNull).count() < Configuration.getInstance().getMinPlayers())
+                phase = GamePhase.ENDED;
 
             if(active.getConn() != null)
             {
@@ -783,5 +784,13 @@ public class Match implements Runnable
     public Player getActive()
     {
         return active;
+    }
+
+    /**
+     * Fixes the active player reference after a persistent game is loaded
+     */
+    public void fixActive()
+    {
+        active = game.getPlayer(active.getNick());
     }
 }

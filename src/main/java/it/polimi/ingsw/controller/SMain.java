@@ -118,13 +118,9 @@ public class SMain
 
             //Persistency
             Gson gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
-            println("gson creato");
             JsonReader reader;
             File matchesDir = new File("matches/");
-            println(matchesDir.toString());
             File[] listOfMatches = matchesDir.listFiles();
-            println( Integer.toString(listOfMatches.length) );
-            println(listOfMatches.toString());
 
             if(listOfMatches != null) {
                 for (File file : listOfMatches) {
@@ -143,6 +139,7 @@ public class SMain
 
                 for (Match m : loadedMatches) {
                     m.getGame().getMap().fixPawns(m.getGame().getPlayers());
+                    m.fixActive();
                 }
             }
 

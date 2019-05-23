@@ -1131,7 +1131,7 @@ public class CLInterface implements UserInterface {
 
         map(null, destinations);
 
-        print("\nMovimenti possibili:");
+        print("\nMovimenti possibili: ");
         for(Integer point: options) {
             print(point + " ");
         }
