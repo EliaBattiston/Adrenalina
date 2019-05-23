@@ -575,7 +575,7 @@ public class Gui extends Application{
 
         //TODO implement the mustChoose for the ones that need it
         //On my linux (Andrea) I need to wait a while the javafx app before starting the tests
-        try{Thread.sleep(1500);}catch (InterruptedException e){ ; }
+        try{Thread.sleep(500);}catch (InterruptedException e){ ; }
 
         exchanger = GuiExchanger.getInstance();
         //todo implement a wait / notify way like for the NONE
@@ -587,7 +587,8 @@ public class Gui extends Application{
                         chooseBaseAction();
                         break;
                     case CHOOSEWEAPONACTION:
-                        chooseWeaponAction();
+                        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+                        uiExec.execute(()-> chooseWeaponAction());
                         break;
                     case CHOOSEWEAPON:
                     case GRABWEAPON:
@@ -702,11 +703,11 @@ public class Gui extends Application{
         l.setTranslateY(y);
         l.setTextFill(javafx.scene.paint.Color.WHITE);
         l.setFont(Font.font(MYFONT, dim));
+        l.setWrapText(true);
         return l;
     }
 
     private void chooseWeaponAction(){
-        exchanger.setActualInteraction(Interaction.WAITINGUSER);
         showInfoOnMap(exchanger.getMessage());
         List<Action> possible = (List<Action>) exchanger.getRequest();
 
@@ -738,15 +739,30 @@ public class Gui extends Application{
 
         popupCanvas.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( Gui.imgRoot + "weapon/weapon" + lambdaId + ".png" ), cardX, cardY, cardW, cardH);
 
-        double titleDim = SETTINGSFONTDIM * 1.3;
-        for(Action a: possible) {
-            Label title = createLabel(a.getName(), xText, yText, titleDim*dimMult);
-            yText += 30;
-            Label description = createLabel(a.getDescription(), xText, yText, SETTINGSFONTDIM*dimMult);
-            popupPane.getChildren().addAll(title, description);
-        }
+        //Text and buttons
+        GridPane grid = gridMaker(backgroundWidth - xText - cardX - 10*dimMult);
 
-        uiExec.execute(()-> masterPane.getChildren().add(popupPane));
+        double titleDim = SETTINGSFONTDIM * 1.3;
+        int row = 0;
+        for(Action a: possible) {
+            Label title = new Label(a.getName());
+            //title.setMaxWidth(backgroundWidth - xText - cardX - 10*dimMult);
+            grid.add(title,0,row++);
+            yText +=  title.getHeight() + 10*dimMult;
+            Label description = new Label(a.getDescription());
+            //description.setMaxWidth(backgroundWidth - xText - cardX - 10*dimMult);
+            grid.add(description,0,row++);
+
+            yText += description.getHeight() + 15*dimMult ;
+        }
+        StackPane.setAlignment(grid, Pos.TOP_LEFT);
+        //grid.setLayoutX(xText);
+        //grid.setLayoutY(yText);
+
+        popupPane.getChildren().addAll(grid);
+
+
+        masterPane.getChildren().add(popupPane);
 
         try{
             Thread.sleep(2000);
@@ -881,7 +897,7 @@ public class Gui extends Application{
         uiExec.execute(() -> dialog.accept(message));
     }
 
-    private GridPane gridMaker(){
+    private GridPane gridMaker(double width){
         GridPane grid = new GridPane();
         double maxWidth = 480 * dimMult;
 
@@ -903,7 +919,7 @@ public class Gui extends Application{
      */
     private void askSetting(String message){
         StackPane root = initializerBackground();
-        GridPane grid = gridMaker();
+        GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
@@ -934,7 +950,7 @@ public class Gui extends Application{
 
     private void askRMI(String message){
         Pane root = initializerBackground();
-        GridPane grid = gridMaker();
+        GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
         l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
@@ -976,7 +992,7 @@ public class Gui extends Application{
 
     private void askFighter(String message){
         Pane root = initializerBackground();
-        GridPane grid = gridMaker();
+        GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
@@ -1017,7 +1033,7 @@ public class Gui extends Application{
 
     private void askSkulls(String message){
         Pane root = initializerBackground();
-        GridPane grid = gridMaker();
+        GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
@@ -1193,7 +1209,7 @@ public class Gui extends Application{
 
     private void askMap(String message){
         Pane root = initializerBackground();
-        GridPane grid = gridMaker();
+        GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
@@ -1231,7 +1247,7 @@ public class Gui extends Application{
 
     private void askFrenzy(String message){
         Pane root = initializerBackground();
-        GridPane grid = gridMaker();
+        GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));

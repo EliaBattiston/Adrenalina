@@ -51,7 +51,8 @@ public class GuiInterface implements UserInterface{
             players.add(new Player("p5", "!", Fighter.DOZER));
 
             List<Action> actions = new ArrayList<>();
-            actions.add(new Action("try", "asvdsbsd", null, "w2-a"));
+            actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
+            actions.add(new Action("try", "asvdsjnzfjbn jdzfnbkjdzfnbjknzfjbjzfdnbjzfndbjzdhjfjzfnvbjdf<nvijzdnfijbnbsd", null, "w2-a"));
 
             this.chooseAction(actions, false);
 
