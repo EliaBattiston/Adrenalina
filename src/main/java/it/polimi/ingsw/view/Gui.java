@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
@@ -44,6 +45,7 @@ public class Gui extends Application{
     private double backgroundHeight;
     private double dimMult;
     private GraphicsContext gc;
+    private Pane masterPane;
 
     //Canvases
     private List<GuiCardWeapon> lootWeapons;
@@ -121,7 +123,6 @@ public class Gui extends Application{
     }
 
     private Pane drawGame(){
-        Pane masterPane;
         Canvas canvas;
         StackPane myWeapons, MyPowers, weaponsLoot, mapLoot, pawns;
 
@@ -585,6 +586,9 @@ public class Gui extends Application{
                     case CHOOSEBASEACTION:
                         chooseBaseAction();
                         break;
+                    case CHOOSEWEAPONACTION:
+                        chooseWeaponAction();
+                        break;
                     case CHOOSEWEAPON:
                     case GRABWEAPON:
                     case DISCARDWEAPON:
@@ -689,6 +693,48 @@ public class Gui extends Application{
                 //todo add the finalfrenzy ones
             }
         }
+    }
+
+    private void chooseWeaponAction(){
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+        showInfoOnMap(exchanger.getMessage());
+        List<Action> possible = (List<Action>) exchanger.getRequest();
+
+        Pane popupPane = new StackPane();
+        Canvas popupCanvas; //canvas used for popup of weapons action...
+
+        String lambdaId = possible.get(0).getLambdaID();
+        lambdaId = lambdaId.substring(1, lambdaId.indexOf('-'));
+
+        popupCanvas = new Canvas(backgroundWidth, backgroundHeight);
+
+        double x = backgroundWidth * 0.2;
+        double y = backgroundHeight * 0.2;
+        double w = backgroundWidth * 0.6;
+        double h = backgroundHeight * 0.6;
+        double r = 100 * dimMult;
+        double cardX = backgroundWidth * 0.23;
+        double cardY = backgroundHeight * 0.23;
+        double cardH = backgroundHeight * 0.54;
+        double cardW = cardH * ((double) 104)/174;
+
+        popupPane.getChildren().addAll(popupCanvas);
+
+        popupCanvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.rgb(140,140,140,0.8));
+        popupCanvas.getGraphicsContext2D().fillRoundRect(x, y, w, h, r, r);
+
+        popupCanvas.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( Gui.imgRoot + "weapon/weapon" + lambdaId + ".png" ), cardX, cardY, cardW, cardH);
+
+        uiExec.execute(()-> masterPane.getChildren().add(popupCanvas));
+
+        try{
+            Thread.sleep(2000);
+        }catch (Exception e){
+            ;
+        }
+
+        //uiExec.execute(()-> masterPane.getChildren().remove(popupCanvas));
+
     }
 
     private void clearAllActions(){

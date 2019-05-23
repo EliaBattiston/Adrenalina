@@ -50,6 +50,11 @@ public class GuiInterface implements UserInterface{
             players.add(new Player("p4", "!", Fighter.BANSHEE));
             players.add(new Player("p5", "!", Fighter.DOZER));
 
+            List<Action> actions = new ArrayList<>();
+            actions.add(new Action("try", "asvdsbsd", null, "w2-a"));
+
+            this.chooseAction(actions, false);
+
             //Player choosen = chooseTarget(players, true);
 
            // System.out.println(choosen.toString());
@@ -236,8 +241,16 @@ public class GuiInterface implements UserInterface{
     @Override
     public Action chooseAction(List<Action> available, boolean mustChoose) {
         //if id "a-*" -> run, shoot...
+        //todo add frenzy and power
         if(available.get(0).getLambdaID().contains("a-")) {
             exchanger.setRequest(Interaction.CHOOSEBASEACTION, "Scegli un'azione di base", available, true);
+            exchanger.waitFreeToUse();
+            return (Action) exchanger.getAnswer();
+        }
+
+        //weapons
+        if(available.get(0).getLambdaID().contains("w")) {
+            exchanger.setRequest(Interaction.CHOOSEWEAPONACTION, "Scegli l'azione della carta da usare", available, true);
             exchanger.waitFreeToUse();
             return (Action) exchanger.getAnswer();
         }
