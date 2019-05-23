@@ -34,6 +34,7 @@ public class Gui extends Application{
     static String imgRoot = "/images/";//for the entire package only
     final static String MYFONT = "Verdana";
     final static double SETTINGSFONTDIM = 28;
+    final static double POPUPFONTDIM = 24;
 
     //Ui Executor
     private static Executor uiExec = Platform::runLater ;
@@ -61,6 +62,7 @@ public class Gui extends Application{
     private GuiCardClickableArea shootAction;
     private GuiCardClickableArea adrPickAction;
     private GuiCardClickableArea adrShootAction;
+    private GuiCardClickableArea powerAction;
 
     //Move in cells
     private GuiCardClickableArea[][] mapOfCells = new GuiCardClickableArea[4][3];
@@ -170,7 +172,8 @@ public class Gui extends Application{
         cellsClick.setPickOnBounds(false);
 
         //infoTextCanvas needs to be before the clickable ones because the PickOnBounds doesn't work
-        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, runAction, pickAction, shootAction, adrPickAction, adrShootAction);
+        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns,
+                runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
 
         return masterPane;
     }
@@ -465,6 +468,7 @@ public class Gui extends Application{
             shootAction = new GuiCardClickableArea(x, y + 3*actionsY, actionsWidth, actionsHeight);
 
             actionsY = ((float)56)/ 270 * height;
+            powerAction = new GuiCardClickableArea(x + ((float)120)/1121*width, y+actionsY, actionsWidth, actionsHeight);
             adrPickAction = new GuiCardClickableArea(x + ((float)230)/1121*width, y+actionsY, actionsWidth, actionsHeight);
             adrShootAction = new GuiCardClickableArea(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
         }
@@ -691,6 +695,10 @@ public class Gui extends Application{
                     adrShootAction.setOnMousePressed(onClick);
                     adrShootAction.setEventsChoosable();
                     break;
+                case "a-p":
+                    powerAction.setOnMousePressed(onClick);
+                    powerAction.setEventsChoosable();
+                    break;
                 default:
                     break;
                 //todo add the finalfrenzy ones
@@ -722,11 +730,11 @@ public class Gui extends Application{
         double w = backgroundWidth * 0.6;
         double h = backgroundHeight * 0.6;
         double r = 100 * dimMult;
-        double cardX = backgroundWidth * 0.23;
+        double cardX = backgroundWidth * 0.215;
         double cardY = backgroundHeight * 0.23;
         double cardH = backgroundHeight * 0.54;
         double cardW = cardH * ((double) 104)/174;
-        double xGridText = backgroundWidth * 0.26 + cardW;
+        double xGridText = backgroundWidth * 0.24 + cardW;
         double yGridText = backgroundHeight * 0.23;
 
         //backround
@@ -740,21 +748,22 @@ public class Gui extends Application{
 
         //Text and button
         GridPane grid = gridMaker(backgroundWidth * 0.8 - xGridText - 20*dimMult);
+        grid.setVgap(4);
         popupPane.getChildren().addAll(grid);
-        double titleDim = SETTINGSFONTDIM * 1.3;
         int row = 0;
         for(Action a: possible) {
             Label title = new Label(a.getName());
-            title.setFont(new Font(MYFONT,titleDim*dimMult));
+            title.setFont(new Font(MYFONT,POPUPFONTDIM * 1.3 * dimMult));
             title.setWrapText(true);
             grid.add(title,0,row++);
 
             Label description = new Label(a.getDescription());
-            description.setFont(new Font(MYFONT,SETTINGSFONTDIM*dimMult));
+            description.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult));
             description.setWrapText(true);
             grid.add(description,0,row++);
 
             Button buttonAction = new Button("Usa " + a.getName());
+            //buttonAction.setFont(new Font(MYFONT,titleDim*dimMult));
             buttonAction.setOnAction((e)->{
                 System.out.println("Scelto: " + a.getName());
                 exchanger.setAnswer(a);

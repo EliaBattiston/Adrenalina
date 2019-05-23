@@ -45,7 +45,7 @@ public class GuiInterface implements UserInterface{
 */
             this.updateGame(initForTest());
 
-            List<Player> players = new ArrayList<>();
+            /*List<Player> players = new ArrayList<>();
 
             players.add(new Player("p4", "!", Fighter.BANSHEE));
             players.add(new Player("p5", "!", Fighter.DOZER));
@@ -54,7 +54,7 @@ public class GuiInterface implements UserInterface{
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
             actions.add(new Action("try", "asvdsjnzfjbn jdzfnbkjdzfnbjknzfjbjzfdnbjzfndbjzdhjfjzfnvbjdf<nvijzdnfijbnbsd", null, "w2-a"));
 
-            this.chooseAction(actions, false);
+            this.chooseAction(actions, false);*/
 
             //Player choosen = chooseTarget(players, true);
 
@@ -66,7 +66,7 @@ public class GuiInterface implements UserInterface{
             Action cho = chooseAction(a, true);
 
             System.out.println(cho.getName());
-
+*/
             List<Point> dest = new ArrayList<>();
             dest.add(new Point(0,0));
             dest.add(new Point(0,1));
