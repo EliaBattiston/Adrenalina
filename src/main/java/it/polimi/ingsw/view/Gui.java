@@ -34,6 +34,8 @@ public class Gui extends Application{
     static String imgRoot = "/images/";//for the entire package only
     final static String MYFONT = "Verdana";
     final static double SETTINGSFONTDIM = 28;
+
+    //Ui Executor
     private static Executor uiExec = Platform::runLater ;
 
     //Data
@@ -427,7 +429,7 @@ public class Gui extends Application{
         double deltaX = (adrenalineMode?61:63) * pbMult;
 
         gc.setFill(javafx.scene.paint.Color.WHITE);
-        gc.setFont(new Font("Verdana",18*dimMult));
+        gc.setFont(new Font(MYFONT,18*dimMult));
         gc.fillText(player.getNick() + " - " + player.getCharacter().toString(), x, y-(8*dimMult));
 
         gc.drawImage( GuiImagesMap.getImage(imgRoot + "playerBoard/" + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
@@ -558,7 +560,7 @@ public class Gui extends Application{
         double x = 1055 * dimMult;
         double y = 970 * dimMult;
 
-        gc.setFont(new Font("Verdana",18*dimMult));
+        gc.setFont(new Font(MYFONT,18*dimMult));
         gc.setFill(javafx.scene.paint.Color.WHITE); //FIXME it draws the points in black
         gc.strokeText(Integer.toString(points), x, y);
     }
@@ -712,12 +714,8 @@ public class Gui extends Application{
         List<Action> possible = (List<Action>) exchanger.getRequest();
 
         Pane popupPane = new StackPane();
-        Canvas popupCanvas; //canvas used for popup of weapons action...
-
-        String lambdaId = possible.get(0).getLambdaID();
-        lambdaId = lambdaId.substring(1, lambdaId.indexOf('-'));
-
-        popupCanvas = new Canvas(backgroundWidth, backgroundHeight);
+        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        popupPane.getChildren().addAll(canvas);
 
         double x = backgroundWidth * 0.2;
         double y = backgroundHeight * 0.2;
@@ -728,50 +726,52 @@ public class Gui extends Application{
         double cardY = backgroundHeight * 0.23;
         double cardH = backgroundHeight * 0.54;
         double cardW = cardH * ((double) 104)/174;
+        double xGridText = backgroundWidth * 0.26 + cardW;
+        double yGridText = backgroundHeight * 0.23;
 
-        double xText = backgroundWidth * 0.26 + cardW;
-        double yText = backgroundHeight * 0.23;
+        //backround
+        canvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.rgb(140,140,140,0.8));
+        canvas.getGraphicsContext2D().fillRoundRect(x, y, w, h, r, r);
 
-        popupPane.getChildren().addAll(popupCanvas);
+        //card
+        String lambdaId = possible.get(0).getLambdaID();
+        lambdaId = lambdaId.substring(1, lambdaId.indexOf('-'));
+        canvas.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( Gui.imgRoot + "weapon/weapon" + lambdaId + ".png" ), cardX, cardY, cardW, cardH);
 
-        popupCanvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.rgb(140,140,140,0.8));
-        popupCanvas.getGraphicsContext2D().fillRoundRect(x, y, w, h, r, r);
-
-        popupCanvas.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( Gui.imgRoot + "weapon/weapon" + lambdaId + ".png" ), cardX, cardY, cardW, cardH);
-
-        //Text and buttons
-        GridPane grid = gridMaker(backgroundWidth - xText - cardX - 10*dimMult);
-
+        //Text and button
+        GridPane grid = gridMaker(backgroundWidth * 0.8 - xGridText - 20*dimMult);
+        popupPane.getChildren().addAll(grid);
         double titleDim = SETTINGSFONTDIM * 1.3;
         int row = 0;
         for(Action a: possible) {
             Label title = new Label(a.getName());
-            //title.setMaxWidth(backgroundWidth - xText - cardX - 10*dimMult);
+            title.setFont(new Font(MYFONT,titleDim*dimMult));
+            title.setWrapText(true);
             grid.add(title,0,row++);
-            yText +=  title.getHeight() + 10*dimMult;
+
             Label description = new Label(a.getDescription());
-            //description.setMaxWidth(backgroundWidth - xText - cardX - 10*dimMult);
+            description.setFont(new Font(MYFONT,SETTINGSFONTDIM*dimMult));
+            description.setWrapText(true);
             grid.add(description,0,row++);
 
-            yText += description.getHeight() + 15*dimMult ;
+            Button buttonAction = new Button("Usa " + a.getName());
+            buttonAction.setOnAction((e)->{
+                System.out.println("Scelto: " + a.getName());
+                exchanger.setAnswer(a);
+                exchanger.setActualInteraction(Interaction.NONE);
+                masterPane.getChildren().remove(popupPane);
+            });
+            GridPane.setHalignment(buttonAction, HPos.CENTER);
+            grid.add(buttonAction,0,row++);
         }
+        //both alignment are NECESSARY
         StackPane.setAlignment(grid, Pos.TOP_LEFT);
-        //grid.setLayoutX(xText);
-        //grid.setLayoutY(yText);
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setTranslateX(xGridText);
+        grid.setTranslateY(yGridText);
 
-        popupPane.getChildren().addAll(grid);
-
-
+        //Show the pane
         masterPane.getChildren().add(popupPane);
-
-        try{
-            Thread.sleep(2000);
-        }catch (Exception e){
-            ;
-        }
-
-        //uiExec.execute(()-> masterPane.getChildren().remove(popupCanvas));
-
     }
 
     private void clearAllActions(){
@@ -899,16 +899,15 @@ public class Gui extends Application{
 
     private GridPane gridMaker(double width){
         GridPane grid = new GridPane();
-        double maxWidth = 480 * dimMult;
 
         grid.setAlignment(Pos.CENTER);
         //grid.setHgap(10);
         grid.setVgap(10);
-        grid.setMaxWidth(maxWidth);
-        grid.setMinWidth(maxWidth);
+        grid.setMaxWidth(width);
+        grid.setMinWidth(width);
 
         ColumnConstraints cc = new ColumnConstraints();
-        cc.setMinWidth(maxWidth);
+        cc.setMinWidth(width);
         grid.getColumnConstraints().add(cc);
         return grid;
     }
@@ -1076,7 +1075,7 @@ public class Gui extends Application{
         infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);//we use always the same canvas
 
         infoTextCanvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.WHITE);
-        infoTextCanvas.getGraphicsContext2D().setFont(new Font("Verdana",34*dimMult));
+        infoTextCanvas.getGraphicsContext2D().setFont(new Font(MYFONT,34*dimMult));
         infoTextCanvas.getGraphicsContext2D().fillText(message, x, y);
         infoTextCanvas.setPickOnBounds(false);
     }
