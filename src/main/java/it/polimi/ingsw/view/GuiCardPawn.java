@@ -21,7 +21,6 @@ public class GuiCardPawn extends GuiCard {
         setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 0, 0, 0, 0);") );
     }
 
-    //TODO find if there's a way to move the three "inList" methods inside the GuiCard Class
     /**
      * Determine if the card represented by this GuiCard is inside the list
      * @param list of possible matches

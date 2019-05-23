@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 
+//todo make the card darker if it's not charge
 public class GuiCardWeapon extends GuiCard {
     private Weapon weapon;
 

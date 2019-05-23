@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GuiInterface implements UserInterface{
     private GuiExchanger exchanger;
@@ -227,7 +229,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer getSkullNum() {
-        exchanger.setRequest(Interaction.GETSKULLSNUM, "Scegli il numero di teschi da usare", null, true); //todo (after merge) fix the request
+        exchanger.setRequest(Interaction.GETSKULLSNUM, "Scegli il numero di teschi da usare", null, true);
         exchanger.waitFreeToUse();
         return (Integer) exchanger.getAnswer();
     }
@@ -242,7 +244,6 @@ public class GuiInterface implements UserInterface{
     @Override
     public Action chooseAction(List<Action> available, boolean mustChoose) {
         //if id "a-*" -> run, shoot...
-        //todo add frenzy and power
         if(available.get(0).getLambdaID().contains("a-")) {
             exchanger.setRequest(Interaction.CHOOSEBASEACTION, "Scegli un'azione di base", available, true);
             exchanger.waitFreeToUse();
@@ -256,13 +257,9 @@ public class GuiInterface implements UserInterface{
             return (Action) exchanger.getAnswer();
         }
 
-        //todo implement the powers and weapons
-
-        return available.get(new Random().nextInt(available.size()));
-        //if "p-" power
-
-        //if w- action of weapon
-
+        //Not sure 100% there's no other type of action
+        Logger.getGlobal().log(Level.SEVERE, "Action requested can't be handled!!!");
+        return null;
     }
 
     /**
@@ -462,6 +459,7 @@ public class GuiInterface implements UserInterface{
      * @param message Message to be printed
      */
     public void generalMessage(String message){
+        System.out.println(message);
         ;//todo implement
     }
 

@@ -29,10 +29,9 @@ import static java.lang.Math.abs;
 
 
 //TODO check inputs like the ip
-//TODO font and scale for the settings
 public class Gui extends Application{
     static String imgRoot = "/images/";//for the entire package only
-    final static String MYFONT = "Verdana";
+    final static String MYFONT = "EthnocentricRg-Italic";
     final static double SETTINGSFONTDIM = 28;
     final static double POPUPFONTDIM = 24;
 
@@ -75,6 +74,8 @@ public class Gui extends Application{
 
     @Override
     public void start(Stage primaryStage){
+        Font.loadFont(getClass().getResourceAsStream("font/ethnocentric_rg.ttf"), 14);
+
         primaryS = primaryStage;
 
         backgroundWidth = 960;
@@ -86,29 +87,29 @@ public class Gui extends Application{
         Canvas loading = new Canvas(backgroundWidth, backgroundHeight);
         loading.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(imgRoot + "background/adrenalina.jpg"), 0, 0, backgroundWidth, backgroundHeight);
         primaryStage.setScene(new Scene(new StackPane(loading)));
-        //primaryStage.setScene(new Scene(drawGame()));
-        //primaryStage.setResizable(true);
+        primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
         //Event handlers
-        /*primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
             if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
                 dimMult = backgroundWidth / 1920;
 
-                drawDecks();
-                primaryStage.setScene(new Scene(drawGame()));
+                if(match != null) //if it's null it's still in the settings
+                    primaryStage.setScene(new Scene(drawGame()));
+
+                exchanger.resetLastRealInteraction();
             }
-        });*/
+        });
 
         //OnClose
         primaryStage.setOnCloseRequest((t)->{
             Platform.exit();
             System.exit(0);
         });
-
 
        //TODO use this for fixed ratio, find the good way to implement them
         //primaryStage.minHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
@@ -406,7 +407,7 @@ public class Gui extends Application{
         gc.drawImage(GuiImagesMap.getImage(imgRoot + "weapon/weaponBackPile.png"), x, y, width, height);
     }
 
-    private void drawAllPlayersBoards(List<Player> players, boolean adrenalineMode){
+    private void drawAllPlayersBoards(List<Player> players, boolean frenzyMode){
         //dimensions are the same for all the players
         double width = 560 * dimMult;
         double height = 134 * dimMult;
@@ -417,25 +418,25 @@ public class Gui extends Application{
         double deltaY = 169 * dimMult;
 
         for(Player p : players){
-            drawPlayerBoard(p, players, adrenalineMode, width, height, x, y);
+            drawPlayerBoard(p, players, frenzyMode, width, height, x, y);
             y += deltaY;
         }
     }
 
-    private void drawPlayerBoard(Player player, List<Player> players, boolean adrenalineMode, double width, double height, double x, double y){
+    private void drawPlayerBoard(Player player, List<Player> players, boolean frenzyMode, double width, double height, double x, double y){
         double pbMult = width/1123; //(dimMult * width@1080p)/textureWidth -> internal reference based on the card
-        double xDrop = (adrenalineMode?130:116) * pbMult + x;
+        double xDrop = (frenzyMode?130:116) * pbMult + x;
         double yDrop = 116 * pbMult + y;
         double widthDrop = 30 * pbMult;
         double heightDrop = 45 * pbMult;
 
-        double deltaX = (adrenalineMode?61:63) * pbMult;
+        double deltaX = (frenzyMode?61:63) * pbMult;
 
         gc.setFill(javafx.scene.paint.Color.WHITE);
         gc.setFont(new Font(MYFONT,18*dimMult));
         gc.fillText(player.getNick() + " - " + player.getCharacter().toString(), x, y-(8*dimMult));
 
-        gc.drawImage( GuiImagesMap.getImage(imgRoot + "playerBoard/" + player.getCharacter().toString() + (adrenalineMode?"_A":"") + ".png"), x, y, width, height);
+        gc.drawImage( GuiImagesMap.getImage(imgRoot + "playerBoard/" + player.getCharacter().toString() + (frenzyMode?"_F":"") + ".png"), x, y, width, height);
 
         //damages
         for(int i=0; i<12; i++){
@@ -457,9 +458,8 @@ public class Gui extends Application{
         }
 
         //for my player I need to ahve the actions clickable
-        //todo do the finalfrenzy too
-        if(player.getNick().equals(match.getMyPlayer().getNick())){
-            double actionsY = ((float)48)/ 270 * height;
+        if(player.getNick().equals(match.getMyPlayer().getNick()) && !frenzyMode){
+            double actionsY = ((float)45)/ 270 * height;
             double actionsHeight = ((float)42)/270*height;
             double actionsWidth = ((float)69)/1121*width;
 
@@ -468,9 +468,12 @@ public class Gui extends Application{
             shootAction = new GuiCardClickableArea(x, y + 3*actionsY, actionsWidth, actionsHeight);
 
             actionsY = ((float)56)/ 270 * height;
-            powerAction = new GuiCardClickableArea(x + ((float)120)/1121*width, y+actionsY, actionsWidth, actionsHeight);
+            powerAction = new GuiCardClickableArea(x + ((float)116)/1121*width, y+actionsY, actionsWidth, actionsHeight);
             adrPickAction = new GuiCardClickableArea(x + ((float)230)/1121*width, y+actionsY, actionsWidth, actionsHeight);
             adrShootAction = new GuiCardClickableArea(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
+        }
+        else if(frenzyMode && player.getNick().equals(match.getMyPlayer().getNick())){
+            //todo
         }
     }
 
@@ -561,11 +564,13 @@ public class Gui extends Application{
     }
 
     private void drawPoints(int points){
-        double x = 1055 * dimMult;
-        double y = 970 * dimMult;
+        double x = 1045 * dimMult;
+        double y = 990 * dimMult;
 
-        gc.setFont(new Font(MYFONT,18*dimMult));
-        gc.setFill(javafx.scene.paint.Color.WHITE); //FIXME it draws the points in black
+        gc.setFont(new Font(MYFONT,32*dimMult));
+        gc.setFill(javafx.scene.paint.Color.WHITE);
+        gc.setStroke(javafx.scene.paint.Color.BLACK);
+        gc.fillText(Integer.toString(points), x, y);
         gc.strokeText(Integer.toString(points), x, y);
     }
 
@@ -575,84 +580,81 @@ public class Gui extends Application{
     //
 
     private void listenRequests(){
-        //TODO decide how to handle the possibility of a resize while a request in in action. we can:
-        // a) reset the actualInteraction so this code will re-runAction FAST
-        // b) not re-paint all the stuffs but just move&resize them CLEANER
-
         //TODO implement the mustChoose for the ones that need it
-        //On my linux (Andrea) I need to wait a while the javafx app before starting the tests
-        try{Thread.sleep(500);}catch (InterruptedException e){ ; }
+
+        //try{Thread.sleep(500);}catch (InterruptedException e){ ; } //On my linux (Andrea) I need to wait a while the javafx app before starting the tests
 
         exchanger = GuiExchanger.getInstance();
-        //todo implement a wait / notify way like for the NONE
         while(exchanger.getActualInteraction()!=Interaction.CLOSEAPP) {
-            if (exchanger.guiRequestIncoming()) {
-                System.out.println(exchanger.getActualInteraction().toString());
-                switch (exchanger.getActualInteraction()) {
-                    case CHOOSEBASEACTION:
-                        chooseBaseAction();
-                        break;
-                    case CHOOSEWEAPONACTION:
-                        exchanger.setActualInteraction(Interaction.WAITINGUSER);
-                        uiExec.execute(()-> chooseWeaponAction());
-                        break;
-                    case CHOOSEWEAPON:
-                    case GRABWEAPON:
-                    case DISCARDWEAPON:
-                    case RELOAD:
-                        chooseWeaponCard();
-                        break;
-                    case DISCARDPOWER:
-                    case CHOOSEPOWER:
-                        choosePowerCard();
-                        break;
-                    case MOVEPLAYER:
-                    case MOVEENEMY:
-                    case CHOOSEPOSITION:
-                        chooseCell();
-                        break;
-                    case CHOOSETARGET:
-                        chooseEnemy();
-                        break;
-                    case CHOOSEROOM:
-                        showAlert(this::guiChooseRoom, exchanger.getMessage());
-                        break;
-                    case CHOOSEDIRECTION:
-                        showAlert(this::guiChooseDirection, exchanger.getMessage());
-                        break;
-                    case CHOOSEMAP:
-                        showAlert(this::askMap, exchanger.getMessage());
-                        break;
-                    case CHOOSEFRENZY:
-                        showAlert(this::askFrenzy, exchanger.getMessage());
-                        break;
-                    case SERVERIP:
-                    case GETNICKNAME:
-                    case GETPHRASE:
-                        showAlert(this::askSetting, exchanger.getMessage());
-                        break;
-                    case RMIORSOCKET:
-                        showAlert(this::askRMI, exchanger.getMessage());
-                        break;
-                    case GETSKULLSNUM:
-                        showAlert(this::askSkulls, exchanger.getMessage());
-                        break;
-                    case GETFIGHTER:
-                        showAlert(this::askFighter, exchanger.getMessage());
-                        break;
-                    case UPDATEVIEW://todo get the new match
-                        uiExec.execute(() -> {
-                            match = (MatchView) exchanger.getRequest();
-                            primaryS.setScene(new Scene(drawGame()));
-                            exchanger.setActualInteraction(Interaction.NONE);
-                        });
-                        exchanger.setActualInteraction(Interaction.WAITINGUSER);
-                        break;
-                    case NONE:
-                    default:
-                        break;
-                }
+            while (!exchanger.guiRequestIncoming()) //it waits until a request is incoming
+                exchanger.waitRequestIncoming();
+
+            System.out.println(exchanger.getActualInteraction().toString());
+            switch (exchanger.getActualInteraction()) {
+                case CHOOSEBASEACTION:
+                    chooseBaseAction();
+                    break;
+                case CHOOSEWEAPONACTION:
+                    exchanger.setActualInteraction(Interaction.WAITINGUSER);
+                    uiExec.execute(this::chooseWeaponAction);
+                    break;
+                case CHOOSEWEAPON:
+                case GRABWEAPON:
+                case DISCARDWEAPON:
+                case RELOAD:
+                    chooseWeaponCard();
+                    break;
+                case DISCARDPOWER:
+                case CHOOSEPOWER:
+                    choosePowerCard();
+                    break;
+                case MOVEPLAYER:
+                case MOVEENEMY:
+                case CHOOSEPOSITION:
+                    chooseCell();
+                    break;
+                case CHOOSETARGET:
+                    chooseEnemy();
+                    break;
+                case CHOOSEROOM:
+                    showAlert(this::guiChooseRoom, exchanger.getMessage());
+                    break;
+                case CHOOSEDIRECTION:
+                    showAlert(this::guiChooseDirection, exchanger.getMessage());
+                    break;
+                case CHOOSEMAP:
+                    showAlert(this::askMap, exchanger.getMessage());
+                    break;
+                case CHOOSEFRENZY:
+                    showAlert(this::askFrenzy, exchanger.getMessage());
+                    break;
+                case SERVERIP:
+                case GETNICKNAME:
+                case GETPHRASE:
+                    showAlert(this::askSetting, exchanger.getMessage());
+                    break;
+                case RMIORSOCKET:
+                    showAlert(this::askRMI, exchanger.getMessage());
+                    break;
+                case GETSKULLSNUM:
+                    showAlert(this::askSkulls, exchanger.getMessage());
+                    break;
+                case GETFIGHTER:
+                    showAlert(this::askFighter, exchanger.getMessage());
+                    break;
+                case UPDATEVIEW:
+                    uiExec.execute(() -> {
+                        match = (MatchView) exchanger.getRequest();
+                        primaryS.setScene(new Scene(drawGame()));
+                        exchanger.setActualInteraction(Interaction.NONE);
+                    });
+                    exchanger.setActualInteraction(Interaction.WAITINGUSER);
+                    break;
+                case NONE:
+                default:
+                    break;
             }
+
         }
         Platform.exit();
     }
@@ -789,6 +791,7 @@ public class Gui extends Application{
         shootAction.resetEventsStyle();
         adrPickAction.resetEventsStyle();
         adrShootAction.resetEventsStyle();
+        powerAction.resetEventsStyle();
         //todo add the frenzy
     }
 
@@ -847,7 +850,7 @@ public class Gui extends Application{
      * Used for: movePlayer, choosePosition, moveEnemy
      */
     private void chooseCell(){
-        showInfoOnMap(exchanger.getMessage()); //fixme in the chooseCell it doesn't work!!!
+        showInfoOnMap(exchanger.getMessage()); //fixme in the chooseCell (and other times) it doesn't work!!!
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
 
         List<Point> possible = (List<Point>) exchanger.getRequest();
