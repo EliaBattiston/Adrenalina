@@ -123,7 +123,7 @@ public class Gui extends Application{
     private Pane drawGame(){
         Pane masterPane;
         Canvas canvas;
-        StackPane a, b, c, d, e;
+        StackPane myWeapons, MyPowers, weaponsLoot, mapLoot, pawns;
 
         masterPane = new Pane();
 
@@ -141,34 +141,33 @@ public class Gui extends Application{
         drawMyAmmo(match.getMyPlayer().getAmmo());
         drawPoints(10);
 
-        a = drawMyWeapons(match.getMyPlayer().getWeapons());
-        b = drawMyPowers(match.getMyPlayer().getPowers());
-        c = drawWeaponsLoot(match.getGame().getMap());
-        d = drawLootOnMap(match.getGame().getMap());
-        e = drawPawnsOnMap(match.getGame().getMap());
+        myWeapons = drawMyWeapons(match.getMyPlayer().getWeapons());
+        MyPowers = drawMyPowers(match.getMyPlayer().getPowers());
+        weaponsLoot = drawWeaponsLoot(match.getGame().getMap());
+        mapLoot = drawLootOnMap(match.getGame().getMap());
+        pawns = drawPawnsOnMap(match.getGame().getMap());
 
-        a.setPickOnBounds(false);
-        b.setPickOnBounds(false);
-        c.setPickOnBounds(false);
-        d.setPickOnBounds(false);
-        e.setPickOnBounds(false);
+        myWeapons.setPickOnBounds(false);
+        MyPowers.setPickOnBounds(false);
+        weaponsLoot.setPickOnBounds(false);
+        mapLoot.setPickOnBounds(false);
+        pawns.setPickOnBounds(false);
         masterPane.setPickOnBounds(false);
 
         //canvas for text
         infoTextCanvas = new Canvas(backgroundWidth, backgroundHeight);
         infoTextCanvas.setPickOnBounds(false);
 
-        //infoTextCanvas needs to be before the clickable ones because the PickOnBounds doesn't work
-        masterPane.getChildren().addAll( canvas, infoTextCanvas,  a, b, c, d, e, runAction, pickAction, shootAction, adrPickAction, adrShootAction);
-
-        //FIXME the players are not clickable because the click cell area is blocking them
-
+        //canvases for the cells
+        StackPane cellsClick = new StackPane();
         for(GuiCardClickableArea[] t:mapOfCells)
             for(GuiCardClickableArea s:t)
-                if(s!=null) {
-                    s.setPickOnBounds(false);
-                    masterPane.getChildren().add(s);
-                }
+                if(s!=null)
+                    cellsClick.getChildren().add(s);
+        cellsClick.setPickOnBounds(false);
+
+        //infoTextCanvas needs to be before the clickable ones because the PickOnBounds doesn't work
+        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, runAction, pickAction, shootAction, adrPickAction, adrShootAction);
 
         return masterPane;
     }
