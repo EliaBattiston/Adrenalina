@@ -31,12 +31,12 @@ import static java.lang.Math.abs;
 //TODO check inputs like the ip
 public class Gui extends Application{
     static String imgRoot = "/images/";//for the entire package only
-    final static String MYFONT = "EthnocentricRg-Italic";
+    final static String MYFONT = "EthnocentricRg-Italic"; //todo check it doesn't work only on my pc where I have the font installed
     final static double SETTINGSFONTDIM = 28;
     final static double POPUPFONTDIM = 24;
 
     //Ui Executor
-    private static Executor uiExec = Platform::runLater ;
+    private static Executor uiExec = Platform::runLater;
 
     //Data
     private MatchView match;
@@ -48,6 +48,7 @@ public class Gui extends Application{
     private double dimMult;
     private GraphicsContext gc;
     private Pane masterPane;
+    private TextArea logArea;
 
     //Canvases
     private List<GuiCardWeapon> lootWeapons;
@@ -172,9 +173,16 @@ public class Gui extends Application{
                     cellsClick.getChildren().add(s);
         cellsClick.setPickOnBounds(false);
 
-        //infoTextCanvas needs to be before the clickable ones because the PickOnBounds doesn't work
+        logArea = new TextArea();
+        logArea.setLayoutX(1222 * dimMult);
+        logArea.setLayoutY(920 * dimMult);
+        logArea.setMaxWidth(560 * dimMult);
+        logArea.setMaxHeight(134 * dimMult);
+        logArea.setEditable(false);
+        logArea.setStyle("-fx-focus-color: transparent; -fx-text-box-border: transparent;");
+
         masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns,
-                runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
+                runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction, logArea);
 
         return masterPane;
     }
@@ -649,6 +657,11 @@ public class Gui extends Application{
                         exchanger.setActualInteraction(Interaction.NONE);
                     });
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
+                    break;
+                case LOG:
+                   /* if(logArea != null)
+                        logArea.setText(logArea.getText() + "\n" + exchanger.getMessage());*/
+                    exchanger.setActualInteraction(Interaction.NONE);
                     break;
                 case NONE:
                 default:

@@ -30,5 +30,6 @@ public enum Interaction {
     CHOOSEBASEACTION,
     MESSAGE,
     PING,
-    CHOOSEWEAPONACTION
+    CHOOSEWEAPONACTION,
+    LOG
 }

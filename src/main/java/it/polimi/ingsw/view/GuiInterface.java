@@ -460,7 +460,8 @@ public class GuiInterface implements UserInterface{
      */
     public void generalMessage(String message){
         System.out.println(message);
-        ;//todo implement
+        exchanger.setRequest(Interaction.LOG, message, null, true);
+        exchanger.waitFreeToUse();
     }
 
     /**
