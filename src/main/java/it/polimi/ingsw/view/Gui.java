@@ -695,6 +695,16 @@ public class Gui extends Application{
         }
     }
 
+    private Label createLabel(String text, double x, double y, double dim){
+        Label l = new Label(text);
+        StackPane.setAlignment(l, Pos.TOP_LEFT);
+        l.setTranslateX(x);
+        l.setTranslateY(y);
+        l.setTextFill(javafx.scene.paint.Color.WHITE);
+        l.setFont(Font.font(MYFONT, dim));
+        return l;
+    }
+
     private void chooseWeaponAction(){
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
         showInfoOnMap(exchanger.getMessage());
@@ -718,6 +728,9 @@ public class Gui extends Application{
         double cardH = backgroundHeight * 0.54;
         double cardW = cardH * ((double) 104)/174;
 
+        double xText = backgroundWidth * 0.26 + cardW;
+        double yText = backgroundHeight * 0.23;
+
         popupPane.getChildren().addAll(popupCanvas);
 
         popupCanvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.rgb(140,140,140,0.8));
@@ -725,7 +738,15 @@ public class Gui extends Application{
 
         popupCanvas.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( Gui.imgRoot + "weapon/weapon" + lambdaId + ".png" ), cardX, cardY, cardW, cardH);
 
-        uiExec.execute(()-> masterPane.getChildren().add(popupCanvas));
+        double titleDim = SETTINGSFONTDIM * 1.3;
+        for(Action a: possible) {
+            Label title = createLabel(a.getName(), xText, yText, titleDim*dimMult);
+            yText += 30;
+            Label description = createLabel(a.getDescription(), xText, yText, SETTINGSFONTDIM*dimMult);
+            popupPane.getChildren().addAll(title, description);
+        }
+
+        uiExec.execute(()-> masterPane.getChildren().add(popupPane));
 
         try{
             Thread.sleep(2000);
