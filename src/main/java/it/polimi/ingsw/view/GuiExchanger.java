@@ -50,7 +50,7 @@ public class GuiExchanger {
     }
 
     public synchronized void waitFreeToUse(){
-        if(actualInteraction != Interaction.NONE)
+        while(actualInteraction != Interaction.NONE)
             try {
                 wait();
             }catch(InterruptedException e){
@@ -60,7 +60,7 @@ public class GuiExchanger {
     }
 
     public synchronized void waitRequestIncoming(){
-        if(actualInteraction == Interaction.NONE ||
+        while(actualInteraction == Interaction.NONE ||
                 actualInteraction == Interaction.WAITINGUSER ||
                 actualInteraction ==Interaction.SHOWINGMESSAGE)
             try {

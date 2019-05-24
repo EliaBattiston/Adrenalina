@@ -301,7 +301,7 @@ public class SMain
     }
 
     private void matchTimer(int skulls) {
-        long seconds = 10;
+        long seconds = 1;
         //TODO make configuration file to set waiting time
         timer[skulls - MINSKULLS] = new Timer();
         timer[skulls - MINSKULLS].schedule(new TimerTask() {

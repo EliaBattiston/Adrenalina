@@ -49,6 +49,7 @@ public class Gui extends Application{
     private GraphicsContext gc;
     private Pane masterPane;
     private TextArea logArea;
+    private String loggedText;
 
     //Canvases
     private List<GuiCardWeapon> lootWeapons;
@@ -64,6 +65,8 @@ public class Gui extends Application{
     private GuiCardClickableArea adrShootAction;
     private GuiCardClickableArea powerAction;
 
+    private Canvas skipAction;
+
     //Move in cells
     private GuiCardClickableArea[][] mapOfCells = new GuiCardClickableArea[4][3];
 
@@ -76,6 +79,7 @@ public class Gui extends Application{
     @Override
     public void start(Stage primaryStage){
         Font.loadFont(getClass().getResourceAsStream("font/ethnocentric_rg.ttf"), 14);
+        loggedText = "";
 
         primaryS = primaryStage;
 
@@ -174,12 +178,19 @@ public class Gui extends Application{
         cellsClick.setPickOnBounds(false);
 
         logArea = new TextArea();
+        logArea.setFont(new Font(MYFONT, 16*dimMult));
         logArea.setLayoutX(1222 * dimMult);
         logArea.setLayoutY(920 * dimMult);
         logArea.setMaxWidth(560 * dimMult);
         logArea.setMaxHeight(134 * dimMult);
         logArea.setEditable(false);
         logArea.setStyle("-fx-focus-color: transparent; -fx-text-box-border: transparent;");
+        logArea.setText(loggedText);
+        logArea.setScrollTop(90000000);
+
+        skipAction = new Canvas(backgroundWidth, backgroundHeight);
+        skipAction.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(Gui.imgRoot + "skipAction.png"), 40*dimMult, 825*dimMult, 40*dimMult, 40*dimMult);
+        skipAction.setPickOnBounds(false);
 
         masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns,
                 runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction, logArea);
@@ -594,8 +605,7 @@ public class Gui extends Application{
 
         exchanger = GuiExchanger.getInstance();
         while(exchanger.getActualInteraction()!=Interaction.CLOSEAPP) {
-            while (!exchanger.guiRequestIncoming()) //it waits until a request is incoming
-                exchanger.waitRequestIncoming();
+            exchanger.waitRequestIncoming();
 
             System.out.println(exchanger.getActualInteraction().toString());
             switch (exchanger.getActualInteraction()) {
@@ -659,14 +669,30 @@ public class Gui extends Application{
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
                     break;
                 case LOG:
-                   /* if(logArea != null)
-                        logArea.setText(logArea.getText() + "\n" + exchanger.getMessage());*/
+                    loggedText += "\n\n" + exchanger.getMessage();
+                    if(logArea != null)
+                        uiExec.execute(()->{
+                            logArea.setText(loggedText);
+                            logArea.setScrollTop(90000000);
+                        });
+                        //logArea.setText(logArea.getText() + "\n" + exchanger.getMessage());
                     exchanger.setActualInteraction(Interaction.NONE);
                     break;
                 case NONE:
                 default:
                     break;
             }
+            //handle the mustChoose
+            if(!exchanger.isMustChoose()){
+                uiExec.execute(()->{
+                    masterPane.getChildren().add(skipAction);
+                    skipAction.setOnMousePressed(e->{
+                        exchanger.setAnswer(null);
+                        exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
+                    });
+                });
+            }
+
 
         }
         Platform.exit();
@@ -941,6 +967,7 @@ public class Gui extends Application{
      * Used for IP, nick, phrase
      * @param message
      */
+    //todo set the font dimension
     private void askSetting(String message){
         StackPane root = initializerBackground();
         GridPane grid = gridMaker(480 * dimMult);
@@ -948,7 +975,7 @@ public class Gui extends Application{
         Label l = new Label(message);
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
-        TextField field = new TextField();
+        TextField field = new TextField("localhost");
         //field.setMaxWidth(maxWidth);
 
         Button submit = new Button("Conferma");
@@ -1094,7 +1121,7 @@ public class Gui extends Application{
     }
 
     private void showInfoOnMap(String message) {
-        double x = 40 * dimMult;
+        double x = 70 * dimMult; //it was 40 before the button
         double y = 845 * dimMult;
 
         infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);//we use always the same canvas

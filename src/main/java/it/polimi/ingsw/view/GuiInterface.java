@@ -182,7 +182,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public void updateGame(MatchView matchView) {
-        exchanger.setRequest(Interaction.UPDATEVIEW, "Updating view...", matchView, false);
+        exchanger.setRequest(Interaction.UPDATEVIEW, "Updating view...", matchView, true);
         exchanger.waitFreeToUse();
     }
 
@@ -245,14 +245,14 @@ public class GuiInterface implements UserInterface{
     public Action chooseAction(List<Action> available, boolean mustChoose) {
         //if id "a-*" -> run, shoot...
         if(available.get(0).getLambdaID().contains("a-")) {
-            exchanger.setRequest(Interaction.CHOOSEBASEACTION, "Scegli un'azione di base", available, true);
+            exchanger.setRequest(Interaction.CHOOSEBASEACTION, "Scegli un'azione di base", available, mustChoose);
             exchanger.waitFreeToUse();
             return (Action) exchanger.getAnswer();
         }
 
         //weapons
         if(available.get(0).getLambdaID().contains("w")) {
-            exchanger.setRequest(Interaction.CHOOSEWEAPONACTION, "Scegli l'azione della carta da usare", available, true);
+            exchanger.setRequest(Interaction.CHOOSEWEAPONACTION, "Scegli l'azione della carta da usare", available, mustChoose);
             exchanger.waitFreeToUse();
             return (Action) exchanger.getAnswer();
         }
