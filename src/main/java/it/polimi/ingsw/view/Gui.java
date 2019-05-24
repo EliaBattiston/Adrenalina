@@ -972,12 +972,15 @@ public class Gui extends Application{
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
+        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         TextField field = new TextField("localhost");
+        field.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         //field.setMaxWidth(maxWidth);
 
         Button submit = new Button("Conferma");
+        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         submit.setOnAction((e)->{
             String answer = field.getText();
             System.out.println(answer);
@@ -1045,6 +1048,7 @@ public class Gui extends Application{
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
+        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
@@ -1056,6 +1060,7 @@ public class Gui extends Application{
         int row = 1;
         for(Fighter f:available){
             RadioButton radio = new RadioButton(f.toString());
+            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
             if(row==1)
@@ -1066,6 +1071,7 @@ public class Gui extends Application{
         }
 
         Button submit = new Button("Conferma");
+        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             System.out.println(answer);
@@ -1086,6 +1092,7 @@ public class Gui extends Application{
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
+        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
@@ -1095,6 +1102,7 @@ public class Gui extends Application{
         int row = 1;
         for(int i = 5; i<=8; i++){
             RadioButton radio = new RadioButton(Integer.toString(i));
+            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
             if(row==1)
@@ -1104,6 +1112,7 @@ public class Gui extends Application{
         }
 
         Button submit = new Button("Conferma");
+        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             System.out.println(answer);
@@ -1188,6 +1197,7 @@ public class Gui extends Application{
         primaryS.setScene(new Scene(root));
     }*/
 
+   //todo fix this
     private void guiChooseRoom(String message){
         List<Integer> rooms = (List<Integer>) exchanger.getRequest();
         List<ButtonType> btns = new ArrayList<>();
