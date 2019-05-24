@@ -2,6 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
+import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.model.*;
 
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class GuiInterface implements UserInterface{
 
             System.out.println(f.toString() + "  " + s);
 */
-            this.updateGame(initForTest());
+            MatchView testView = initForTest();
+            this.updateGame( testView );
 
             /*List<Player> players = new ArrayList<>();
 
@@ -69,12 +71,9 @@ public class GuiInterface implements UserInterface{
 
             System.out.println(cho.getName());
 */
-            List<Point> dest = new ArrayList<>();
-            dest.add(new Point(0,0));
-            dest.add(new Point(0,1));
-            dest.add(new Point(2,0));
+            List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
 
-            Point chosenP = movePlayer(dest, true);
+            Point chosenP = movePlayer(dest,false);
             System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
 
             /*List<Weapon> goodW = new ArrayList<>();

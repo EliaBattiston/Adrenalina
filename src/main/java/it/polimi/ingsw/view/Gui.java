@@ -32,7 +32,6 @@ import static java.lang.Math.abs;
 //TODO (ALESSANDRO) check inputs like the ip
 //todo (ELIA) add the decks directly on the image
 //todo (ELIA) square around the cell when you don't want to move
-//todo (ELIA) draw the skulls on the board
 //todo (ALESSANDRO) do the fixme of the pawns
 //todo (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
 //todo (EVERYONE) check that all the text are written
@@ -633,6 +632,17 @@ public class Gui extends Application{
         while(exchanger.getActualInteraction()!=Interaction.CLOSEAPP) {
             exchanger.waitRequestIncoming();
 
+            //handle the mustChoose
+            if(!exchanger.isMustChoose() && exchanger.getActualInteraction() != Interaction.MOVEPLAYER){
+                uiExec.execute(()->{
+                    masterPane.getChildren().add(skipAction);
+                    skipAction.setOnMousePressed(e->{
+                        exchanger.setAnswer(null);
+                        exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
+                    });
+                });
+            }
+
             System.out.println(exchanger.getActualInteraction().toString());
             switch (exchanger.getActualInteraction()) {
                 case CHOOSEBASEACTION:
@@ -708,18 +718,6 @@ public class Gui extends Application{
                 default:
                     break;
             }
-            //handle the mustChoose
-            if(!exchanger.isMustChoose()){
-                uiExec.execute(()->{
-                    masterPane.getChildren().add(skipAction);
-                    skipAction.setOnMousePressed(e->{
-                        exchanger.setAnswer(null);
-                        exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
-                    });
-                });
-            }
-
-
         }
         Platform.exit();
     }
@@ -916,14 +914,26 @@ public class Gui extends Application{
      */
     private void chooseCell(){
         showInfoOnMap(exchanger.getMessage()); //fixme in the chooseCell (and other times) it doesn't work!!!
-        exchanger.setActualInteraction(Interaction.WAITINGUSER);
 
         List<Point> possible = (List<Point>) exchanger.getRequest();
+        boolean dontMove = !exchanger.isMustChoose() && exchanger.getActualInteraction() == Interaction.MOVEPLAYER;
+
+        exchanger.setActualInteraction(Interaction.WAITINGUSER);
+
+        if(dontMove)
+        {
+            possible.add(match.getMyPlayer().getPosition());
+        }
 
         for(Point p:possible) {
             if (mapOfCells[p.getX()][p.getY()] != null) {
                 mapOfCells[p.getX()][p.getY()].setOnMousePressed(e -> {
-                    exchanger.setAnswer(p);
+
+                    if(p.equals(match.getMyPlayer().getPosition()) && dontMove)
+                        exchanger.setAnswer(null);
+                    else
+                        exchanger.setAnswer(p);
+
                     exchanger.setActualInteraction(Interaction.NONE);
                     clearInfoOnMap();
                     //After finishing the click event, reset all the events to the original option
