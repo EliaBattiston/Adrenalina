@@ -489,6 +489,8 @@ public class GuiInterface implements UserInterface{
      * @return Server's IP address
      */
     public String getLocalAddress(List<String> possibleIP){
-        return possibleIP.get(0);//todo add the gui method for this
+        exchanger.setRequest(Interaction.ASKLOCALADDRESS, "Seleziona l'indirizzo su cui vuoi giocare", possibleIP, true);
+        exchanger.waitFreeToUse();
+        return (String)exchanger.getAnswer();
     }
 }

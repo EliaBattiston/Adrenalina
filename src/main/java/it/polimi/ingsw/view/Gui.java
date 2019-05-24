@@ -37,7 +37,7 @@ import static java.lang.Math.abs;
 //todo (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
 //todo (EVERYONE) check that all the text are written
 //todo (ALESSANDRO) add the settingsScreen "Waiting other users for the game"
-//todo (ANDREA) add the different IPs and make the radio button method reusable
+//DONE (ANDREA) add the different IPs and make the radio button method reusable
 //todo (ELIA) make the unloaded card of the user less visible
 //todo (ANDREA) make the popup reusable
 //todo (ELIA)  make the popup for the unloaded enemies weapons
@@ -645,6 +645,9 @@ public class Gui extends Application{
                 case GETPHRASE:
                     showAlert(this::askSetting, exchanger.getMessage());
                     break;
+                case ASKLOCALADDRESS:
+                    showAlert(this::askLocalAddress, exchanger.getMessage());
+                    break;
                 case RMIORSOCKET:
                     showAlert(this::askRMI, exchanger.getMessage());
                     break;
@@ -996,131 +999,106 @@ public class Gui extends Application{
         primaryS.setScene(new Scene(root));
     }
 
-    private void askRMI(String message){
+    private void askWithRadio(String message, ToggleGroup group, List<String> buttons, javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler){
         Pane root = initializerBackground();
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
         l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
 
-        ToggleGroup group = new ToggleGroup();
-        RadioButton radio1 = new RadioButton("Socket");
-        radio1.setToggleGroup(group);
-        radio1.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        radio1.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        radio1.setSelected(true);
-        RadioButton radio2 = new RadioButton("RMI");
-        radio2.setToggleGroup(group);
-        radio2.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        radio2.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+
+        int row = 1;
+        for(String s:buttons){
+            RadioButton radio = new RadioButton(s);
+            radio.setToggleGroup(group);
+            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+            if(row==1)
+                radio.setSelected(true);
+
+            grid.add(radio, 0, row++);
+        }
 
         Button submit = new Button("Conferma");
         submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        submit.setOnAction((e)->{
+        submit.setOnAction(eventHandler);
+        submit.setDefaultButton(true);
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,row);
+
+        root.getChildren().addAll(grid);
+        primaryS.setScene(new Scene(root));
+    }
+
+    private void askLocalAddress(String message){
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = (List<String>) exchanger.getRequest();
+
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
+            System.out.println(answer);
+            exchanger.setAnswer(answer);
+            exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(initializerBackground()));
+        });
+
+        askWithRadio(message, group, buttons, eventHandler);
+    }
+
+    private void askRMI(String message){
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = new ArrayList<>();
+        buttons.add("Socket");
+        buttons.add("RMI");
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
             exchanger.setAnswer(answer.equalsIgnoreCase("RMI"));
             exchanger.setActualInteraction(Interaction.NONE);
             primaryS.setScene(new Scene(initializerBackground()));
         });
-        submit.setDefaultButton(true);
 
-        GridPane.setHalignment(l, HPos.CENTER);
-        grid.add(l,0,0);
-        grid.add(radio1,0,1);
-        grid.add(radio2,0,2);
-        GridPane.setHalignment(submit, HPos.CENTER);
-        grid.add(submit,0,3);
-
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
+        askWithRadio(message, group, buttons, eventHandler);
     }
 
     private void askFighter(String message){
-        Pane root = initializerBackground();
-        GridPane grid = gridMaker(480 * dimMult);
-
-        Label l = new Label(message);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        GridPane.setHalignment(l, HPos.CENTER);
-        grid.add(l,0,0);
-
-        ToggleGroup radioGroup = new ToggleGroup();
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = new ArrayList<>();
 
         List<Fighter> available = (List<Fighter>) exchanger.getRequest();
+        for(Fighter f:available)
+            buttons.add(f.toString());
 
-        int row = 1;
-        for(Fighter f:available){
-            RadioButton radio = new RadioButton(f.toString());
-            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-            radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            if(row==1)
-                radio.setSelected(true);
-
-            grid.add(radio,0,row);
-            row++;
-        }
-
-        Button submit = new Button("Conferma");
-        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        submit.setOnAction(rs -> {
-            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
             exchanger.setAnswer(Fighter.valueOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(initializerBackground()));
         });
-        submit.setDefaultButton(true);
-        GridPane.setHalignment(submit, HPos.CENTER);
-        grid.add(submit,0,row);
 
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
+        askWithRadio(message, group, buttons, eventHandler);
     }
 
     private void askSkulls(String message){
-        Pane root = initializerBackground();
-        GridPane grid = gridMaker(480 * dimMult);
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = new ArrayList<>();
 
-        Label l = new Label(message);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        GridPane.setHalignment(l, HPos.CENTER);
-        grid.add(l,0,0);
+        for(int i = 5; i<=8; i++)
+            buttons.add(Integer.toString(i));
 
-        ToggleGroup radioGroup = new ToggleGroup();
-
-        int row = 1;
-        for(int i = 5; i<=8; i++){
-            RadioButton radio = new RadioButton(Integer.toString(i));
-            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-            radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            if(row==1)
-                radio.setSelected(true);
-            grid.add(radio,0,row);
-            row++;
-        }
-
-        Button submit = new Button("Conferma");
-        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        submit.setOnAction(rs -> {
-            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(initializerBackground()));
         });
-        submit.setDefaultButton(true);
-        GridPane.setHalignment(submit, HPos.CENTER);
-        grid.add(submit,0,row);
 
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
+        askWithRadio(message, group, buttons, eventHandler);
     }
 
     private void showInfoOnMap(String message) {
