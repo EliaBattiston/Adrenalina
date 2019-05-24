@@ -30,7 +30,6 @@ import static java.lang.Math.abs;
 
 //TODO check inputs like the ip
 public class Gui extends Application{
-    static String imgRoot = "/images/";//for the entire package only
     final static String MYFONT = "EthnocentricRg-Italic"; //todo check it doesn't work only on my pc where I have the font installed
     final static double SETTINGSFONTDIM = 28;
     final static double POPUPFONTDIM = 24;
@@ -90,7 +89,7 @@ public class Gui extends Application{
 
         primaryStage.setTitle("Adrenalina");
         Canvas loading = new Canvas(backgroundWidth, backgroundHeight);
-        loading.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(imgRoot + "background/adrenalina.jpg"), 0, 0, backgroundWidth, backgroundHeight);
+        loading.getGraphicsContext2D().drawImage(GuiImagesMap.getImage("background/adrenalina.jpg"), 0, 0, backgroundWidth, backgroundHeight);
         primaryStage.setScene(new Scene(new StackPane(loading)));
         primaryStage.setResizable(true);
         //primaryStage.setFullScreen(true);
@@ -127,7 +126,7 @@ public class Gui extends Application{
     private StackPane initializerBackground(){
         StackPane root = new StackPane();
         Canvas c = new Canvas(backgroundWidth, backgroundHeight);
-        c.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(imgRoot + "background/adrenalinaWithBox.jpg"), 0, 0, backgroundWidth, backgroundHeight);
+        c.getGraphicsContext2D().drawImage(GuiImagesMap.getImage("background/adrenalinaWithBox.jpg"), 0, 0, backgroundWidth, backgroundHeight);
         root.getChildren().addAll(c);
         return root;
     }
@@ -141,7 +140,7 @@ public class Gui extends Application{
         canvas = new Canvas(backgroundWidth, backgroundHeight);
         gc = canvas.getGraphicsContext2D();
 
-        gc.drawImage( GuiImagesMap.getImage(imgRoot + "background/gameBoard.png"), 0, 0, backgroundWidth, backgroundHeight);
+        gc.drawImage( GuiImagesMap.getImage("background/gameBoard.png"), 0, 0, backgroundWidth, backgroundHeight);
         drawMap(match.getGame().getMap());
         drawDecks();
 
@@ -189,7 +188,7 @@ public class Gui extends Application{
         logArea.setScrollTop(90000000);
 
         skipAction = new Canvas(backgroundWidth, backgroundHeight);
-        skipAction.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(Gui.imgRoot + "skipAction.png"), 40*dimMult, 825*dimMult, 40*dimMult, 40*dimMult);
+        skipAction.getGraphicsContext2D().drawImage(GuiImagesMap.getImage("skipAction.png"), 40*dimMult, 825*dimMult, 40*dimMult, 40*dimMult);
         skipAction.setPickOnBounds(false);
 
         masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns,
@@ -204,7 +203,7 @@ public class Gui extends Application{
         double x = 18 * dimMult;
         double y = x;
 
-        gc.drawImage( GuiImagesMap.getImage(imgRoot + "map/map" + map.getId() + ".png"), x, y, width, height);
+        gc.drawImage( GuiImagesMap.getImage("map/map" + map.getId() + ".png"), x, y, width, height);
 
         //get position of the first cell
         x = ((double)500)/2545 * width;
@@ -416,14 +415,14 @@ public class Gui extends Application{
         double height = 109 * dimMult;
         double x = 1044 * dimMult;
         double y = 65 * dimMult;
-        gc.drawImage(GuiImagesMap.getImage(imgRoot + "power/powerBackPile.png"), x, y, width, height);
+        gc.drawImage(GuiImagesMap.getImage("power/powerBackPile.png"), x, y, width, height);
 
         //WeaponsDeck
         width = 100 * dimMult;
         height = 174 * dimMult;
         x = 1018 * dimMult;
         y = 252 * dimMult;
-        gc.drawImage(GuiImagesMap.getImage(imgRoot + "weapon/weaponBackPile.png"), x, y, width, height);
+        gc.drawImage(GuiImagesMap.getImage("weapon/weaponBackPile.png"), x, y, width, height);
     }
 
     private void drawAllPlayersBoards(List<Player> players, boolean frenzyMode){
@@ -455,12 +454,12 @@ public class Gui extends Application{
         gc.setFont(new Font(MYFONT,18*dimMult));
         gc.fillText(player.getNick() + " - " + player.getCharacter().toString(), x, y-(8*dimMult));
 
-        gc.drawImage( GuiImagesMap.getImage(imgRoot + "playerBoard/" + player.getCharacter().toString() + (frenzyMode?"_F":"") + ".png"), x, y, width, height);
+        gc.drawImage( GuiImagesMap.getImage("playerBoard/" + player.getCharacter().toString() + (frenzyMode?"_F":"") + ".png"), x, y, width, height);
 
         //damages
         for(int i=0; i<12; i++){
             if(player.getReceivedDamage()[i] != null)
-                gc.drawImage( GuiImagesMap.getImage(imgRoot + "drops/" + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+                gc.drawImage( GuiImagesMap.getImage("drops/" + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
 
             xDrop += deltaX;
         }
@@ -471,7 +470,7 @@ public class Gui extends Application{
         deltaX = widthDrop * 1.1; //put just a little bit of space, we don't know how many marks a player will get
         for(String p: player.getReceivedMarks()){
             if(p != null)
-                gc.drawImage( GuiImagesMap.getImage(imgRoot + "drops/" + Player.fighterFromNick(players, p) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+                gc.drawImage( GuiImagesMap.getImage("drops/" + Player.fighterFromNick(players, p) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
 
             xDrop += deltaX;
         }
@@ -558,9 +557,9 @@ public class Gui extends Application{
         double deltaX = 43 * dimMult;
         double deltaY = 36 * dimMult;
 
-        Image blue = GuiImagesMap.getImage(imgRoot + "loot/blue.png");
-        Image red = GuiImagesMap.getImage(imgRoot + "loot/red.png");
-        Image yellow = GuiImagesMap.getImage(imgRoot + "loot/yellow.png");
+        Image blue = GuiImagesMap.getImage("loot/blue.png");
+        Image red = GuiImagesMap.getImage("loot/red.png");
+        Image yellow = GuiImagesMap.getImage("loot/yellow.png");
 
         for(int i=0; i<ammo.getBlue(); i++){
             gc.drawImage(blue, x, y, width, width);
@@ -785,7 +784,7 @@ public class Gui extends Application{
         //card
         String lambdaId = possible.get(0).getLambdaID();
         lambdaId = lambdaId.substring(1, lambdaId.indexOf('-'));
-        canvas.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( Gui.imgRoot + "weapon/weapon" + lambdaId + ".png" ), cardX, cardY, cardW, cardH);
+        canvas.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( "weapon/weapon" + lambdaId + ".png" ), cardX, cardY, cardW, cardH);
 
         //Text and button
         GridPane grid = gridMaker(backgroundWidth * 0.8 - xGridText - 20*dimMult);

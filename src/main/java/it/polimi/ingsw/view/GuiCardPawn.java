@@ -10,7 +10,7 @@ public class GuiCardPawn extends GuiCard {
     public GuiCardPawn(Player pl, double size){
         super(size, size);
         this.pl = pl;
-        img = GuiImagesMap.getImage( Gui.imgRoot + "playerPawn/" + pl.getCharacter().toString() + ".png" );
+        img = GuiImagesMap.getImage( "playerPawn/" + pl.getCharacter().toString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
 

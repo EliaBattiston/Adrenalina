@@ -16,7 +16,7 @@ public class GuiCardWeapon extends GuiCard {
         super((rotation==0?width:height), (rotation==0?height:width));
         this.weapon = weapon;
 
-        img = GuiImagesMap.getImage( Gui.imgRoot + "weapon/weapon" + weapon.getId() + ".png" );
+        img = GuiImagesMap.getImage( "weapon/weapon" + weapon.getId() + ".png" );
 
         if(rotation != 0){
             ImageView iv = new ImageView(img);
