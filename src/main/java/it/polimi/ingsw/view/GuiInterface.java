@@ -69,13 +69,13 @@ public class GuiInterface implements UserInterface{
 
             System.out.println(cho.getName());
 */
-            List<Point> dest = new ArrayList<>();
+            /*List<Point> dest = new ArrayList<>();
             dest.add(new Point(0,0));
             dest.add(new Point(0,1));
             dest.add(new Point(2,0));
 
             Point chosenP = movePlayer(dest, true);
-            System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
+            System.out.println(chosenP.getX() + " y: "+ chosenP.getY());*/
 
             /*List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
@@ -98,19 +98,24 @@ public class GuiInterface implements UserInterface{
             //getFighter();
 
             //getNickname();
-/*
+
             List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
             rooms.add(2);
             rooms.add(3);
 
-            Integer choosen = chooseRoom(rooms, false);
+            Integer choosen = chooseRoom(rooms, true);
 
-*/
+
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));
             players.add(new Player("aaa", "yay", Fighter.DOZER));
             chooseTarget(players, true);*/
+
+            List<Direction> possible = new ArrayList<>();
+            possible.add(Direction.NORTH);
+            possible.add(Direction.SOUTH);
+            chooseDirection(possible, true);
 
         }catch (Exception e){
 

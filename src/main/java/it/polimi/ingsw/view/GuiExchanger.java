@@ -29,6 +29,10 @@ public class GuiExchanger {
         return actualInteraction;
     }
 
+    public Interaction getLastRealInteraction() {
+        return lastRealInteraction;
+    }
+
     public synchronized void setRequest(Interaction interaction, String message, Object request, boolean mustChoose){
         instance.actualInteraction = interaction;
         instance.message = message;
@@ -71,10 +75,6 @@ public class GuiExchanger {
         return;
     }
 
-    public synchronized boolean guiRequestIncoming(){
-        return actualInteraction != Interaction.NONE && actualInteraction != Interaction.WAITINGUSER && actualInteraction !=Interaction.SHOWINGMESSAGE;
-    }
-
     public synchronized Object getRequest() {
         return request;
     }
@@ -94,5 +94,6 @@ public class GuiExchanger {
     public synchronized boolean isMustChoose() {
         return mustChoose;
     }
+
 
 }
