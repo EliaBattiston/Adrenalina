@@ -27,10 +27,22 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
+//On Monday together the background and the drops
 
-//TODO check inputs like the ip
+//TODO (ALESSANDRO) check inputs like the ip
+//todo (ELIA) add the decks directly on the image
+//todo (ELIA) square around the cell when you don't want to move
+//todo (ELIA) draw the skulls on the board
+//todo (ALESSANDRO) do the fixme of the pawns
+//todo (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
+//todo (EVERYONE) check that all the text are written
+//todo (ALESSANDRO) add the settingsScreen "Waiting other users for the game"
+//todo (ANDREA) add the different IPs and make the radio button method reusable
+//todo (ELIA) make the unloaded card of the user less visible
+//todo (ANDREA) make the popup reusable
+//todo (ELIA)  make the popup for the unloaded enemies weapons
 public class Gui extends Application{
-    final static String MYFONT = "EthnocentricRg-Italic"; //todo check it doesn't work only on my pc where I have the font installed
+    final static String MYFONT = "EthnocentricRg-Italic"; //todo fix this
     final static double SETTINGSFONTDIM = 28;
     final static double POPUPFONTDIM = 24;
 
@@ -64,7 +76,7 @@ public class Gui extends Application{
     private GuiCardClickableArea adrShootAction;
     private GuiCardClickableArea powerAction;
 
-    private Canvas skipAction;
+    private Canvas skipAction; //todo change the image with a rectangular one and put it just under the red spawn loot
 
     //Move in cells
     private GuiCardClickableArea[][] mapOfCells = new GuiCardClickableArea[4][3];
@@ -142,14 +154,13 @@ public class Gui extends Application{
 
         gc.drawImage( GuiImagesMap.getImage("background/gameBoard.png"), 0, 0, backgroundWidth, backgroundHeight);
         drawMap(match.getGame().getMap());
-        drawDecks();
 
         //weapons, powers, loot
         //gc = canvas.getGraphicsContext2D(); //from now on the global gc will be the one for the dynamics data
 
         drawAllPlayersBoards(match.getGame().getPlayers(),false); //FRENZY?
         drawMyAmmo(match.getMyPlayer().getAmmo());
-        drawPoints(10);
+        drawPoints(match.getMyPlayer().getPoints());
 
         myWeapons = drawMyWeapons(match.getMyPlayer().getWeapons());
         MyPowers = drawMyPowers(match.getMyPlayer().getPowers());
@@ -407,22 +418,6 @@ public class Gui extends Application{
             y += deltaY;
         }
         return root;
-    }
-
-    private void drawDecks(){
-        //PowersDeck
-        double width = 80 * dimMult;
-        double height = 109 * dimMult;
-        double x = 1044 * dimMult;
-        double y = 65 * dimMult;
-        gc.drawImage(GuiImagesMap.getImage("power/powerBackPile.png"), x, y, width, height);
-
-        //WeaponsDeck
-        width = 100 * dimMult;
-        height = 174 * dimMult;
-        x = 1018 * dimMult;
-        y = 252 * dimMult;
-        gc.drawImage(GuiImagesMap.getImage("weapon/weaponBackPile.png"), x, y, width, height);
     }
 
     private void drawAllPlayersBoards(List<Player> players, boolean frenzyMode){
@@ -1287,7 +1282,7 @@ public class Gui extends Application{
         Button submit = new Button("Conferma");
         submit.setOnAction((e)->{
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
-            answer = answer.substring(5);
+            answer = answer.substring(6);
             System.out.println(answer);
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);

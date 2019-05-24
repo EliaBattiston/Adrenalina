@@ -437,7 +437,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer chooseMap() {
-        exchanger.setRequest(Interaction.CHOOSEROOM, "Con quale mappa vuoi giocare?", null, true);
+        exchanger.setRequest(Interaction.CHOOSEMAP, "Con quale mappa vuoi giocare?", null, true);
         exchanger.waitFreeToUse();
         return (Integer) exchanger.getAnswer();
     }
