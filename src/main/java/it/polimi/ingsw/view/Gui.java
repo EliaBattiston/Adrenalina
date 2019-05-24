@@ -145,7 +145,7 @@ public class Gui extends Application{
 
     private Pane drawGame(){
         Canvas canvas;
-        StackPane myWeapons, MyPowers, weaponsLoot, mapLoot, pawns;
+        StackPane myWeapons, MyPowers, weaponsLoot, mapLoot, pawns, skulls;
 
         masterPane = new Pane();
 
@@ -161,6 +161,7 @@ public class Gui extends Application{
         drawAllPlayersBoards(match.getGame().getPlayers(),false); //FRENZY?
         drawMyAmmo(match.getMyPlayer().getAmmo());
         drawPoints(match.getMyPlayer().getPoints());
+        drawSkulls(match.getGame().getSkullsBoard());
 
         myWeapons = drawMyWeapons(match.getMyPlayer().getWeapons());
         MyPowers = drawMyPowers(match.getMyPlayer().getPowers());
@@ -418,6 +419,37 @@ public class Gui extends Application{
             y += deltaY;
         }
         return root;
+    }
+
+    private void drawSkulls(Kill[] kills)
+    {
+        double x = 108;
+        double y = 73;
+
+        double w = 30 * dimMult;
+        double h = 40 * dimMult;
+
+        for(int s = 0; s<8; s++)
+        {
+            if(kills[s].isUsed())
+            {
+                if(kills[s].getSkull())
+                    gc.drawImage(GuiImagesMap.getImage("skull.png"), x * dimMult, y * dimMult, w, h);
+                else
+                {
+                    if(kills[s].getOverkill())
+                    {
+                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), (x-2) * dimMult, (y-2) * dimMult, w, h);
+                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), (x+2) * dimMult, (y+2) * dimMult, w, h);
+                    }
+                    else
+                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), x * dimMult, y * dimMult, w, h);
+                }
+            }
+
+            //Distance between skulls
+            x+=48;
+        }
     }
 
     private void drawAllPlayersBoards(List<Player> players, boolean frenzyMode){

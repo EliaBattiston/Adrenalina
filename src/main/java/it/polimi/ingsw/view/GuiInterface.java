@@ -168,7 +168,11 @@ public class GuiInterface implements UserInterface{
                 allGame.getMap().getCell(x, y).addPawn(p);
             }
 
-            return new MatchView(new GameView(allGame.getMap(), players, null), me, me, 3, GamePhase.REGULAR, true, me);
+            allGame.initializeSkullsBoard(6);
+            allGame.getSkulls()[3].setKiller(me,true);
+            allGame.getSkulls()[4].setKiller(me,false);
+
+            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.REGULAR, true, me);
         }catch (Exception ex){
             ;
         }
