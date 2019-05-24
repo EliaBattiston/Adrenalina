@@ -133,6 +133,7 @@ public class GuiInterface implements UserInterface{
                 allGame.getWeaponsDeck().shuffle();
                 weapons[0] = allGame.getWeaponsDeck().draw();
                 weapons[1] = allGame.getWeaponsDeck().draw();
+                weapons[1].setLoaded(false);
 
                 allGame.getPowersDeck().shuffle();
                 powers[0] = allGame.getPowersDeck().draw();
