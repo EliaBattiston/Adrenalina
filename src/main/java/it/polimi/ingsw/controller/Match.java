@@ -164,6 +164,8 @@ public class Match implements Runnable
             } catch (ClientDisconnectedException e)
             {
                 disconnectPlayer(game.getPlayers().get(0), game.getPlayers());
+
+                //If the first player disconnects while trying to choose, the server choses randomly
                 if (game.getMap() == null)
                 {
                     int mapNum = new Random().nextInt(4) + 1;
@@ -607,7 +609,8 @@ public class Match implements Runnable
                 }
             }
 
-            inflictedDamages.add( new AbstractMap.SimpleEntry<Player, Integer>(p, damageNum) );
+            if(damageNum > 0)
+                inflictedDamages.add( new AbstractMap.SimpleEntry<Player, Integer>(p, damageNum) );
         }
 
         //Sort the damages

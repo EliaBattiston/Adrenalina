@@ -356,7 +356,10 @@ public class SMain
                             println("Giocatore " + nick + " rimosso dalla lista di attesa");
                             waiting[i].getGame().removePlayer(p);
                             if (waiting[i].getGame().getPlayers().size() == 2)
+                            {
                                 cancelTimer(i + MINSKULLS);
+                                waiting[i].broadcastMessage("Avvio partita annullato", waiting[i].getGame().getPlayers());
+                            }
                             found = true;
                         }
                     }
@@ -382,7 +385,6 @@ public class SMain
         timer[index].purge();
         timer[index] = null;
         startedTimer[index] = false;
-        waiting[index].broadcastMessage("Avvio partita annullato", waiting[index].getGame().getPlayers());
 
     }
 
