@@ -30,12 +30,11 @@ import static java.lang.Math.abs;
 //On Monday together the background and the drops
 
 //TODO (ALESSANDRO) check inputs like the ip
-//todo (ELIA) add the decks directly on the image
 //todo (ALESSANDRO) do the fixme of the pawns
 //todo (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
 //todo (EVERYONE) check that all the text are written
 //todo (ALESSANDRO) add the settingsScreen "Waiting other users for the game"
-//todo (ANDREA) add the different IPs and make the radio button method reusable
+//todo (ANDREA) add the different IPs and make the radio button method reusablet
 //todo (ANDREA) make the popup reusable
 //todo (ELIA)  make the popup for the unloaded enemies weapons
 public class Gui extends Application{
