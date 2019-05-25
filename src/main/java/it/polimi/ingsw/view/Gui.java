@@ -11,18 +11,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
-import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
@@ -34,8 +30,8 @@ import static java.lang.Math.abs;
 //todo (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
 //todo (EVERYONE) check that all the text are written
 //todo (ALESSANDRO) add the settingsScreen "Waiting other users for the game"
-//todo (ANDREA) add the different IPs and make the radio button method reusablet
-//todo (ANDREA) make the popup reusable
+//DONE (ANDREA) add the different IPs and make the radio button method reusable
+//DONE (ANDREA) make the popup reusable
 //todo (ELIA)  make the popup for the unloaded enemies weapons
 public class Gui extends Application{
     final static String MYFONT = "EthnocentricRg-Italic"; //todo fix this
@@ -113,7 +109,9 @@ public class Gui extends Application{
                 if(match != null) //if it's null it's still in the settings
                     primaryStage.setScene(new Scene(drawGame()));
 
-                exchanger.resetLastRealInteraction();
+                //ANDREA: on my linux with tiling, when one of these are called, the window is going to be resized
+                if(exchanger.getLastRealInteraction() != Interaction.CHOOSEDIRECTION && exchanger.getLastRealInteraction() != Interaction.CHOOSEROOM)
+                    exchanger.resetLastRealInteraction();
             }
         });
 
@@ -668,10 +666,10 @@ public class Gui extends Application{
                     chooseEnemy();
                     break;
                 case CHOOSEROOM:
-                    showAlert(this::guiChooseRoom, exchanger.getMessage());
+                    showAlert(this::askRoom, exchanger.getMessage());
                     break;
                 case CHOOSEDIRECTION:
-                    showAlert(this::guiChooseDirection, exchanger.getMessage());
+                    showAlert(this::askDirection, exchanger.getMessage());
                     break;
                 case CHOOSEMAP:
                     showAlert(this::askMap, exchanger.getMessage());
@@ -683,6 +681,9 @@ public class Gui extends Application{
                 case GETNICKNAME:
                 case GETPHRASE:
                     showAlert(this::askSetting, exchanger.getMessage());
+                    break;
+                case ASKLOCALADDRESS:
+                    showAlert(this::askLocalAddress, exchanger.getMessage());
                     break;
                 case RMIORSOCKET:
                     showAlert(this::askRMI, exchanger.getMessage());
@@ -715,6 +716,19 @@ public class Gui extends Application{
                 default:
                     break;
             }
+<<<<<<< HEAD
+=======
+            //handle the mustChoose
+            if(!exchanger.isMustChoose()){
+                uiExec.execute(()->{
+                    masterPane.getChildren().add(skipAction);
+                    skipAction.setOnMousePressed(e->{
+                        exchanger.setAnswer(null);
+                        exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
+                    });
+                });
+            }
+>>>>>>> gui-additions
         }
         Platform.exit();
     }
@@ -779,29 +793,34 @@ public class Gui extends Application{
         return l;
     }
 
-    private void chooseWeaponAction(){
-        showInfoOnMap(exchanger.getMessage());
-        List<Action> possible = (List<Action>) exchanger.getRequest();
-
-        Pane popupPane = new StackPane();
-        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
-        popupPane.getChildren().addAll(canvas);
-
+    private Canvas createPopupCanvas(){
         double x = backgroundWidth * 0.2;
         double y = backgroundHeight * 0.2;
         double w = backgroundWidth * 0.6;
         double h = backgroundHeight * 0.6;
         double r = 100 * dimMult;
+
+        Canvas canvas = new Canvas(backgroundWidth, backgroundHeight);
+        canvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.rgb(140,140,140,0.8));
+        canvas.getGraphicsContext2D().fillRoundRect(x, y, w, h, r, r);
+
+        return canvas;
+    }
+
+    private void chooseWeaponAction(){
+        showInfoOnMap(exchanger.getMessage());
+        List<Action> possible = (List<Action>) exchanger.getRequest();
+
+        Pane popupPane = new StackPane();
+        Canvas canvas = createPopupCanvas();
+        popupPane.getChildren().addAll(canvas);
+
         double cardX = backgroundWidth * 0.215;
         double cardY = backgroundHeight * 0.23;
         double cardH = backgroundHeight * 0.54;
         double cardW = cardH * ((double) 104)/174;
         double xGridText = backgroundWidth * 0.24 + cardW;
         double yGridText = backgroundHeight * 0.23;
-
-        //backround
-        canvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.rgb(140,140,140,0.8));
-        canvas.getGraphicsContext2D().fillRoundRect(x, y, w, h, r, r);
 
         //card
         String lambdaId = possible.get(0).getLambdaID();
@@ -825,7 +844,7 @@ public class Gui extends Application{
             grid.add(description,0,row++);
 
             Button buttonAction = new Button("Usa " + a.getName());
-            //buttonAction.setFont(new Font(MYFONT,titleDim*dimMult));
+            buttonAction.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult*0.8));
             buttonAction.setOnAction((e)->{
                 System.out.println("Scelto: " + a.getName());
                 exchanger.setAnswer(a);
@@ -978,6 +997,7 @@ public class Gui extends Application{
      */
     private void showAlert(Consumer<String> dialog, String message){
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
+        System.out.println("Waiting");
         uiExec.execute(() -> dialog.accept(message));
     }
 
@@ -1000,7 +1020,6 @@ public class Gui extends Application{
      * Used for IP, nick, phrase
      * @param message
      */
-    //todo set the font dimension
     private void askSetting(String message){
         StackPane root = initializerBackground();
         GridPane grid = gridMaker(480 * dimMult);
@@ -1035,131 +1054,106 @@ public class Gui extends Application{
         primaryS.setScene(new Scene(root));
     }
 
-    private void askRMI(String message){
+    private void askWithRadio(String message, ToggleGroup group, List<String> buttons, javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler){
         Pane root = initializerBackground();
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
         l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
 
-        ToggleGroup group = new ToggleGroup();
-        RadioButton radio1 = new RadioButton("Socket");
-        radio1.setToggleGroup(group);
-        radio1.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        radio1.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        radio1.setSelected(true);
-        RadioButton radio2 = new RadioButton("RMI");
-        radio2.setToggleGroup(group);
-        radio2.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        radio2.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+
+        int row = 1;
+        for(String s:buttons){
+            RadioButton radio = new RadioButton(s);
+            radio.setToggleGroup(group);
+            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+            if(row==1)
+                radio.setSelected(true);
+
+            grid.add(radio, 0, row++);
+        }
 
         Button submit = new Button("Conferma");
         submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        submit.setOnAction((e)->{
+        submit.setOnAction(eventHandler);
+        submit.setDefaultButton(true);
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,row);
+
+        root.getChildren().addAll(grid);
+        primaryS.setScene(new Scene(root));
+    }
+
+    private void askLocalAddress(String message){
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = (List<String>) exchanger.getRequest();
+
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
+            System.out.println(answer);
+            exchanger.setAnswer(answer);
+            exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(initializerBackground()));
+        });
+
+        askWithRadio(message, group, buttons, eventHandler);
+    }
+
+    private void askRMI(String message){
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = new ArrayList<>();
+        buttons.add("Socket");
+        buttons.add("RMI");
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
             exchanger.setAnswer(answer.equalsIgnoreCase("RMI"));
             exchanger.setActualInteraction(Interaction.NONE);
             primaryS.setScene(new Scene(initializerBackground()));
         });
-        submit.setDefaultButton(true);
 
-        GridPane.setHalignment(l, HPos.CENTER);
-        grid.add(l,0,0);
-        grid.add(radio1,0,1);
-        grid.add(radio2,0,2);
-        GridPane.setHalignment(submit, HPos.CENTER);
-        grid.add(submit,0,3);
-
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
+        askWithRadio(message, group, buttons, eventHandler);
     }
 
     private void askFighter(String message){
-        Pane root = initializerBackground();
-        GridPane grid = gridMaker(480 * dimMult);
-
-        Label l = new Label(message);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        GridPane.setHalignment(l, HPos.CENTER);
-        grid.add(l,0,0);
-
-        ToggleGroup radioGroup = new ToggleGroup();
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = new ArrayList<>();
 
         List<Fighter> available = (List<Fighter>) exchanger.getRequest();
+        for(Fighter f:available)
+            buttons.add(f.toString());
 
-        int row = 1;
-        for(Fighter f:available){
-            RadioButton radio = new RadioButton(f.toString());
-            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-            radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            if(row==1)
-                radio.setSelected(true);
-
-            grid.add(radio,0,row);
-            row++;
-        }
-
-        Button submit = new Button("Conferma");
-        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        submit.setOnAction(rs -> {
-            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
             exchanger.setAnswer(Fighter.valueOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(initializerBackground()));
         });
-        submit.setDefaultButton(true);
-        GridPane.setHalignment(submit, HPos.CENTER);
-        grid.add(submit,0,row);
 
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
+        askWithRadio(message, group, buttons, eventHandler);
     }
 
     private void askSkulls(String message){
-        Pane root = initializerBackground();
-        GridPane grid = gridMaker(480 * dimMult);
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = new ArrayList<>();
 
-        Label l = new Label(message);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        GridPane.setHalignment(l, HPos.CENTER);
-        grid.add(l,0,0);
+        for(int i = 5; i<=8; i++)
+            buttons.add(Integer.toString(i));
 
-        ToggleGroup radioGroup = new ToggleGroup();
-
-        int row = 1;
-        for(int i = 5; i<=8; i++){
-            RadioButton radio = new RadioButton(Integer.toString(i));
-            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-            radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            if(row==1)
-                radio.setSelected(true);
-            grid.add(radio,0,row);
-            row++;
-        }
-
-        Button submit = new Button("Conferma");
-        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
-        submit.setOnAction(rs -> {
-            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);
+            primaryS.setScene(new Scene(initializerBackground()));
         });
-        submit.setDefaultButton(true);
-        GridPane.setHalignment(submit, HPos.CENTER);
-        grid.add(submit,0,row);
 
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
+        askWithRadio(message, group, buttons, eventHandler);
     }
 
     private void showInfoOnMap(String message) {
@@ -1178,41 +1172,92 @@ public class Gui extends Application{
         infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);
     }
 
-   /* half work done
-   private void askRoom(String message){
-        Pane root = initializerBackground();
-        GridPane grid = gridMaker();
-
+    private void askRoom(String message){
         List<Integer> rooms = (List<Integer>) exchanger.getRequest();
+
+        Pane popupPane = new Pane();
+        Canvas canvas = createPopupCanvas();
+        popupPane.getChildren().addAll(canvas);
+
+        GridPane grid = gridMaker(backgroundWidth);
+        StackPane.setAlignment(grid, Pos.TOP_LEFT);
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setTranslateX(backgroundWidth * 0.24 );
+        grid.setTranslateY(backgroundHeight * 0.23);
+        popupPane.getChildren().addAll(grid);
 
         Label l = new Label(message);
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
 
-        ToggleGroup radioGroup = new ToggleGroup();
-
-        int row = 1;
         List<String> roomsNames = new ArrayList<>();
-
         if(rooms.contains(0))
-            roomsNames.add("Rossa");
+           roomsNames.add("Rossa");
         if(rooms.contains(1))
-            roomsNames.add("Bianca");
+           roomsNames.add("Blu");
         if(rooms.contains(2))
-            roomsNames.add("Blu");
+           roomsNames.add("Gialla");
         if(rooms.contains(3))
-            roomsNames.add("Viola");
+           roomsNames.add("Bianca");
         if(rooms.contains(4))
-            roomsNames.add("Verde");
+           roomsNames.add("Viola");
         if(rooms.contains(5))
-            roomsNames.add("Gialla");
+           roomsNames.add("Verde");
+
+        ToggleGroup radioGroup = new ToggleGroup();
+        int row = 1;
         for(String s : roomsNames){
-            RadioButton radio = new RadioButton(s);
+           RadioButton radio = new RadioButton(s);
+           radio.setToggleGroup(radioGroup);
+           radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            GridPane.setHalignment(radio, HPos.CENTER);
+            grid.add(radio,0,row++);
+        }
+
+        Button submit = new Button("Conferma");
+        submit.setOnAction(rs -> {
+           String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+           System.out.println(answer + ": " + roomsNames.indexOf(answer));
+           exchanger.setAnswer(roomsNames.indexOf(answer));
+           exchanger.setActualInteraction(Interaction.NONE);
+           masterPane.getChildren().remove(popupPane);
+        });
+        GridPane.setHalignment(submit, HPos.CENTER);
+        grid.add(submit,0,row);
+
+        //Show the pane
+        masterPane.getChildren().add(popupPane);
+   }
+
+    private void askDirection(String message){
+        List<Direction> dirs = (List<Direction>) exchanger.getRequest();
+
+        Pane popupPane = new Pane();
+        Canvas canvas = createPopupCanvas();
+        popupPane.getChildren().addAll(canvas);
+
+        GridPane grid = gridMaker(backgroundWidth*0.6);
+        StackPane.setAlignment(grid, Pos.TOP_LEFT);
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setTranslateX(backgroundWidth * 0.24 );
+        grid.setTranslateY(backgroundHeight * 0.23);
+        popupPane.getChildren().addAll(grid);
+
+        Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        GridPane.setHalignment(l, HPos.CENTER);
+        grid.add(l,0,0);
+
+
+        ToggleGroup radioGroup = new ToggleGroup();
+        int row = 1;
+        for(Direction d:dirs){
+            RadioButton radio = new RadioButton(d.toString());
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            grid.add(radio,0,row);
-            row++;
+            GridPane.setHalignment(radio, HPos.CENTER);
+            grid.add(radio,0,row++);
         }
 
         //continue here
@@ -1220,85 +1265,15 @@ public class Gui extends Application{
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             System.out.println(answer);
-            exchanger.setAnswer(Integer.parseInt(answer));
+            exchanger.setAnswer(Direction.valueOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
+            masterPane.getChildren().remove(popupPane);
         });
         GridPane.setHalignment(submit, HPos.CENTER);
         grid.add(submit,0,row);
 
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
-    }*/
-
-   //todo fix this
-    private void guiChooseRoom(String message){
-        List<Integer> rooms = (List<Integer>) exchanger.getRequest();
-        List<ButtonType> btns = new ArrayList<>();
-
-        if(rooms.contains(0))
-            btns.add(new ButtonType("Rossa", ButtonBar.ButtonData.OK_DONE));
-        if(rooms.contains(1))
-            btns.add(new ButtonType("Bianca", ButtonBar.ButtonData.OK_DONE));
-        if(rooms.contains(2))
-            btns.add(new ButtonType("Blu", ButtonBar.ButtonData.OK_DONE));
-        if(rooms.contains(3))
-            btns.add(new ButtonType("Viola", ButtonBar.ButtonData.OK_DONE));
-        if(rooms.contains(4))
-            btns.add(new ButtonType("Verde", ButtonBar.ButtonData.OK_DONE));
-        if(rooms.contains(5))
-            btns.add(new ButtonType("Gialla", ButtonBar.ButtonData.OK_DONE));
-
-        Alert alert = new Alert(Alert.AlertType.NONE, message);
-        alert.getButtonTypes().setAll(btns);
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.setTitle("Adrenalina");
-
-        alert.showAndWait().ifPresent(rs -> {
-            System.out.println(rs.getText());
-            switch (rs.getText()){
-                case "Rossa":
-                    exchanger.setAnswer(0);
-                    break;
-                case "Bianca":
-                    exchanger.setAnswer(1);
-                    break;
-                case "Blu":
-                    exchanger.setAnswer(2);
-                    break;
-                case "Viola":
-                    exchanger.setAnswer(3);
-                    break;
-                case "Verde":
-                    exchanger.setAnswer(4);
-                    break;
-                case "Gialla":
-                    exchanger.setAnswer(5);
-                    break;
-                default:
-                    Logger.getGlobal().log(Level.SEVERE, "Error while choosing the room");
-            }
-            exchanger.setActualInteraction(Interaction.NONE);
-        });
-    }
-
-    private void guiChooseDirection(String message){
-        List<Direction> dirs = (List<Direction>) exchanger.getRequest();
-        List<ButtonType> btns = new ArrayList<>();
-
-        for(Direction d:dirs)
-            btns.add(new ButtonType(d.toString(), ButtonBar.ButtonData.OK_DONE));
-
-        Alert alert = new Alert(Alert.AlertType.NONE, message);
-        alert.getButtonTypes().setAll(btns);
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.setTitle("Adrenalina");
-
-        alert.showAndWait().ifPresent(rs -> {
-            System.out.println(rs.getText());
-            exchanger.setAnswer(Direction.valueOf(rs.getText()));
-            exchanger.setActualInteraction(Interaction.NONE);
-        });
+        //Show the pane
+        masterPane.getChildren().add(popupPane);
     }
 
     private void askMap(String message){

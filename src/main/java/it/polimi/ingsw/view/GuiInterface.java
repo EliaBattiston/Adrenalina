@@ -97,19 +97,24 @@ public class GuiInterface implements UserInterface{
             //getFighter();
 
             //getNickname();
-/*
+
             List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
             rooms.add(2);
             rooms.add(3);
 
-            Integer choosen = chooseRoom(rooms, false);
+            Integer choosen = chooseRoom(rooms, true);
 
-*/
+
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));
             players.add(new Player("aaa", "yay", Fighter.DOZER));
             chooseTarget(players, true);*/
+
+            List<Direction> possible = new ArrayList<>();
+            possible.add(Direction.NORTH);
+            possible.add(Direction.SOUTH);
+            chooseDirection(possible, true);
 
         }catch (Exception e){
 
@@ -493,6 +498,8 @@ public class GuiInterface implements UserInterface{
      * @return Server's IP address
      */
     public String getLocalAddress(List<String> possibleIP){
-        return possibleIP.get(0);//todo add the gui method for this
+        exchanger.setRequest(Interaction.ASKLOCALADDRESS, "Seleziona l'indirizzo su cui vuoi giocare", possibleIP, true);
+        exchanger.waitFreeToUse();
+        return (String)exchanger.getAnswer();
     }
 }
