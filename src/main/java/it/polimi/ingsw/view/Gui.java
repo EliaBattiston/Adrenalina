@@ -37,10 +37,13 @@ import static java.lang.Math.abs;
 //todo (ELIA) make the unloaded card of the user less visible
 //DONE (ANDREA) make the popup reusable
 //todo (ELIA)  make the popup for the unloaded enemies weapons
+
+//FIXME It looks like the additional actions don't work. Add also the possibility of no use of the additional
+//FIXME the grabWeapon method (in GuiInterface) seems to never be called. when you have to choose between weapons to grab the chooseWeapon is called instead (or at least it seems)
 public class Gui extends Application{
     final static String MYFONT = "EthnocentricRg-Italic"; //todo fix this
     final static double SETTINGSFONTDIM = 28;
-    final static double POPUPFONTDIM = 24;
+    final static double POPUPFONTDIM = 22;
 
     //Ui Executor
     private static Executor uiExec = Platform::runLater;
@@ -257,7 +260,7 @@ public class Gui extends Application{
         }
         if(map.getCell(3, 0) != null && ((RegularCell)map.getCell(3, 0)).getLoot() != null) {
             x = 900 * dimMult;
-            y = 900 * dimMult;
+            y = 325 * dimMult;
             GuiCardLoot card = new GuiCardLoot(((RegularCell)map.getCell(3, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
@@ -705,6 +708,7 @@ public class Gui extends Application{
             onClick = (e ->{
                 exchanger.setAnswer(a);
                 clearAllActions();
+                clearInfoOnMap();
                 exchanger.setActualInteraction(Interaction.NONE);
                 //After finishing the click event, reset all the events to the original option -> just call the redraw game
             });
@@ -738,17 +742,6 @@ public class Gui extends Application{
                 //todo add the finalfrenzy ones
             }
         }
-    }
-
-    private Label createLabel(String text, double x, double y, double dim){
-        Label l = new Label(text);
-        StackPane.setAlignment(l, Pos.TOP_LEFT);
-        l.setTranslateX(x);
-        l.setTranslateY(y);
-        l.setTextFill(javafx.scene.paint.Color.WHITE);
-        l.setFont(Font.font(MYFONT, dim));
-        l.setWrapText(true);
-        return l;
     }
 
     private Canvas createPopupCanvas(){
@@ -789,7 +782,11 @@ public class Gui extends Application{
         GridPane grid = gridMaker(backgroundWidth * 0.8 - xGridText - 20*dimMult);
         grid.setVgap(4);
         popupPane.getChildren().addAll(grid);
-        int row = 0;
+        Label popupTitle = new Label(exchanger.getMessage());
+        popupTitle.setFont(new Font(MYFONT,POPUPFONTDIM * 1.5 * dimMult));
+        popupTitle.setWrapText(true);
+        grid.add(popupTitle,0,0);
+        int row = 1;
         for(Action a: possible) {
             Label title = new Label(a.getName());
             title.setFont(new Font(MYFONT,POPUPFONTDIM * 1.3 * dimMult));
@@ -806,6 +803,7 @@ public class Gui extends Application{
             buttonAction.setOnAction((e)->{
                 System.out.println("Scelto: " + a.getName());
                 exchanger.setAnswer(a);
+                clearInfoOnMap();
                 exchanger.setActualInteraction(Interaction.NONE);
                 masterPane.getChildren().remove(popupPane);
             });
@@ -867,6 +865,19 @@ public class Gui extends Application{
         List<Power> choosable = (List<Power>) exchanger.getRequest();
 
         List<GuiCardPower> cards = myPowers.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
+
+        //if the request ask for discarding a power when I have three and I'm picking up another one (fourth)
+        if(choosable.size() > 3){
+            List<Power> p = cards.stream().map(GuiCardPower::getPower).collect(Collectors.toList());//get the already showed powers
+            //find the missing power
+            for(int i =choosable.size(); i>=0; i--)
+                for(int j=0; j<p.size();j++)
+                    if(choosable.get(i).getId() == p.get(j).getId())
+                        choosable.remove(i);
+
+            //draw the missing power
+            GuiCardPower temp = new GuiCardPower(choosable.get(0), 100, 100);
+        }
 
         for(GuiCardPower c : cards){
             c.setOnMousePressed(e -> {
@@ -1223,78 +1234,37 @@ public class Gui extends Application{
     }
 
     private void askMap(String message){
-        Pane root = initializerBackground();
-        GridPane grid = gridMaker(480 * dimMult);
-
-        Label l = new Label(message);
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-
-        int row = 1;
-        ToggleGroup radioGroup = new ToggleGroup();
-        for(int i = 5; i<=8; i++){
-            RadioButton radio = new RadioButton("Mappa " + (i-4));
-            radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            grid.add(radio,0,row);
-            row++;
-        }
-
-        Button submit = new Button("Conferma");
-        submit.setOnAction((e)->{
-            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
-            answer = answer.substring(6);
+        ToggleGroup group = new ToggleGroup();
+        List<String> buttons = new ArrayList<>();
+        buttons.add("Mappa 1");
+        buttons.add("Mappa 2");
+        buttons.add("Mappa 3");
+        buttons.add("Mappa 4");
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
+            String answer = ((RadioButton)group.getSelectedToggle()).getText();
+            answer = answer.substring(6);//get the number
             System.out.println(answer);
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);
             primaryS.setScene(new Scene(initializerBackground()));
         });
-        submit.setDefaultButton(true);
 
-        GridPane.setHalignment(l, HPos.CENTER);
-        grid.add(l,0,0);
-        GridPane.setHalignment(submit, HPos.CENTER);
-        grid.add(submit,0,row);
-
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
+        askWithRadio(message, group, buttons, eventHandler);
     }
 
     private void askFrenzy(String message){
-        Pane root = initializerBackground();
-        GridPane grid = gridMaker(480 * dimMult);
-
-        Label l = new Label(message);
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-
         ToggleGroup group = new ToggleGroup();
-        RadioButton radio1 = new RadioButton("Con frenesia");
-        radio1.setToggleGroup(group);
-        radio1.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        radio1.setSelected(true);
-        RadioButton radio2 = new RadioButton("Senza frenesia");
-        radio2.setToggleGroup(group);
-        radio2.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-
-        Button submit = new Button("Conferma");
-        submit.setOnAction((e)->{
+        List<String> buttons = new ArrayList<>();
+        buttons.add("Con Frenesia");
+        buttons.add("Senza Frenesia");
+        javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             System.out.println(answer);
-            exchanger.setAnswer(answer.equalsIgnoreCase("Con frenesia"));
+            exchanger.setAnswer(answer.equalsIgnoreCase("Con Frenesia"));
             exchanger.setActualInteraction(Interaction.NONE);
             primaryS.setScene(new Scene(initializerBackground()));
         });
-        submit.setDefaultButton(true);
 
-        GridPane.setHalignment(l, HPos.CENTER);
-        grid.add(l,0,0);
-        grid.add(radio1,0,1);
-        grid.add(radio2,0,2);
-        GridPane.setHalignment(submit, HPos.CENTER);
-        grid.add(submit,0,3);
-
-        root.getChildren().addAll(grid);
-
-        primaryS.setScene(new Scene(root));
+        askWithRadio(message, group, buttons, eventHandler);
     }
 }

@@ -239,6 +239,7 @@ public class Map implements Serializable {
      * @return the distance
      */
     public static int distance(Player p1, Player p2){
+        //FIXME this method doesn't count if there's a wall and the players cannot move through it!!!!
         return Math.abs(p1.getPosition().getX() - p2.getPosition().getX()) + Math.abs(p1.getPosition().getY() - p2.getPosition().getY());
     }
 

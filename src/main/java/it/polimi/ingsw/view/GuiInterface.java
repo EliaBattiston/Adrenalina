@@ -257,7 +257,7 @@ public class GuiInterface implements UserInterface{
 
         //weapons
         if(available.get(0).getLambdaID().contains("w")) {
-            exchanger.setRequest(Interaction.CHOOSEWEAPONACTION, "Scegli l'azione della carta da usare", available, mustChoose);
+            exchanger.setRequest(Interaction.CHOOSEWEAPONACTION, "Scegli l'azione da usare", available, mustChoose);
             exchanger.waitFreeToUse();
             return (Action) exchanger.getAnswer();
         }
@@ -346,7 +346,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power discardPower(List<Power> powers, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEPOWER, "Scegli una power da scartare", powers, mustChoose);
+        exchanger.setRequest(Interaction.DISCARDPOWER, "Scegli una power da scartare", powers, mustChoose);
         exchanger.waitFreeToUse();
         return (Power)exchanger.getAnswer();
     }
