@@ -125,7 +125,7 @@ public class Gui extends Application{
             System.exit(0);
         });
 
-       //TODO use this for fixed ratio, find the good way to implement them
+        //TODO use this for fixed ratio, find the good way to implement them
         //primaryStage.minHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
         //primaryStage.maxHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
 
@@ -462,23 +462,24 @@ public class Gui extends Application{
         double y = 73;
 
         double w = 30 * dimMult;
-        double h = 40 * dimMult;
+        double dropH = 46 * dimMult;
+        double skullH = 40 * dimMult;
 
         for(int s = 0; s<8; s++)
         {
             if(kills[s].isUsed())
             {
                 if(kills[s].getSkull())
-                    gc.drawImage(GuiImagesMap.getImage("skull.png"), x * dimMult, y * dimMult, w, h);
+                    gc.drawImage(GuiImagesMap.getImage("skull.png"), x * dimMult, y * dimMult, w, skullH);
                 else
                 {
                     if(kills[s].getOverkill())
                     {
-                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), (x-2) * dimMult, (y-2) * dimMult, w, h);
-                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), (x+2) * dimMult, (y+2) * dimMult, w, h);
+                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), (x-6) * dimMult, (y-6) * dimMult, w, dropH);
+                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), (x+6) * dimMult, y * dimMult, w, dropH);
                     }
                     else
-                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), x * dimMult, y * dimMult, w, h);
+                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), x * dimMult, (y-3) * dimMult, w, dropH);
                 }
             }
 
@@ -644,14 +645,16 @@ public class Gui extends Application{
     }
 
     private void drawPoints(int points){
-        double x = 1045 * dimMult;
-        double y = 990 * dimMult;
+        double x = 1050 * dimMult;
+        double y = 995 * dimMult;
+
+        String str = (points<10 ? "0":"") + points;
 
         gc.setFont(new Font(MYFONT,32*dimMult));
         gc.setFill(javafx.scene.paint.Color.WHITE);
         gc.setStroke(javafx.scene.paint.Color.BLACK);
-        gc.fillText(Integer.toString(points), x, y);
-        gc.strokeText(Integer.toString(points), x, y);
+        gc.fillText( str, x, y);
+        gc.strokeText( str, x, y);
     }
 
     //
@@ -750,7 +753,7 @@ public class Gui extends Application{
                             logArea.setText(loggedText);
                             logArea.setScrollTop(90000000);
                         });
-                        //logArea.setText(logArea.getText() + "\n" + exchanger.getMessage());
+                    //logArea.setText(logArea.getText() + "\n" + exchanger.getMessage());
                     exchanger.setActualInteraction(Interaction.NONE);
                     break;
                 case NONE:
@@ -1073,7 +1076,7 @@ public class Gui extends Application{
      * Used for: chooseTarget
      */
     private void chooseEnemy(){
-       showInfoOnMap(exchanger.getMessage());
+        showInfoOnMap(exchanger.getMessage());
 
         List<Player> choosable = (List<Player>) exchanger.getRequest();
 
@@ -1299,42 +1302,42 @@ public class Gui extends Application{
 
         List<String> roomsNames = new ArrayList<>();
         if(rooms.contains(0))
-           roomsNames.add("Rossa");
+            roomsNames.add("Rossa");
         if(rooms.contains(1))
-           roomsNames.add("Blu");
+            roomsNames.add("Blu");
         if(rooms.contains(2))
-           roomsNames.add("Gialla");
+            roomsNames.add("Gialla");
         if(rooms.contains(3))
-           roomsNames.add("Bianca");
+            roomsNames.add("Bianca");
         if(rooms.contains(4))
-           roomsNames.add("Viola");
+            roomsNames.add("Viola");
         if(rooms.contains(5))
-           roomsNames.add("Verde");
+            roomsNames.add("Verde");
 
         ToggleGroup radioGroup = new ToggleGroup();
         int row = 1;
         for(String s : roomsNames){
-           RadioButton radio = new RadioButton(s);
-           radio.setToggleGroup(radioGroup);
-           radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            RadioButton radio = new RadioButton(s);
+            radio.setToggleGroup(radioGroup);
+            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
             GridPane.setHalignment(radio, HPos.CENTER);
             grid.add(radio,0,row++);
         }
 
         Button submit = new Button("Conferma");
         submit.setOnAction(rs -> {
-           String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
-           System.out.println(answer + ": " + roomsNames.indexOf(answer));
-           exchanger.setAnswer(roomsNames.indexOf(answer));
-           exchanger.setActualInteraction(Interaction.NONE);
-           masterPane.getChildren().remove(popupPane);
+            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+            System.out.println(answer + ": " + roomsNames.indexOf(answer));
+            exchanger.setAnswer(roomsNames.indexOf(answer));
+            exchanger.setActualInteraction(Interaction.NONE);
+            masterPane.getChildren().remove(popupPane);
         });
         GridPane.setHalignment(submit, HPos.CENTER);
         grid.add(submit,0,row);
 
         //Show the pane
         masterPane.getChildren().add(popupPane);
-   }
+    }
 
     private void askDirection(String message){
         List<Direction> dirs = (List<Direction>) exchanger.getRequest();
