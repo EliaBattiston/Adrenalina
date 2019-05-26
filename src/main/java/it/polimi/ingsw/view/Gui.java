@@ -30,7 +30,7 @@ import static java.lang.Math.abs;
 //todo (ELIA) square around the cell when you don't want to move
 //todo (ELIA) draw the skulls on the board
 //todo (ALESSANDRO) do the fixme of the pawns
-//todo (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
+//DONE (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
 //todo (EVERYONE) check that all the text are written
 //todo (ALESSANDRO) add the settingsScreen "Waiting other users for the game"
 //DONE (ANDREA) add the different IPs and make the radio button method reusable
@@ -618,6 +618,9 @@ public class Gui extends Application{
                     chooseWeaponCard();
                     break;
                 case DISCARDPOWER:
+                    exchanger.setActualInteraction(Interaction.WAITINGUSER);
+                    uiExec.execute(this::discardPower);
+                    break;
                 case CHOOSEPOWER:
                     choosePowerCard();
                     break;
@@ -866,19 +869,6 @@ public class Gui extends Application{
 
         List<GuiCardPower> cards = myPowers.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
-        //if the request ask for discarding a power when I have three and I'm picking up another one (fourth)
-        if(choosable.size() > 3){
-            List<Power> p = cards.stream().map(GuiCardPower::getPower).collect(Collectors.toList());//get the already showed powers
-            //find the missing power
-            for(int i =choosable.size(); i>=0; i--)
-                for(int j=0; j<p.size();j++)
-                    if(choosable.get(i).getId() == p.get(j).getId())
-                        choosable.remove(i);
-
-            //draw the missing power
-            GuiCardPower temp = new GuiCardPower(choosable.get(0), 100, 100);
-        }
-
         for(GuiCardPower c : cards){
             c.setOnMousePressed(e -> {
                 exchanger.setAnswer(c.getPower());
@@ -892,6 +882,62 @@ public class Gui extends Application{
         }
 
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
+    }
+
+    private void discardPower(){
+        showInfoOnMap(exchanger.getMessage());
+
+        List<Power> choosable = (List<Power>) exchanger.getRequest();
+
+        Pane popupPane = new StackPane();
+        Canvas canvas = createPopupCanvas();
+        popupPane.getChildren().addAll(canvas);
+
+        double w = backgroundWidth * 0.6 / 4 * 0.86; //0.6 is the popup width, /4 are the four cards, *.86 is for non touch with eachother
+        double h = w * ((double)264/169);
+        double xGridText = backgroundWidth * 0.24;
+        double yGridText = backgroundHeight * 0.23;
+
+        //Grid
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setVgap(10);
+        grid.setMaxWidth(backgroundWidth*0.54);
+        grid.setMinWidth(backgroundWidth*0.54);
+        ColumnConstraints cc = new ColumnConstraints();
+        cc.setMinWidth(w);
+        grid.getColumnConstraints().add(cc);
+        popupPane.getChildren().addAll(grid);
+
+        //Title
+        Label popupTitle = new Label(exchanger.getMessage());
+        popupTitle.setFont(new Font(MYFONT,POPUPFONTDIM * 1.5 * dimMult));
+        popupTitle.setWrapText(true);
+        grid.add(popupTitle,0,0, 4,1);
+
+        //Cards
+        int col = 0;
+        for(Power p: choosable) {
+            GuiCardPower powerCard = new GuiCardPower(p, w, h);
+            grid.add(powerCard,col++,1);
+
+            powerCard.setEventsChoosable();
+            powerCard.setOnMousePressed(e->{
+                System.out.println("Scelto: " + p.getName());
+                exchanger.setAnswer(p);
+                exchanger.setActualInteraction(Interaction.NONE);
+                clearInfoOnMap();
+                masterPane.getChildren().remove(popupPane);
+            });
+        }
+        //both alignment are NECESSARY
+        StackPane.setAlignment(grid, Pos.TOP_LEFT);
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setTranslateX(xGridText);
+        grid.setTranslateY(yGridText);
+
+        //Show the pane
+        masterPane.getChildren().add(popupPane);
     }
 
     /**

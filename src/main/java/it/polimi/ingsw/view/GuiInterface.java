@@ -47,6 +47,14 @@ public class GuiInterface implements UserInterface{
 */
             this.updateGame(initForTest());
 
+            List<Power> p = new ArrayList<>();
+            p.add(new Power(1, "sdb", null, Color.RED));
+            p.add(new Power(4, "sdb", null, Color.RED));
+            p.add(new Power(5, "sdb", null, Color.BLUE));
+            p.add(new Power(18, "sdb", null, Color.RED));
+
+            discardPower(p, true);
+
             /*List<Player> players = new ArrayList<>();
 
             players.add(new Player("p4", "!", Fighter.BANSHEE));
@@ -99,23 +107,23 @@ public class GuiInterface implements UserInterface{
 
             //getNickname();
 
-            List<Integer> rooms = new ArrayList<>();
+            /*List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
             rooms.add(2);
             rooms.add(3);
 
             Integer choosen = chooseRoom(rooms, true);
 
-
+*/
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));
             players.add(new Player("aaa", "yay", Fighter.DOZER));
             chooseTarget(players, true);*/
 
-            List<Direction> possible = new ArrayList<>();
+           /* List<Direction> possible = new ArrayList<>();
             possible.add(Direction.NORTH);
             possible.add(Direction.SOUTH);
-            chooseDirection(possible, true);
+            chooseDirection(possible, true);*/
 
         }catch (Exception e){
 
