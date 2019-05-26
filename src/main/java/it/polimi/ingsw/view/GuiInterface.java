@@ -74,7 +74,10 @@ public class GuiInterface implements UserInterface{
             List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
 
             Point chosenP = movePlayer(dest,false);
-            System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
+            if(chosenP == null)
+                System.out.println("null");
+            else
+                System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
 
             /*List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
@@ -170,7 +173,10 @@ public class GuiInterface implements UserInterface{
                     y = new Random().nextInt(3);
                 }while(allGame.getMap().getCell(x, y) == null);
 
-                allGame.getMap().getCell(x, y).addPawn(p);
+                if(p == me)
+                    allGame.getMap().getCell(me.getPosition()).addPawn(me);
+                else
+                    allGame.getMap().getCell(x, y).addPawn(p);
             }
 
             allGame.initializeSkullsBoard(6);

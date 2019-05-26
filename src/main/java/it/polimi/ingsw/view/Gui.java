@@ -15,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
+import java.awt.event.MouseEvent;
+import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -126,6 +128,7 @@ public class Gui extends Application{
         //primaryStage.maxHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
 
         //Run the thread that handles the connection with the GuiInterface
+
         new Thread(this::listenRequests).start();
     }
 
@@ -716,19 +719,7 @@ public class Gui extends Application{
                 default:
                     break;
             }
-<<<<<<< HEAD
-=======
-            //handle the mustChoose
-            if(!exchanger.isMustChoose()){
-                uiExec.execute(()->{
-                    masterPane.getChildren().add(skipAction);
-                    skipAction.setOnMousePressed(e->{
-                        exchanger.setAnswer(null);
-                        exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
-                    });
-                });
-            }
->>>>>>> gui-additions
+
         }
         Platform.exit();
     }
@@ -864,6 +855,24 @@ public class Gui extends Application{
         masterPane.getChildren().add(popupPane);
     }
 
+    private void showEnemyInfo()
+    {
+        Pane popupPane = new StackPane();
+        Canvas canvas = createPopupCanvas();
+        popupPane.getChildren().addAll(canvas);
+
+        Button buttonAction = new Button("Chiudi" );
+        buttonAction.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult*0.8));
+        buttonAction.setOnAction((e)->{
+            masterPane.getChildren().remove(popupPane);
+        });
+
+        popupPane.getChildren().add(buttonAction);
+
+        //Show the pane
+        masterPane.getChildren().add(popupPane);
+    }
+
     private void clearAllActions(){
         runAction.resetEventsStyle();
         pickAction.resetEventsStyle();
@@ -931,6 +940,7 @@ public class Gui extends Application{
     private void chooseCell(){
         showInfoOnMap(exchanger.getMessage()); //fixme in the chooseCell (and other times) it doesn't work!!!
 
+        Point answer;
         List<Point> possible = (List<Point>) exchanger.getRequest();
         boolean dontMove = !exchanger.isMustChoose() && exchanger.getActualInteraction() == Interaction.MOVEPLAYER;
 
@@ -943,24 +953,31 @@ public class Gui extends Application{
 
         for(Point p:possible) {
             if (mapOfCells[p.getX()][p.getY()] != null) {
-                mapOfCells[p.getX()][p.getY()].setOnMousePressed(e -> {
 
-                    if(p.equals(match.getMyPlayer().getPosition()) && dontMove)
-                        exchanger.setAnswer(null);
-                    else
-                        exchanger.setAnswer(p);
+                if(p.equals(match.getMyPlayer().getPosition()) && dontMove)
+                    answer = null;
+                else
+                    answer = p;
 
-                    exchanger.setActualInteraction(Interaction.NONE);
-                    clearInfoOnMap();
-                    //After finishing the click event, reset all the events to the original option
-                    for(GuiCardClickableArea[] t:mapOfCells)
-                        for(GuiCardClickableArea s:t)
-                            if(s!=null)
-                                s.resetEventsStyle();
-                });
+                mapOfCells[p.getX()][p.getY()].setOnMousePressed(cellPressed(answer));
                 mapOfCells[p.getX()][p.getY()].setEventsChoosable();
             }
         }
+    }
+
+    private javafx.event.EventHandler<javafx.scene.input.MouseEvent> cellPressed(Point answer)
+    {
+        return (e -> {
+            exchanger.setAnswer(answer);
+
+            exchanger.setActualInteraction(Interaction.NONE);
+            clearInfoOnMap();
+            //After finishing the click event, reset all the events to the original option
+            for(GuiCardClickableArea[] t:mapOfCells)
+                for(GuiCardClickableArea s:t)
+                    if(s!=null)
+                        s.resetEventsStyle();
+        });
     }
 
     /**

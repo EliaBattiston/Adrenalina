@@ -75,6 +75,6 @@ public class Point implements Serializable {
 
     public boolean equals(Point x)
     {
-        return x.getX() == this.getY() && x.getY() == this.getY();
+        return x.getX() == this.getX() && x.getY() == this.getY();
     }
 }
