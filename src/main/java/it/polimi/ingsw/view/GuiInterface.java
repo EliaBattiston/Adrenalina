@@ -142,6 +142,8 @@ public class GuiInterface implements UserInterface{
                 weapons[0] = allGame.getWeaponsDeck().draw();
                 weapons[1] = allGame.getWeaponsDeck().draw();
                 weapons[1].setLoaded(false);
+                weapons[2] = allGame.getWeaponsDeck().draw();
+                weapons[2].setLoaded(false);
 
                 allGame.getPowersDeck().shuffle();
                 powers[0] = allGame.getPowersDeck().draw();
@@ -157,6 +159,8 @@ public class GuiInterface implements UserInterface{
                 marks.addAll(Arrays.asList("p2", "p3", "p3"));
                 marks.addAll(Arrays.asList("p4", "p5", "p4"));
             }));
+
+            me.addPoints(5);
 
             allGame.loadMap(1);
 

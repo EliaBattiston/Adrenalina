@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
@@ -19,11 +20,13 @@ import java.awt.event.MouseEvent;
 import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.pow;
 
 //On Monday together the background and the drops
 
@@ -34,7 +37,6 @@ import static java.lang.Math.abs;
 //todo (ALESSANDRO) add the settingsScreen "Waiting other users for the game"
 //DONE (ANDREA) add the different IPs and make the radio button method reusable
 //DONE (ANDREA) make the popup reusable
-//todo (ELIA)  make the popup for the unloaded enemies weapons
 public class Gui extends Application{
     final static String MYFONT = "EthnocentricRg-Italic"; //todo fix this
     final static double SETTINGSFONTDIM = 28;
@@ -142,7 +144,7 @@ public class Gui extends Application{
 
     private Pane drawGame(){
         Canvas canvas;
-        StackPane myWeapons, MyPowers, weaponsLoot, mapLoot, pawns, skulls;
+        StackPane myWeapons, MyPowers, weaponsLoot, mapLoot, pawns, info;
 
         masterPane = new Pane();
 
@@ -165,12 +167,14 @@ public class Gui extends Application{
         weaponsLoot = drawWeaponsLoot(match.getGame().getMap());
         mapLoot = drawLootOnMap(match.getGame().getMap());
         pawns = drawPawnsOnMap(match.getGame().getMap());
+        info = drawInfoOnMap(match.getGame().getPlayers());
 
         myWeapons.setPickOnBounds(false);
         MyPowers.setPickOnBounds(false);
         weaponsLoot.setPickOnBounds(false);
         mapLoot.setPickOnBounds(false);
         pawns.setPickOnBounds(false);
+        info.setPickOnBounds(false);
         masterPane.setPickOnBounds(false);
 
         //canvas for text
@@ -200,7 +204,7 @@ public class Gui extends Application{
         skipAction.getGraphicsContext2D().drawImage(GuiImagesMap.getImage("skipAction.png"), 40*dimMult, 825*dimMult, 40*dimMult, 40*dimMult);
         skipAction.setPickOnBounds(false);
 
-        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns,
+        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info,
                 runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction, logArea);
 
         return masterPane;
@@ -415,6 +419,40 @@ public class Gui extends Application{
 
             y += deltaY;
         }
+        return root;
+    }
+
+    private StackPane drawInfoOnMap(List<Player> players)
+    {
+        double boardW = 560 * dimMult;
+        double boardH = 134 * dimMult;
+        double boardX = 1222 * dimMult;
+        double boardY = 74 * dimMult;
+
+        //calculate distance from board to board
+        double deltaY = 169 * dimMult;
+
+        double size = 40*dimMult;
+
+        StackPane root = new StackPane();
+        GuiInfo info;
+
+        for(Player pl: players)
+        {
+            info = new GuiInfo(pl, size, size);
+
+            info.setOnMousePressed(e->{
+                uiExec.execute(()->{
+                    showEnemyInfo(pl);
+                });
+            });
+
+            info.setPickOnBounds(false);
+            info.setPosition(boardX + boardW + (30*dimMult), boardY + (53*dimMult) );
+            root.getChildren().add(info);
+            boardY += deltaY;
+        }
+
         return root;
     }
 
@@ -855,19 +893,70 @@ public class Gui extends Application{
         masterPane.getChildren().add(popupPane);
     }
 
-    private void showEnemyInfo()
+    private void showEnemyInfo(Player pl)
     {
         Pane popupPane = new StackPane();
         Canvas canvas = createPopupCanvas();
         popupPane.getChildren().addAll(canvas);
+        Canvas weapon;
+        Canvas power;
 
-        Button buttonAction = new Button("Chiudi" );
-        buttonAction.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult*0.8));
-        buttonAction.setOnAction((e)->{
+        //Close button
+        Button closeButton = new Button("Chiudi" );
+        closeButton.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult*0.8));
+        closeButton.setOnAction((e)->{
             masterPane.getChildren().remove(popupPane);
         });
+        StackPane.setAlignment(closeButton, Pos.CENTER);
+        closeButton.setTranslateX(500*dimMult);
+        closeButton.setTranslateY(-290*dimMult);
 
-        popupPane.getChildren().add(buttonAction);
+        //Player name
+        Label nameLbl = new Label(pl.getNick() + " - " + pl.getCharacter() + " - Punti: " + pl.getPoints());
+        nameLbl.setTextFill(Color.WHITE);
+        nameLbl.setFont(new Font(MYFONT,POPUPFONTDIM * 1.3 * dimMult));
+        nameLbl.setWrapText(true);
+        StackPane.setAlignment(nameLbl, Pos.CENTER_LEFT);
+        nameLbl.setTranslateX(420*dimMult);
+        nameLbl.setTranslateY(-280*dimMult);
+
+        //Weapons
+        double weaponX = 420;
+        double weaponW = 180*dimMult;
+        double weaponH = 305*dimMult;
+        for(Weapon w : pl.getWeapons().stream().filter(w->!w.isLoaded()).collect(Collectors.toList()))
+        {
+            weapon = new Canvas(weaponW, weaponH);
+            StackPane.setAlignment(weapon, Pos.CENTER_LEFT);
+            weapon.setPickOnBounds(false);
+            weapon.setTranslateX(weaponX*dimMult);
+            weapon.setTranslateY(-95*dimMult);
+
+            weapon.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( "weapon/weapon" + w.getId() + ".png" ), 0, 0, weaponW, weaponH);
+
+            weaponX += 200;
+            popupPane.getChildren().add(weapon);
+        }
+
+        //Powers
+        double powerX = 430;
+        double powerW = 127*dimMult;
+        double powerH = 198*dimMult;
+        for(Power p: pl.getPowers())
+        {
+            power = new Canvas(127*dimMult, 198*dimMult);
+            StackPane.setAlignment(power, Pos.CENTER_LEFT);
+            power.setPickOnBounds(false);
+            power.setTranslateX(powerX*dimMult);
+            power.setTranslateY(180*dimMult);
+
+            power.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(  "power/power" + (p.getId()<=12 ? p.getId() : p.getId()-12) + ".png" ), 0, 0, powerW, powerH);
+
+            powerX += 150;
+            popupPane.getChildren().add(power);
+        }
+
+        popupPane.getChildren().addAll(closeButton, nameLbl);
 
         //Show the pane
         masterPane.getChildren().add(popupPane);
