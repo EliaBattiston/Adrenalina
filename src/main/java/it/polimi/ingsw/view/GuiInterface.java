@@ -508,7 +508,33 @@ public class GuiInterface implements UserInterface{
     public String getIPAddress(){
         exchanger.setRequest(Interaction.SERVERIP, "Inserisci l'IP del server.", null, true);
         exchanger.waitFreeToUse();
-        return (String)exchanger.getAnswer();
+        String ip = (String)exchanger.getAnswer();
+
+        while(!checkIP(ip)) {
+            exchanger.setRequest(Interaction.SERVERIP, "Indirizzo IP non correttamente formattato\nInserisci l'IP del server.", null, true);
+            exchanger.waitFreeToUse();
+            ip = (String)exchanger.getAnswer();
+        }
+
+        return ip;
+    }
+
+
+    private boolean checkIP(String ip) {
+        String pieces[];
+        pieces = ip.split("\\.");
+        if(ip.equals("localhost"))
+            return true;
+        else {
+            if(pieces.length != 4)
+                return false;
+            for(String piece: pieces) {
+                int n = Integer.parseInt(piece);
+                if(n > 255)
+                    return false;
+            }
+            return true;
+        }
     }
 
     /**

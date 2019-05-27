@@ -650,6 +650,7 @@ public class Match implements Runnable
 
             //First blood
             if(!useFrenzy)
+                //FIXME NullPointerException when called on disconnected player
                 game.getPlayer(damaged.getReceivedDamage()[0]).addPoints(1);
             //Give points
             for(Entry<Player, Integer> entry : inflictedDamages)
