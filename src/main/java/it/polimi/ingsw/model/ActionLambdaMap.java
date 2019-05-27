@@ -141,6 +141,7 @@ public class ActionLambdaMap {
 
             fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(vortexPoint));
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1,p2)<=1);
+            targets.remove(pl);
             Player chosen = pl.getConn().chooseTarget(targets, true);
 
             chosen.applyEffects(EffectsLambda.move(chosen, vortexPoint, map));
@@ -163,7 +164,7 @@ public class ActionLambdaMap {
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
 
-            visibleRooms.remove(new Integer(map.getCell(pl.getPosition()).getRoomNumber()));
+            visibleRooms.remove(((Integer)(map.getCell(pl.getPosition()).getRoomNumber())));
 
             int roomChosen = pl.getConn().chooseRoom(playersRooms, true);
 
@@ -400,18 +401,13 @@ public class ActionLambdaMap {
         //Dai 1 danno aggiuntivo al tuo bersaglio.
         data.put("w4-ad2", (pl, map, memory)->((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl)));
 
+        //FIXME the feasible told me I could do this but when asked, I didn't have any possible target even if I really could
         //(Point) memory
         data.put("w8-ad1", (pl, map, memory)->{
             //Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.
 
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
-            fakePlayer.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                try {
-                    position.set((Point)memory);
-                }catch(WrongPointException ex){
-                    Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
-                }
-            }));
+            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set((Point)memory));
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, ((p1, p2) -> Map.distance(p1,p2)<=1));
             List<Player> chosen = new ArrayList<>();
 

@@ -1,10 +1,5 @@
 package it.polimi.ingsw.controller;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.rmi.RMISecurityManager;
 import java.util.*;
 
 public class Main {
@@ -15,23 +10,21 @@ public class Main {
         //System.setSecurityManager(null);
 
         List<String> flags = Arrays.asList(args);
-        if(flags.contains("-c")) {
-
-
-            boolean gui = false;
-            if(flags.contains("-g"))
-                gui = true;
-
-            new CMain(gui);
-        }
+        if(flags.contains("-c"))
+            new CMain(false);
+        else if(flags.contains("-g"))
+            new CMain(true);
         else if(flags.contains("-s")) {
-            new SMain();
+            if(flags.contains("-l"))
+                new SMain("localhost");
+            else
+                new SMain(null);
         }
         else {
             System.out.println("Flag errati");
-            System.out.println("\t-s\tAvvia come Server");
-            System.out.println("\t-c\tAvvia come Client");
-            System.out.println("\t-g\tInterfaccia grafica per il Client, utilizzabile solo con flag -c");
+            System.out.println("\t-s\tAvvia Server");
+            System.out.println("\t-c\tAvvia CLI Client");
+            System.out.println("\t-g\tAvvia GUI Client");
         }
     }
 }

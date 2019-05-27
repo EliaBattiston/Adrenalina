@@ -196,7 +196,6 @@ public interface Connection extends Remote
 
     /**
      * Returns true indifferently, needed from the server to ping the client
-     * @return True
      */
     public void clientPing() throws ClientDisconnectedException;
 

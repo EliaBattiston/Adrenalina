@@ -2,21 +2,205 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
+import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.model.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GuiInterface implements UserInterface{
     private GuiExchanger exchanger;
+
+    public static void main(String[] args){
+        new GuiInterface().tester();
+    }
 
     public GuiInterface(){
         String[] args = new String[2];
         exchanger = GuiExchanger.getInstance();
 
         new Thread(()-> javafx.application.Application.launch(Gui.class, args)).start();
+    }
+
+    private void tester(){
+        try {
+            System.out.println("Start test gui");
+
+
+
+            //String ip = getIPAddress();
+            //boolean isRMI = this.useRMI();
+            //String nick = getNickname();
+            //String phrase = getPhrase();
+            //Fighter f= getFighter();
+            //int s = getSkullNum();
+/*
+            chooseFrenzy();
+
+
+            System.out.println("IP choosen: " + ip + ", RMI: " + isRMI + "  " + nick + "   " + phrase);
+
+            System.out.println(f.toString() + "  " + s);
+*/
+            MatchView testView = initForTest();
+            this.updateGame( testView );
+
+            List<Power> p = new ArrayList<>();
+            p.add(new Power(1, "sdb", null, Color.RED));
+            p.add(new Power(4, "sdb", null, Color.RED));
+            p.add(new Power(5, "sdb", null, Color.BLUE));
+            p.add(new Power(18, "sdb", null, Color.RED));
+
+            discardPower(p, true);
+
+            /*List<Player> players = new ArrayList<>();
+
+            players.add(new Player("p4", "!", Fighter.BANSHEE));
+            players.add(new Player("p5", "!", Fighter.DOZER));
+
+            List<Action> actions = new ArrayList<>();
+            actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
+            actions.add(new Action("try", "asvdsjnzfjbn jdzfnbkjdzfnbjknzfjbjzfdnbjzfndbjzdhjfjzfnvbjdf<nvijzdnfijbnbsd", null, "w2-a"));
+
+            this.chooseAction(actions, false);*/
+
+            //Player choosen = chooseTarget(players, true);
+
+           // System.out.println(choosen.toString());
+
+            /*List<Action> a = new ArrayList<>();
+            a.addAll(Activities.getInstance().getAvailable(4, false, false));
+
+            Action cho = chooseAction(a, true);
+
+            System.out.println(cho.getName());
+*/
+            List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
+
+            Point chosenP = movePlayer(dest,false);
+            if(chosenP == null)
+                System.out.println("null");
+            else
+                System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
+
+            /*List<Weapon> goodW = new ArrayList<>();
+            goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(3, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(4, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(5, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(6, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(7, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(8, "", "", null, null, null, Color.RED));
+            goodW.add(new Weapon(9, "", "", null, null, null, Color.RED));
+
+            Weapon w = chooseWeapon(goodW, false);
+
+            Thread.sleep(200);
+
+            System.out.println("Done, chosen weapon: " + w.getName());
+
+            Thread.sleep(500);*/
+            //getFighter();
+
+            //getNickname();
+
+            /*List<Integer> rooms = new ArrayList<>();
+            rooms.add(1);
+            rooms.add(2);
+            rooms.add(3);
+
+            Integer choosen = chooseRoom(rooms, true);
+
+*/
+            /*List<Player> players = new ArrayList<>();
+            players.add(new Player("aaa", "yay", Fighter.SPROG));
+            players.add(new Player("aaa", "yay", Fighter.DOZER));
+            chooseTarget(players, true);*/
+
+           /* List<Direction> possible = new ArrayList<>();
+            possible.add(Direction.NORTH);
+            possible.add(Direction.SOUTH);
+            chooseDirection(possible, true);*/
+
+        }catch (Exception e){
+
+        }
+    }
+
+    private MatchView initForTest() {
+        //Settings for testing
+        try {
+            Game allGame = Game.jsonDeserialize("baseGame.json");
+            ArrayList<Player> players = new ArrayList<>();
+            players.add(new Player("p1", "!", Fighter.VIOLETTA));
+            players.add(new Player("p2", "!", Fighter.DSTRUTTOR3));
+            players.add(new Player("p3", "!", Fighter.SPROG));
+            players.add(new Player("p4", "!", Fighter.BANSHEE));
+            players.add(new Player("p5", "!", Fighter.DOZER));
+
+            Player me = players.get(0);
+
+            me.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                allGame.getWeaponsDeck().shuffle();
+                weapons[0] = allGame.getWeaponsDeck().draw();
+                weapons[1] = allGame.getWeaponsDeck().draw();
+                weapons[1].setLoaded(false);
+                weapons[2] = allGame.getWeaponsDeck().draw();
+                weapons[2].setLoaded(false);
+
+                allGame.getPowersDeck().shuffle();
+                powers[0] = allGame.getPowersDeck().draw();
+                powers[1] = allGame.getPowersDeck().draw();
+
+                ammo.add(Color.YELLOW, 2);
+                ammo.add(Color.BLUE, 1);
+
+                damage[0] = "p2";
+                damage[1] = "p2";
+                damage[2] = "p3";
+
+                marks.addAll(Arrays.asList("p2", "p3", "p3"));
+                marks.addAll(Arrays.asList("p4", "p5", "p4"));
+            }));
+
+            me.addPoints(5);
+
+            allGame.loadMap(1);
+
+            for(int x = 0; x < 4; x++)
+                for(int y = 0; y < 3; y++)
+                    if(allGame.getMap().getCell(x, y) != null)
+                        allGame.getMap().getCell(x, y).refill(allGame);
+
+            //it's just for test
+            for(Player p:players){
+                int x, y;
+                /*do {
+                    x = new Random().nextInt(4);
+                    y = new Random().nextInt(3);
+                }while(allGame.getMap().getCell(x, y) == null);*/
+x=0;
+y=0;
+                if(p == me)
+                    allGame.getMap().getCell(me.getPosition()).addPawn(me);
+                else
+                    allGame.getMap().getCell(x, y).addPawn(p);
+            }
+
+            allGame.initializeSkullsBoard(6);
+            allGame.getSkulls()[3].setKiller(me,true);
+            allGame.getSkulls()[4].setKiller(me,false);
+
+            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.REGULAR, true, me);
+        }catch (Exception ex){
+            ;
+        }
+        return null;
     }
 
     /**
@@ -26,7 +210,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public void updateGame(MatchView matchView) {
-        exchanger.setRequest(Interaction.UPDATEVIEW, "Updating view...", matchView, false);
+        exchanger.setRequest(Interaction.UPDATEVIEW, "Updating view...", matchView, true);
         exchanger.waitFreeToUse();
     }
 
@@ -73,7 +257,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer getSkullNum() {
-        exchanger.setRequest(Interaction.GETSKULLSNUM, "Scegli il numero di teschi da usare", null, true); //todo (after merge) fix the request
+        exchanger.setRequest(Interaction.GETSKULLSNUM, "Scegli il numero di teschi da usare", null, true);
         exchanger.waitFreeToUse();
         return (Integer) exchanger.getAnswer();
     }
@@ -89,18 +273,21 @@ public class GuiInterface implements UserInterface{
     public Action chooseAction(List<Action> available, boolean mustChoose) {
         //if id "a-*" -> run, shoot...
         if(available.get(0).getLambdaID().contains("a-")) {
-            exchanger.setRequest(Interaction.CHOOSEBASEACTION, "Scegli un'azione di base", available, true);
+            exchanger.setRequest(Interaction.CHOOSEBASEACTION, "Scegli un'azione di base", available, mustChoose);
             exchanger.waitFreeToUse();
             return (Action) exchanger.getAnswer();
         }
 
-        //todo implement the powers and weapons
+        //weapons
+        if(available.get(0).getLambdaID().contains("w")) {
+            exchanger.setRequest(Interaction.CHOOSEWEAPONACTION, "Scegli l'azione da usare", available, mustChoose);
+            exchanger.waitFreeToUse();
+            return (Action) exchanger.getAnswer();
+        }
 
-        return available.get(new Random().nextInt(available.size()));
-        //if "p-" power
-
-        //if w- action of weapon
-
+        //Not sure 100% there's no other type of action
+        Logger.getGlobal().log(Level.SEVERE, "Action requested can't be handled!!!");
+        return null;
     }
 
     /**
@@ -182,7 +369,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power discardPower(List<Power> powers, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEPOWER, "Scegli una power da scartare", powers, mustChoose);
+        exchanger.setRequest(Interaction.DISCARDPOWER, "Scegli una power da scartare", powers, mustChoose);
         exchanger.waitFreeToUse();
         return (Power)exchanger.getAnswer();
     }
@@ -278,7 +465,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer chooseMap() {
-        exchanger.setRequest(Interaction.CHOOSEROOM, "Con quale mappa vuoi giocare?", null, true);
+        exchanger.setRequest(Interaction.CHOOSEMAP, "Con quale mappa vuoi giocare?", null, true);
         exchanger.waitFreeToUse();
         return (Integer) exchanger.getAnswer();
     }
@@ -308,7 +495,9 @@ public class GuiInterface implements UserInterface{
      * @param message Message to be printed
      */
     public void generalMessage(String message){
-        ;//todo implement
+        System.out.println(message);
+        exchanger.setRequest(Interaction.LOG, message, null, true);
+        exchanger.waitFreeToUse();
     }
 
     /**
@@ -328,7 +517,33 @@ public class GuiInterface implements UserInterface{
     public String getIPAddress(){
         exchanger.setRequest(Interaction.SERVERIP, "Inserisci l'IP del server.", null, true);
         exchanger.waitFreeToUse();
-        return (String)exchanger.getAnswer();
+        String ip = (String)exchanger.getAnswer();
+
+        while(!checkIP(ip)) {
+            exchanger.setRequest(Interaction.SERVERIP, "Indirizzo IP non correttamente formattato\nInserisci l'IP del server.", null, true);
+            exchanger.waitFreeToUse();
+            ip = (String)exchanger.getAnswer();
+        }
+
+        return ip;
+    }
+
+
+    private boolean checkIP(String ip) {
+        String pieces[];
+        pieces = ip.split("\\.");
+        if(ip.equals("localhost"))
+            return true;
+        else {
+            if(pieces.length != 4)
+                return false;
+            for(String piece: pieces) {
+                int n = Integer.parseInt(piece);
+                if(n > 255)
+                    return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -336,6 +551,8 @@ public class GuiInterface implements UserInterface{
      * @return Server's IP address
      */
     public String getLocalAddress(List<String> possibleIP){
-        return possibleIP.get(0);//todo add the gui method for this
+        exchanger.setRequest(Interaction.ASKLOCALADDRESS, "Seleziona l'indirizzo su cui vuoi giocare", possibleIP, true);
+        exchanger.waitFreeToUse();
+        return (String)exchanger.getAnswer();
     }
 }

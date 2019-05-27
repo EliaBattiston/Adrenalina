@@ -699,7 +699,7 @@ public class Match implements Runnable
             });
 
             //First blood
-            if(!useFrenzy)
+            if(!useFrenzy && damaged.getReceivedDamage()[0] != null)
                 game.getPlayer(damaged.getReceivedDamage()[0]).addPoints(1);
             //Give points
             for(Entry<Player, Integer> entry : inflictedDamages)

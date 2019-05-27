@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"it.polimi.ingsw.controller"},{"l":"it.polimi.ingsw.exceptions"},{"l":"it.polimi.ingsw.model"},{"l":"it.polimi.ingsw.view"}]

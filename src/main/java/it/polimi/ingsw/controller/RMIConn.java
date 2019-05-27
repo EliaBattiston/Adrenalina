@@ -408,7 +408,6 @@ public class RMIConn implements Connection, Serializable
 
     /**
      * Returns true indifferently, needed from the server to ping the client
-     * @return True
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
     public void clientPing() throws ClientDisconnectedException {

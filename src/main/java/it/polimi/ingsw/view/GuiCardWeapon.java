@@ -15,7 +15,7 @@ public class GuiCardWeapon extends GuiCard {
         super((rotation==0?width:height), (rotation==0?height:width));
         this.weapon = weapon;
 
-        img = GuiImagesMap.getImage( Gui.imgRoot + "weapon/weapon" + weapon.getId() + ".png" );
+        img = GuiImagesMap.getImage( "weapon/weapon" + weapon.getId() + ".png" );
 
         if(rotation != 0){
             ImageView iv = new ImageView(img);
@@ -25,9 +25,25 @@ public class GuiCardWeapon extends GuiCard {
             params.setFill(Color.TRANSPARENT);
             Image rotatedImage = iv.snapshot(params, null);
             getGraphicsContext2D().drawImage(rotatedImage, 0, 0, height, width); //the rotation should be of +-90 degrees so height and width will be inverted
+
+            //Make it darker if not loaded
+            if(!weapon.isLoaded())
+            {
+                getGraphicsContext2D().setFill(javafx.scene.paint.Color.rgb(0, 0, 0, 0.7));
+                getGraphicsContext2D().fillRect(0, 0, height, width);
+            }
         }
         else
-            getGraphicsContext2D().drawImage( img, 0, 0, width, height);
+        {
+            getGraphicsContext2D().drawImage(img, 0, 0, width, height);
+
+            //Make it darker if not loaded
+            if(!weapon.isLoaded())
+            {
+                getGraphicsContext2D().setFill(javafx.scene.paint.Color.rgb(0, 0, 0, 0.7));
+                getGraphicsContext2D().fillRect(0, 0, width, height);
+            }
+        }
 
         resetEventsStyle();
     }

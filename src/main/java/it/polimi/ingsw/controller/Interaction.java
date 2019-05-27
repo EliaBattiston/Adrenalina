@@ -27,8 +27,11 @@ public enum Interaction {
     CLOSEAPP,
     RMIORSOCKET,
     SERVERIP,
+    ASKLOCALADDRESS,
     CHOOSEBASEACTION,
     MESSAGE,
     PING,
-    ENDGAME
+    ENDGAME,
+    CHOOSEWEAPONACTION,
+    LOG
 }

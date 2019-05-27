@@ -106,7 +106,7 @@ public class FeasibleLambdaMap
             }
 
             //Without converting to integer it removes the one @ position instead of the value - Andrea Aspesi
-            visibleRooms.remove(new Integer(map.getCell(pl.getPosition()).getRoomNumber()));
+            visibleRooms.remove(((Integer)(map.getCell(pl.getPosition()).getRoomNumber())));
 
             return !playersRooms.isEmpty();
         });
@@ -254,7 +254,7 @@ public class FeasibleLambdaMap
             //Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.
 
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
-            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) ->  position.set((Point)memory) );
+            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) ->  position.set((Point)memory));
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, ((p1, p2) -> Map.distance(p1,p2)<=1));
 
             return !targets.isEmpty() && memory != null;

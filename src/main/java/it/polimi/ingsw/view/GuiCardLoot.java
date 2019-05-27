@@ -11,7 +11,7 @@ public class GuiCardLoot extends GuiCard {
     public GuiCardLoot(Loot loot, double size){
         super(size, size);
         this.loot = loot;
-        img = GuiImagesMap.getImage( Gui.imgRoot +"loot/" + loot.getContentAsString() + ".png" );
+        img = GuiImagesMap.getImage( "loot/" + loot.getContentAsString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
     }

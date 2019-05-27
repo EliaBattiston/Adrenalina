@@ -239,6 +239,7 @@ public class Map implements Serializable {
      * @return the distance
      */
     public static int distance(Player p1, Player p2){
+        //FIXME this method doesn't count if there's a wall and the players cannot move through it!!!!
         return Math.abs(p1.getPosition().getX() - p2.getPosition().getX()) + Math.abs(p1.getPosition().getY() - p2.getPosition().getY());
     }
 
@@ -407,6 +408,7 @@ public class Map implements Serializable {
      * Find the second point in the same direction the first has been found from the start
      * @param start start point
      * @param first first point found
+     * @param map the map
      * @return the second point in the same direction as the first if it's in the map
      */
     public static Point nextPointSameDirection(Point start, Point first, Map map){

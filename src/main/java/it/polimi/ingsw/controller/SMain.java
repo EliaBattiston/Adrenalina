@@ -59,7 +59,7 @@ public class SMain
     /**
      * Creates a new SMain
      */
-    public SMain()
+    public SMain(String passedIp)
     {
 
         lock = new Object();
@@ -70,43 +70,47 @@ public class SMain
         }
 
         try {
-
-            List<String> addresses = new ArrayList<>();
             String localIP;
 
-            Enumeration<NetworkInterface> nInterfaces = NetworkInterface.getNetworkInterfaces();
-            while (nInterfaces.hasMoreElements()) {
-                Enumeration<InetAddress> inetAddresses = nInterfaces
-                        .nextElement().getInetAddresses();
-                while (inetAddresses.hasMoreElements()) {
-                    String address = inetAddresses.nextElement()
-                            .getHostAddress();
-                    if (address.contains(".")) {
-                        String[] split = address.split("\\.");
-                        if(!split[0].equals("127") && !split[0].equals("169"))
-                            addresses.add(address);
+            if(passedIp == null || passedIp.equals("")) {
+                List<String> addresses = new ArrayList<>();
+
+                Enumeration<NetworkInterface> nInterfaces = NetworkInterface.getNetworkInterfaces();
+                while (nInterfaces.hasMoreElements()) {
+                    Enumeration<InetAddress> inetAddresses = nInterfaces
+                            .nextElement().getInetAddresses();
+                    while (inetAddresses.hasMoreElements()) {
+                        String address = inetAddresses.nextElement()
+                                .getHostAddress();
+                        if (address.contains(".")) {
+                            String[] split = address.split("\\.");
+                            if (!split[0].equals("127") && !split[0].equals("169"))
+                                addresses.add(address);
+                        }
                     }
                 }
-            }
 
-            if(addresses.size() > 1) {
-                System.out.println("Seleziona l'IP della macchina");
-                for(int i = 0; i < addresses.size(); i++) {
-                    System.out.println("[" + (i + 1) + "] " + addresses.get(i));
+                if (addresses.size() > 1) {
+                    System.out.println("Seleziona l'IP della macchina");
+                    for (int i = 0; i < addresses.size(); i++) {
+                        System.out.println("[" + (i + 1) + "] " + addresses.get(i));
+                    }
+                    Scanner in = new Scanner(System.in);
+                    int pos;
+                    do {
+                        System.out.print("Selezione [1-" + addresses.size() + "]: ");
+                        localIP = in.nextLine();
+                        pos = Integer.parseInt(localIP) - 1;
+                    }
+                    while (pos < 0 || pos >= addresses.size());
+                    localIP = addresses.get(pos);
+                } else {
+                    localIP = addresses.get(0);
                 }
-                Scanner in = new Scanner(System.in);
-                int pos;
-                do {
-                    System.out.print("Selezione [1-" + addresses.size() + "]: ");
-                    localIP = in.nextLine();
-                    pos = Integer.parseInt(localIP) - 1;
-                }
-                while (pos < 0 || pos >= addresses.size());
-                localIP = addresses.get(pos);
+
             }
-            else {
-                localIP = addresses.get(0);
-            }
+            else
+                localIP = passedIp;
 
             System.setProperty("java.rmi.server.hostname", localIP);
 

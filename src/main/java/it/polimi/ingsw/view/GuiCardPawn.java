@@ -10,18 +10,17 @@ public class GuiCardPawn extends GuiCard {
     public GuiCardPawn(Player pl, double size){
         super(size, size);
         this.pl = pl;
-        img = GuiImagesMap.getImage( Gui.imgRoot + "playerPawn/" + pl.getCharacter().toString() + ".png" );
+        img = GuiImagesMap.getImage( "playerPawn/" + pl.getCharacter().toString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
 
         setOnMousePressed(e ->{
-            System.out.println("Clicked " + pl.getCharacter().toString());
+            System.out.println(e.getX() + "   " + e.getY() + "Clicked " + pl.getCharacter().toString() + getLayoutX()  + "  " + getLayoutY() + "  " + size);
         });
         setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 10, 0.5, 0, 0);"));
         setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 0, 0, 0, 0);") );
     }
 
-    //TODO find if there's a way to move the three "inList" methods inside the GuiCard Class
     /**
      * Determine if the card represented by this GuiCard is inside the list
      * @param list of possible matches

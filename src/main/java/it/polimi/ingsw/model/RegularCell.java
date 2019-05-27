@@ -73,7 +73,7 @@ public class RegularCell extends Cell {
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
      */
-    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException
+    public void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers)
     {
         Loot picked = pickLoot();
 

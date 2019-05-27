@@ -20,6 +20,7 @@ public abstract class GuiCard extends Canvas {
 
     protected GuiCard(double width, double height){
         super(width, height);
+        setPickOnBounds(false);
     }
 
     public void setPosition(double x, double y){
