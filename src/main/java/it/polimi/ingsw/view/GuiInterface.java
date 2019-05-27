@@ -2,6 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
+import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.model.*;
 
 import java.util.ArrayList;
@@ -45,7 +46,8 @@ public class GuiInterface implements UserInterface{
 
             System.out.println(f.toString() + "  " + s);
 */
-            this.updateGame(initForTest());
+            MatchView testView = initForTest();
+            this.updateGame( testView );
 
             List<Power> p = new ArrayList<>();
             p.add(new Power(1, "sdb", null, Color.RED));
@@ -77,13 +79,13 @@ public class GuiInterface implements UserInterface{
 
             System.out.println(cho.getName());
 */
-            /*List<Point> dest = new ArrayList<>();
-            dest.add(new Point(0,0));
-            dest.add(new Point(0,1));
-            dest.add(new Point(2,0));
+            List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
 
-            Point chosenP = movePlayer(dest, true);
-            System.out.println(chosenP.getX() + " y: "+ chosenP.getY());*/
+            Point chosenP = movePlayer(dest,false);
+            if(chosenP == null)
+                System.out.println("null");
+            else
+                System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
 
             /*List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
@@ -147,6 +149,9 @@ public class GuiInterface implements UserInterface{
                 allGame.getWeaponsDeck().shuffle();
                 weapons[0] = allGame.getWeaponsDeck().draw();
                 weapons[1] = allGame.getWeaponsDeck().draw();
+                weapons[1].setLoaded(false);
+                weapons[2] = allGame.getWeaponsDeck().draw();
+                weapons[2].setLoaded(false);
 
                 allGame.getPowersDeck().shuffle();
                 powers[0] = allGame.getPowersDeck().draw();
@@ -163,6 +168,8 @@ public class GuiInterface implements UserInterface{
                 marks.addAll(Arrays.asList("p4", "p5", "p4"));
             }));
 
+            me.addPoints(5);
+
             allGame.loadMap(1);
 
             for(int x = 0; x < 4; x++)
@@ -178,10 +185,17 @@ public class GuiInterface implements UserInterface{
                     y = new Random().nextInt(3);
                 }while(allGame.getMap().getCell(x, y) == null);
 
-                allGame.getMap().getCell(x, y).addPawn(p);
+                if(p == me)
+                    allGame.getMap().getCell(me.getPosition()).addPawn(me);
+                else
+                    allGame.getMap().getCell(x, y).addPawn(p);
             }
 
-            return new MatchView(new GameView(allGame.getMap(), players, null), me, me, 3, GamePhase.REGULAR, true, me);
+            allGame.initializeSkullsBoard(6);
+            allGame.getSkulls()[3].setKiller(me,true);
+            allGame.getSkulls()[4].setKiller(me,false);
+
+            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.REGULAR, true, me);
         }catch (Exception ex){
             ;
         }
