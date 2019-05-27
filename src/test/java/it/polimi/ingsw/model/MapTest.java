@@ -193,7 +193,7 @@ public class MapTest {
         Player viewer = new Player("viewer", "hi", Fighter.SPROG);
         viewer.applyEffects(EffectsLambda.move(viewer, new Point(1,1), m));
 
-        List<Player> calculated = Map.playersAtGivenDistance(viewer, m, false, (p1,p2)->Map.distance(p1,p2)<=1);
+        List<Player> calculated = Map.playersAtGivenDistance(viewer, m, false, (p1,p2)->m.distance(p1,p2)<=1);
 
         assertFalse(calculated.containsAll(pl));
 
@@ -239,5 +239,67 @@ public class MapTest {
         List<Point> visible = Map.visiblePoints(viewer.getPosition(), m, 0);
 
         assertTrue(visible.size() == 7);
+    }
+
+    /**
+     * Tests for correct functionality of distance function
+     */
+    @Test
+    public void checkDistanceCalculus() {
+        Map m = Map.jsonDeserialize(2);
+        Player p1 = new Player("Player 1", "", Fighter.DSTRUTTOR3);
+        Player p2 = new Player("Player 2", "", Fighter.DSTRUTTOR3);
+
+        Point points[] = new Point[12];
+        for(int y = 0; y < 3; y++)
+            for(int x = 0; x < 4; x++)
+                points[x+4*y] = new Point(x,y);
+
+        int distance;
+
+        p1.applyEffects(EffectsLambda.move(p1, points[0], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[0], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 0);
+
+        p1.applyEffects(EffectsLambda.move(p1, points[0], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[1], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 1);
+
+        p1.applyEffects(EffectsLambda.move(p1, points[0], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[4], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 1);
+
+        p1.applyEffects(EffectsLambda.move(p1, points[4], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[1], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 2);
+
+        p1.applyEffects(EffectsLambda.move(p1, points[0], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[5], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 2);
+
+        p1.applyEffects(EffectsLambda.move(p1, points[4], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[5], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 1);
+
+        p1.applyEffects(EffectsLambda.move(p1, points[6], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[10], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 3);
+
+        p1.applyEffects(EffectsLambda.move(p1, points[0], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[11], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 5);
+
+        p1.applyEffects(EffectsLambda.move(p1, points[4], m));
+        p2.applyEffects(EffectsLambda.move(p2, points[7], m));
+        distance = m.distance(p1,p2);
+        assertTrue(distance == 3);
     }
 }
