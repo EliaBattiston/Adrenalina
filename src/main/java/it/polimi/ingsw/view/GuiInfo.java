@@ -1,16 +1,14 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Weapon;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
 
-import java.util.List;
-
+/**
+ * Draw an info button
+ */
 public class GuiInfo extends Canvas {
+    //todo let it extends the GuiClickableObject class
     protected Image img;
 
     public GuiInfo(Player pl, double width, double height){

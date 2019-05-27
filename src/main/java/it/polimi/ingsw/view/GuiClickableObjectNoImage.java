@@ -1,10 +1,13 @@
 package it.polimi.ingsw.view;
 
-public class GuiCardClickableArea extends GuiCard {
+/**
+ * A GuiClickableObject that is simply an empty canvas clickable
+ */
+public class GuiClickableObjectNoImage extends GuiClickableObject {
     private double w;
     private double h;
 
-    public GuiCardClickableArea(double x, double y, double w, double h){
+    public GuiClickableObjectNoImage(double x, double y, double w, double h){
         super(w, h);
         setPosition(x, y);
 

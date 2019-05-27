@@ -18,6 +18,10 @@ public class GuiExchanger {
         actualInteraction = Interaction.NONE;
     }
 
+    /**
+     * Return the singleton of the Class
+     * @return the instance of the class
+     */
     public static synchronized GuiExchanger getInstance(){
         if(instance==null)
             instance = new GuiExchanger();
@@ -25,14 +29,29 @@ public class GuiExchanger {
         return instance;
     }
 
+    /**
+     * Return the actual interaction
+     * @return the actual interaction
+     */
     public synchronized Interaction getActualInteraction() {
         return actualInteraction;
     }
 
+    /**
+     * Return the last interaction (the one before the actual one)
+     * @return the last interaction (the one before the actual one)
+     */
     public Interaction getLastRealInteraction() {
         return lastRealInteraction;
     }
 
+    /**
+     * Set the request for the GUI
+     * @param interaction the interaction that has to be done
+     * @param message the message to show the user
+     * @param request the data of the request
+     * @param mustChoose if the user must or not choose
+     */
     public synchronized void setRequest(Interaction interaction, String message, Object request, boolean mustChoose){
         instance.actualInteraction = interaction;
         instance.message = message;
@@ -41,6 +60,10 @@ public class GuiExchanger {
         notifyAll(); //notify the gui
     }
 
+    /**
+     * Set the actual interaction
+     * @param actualInteraction whill be the new actual interaction
+     */
     public synchronized void setActualInteraction(Interaction actualInteraction) {
         this.lastRealInteraction = this.actualInteraction;
         this.actualInteraction = actualInteraction;
@@ -48,11 +71,17 @@ public class GuiExchanger {
             notifyAll(); //notify the GuiInterface
     }
 
+    /**
+     * Reset the last interaction
+     */
     public synchronized void resetLastRealInteraction() {
         actualInteraction = lastRealInteraction;
         notifyAll();
     }
 
+    /**
+     * Wait until the instance is free to be used for a new request
+     */
     public synchronized void waitFreeToUse(){
         while(actualInteraction != Interaction.NONE)
             try {
@@ -63,6 +92,9 @@ public class GuiExchanger {
         return;
     }
 
+    /**
+     * Wait untill a new request is incoming
+     */
     public synchronized void waitRequestIncoming(){
         while(actualInteraction == Interaction.NONE ||
                 actualInteraction == Interaction.WAITINGUSER ||
@@ -75,22 +107,42 @@ public class GuiExchanger {
         return;
     }
 
+    /**
+     *
+     * @return the request
+     */
     public synchronized Object getRequest() {
         return request;
     }
 
+    /**
+     *
+     * @return the answer
+     */
     public synchronized Object getAnswer() {
         return answer;
     }
 
+    /**
+     *
+     * @param answer set the answer
+     */
     public synchronized void setAnswer(Object answer) {
         this.answer = answer;
     }
 
+    /**
+     *
+     * @return the message
+     */
     public synchronized String getMessage() {
         return message;
     }
 
+    /**
+     *
+     * @return the must choose flag
+     */
     public synchronized boolean isMustChoose() {
         return mustChoose;
     }

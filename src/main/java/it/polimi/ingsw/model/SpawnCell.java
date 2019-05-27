@@ -3,12 +3,9 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.EmptyDeckException;
-import javafx.scene.effect.Effect;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -6,7 +6,8 @@ import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.view.GameView;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 

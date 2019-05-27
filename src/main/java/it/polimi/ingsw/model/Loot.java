@@ -2,9 +2,6 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.ArrayDimensionException;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 /**
  * Represent a loot made of tree colors (or two plus a 'pick a power')
  */

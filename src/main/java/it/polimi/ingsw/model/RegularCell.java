@@ -4,8 +4,6 @@ import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The class represents a non-spawning (regular) cell

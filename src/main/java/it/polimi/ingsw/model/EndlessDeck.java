@@ -4,8 +4,6 @@ import it.polimi.ingsw.exceptions.EmptyDeckException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * An endless deck is a type of deck in which the used cards are reused when the deck becomes empty

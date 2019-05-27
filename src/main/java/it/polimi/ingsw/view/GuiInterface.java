@@ -2,7 +2,6 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
-import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.model.*;
 
 import java.util.ArrayList;
@@ -12,6 +11,9 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * GuiInterface implements UserInterface and it's the Class that handles the connection between the server and the GUI
+ */
 public class GuiInterface implements UserInterface{
     private GuiExchanger exchanger;
 
@@ -19,6 +21,9 @@ public class GuiInterface implements UserInterface{
         new GuiInterface().tester();
     }
 
+    /**
+     * Build the GuiInterface and launch the GUI thread
+     */
     public GuiInterface(){
         String[] args = new String[2];
         exchanger = GuiExchanger.getInstance();
@@ -26,6 +31,9 @@ public class GuiInterface implements UserInterface{
         new Thread(()-> javafx.application.Application.launch(Gui.class, args)).start();
     }
 
+    /**
+     * Run a test of the implementation
+     */
     private void tester(){
         try {
             System.out.println("Start test gui");
@@ -49,28 +57,32 @@ public class GuiInterface implements UserInterface{
             MatchView testView = initForTest();
             this.updateGame( testView );
 
-            List<Power> p = new ArrayList<>();
+            /*List<Power> p = new ArrayList<>();
             p.add(new Power(1, "sdb", null, Color.RED));
             p.add(new Power(4, "sdb", null, Color.RED));
             p.add(new Power(5, "sdb", null, Color.BLUE));
             p.add(new Power(18, "sdb", null, Color.RED));
 
-            discardPower(p, true);
+            discardPower(p, true);*/
 
-            /*List<Player> players = new ArrayList<>();
+            List<Player> players = new ArrayList<>();
 
             players.add(new Player("p4", "!", Fighter.BANSHEE));
             players.add(new Player("p5", "!", Fighter.DOZER));
 
-            List<Action> actions = new ArrayList<>();
+            /*List<Action> actions = new ArrayList<>();
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
             actions.add(new Action("try", "asvdsjnzfjbn jdzfnbkjdzfnbjknzfjbjzfdnbjzfndbjzdhjfjzfnvbjdf<nvijzdnfijbnbsd", null, "w2-a"));
 
             this.chooseAction(actions, false);*/
 
-            //Player choosen = chooseTarget(players, true);
+            Player choosen = chooseTarget(players, false);
 
-           // System.out.println(choosen.toString());
+            if(choosen != null)
+                System.out.println(choosen.toString());
+            else
+                System.out.println("NULLL");
+
 
             /*List<Action> a = new ArrayList<>();
             a.addAll(Activities.getInstance().getAvailable(4, false, false));
@@ -79,14 +91,14 @@ public class GuiInterface implements UserInterface{
 
             System.out.println(cho.getName());
 */
-            List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
+            /*List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
 
             Point chosenP = movePlayer(dest,false);
             if(chosenP == null)
                 System.out.println("null");
             else
                 System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
-
+*/
             /*List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
@@ -132,6 +144,10 @@ public class GuiInterface implements UserInterface{
         }
     }
 
+    /**
+     * Initialize a test MatchView for a fast debugging
+     * @return a simple MatchView
+     */
     private MatchView initForTest() {
         //Settings for testing
         try {
@@ -180,12 +196,10 @@ public class GuiInterface implements UserInterface{
             //it's just for test
             for(Player p:players){
                 int x, y;
-                /*do {
+                do {
                     x = new Random().nextInt(4);
                     y = new Random().nextInt(3);
-                }while(allGame.getMap().getCell(x, y) == null);*/
-x=0;
-y=0;
+                }while(allGame.getMap().getCell(x, y) == null);
                 if(p == me)
                     allGame.getMap().getCell(me.getPosition()).addPawn(me);
                 else
@@ -528,7 +542,11 @@ y=0;
         return ip;
     }
 
-
+    /**
+     * check it's a valid ip address
+     * @param ip the string to be checked
+     * @return true if it's an IP address, false otherwise
+     */
     private boolean checkIP(String ip) {
         String pieces[];
         pieces = ip.split("\\.");

@@ -41,7 +41,7 @@ public class Configuration
 
     public Configuration()
     {
-        startMatchSeconds = 60;
+        startMatchSeconds = 1;
         playerTurnSeconds = 120;
         minPlayers = 3;
     }

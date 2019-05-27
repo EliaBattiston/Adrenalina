@@ -1,6 +1,5 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.MatchView;
@@ -8,7 +7,6 @@ import it.polimi.ingsw.view.UserInterface;
 
 import java.io.Serializable;
 import java.rmi.AlreadyBoundException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

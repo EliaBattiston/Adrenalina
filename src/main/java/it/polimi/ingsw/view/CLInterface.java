@@ -3,18 +3,13 @@ package it.polimi.ingsw.view;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.controller.GamePhase;
-import it.polimi.ingsw.model.Map;
 import it.polimi.ingsw.model.*;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * CLI implementation of the user interface

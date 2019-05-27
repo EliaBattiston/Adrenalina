@@ -1,8 +1,8 @@
 package it.polimi.ingsw.view;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.Kill;
+import it.polimi.ingsw.model.Map;
+import it.polimi.ingsw.model.Player;
 
 import java.io.Serializable;
 import java.util.List;
