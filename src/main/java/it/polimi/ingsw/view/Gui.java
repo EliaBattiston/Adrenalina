@@ -31,7 +31,7 @@ import static java.lang.Math.pow;
 //On Monday together the background and the drops
 
 //TODO (ALESSANDRO) check inputs like the ip
-//todo (ALESSANDRO) do the fixme of the pawns
+//DONE andrea (ALESSANDRO) do the fixme of the pawns
 //DONE (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
 //todo (EVERYONE) check that all the text are written
 //todo (ALESSANDRO) add the settingsScreen "Waiting other users for the game"
@@ -325,31 +325,28 @@ public class Gui extends Application{
         double y;
         double deltaCellX = 186 * dimMult;
         double deltaCellY = 200 * dimMult;
-        boolean xNotY;
+        int n;
 
-        //FIXME actually it print a max of 3 players in a single cell because of the wrong managing of the xNotY, find a better way
         playersPawns = new ArrayList<>();
         for(int j=0; j<3; j++){
             for(int i=0; i<4; i++){
-                xNotY = true;
+                n=0;
                 x = baseX + i * (deltaCellX + (i==3?10:0)); //the last column is farther
                 y = baseY + j * deltaCellY;
                 if(map.getCell(i, j) != null) { //here X and Y are pointing at the top-left corner of the cell
                     for (Player p : map.getCell(i, j).getPawns()) {
                         GuiCardPawn pawn = new GuiCardPawn(p, size);
+                        if(n==1 || n==3)
+                            y = baseY + size;
+                        if(n==2 || n==4){
+                            x += size;
+                            y=baseY;
+                        }
+                        n++;
                         pawn.setPosition(x, y);
 
                         playersPawns.add(pawn);
                         root.getChildren().add(pawn);
-
-                        if (xNotY) {
-                            x += size;
-                            y = baseY + j * deltaCellY;
-                        } else {
-                            y += size;
-                            x = baseX + i * (deltaCellX +(i==3?10:0));
-                        }
-                        xNotY = !xNotY;
                     }
                 }
             }

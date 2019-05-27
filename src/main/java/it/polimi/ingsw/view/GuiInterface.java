@@ -180,11 +180,12 @@ public class GuiInterface implements UserInterface{
             //it's just for test
             for(Player p:players){
                 int x, y;
-                do {
+                /*do {
                     x = new Random().nextInt(4);
                     y = new Random().nextInt(3);
-                }while(allGame.getMap().getCell(x, y) == null);
-
+                }while(allGame.getMap().getCell(x, y) == null);*/
+x=0;
+y=0;
                 if(p == me)
                     allGame.getMap().getCell(me.getPosition()).addPawn(me);
                 else

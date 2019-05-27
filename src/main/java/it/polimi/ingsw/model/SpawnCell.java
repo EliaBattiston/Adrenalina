@@ -144,7 +144,7 @@ public class SpawnCell extends Cell{
             }
         }
 
-        Weapon picked = pl.getConn().chooseWeapon(purchasable, true);
+        Weapon picked = pl.getConn().grabWeapon(purchasable, true);
         pickWeapon(picked);
 
         //If the player already has 3 weapons he has to discard one
