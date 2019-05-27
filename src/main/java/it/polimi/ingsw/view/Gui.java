@@ -483,8 +483,9 @@ public class Gui extends Application{
                 info.setPickOnBounds(false);
                 info.setPosition(boardX + boardW + (30 * dimMult), boardY + (53 * dimMult));
                 root.getChildren().add(info);
-                boardY += deltaY;
             }
+
+            boardY += deltaY;
         }
 
         return root;
@@ -725,8 +726,8 @@ public class Gui extends Application{
         gc.setFont(new Font(MYFONT,32*dimMult));
         gc.setFill(javafx.scene.paint.Color.WHITE);
         gc.setStroke(javafx.scene.paint.Color.BLACK);
-        gc.fillText( str, x, y);
         gc.strokeText( str, x, y);
+        gc.fillText( str, x, y);
     }
 
     //
@@ -1020,7 +1021,6 @@ public class Gui extends Application{
         Canvas canvas = createPopupCanvas();
         popupPane.getChildren().addAll(canvas);
         Canvas weapon;
-        Canvas power;
 
         //Close button
         Button closeButton = new Button("Chiudi" );
@@ -1043,38 +1043,20 @@ public class Gui extends Application{
 
         //Weapons
         double weaponX = 420;
-        double weaponW = 180*dimMult;
-        double weaponH = 305*dimMult;
+        double weaponW = 240*dimMult;
+        double weaponH = 406*dimMult;
         for(Weapon w : pl.getWeapons().stream().filter(w->!w.isLoaded()).collect(Collectors.toList()))
         {
             weapon = new Canvas(weaponW, weaponH);
             StackPane.setAlignment(weapon, Pos.CENTER_LEFT);
             weapon.setPickOnBounds(false);
             weapon.setTranslateX(weaponX*dimMult);
-            weapon.setTranslateY(-95*dimMult);
+            weapon.setTranslateY(-40*dimMult);
 
             weapon.getGraphicsContext2D().drawImage(GuiImagesMap.getImage( "weapon/weapon" + w.getId() + ".png" ), 0, 0, weaponW, weaponH);
 
-            weaponX += 200;
+            weaponX += 260;
             popupPane.getChildren().add(weapon);
-        }
-
-        //Powers
-        double powerX = 430;
-        double powerW = 127*dimMult;
-        double powerH = 198*dimMult;
-        for(Power p: pl.getPowers())
-        {
-            power = new Canvas(127*dimMult, 198*dimMult);
-            StackPane.setAlignment(power, Pos.CENTER_LEFT);
-            power.setPickOnBounds(false);
-            power.setTranslateX(powerX*dimMult);
-            power.setTranslateY(180*dimMult);
-
-            power.getGraphicsContext2D().drawImage(GuiImagesMap.getImage(  "power/power" + (p.getId()<=12 ? p.getId() : p.getId()-12) + ".png" ), 0, 0, powerW, powerH);
-
-            powerX += 150;
-            popupPane.getChildren().add(power);
         }
 
         popupPane.getChildren().addAll(closeButton, nameLbl);

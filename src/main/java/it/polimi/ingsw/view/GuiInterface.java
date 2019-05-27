@@ -76,12 +76,12 @@ public class GuiInterface implements UserInterface{
 
             this.chooseAction(actions, false);*/
 
-            Player choosen = chooseTarget(players, false);
+            /*Player chosen = chooseTarget(players, false);
 
-            if(choosen != null)
-                System.out.println(choosen.toString());
+            if(chosen != null)
+                System.out.println(chosen.toString());
             else
-                System.out.println("NULLL");
+                System.out.println("NULL");*/
 
 
             /*List<Action> a = new ArrayList<>();
@@ -126,9 +126,8 @@ public class GuiInterface implements UserInterface{
             rooms.add(2);
             rooms.add(3);
 
-            Integer choosen = chooseRoom(rooms, true);
+            Integer choosen = chooseRoom(rooms, false);*/
 
-*/
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));
             players.add(new Player("aaa", "yay", Fighter.DOZER));
@@ -162,6 +161,29 @@ public class GuiInterface implements UserInterface{
             Player me = players.get(0);
 
             me.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                allGame.getWeaponsDeck().shuffle();
+                weapons[0] = allGame.getWeaponsDeck().draw();
+                weapons[1] = allGame.getWeaponsDeck().draw();
+                weapons[1].setLoaded(false);
+                weapons[2] = allGame.getWeaponsDeck().draw();
+                weapons[2].setLoaded(false);
+
+                allGame.getPowersDeck().shuffle();
+                powers[0] = allGame.getPowersDeck().draw();
+                powers[1] = allGame.getPowersDeck().draw();
+
+                ammo.add(Color.YELLOW, 2);
+                ammo.add(Color.BLUE, 1);
+
+                damage[0] = "p2";
+                damage[1] = "p2";
+                damage[2] = "p3";
+
+                marks.addAll(Arrays.asList("p2", "p3", "p3"));
+                marks.addAll(Arrays.asList("p4", "p5", "p4"));
+            }));
+
+            players.get(1).applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 allGame.getWeaponsDeck().shuffle();
                 weapons[0] = allGame.getWeaponsDeck().draw();
                 weapons[1] = allGame.getWeaponsDeck().draw();
