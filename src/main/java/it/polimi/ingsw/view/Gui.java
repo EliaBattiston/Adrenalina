@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,19 +26,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
-
-//On Monday together the background and the drops
-
-//TODO (ALESSANDRO) check inputs like the ip
-//DONE andrea (ALESSANDRO) do the fixme of the pawns
-//DONE (ANDREA) if a fourth power has been picked up, show it over the powers' deck for letting the user discard the card
-//todo (EVERYONE) check that all the text are written
-//todo (ALESSANDRO) add the settingsScreen "Waiting other users for the game"
-//DONE (ANDREA) add the different IPs and make the radio button method reusable
-//DONE (ANDREA) make the popup reusable
-//todo (ELIA)  make the popup for the unloaded enemies weapons
+import static java.lang.Math.*;
 
 //FIXME It looks like the additional actions don't work. Add also the possibility of no use of the additional
 //FIXME the grabWeapon method (in GuiInterface) seems to never be called. when you have to choose between weapons to grab the chooseWeapon is called instead (or at least it seems)
@@ -751,13 +740,16 @@ public class Gui extends Application{
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
                     break;
                 case LOG:
-                    loggedText += "\n\n" + exchanger.getMessage();
+                    loggedText += exchanger.getMessage() + "\n";
                     if(logArea != null)
                         uiExec.execute(()->{
                             logArea.setText(loggedText);
                             logArea.setScrollTop(90000000);
                         });
                     //logArea.setText(logArea.getText() + "\n" + exchanger.getMessage());
+                    if(match == null) {
+                        showAlert(this::beforeStartMessage, loggedText);
+                    }
                     exchanger.setActualInteraction(Interaction.NONE);
                     break;
                 case NONE:
@@ -1212,6 +1204,37 @@ public class Gui extends Application{
         grid.add(field,0,1);
         GridPane.setHalignment(submit, HPos.CENTER);
         grid.add(submit,0,2);
+
+        root.getChildren().addAll(grid);
+
+        primaryS.setScene(new Scene(root));
+    }
+
+
+    /**
+     * Prints out messages from server received before match start
+     * @param message
+     */
+    private void beforeStartMessage(String message){
+        StackPane root = initializerBackground();
+        GridPane grid = gridMaker(480 * dimMult);
+
+        String[] pieces = message.split("\n");
+        String formattedText = "";
+        for(int i = max(0, pieces.length - 1 - 4); i < pieces.length; i++) {
+            formattedText += pieces[i] + "\n";
+        }
+
+        Label l = new Label(formattedText);
+        l.setPrefSize(480 * dimMult, 420 * dimMult);
+
+        l.setWrapText(true);
+        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+
+        GridPane.setHalignment(l, HPos.RIGHT);
+        GridPane.setValignment(l, VPos.TOP);
+        grid.add(l,0,0);
 
         root.getChildren().addAll(grid);
 
