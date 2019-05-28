@@ -114,7 +114,6 @@ public class SMain
 
             socket = new SocketServer(1906);
             rmi = new RMIServer();
-            //TODO load saved matches
             matches = new ArrayList<>();
             loadedMatches = new ArrayList<>();
 

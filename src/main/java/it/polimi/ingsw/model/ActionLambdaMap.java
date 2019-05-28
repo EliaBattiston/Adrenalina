@@ -140,7 +140,7 @@ public class ActionLambdaMap {
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
             for(Point p : pointsAround) {
                 fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(p));
-                List<Player> possibles = Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->Map.distance(p1, p2)<=1);
+                List<Player> possibles = Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->map.distance(p1, p2)<=1);
                 possibles.remove(pl);
                 if(!possibles.isEmpty())
                     points.add(p);

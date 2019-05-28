@@ -29,14 +29,12 @@ import java.util.stream.Collectors;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
-//FIXME It looks like the additional actions don't work. Add also the possibility of no use of the additional
-//FIXME the grabWeapon method (in GuiInterface) seems to never be called. when you have to choose between weapons to grab the chooseWeapon is called instead (or at least it seems)
-
+//FIXME It looks like the additional actions don't work.
 /**
  * The Gui class that extends the JavaFX Application
  */
 public class Gui extends Application{
-    private final static String MYFONT = "EthnocentricRg-Italic"; //todo fix this
+    private final static String MYFONT = "EthnocentricRg-Italic"; //todo fix the import of the font
     private final static double SETTINGSFONTDIM = 28;
     private final static double POPUPFONTDIM = 22;
 
@@ -70,7 +68,7 @@ public class Gui extends Application{
     private GuiClickableObjectNoImage adrShootAction;
     private GuiClickableObjectNoImage powerAction;
 
-    private Canvas skipAction; //todo change the image with a rectangular one and put it just under the red spawn loot
+    private Canvas skipAction;
 
     //Move in cells
     private GuiClickableObjectNoImage[][] mapOfCells = new GuiClickableObjectNoImage[4][3];
@@ -469,7 +467,6 @@ public class Gui extends Application{
         StackPane root = new StackPane();
         GuiInfo info;
 
-        //todo show the button only if it'll show some info
         for(Player pl: players) {
             if(!pl.getNick().equals(match.getMyPlayer().getNick())) {
                 info = new GuiInfo(pl, size, size);
@@ -739,10 +736,6 @@ public class Gui extends Application{
      * The listener of the requests coming from the GuiExchanger. It needs to be runned in a separate thread
      */
     private void listenRequests(){
-        //TODO implement the mustChoose for the ones that need it
-
-        //try{Thread.sleep(500);}catch (InterruptedException e){ ; } //On my linux (Andrea) I need to wait a while the javafx app before starting the tests
-
         exchanger = GuiExchanger.getInstance();
         while(exchanger.getActualInteraction()!=Interaction.CLOSEAPP) {
             exchanger.waitRequestIncoming();
@@ -832,7 +825,6 @@ public class Gui extends Application{
                             logArea.setText(loggedText);
                             logArea.setScrollTop(90000000);
                         });
-                    //logArea.setText(logArea.getText() + "\n" + exchanger.getMessage());
                     if(match == null) {
                         showAlert(this::beforeStartMessage, loggedText);
                     }
@@ -949,7 +941,6 @@ public class Gui extends Application{
      * Ask the user which action of the weapon wants to use
      */
     private void chooseWeaponAction(){
-        //FIXME add the possibility to close the popup when mustChoose = false
         showInfoOnMap(exchanger.getMessage());
         List<Action> possible = (List<Action>) exchanger.getRequest();
 

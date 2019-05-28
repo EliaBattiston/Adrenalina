@@ -21,7 +21,7 @@ public class RunningGameTest {
         for(int i=0; i<nAis; i++)
             ais.add(new AIThread());
 
-        //TODO change this with something that check the server is ready before spowning the clients
+        // change this with something that check the server is ready before spowning the clients
         try {
             TimeUnit.SECONDS.sleep(1);
         }catch (Exception e){
