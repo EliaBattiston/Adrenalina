@@ -76,6 +76,11 @@ public class Player implements Serializable
     private List<Power> usedPowers;
 
     /**
+     * True if the player is using its frenzy board, false otherwise
+     */
+    private boolean frenzyBoard;
+
+    /**
      * Creates a new user, in a suitable configuration to start the game
      * @param nick Nickname
      * @param phrase Action phrase
@@ -96,6 +101,7 @@ public class Player implements Serializable
         this.position = new Point(0, 0);
         this.spawned = false;
         this.usedPowers = new ArrayList<>();
+        this.frenzyBoard = false;
 
         this.conn = null;
     }
@@ -292,11 +298,19 @@ public class Player implements Serializable
         spawned = s;
     }
 
+    /**
+     * Puts a power in the temporary used powers list
+     * @param p Power to throw
+     */
     public void throwPower(Power p)
     {
         usedPowers.add(p);
     }
 
+    /**
+     * Cleans the used powers list by scrapping them in the correct deck
+     * @param powersDeck Deck in which the power cards will be scrapped
+     */
     public void cleanUsedPowers(EndlessDeck<Power> powersDeck)
     {
         for(Power p: usedPowers)
@@ -307,7 +321,31 @@ public class Player implements Serializable
         usedPowers.clear();
     }
 
-    //TODO use existing game method instead of this
+    /**
+     * Tells whether the player is using the frenzy board or not
+     * @return True if it is in use, false otherwise
+     */
+    public boolean getFrenzyBoard()
+    {
+        return frenzyBoard;
+    }
+
+    /**
+     * Sets the value of frenzyBoard
+     * @param val True if the player is using the frenzy board, false otherwise
+     */
+    public void setFrenzyBoard(boolean val)
+    {
+        frenzyBoard = val;
+    }
+
+
+    /**
+     * Helps getting the fighter of a player by providing his nickname
+     * @param players List of players to search for the nickname
+     * @param nick Nickname of the desired player
+     * @return Fighter of the player
+     */
     public static Fighter fighterFromNick(List<Player> players, String nick){
         for(Player p : players)
             if(p.getNick().equals(nick))

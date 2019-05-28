@@ -71,11 +71,6 @@ public class Match implements Runnable
     private int turnNumber;
 
     /**
-     * True if the match has already been initialized
-     */
-    private boolean initialized;
-
-    /**
      * Gson instance used to save persistance files
      */
     private transient Gson gson;
@@ -90,12 +85,11 @@ public class Match implements Runnable
         this.activities = Activities.getInstance();
         this.active = null;
         this.actionsNumber = 0;
-        this.phase = GamePhase.REGULAR;
+        this.phase = GamePhase.INITIALIZING;
         this.firstFrenzy = null;
         this.frenzyKills = new ArrayList<>();
         this.skullsNum = skullsNum;
         this.turnNumber = 0;
-        this.initialized = false;
         this.gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
 
         game = Game.jsonDeserialize("baseGame.json");
@@ -141,7 +135,7 @@ public class Match implements Runnable
 
         broadcastMessage("Partita avviata, è il turno di " + active.getNick(), game.getPlayers());
 
-        this.initialized = true;
+        this.phase = GamePhase.REGULAR;
     }
 
     /**
@@ -158,7 +152,7 @@ public class Match implements Runnable
      */
     public void run()
     {
-        if(!initialized)
+        if(phase == GamePhase.INITIALIZING)
         {
             try
             {
@@ -228,6 +222,14 @@ public class Match implements Runnable
                 if(firstFrenzy == null)
                 {
                     firstFrenzy = active;
+
+                    for(Player p : game.getPlayers())
+                    {
+                        if(Arrays.stream(p.getReceivedDamage()).noneMatch(Objects::nonNull))
+                        {
+                            p.setFrenzyBoard(true);
+                        }
+                    }
                 }
                 else if(game.getPlayers().indexOf(active) == 0)
                 {
@@ -293,7 +295,7 @@ public class Match implements Runnable
             //Check what the player can do right now
             availableActions = activities.getAvailable(
                     (int) Arrays.stream(active.getReceivedDamage()).filter(Objects::nonNull).count(),
-                    phase == GamePhase.FRENZY,
+                    phase == GamePhase.FRENZY && active.getFrenzyBoard(),
                     firstFrenzy != null && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy)
             );
 
@@ -579,6 +581,9 @@ public class Match implements Runnable
         }
 
         killed.setSpawned(false);
+
+        if(phase == GamePhase.FRENZY)
+            killed.setFrenzyBoard(true);
     }
 
     /**

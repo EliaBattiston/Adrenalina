@@ -5,6 +5,7 @@ package it.polimi.ingsw.controller;
  */
 public enum GamePhase
 {
+    INITIALIZING,
     REGULAR,
     FRENZY,
     ENDED
