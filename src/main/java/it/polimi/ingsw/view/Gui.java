@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
@@ -30,6 +31,8 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 //FIXME It looks like the additional actions don't work.
+//TODO draw the end game screen
+//TODO handle the frenzy in the right way
 /**
  * The Gui class that extends the JavaFX Application
  */
@@ -66,6 +69,12 @@ public class Gui extends Application{
     private GuiClickableObjectNoImage adrPickAction;
     private GuiClickableObjectNoImage adrShootAction;
     private GuiClickableObjectNoImage powerAction;
+    //frenzy ones
+    private GuiClickableObjectNoImage frenzyRunReloadShoot;
+    private GuiClickableObjectNoImage frenzyRunFour;
+    private GuiClickableObjectNoImage frenzyRunTwoPick;
+    private GuiClickableObjectNoImage frenzyRunTwoPickShoot;
+    private GuiClickableObjectNoImage frenzyRunTreePick;
 
     private Canvas skipAction;
 
@@ -158,9 +167,8 @@ public class Gui extends Application{
         gc.drawImage( GuiImagesMap.getImage("background/gameBoard.png"), 0, 0, backgroundWidth, backgroundHeight);
         drawMap(match.getGame().getMap());
 
-        drawAllPlayersBoards(match.getGame().getPlayers(),false); //FRENZY?
+        drawAllPlayersBoards(match.getGame().getPlayers(),match.getPhase() == GamePhase.FRENZY);
         drawMyAmmo(match.getMyPlayer().getAmmo());
-        drawPoints(match.getMyPlayer().getPoints());
         drawSkulls(match.getGame().getSkullsBoard());
 
         myWeapons = drawMyWeapons(match.getMyPlayer().getWeapons());
@@ -212,8 +220,12 @@ public class Gui extends Application{
         skipAction.setOnMouseExited(e-> skipAction.setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0);") );
         skipAction.setPickOnBounds(false);
 
-        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info,
-                runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction, logArea);
+        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
+
+        if(runAction!=null)//check if one it's initialized all are
+            masterPane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
+        else if(frenzyRunTreePick != null)
+            masterPane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot);
 
         return masterPane;
     }
@@ -603,7 +615,16 @@ public class Gui extends Application{
             adrShootAction = new GuiClickableObjectNoImage(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
         }
         else if(frenzyMode && player.getNick().equals(match.getMyPlayer().getNick())){
-            //todo
+            double actionsY = ((float)40)/ 270 * height;
+            double actionsHeight = ((float)35)/270*height;
+            double actionsWidth = ((float)69)/1121*width;
+            frenzyRunReloadShoot = new GuiClickableObjectNoImage(x, y+actionsY, actionsWidth, actionsHeight);
+            frenzyRunFour = new GuiClickableObjectNoImage(x, y+2*actionsY, actionsWidth, actionsHeight);
+            frenzyRunTwoPick = new GuiClickableObjectNoImage(x, y+3*actionsY, actionsWidth, actionsHeight);
+
+            double secondActionsY = ((float)184)/ 270 * height;
+            frenzyRunTwoPickShoot = new GuiClickableObjectNoImage(x, y+secondActionsY+actionsY, actionsWidth, actionsHeight);
+            frenzyRunTreePick = new GuiClickableObjectNoImage(x, y+secondActionsY+2*actionsY, actionsWidth, actionsHeight);
         }
     }
 
@@ -707,23 +728,6 @@ public class Gui extends Application{
         }
     }
 
-    /**
-     * Draw my points on the shared GC
-     * @param points my points
-     */
-    private void drawPoints(int points){
-        double x = 1050 * dimMult;
-        double y = 995 * dimMult;
-
-        String str = (points<10 ? "0":"") + points;
-
-        gc.setFont(getFont(32*dimMult));
-        gc.setFill(javafx.scene.paint.Color.WHITE);
-        gc.setStroke(javafx.scene.paint.Color.BLACK);
-        gc.fillText( str, x, y);
-        gc.strokeText( str, x, y);
-    }
-
     //
     //
     // NOW ALL THE METHODS FOR THE INTERACTIONS
@@ -824,7 +828,7 @@ public class Gui extends Application{
                             logArea.setScrollTop(90000000);
                         });
                     if(match == null) {
-                        showAlert(this::beforeStartMessage, loggedText);
+                        uiExec.execute(() -> this.settingsMessage(loggedText));
                     }
                     exchanger.setActualInteraction(Interaction.NONE);
                     break;
@@ -875,13 +879,21 @@ public class Gui extends Application{
                 exchanger.setAnswer(a);
                 clearInfoOnMap();
                 //clear the canvases
-                runAction.resetEventsStyle();
-                pickAction.resetEventsStyle();
-                shootAction.resetEventsStyle();
-                adrPickAction.resetEventsStyle();
-                adrShootAction.resetEventsStyle();
-                powerAction.resetEventsStyle();
-                //todo add the frenzy
+                if(runAction != null) {
+                    runAction.resetEventsStyle();
+                    pickAction.resetEventsStyle();
+                    shootAction.resetEventsStyle();
+                    adrPickAction.resetEventsStyle();
+                    adrShootAction.resetEventsStyle();
+                    powerAction.resetEventsStyle();
+                }
+                if(frenzyRunReloadShoot != null) {
+                    frenzyRunReloadShoot.resetEventsStyle();
+                    frenzyRunFour.resetEventsStyle();
+                    frenzyRunTwoPick.resetEventsStyle();
+                    frenzyRunTwoPickShoot.resetEventsStyle();
+                    frenzyRunTreePick.resetEventsStyle();
+                }
                 exchanger.setActualInteraction(Interaction.NONE);
                 //After finishing the click event, reset all the events to the original option -> just call the redraw game
             });
@@ -906,13 +918,28 @@ public class Gui extends Application{
                     adrShootAction.setOnMousePressed(onClick);
                     adrShootAction.setEventsChoosable();
                     break;
-                case "a-p":
-                    powerAction.setOnMousePressed(onClick);
-                    powerAction.setEventsChoosable();
+                case "a-f1":
+                    frenzyRunReloadShoot.setOnMousePressed(onClick);
+                    frenzyRunReloadShoot.setEventsChoosable();
+                    break;
+                case "a-f2":
+                    frenzyRunFour.setOnMousePressed(onClick);
+                    frenzyRunFour.setEventsChoosable();
+                    break;
+                case "a-f3":
+                    frenzyRunTwoPick.setOnMousePressed(onClick);
+                    frenzyRunTwoPick.setEventsChoosable();
+                    break;
+                case "a-f4":
+                    frenzyRunTwoPickShoot.setOnMousePressed(onClick);
+                    frenzyRunTwoPickShoot.setEventsChoosable();
+                    break;
+                case "a-f5":
+                    frenzyRunTreePick.setOnMousePressed(onClick);
+                    frenzyRunTreePick.setEventsChoosable();
                     break;
                 default:
                     break;
-                //todo add the finalfrenzy ones
             }
         }
     }
@@ -1372,7 +1399,6 @@ public class Gui extends Application{
      */
     private void showAlert(Consumer<String> dialog, String message){
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
-        System.out.println("Waiting");
         uiExec.execute(() -> dialog.accept(message));
     }
 
@@ -1444,7 +1470,7 @@ public class Gui extends Application{
      * (Settings method) Prints out messages from server received before match start
      * @param message to show
      */
-    private void beforeStartMessage(String message){
+    private void settingsMessage(String message){
         StackPane root = initializerBackground();
         GridPane grid = gridMaker(480 * dimMult);
 
@@ -1638,9 +1664,9 @@ public class Gui extends Application{
         askWithRadio(message, group, buttons, eventHandler);
     }
 
-    public Font getFont(double dim){
+    private Font getFont(double dim){
         InputStream streamFont = getClass().getClassLoader().getResourceAsStream("font/ethnocentric_rg.ttf");
 
-        return Font.loadFont(streamFont, dim);
+        return Font.loadFont(streamFont, dim*0.8); //the new font it's bigger
     }
 }
