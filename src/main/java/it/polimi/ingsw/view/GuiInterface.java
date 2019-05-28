@@ -70,6 +70,14 @@ public class GuiInterface implements UserInterface{
             players.add(new Player("p4", "!", Fighter.BANSHEE));
             players.add(new Player("p5", "!", Fighter.DOZER));
 
+            List<Integer> rooms = new ArrayList<>();
+            rooms.add(1);
+            rooms.add(2);
+            rooms.add(3);
+
+            Integer choosen = chooseRoom(rooms, true);
+            System.out.println(choosen!=null?choosen:"null");
+
 
             List<Color> color = new ArrayList<>();
             color.add(Color.RED);
@@ -129,15 +137,9 @@ public class GuiInterface implements UserInterface{
             Thread.sleep(500);
             //getFighter();
 
-            //getNickname();
+            //getNickname();*/
 
-            List<Integer> rooms = new ArrayList<>();
-            rooms.add(1);
-            rooms.add(2);
-            rooms.add(3);
 
-            Integer choosen = chooseRoom(rooms, true);
-            System.out.println(choosen!=null?choosen:"null");*/
 
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));

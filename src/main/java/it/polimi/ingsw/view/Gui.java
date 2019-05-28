@@ -16,7 +16,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -1046,8 +1045,8 @@ public class Gui extends Application{
         closeButton.setTranslateY(-290*dimMult);
 
         //Player name
-        Label nameLbl = new Label(pl.getNick() + " - " + pl.getCharacter() + " - Punti: " + pl.getPoints());
-        nameLbl.setTextFill(Color.WHITE);
+        Label nameLbl = new Label(pl.getNick() + " - " + pl.getCharacter());
+        nameLbl.setTextFill(javafx.scene.paint.Color.WHITE);
         nameLbl.setFont(new Font(MYFONT,POPUPFONTDIM * 1.3 * dimMult));
         nameLbl.setWrapText(true);
         StackPane.setAlignment(nameLbl, Pos.CENTER_LEFT);
@@ -1359,17 +1358,17 @@ public class Gui extends Application{
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         grid.add(l,0,0);
 
-        List<String> roomsNames = new ArrayList<>();
+        List<String> colorNames = new ArrayList<>();
         if(colors.contains(Color.RED))
-            roomsNames.add("Rosso");
+            colorNames.add("Rosso");
         if(colors.contains(Color.BLUE))
-            roomsNames.add("Blu");
+            colorNames.add("Blu");
         if(colors.contains(Color.YELLOW))
-            roomsNames.add("Giallo");
+            colorNames.add("Giallo");
 
         ToggleGroup radioGroup = new ToggleGroup();
         int row = 1;
-        for(String s : roomsNames){
+        for(String s : colorNames){
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
@@ -1379,8 +1378,8 @@ public class Gui extends Application{
         Button submit = new Button("Conferma");
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
-            System.out.println(answer + ": " + roomsNames.indexOf(answer));
-            exchanger.setAnswer(roomsNames.indexOf(answer));
+            System.out.println(answer + ": " + colorNames.indexOf(answer));
+            exchanger.setAnswer(colorNames.indexOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
             masterPane.getChildren().remove(popupPane);
         });
