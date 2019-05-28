@@ -91,15 +91,15 @@ public class GuiInterface implements UserInterface{
 
             System.out.println(cho.getName());
 */
-            /*List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
+            List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
 
             Point chosenP = movePlayer(dest,false);
             if(chosenP == null)
                 System.out.println("null");
             else
                 System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
-*/
-            /*List<Weapon> goodW = new ArrayList<>();
+
+            List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(3, "", "", null, null, null, Color.RED));
@@ -114,19 +114,21 @@ public class GuiInterface implements UserInterface{
 
             Thread.sleep(200);
 
-            System.out.println("Done, chosen weapon: " + w.getName());
+            if(w!=null)
+                System.out.println("Done, chosen weapon: " + w.getName());
 
-            Thread.sleep(500);*/
+            Thread.sleep(500);
             //getFighter();
 
             //getNickname();
 
-            /*List<Integer> rooms = new ArrayList<>();
+            List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
             rooms.add(2);
             rooms.add(3);
 
-            Integer choosen = chooseRoom(rooms, false);*/
+            Integer choosen = chooseRoom(rooms, true);
+            System.out.println(choosen!=null?choosen:"null");
 
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));

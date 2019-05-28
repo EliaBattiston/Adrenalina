@@ -2,6 +2,10 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.Interaction;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Singleton that handles the information sharing through the GuiInterface and the Gui
  */
@@ -147,5 +151,15 @@ public class GuiExchanger {
         return mustChoose;
     }
 
+    /**
+     * Tells the gui if the current action needs the skip button or not
+     * Used for showing the skip button inside popups
+     * @return True if it needs a popup, false otherwise
+     */
+    public synchronized boolean needsPopup()
+    {
+        Interaction[] noSkip = { Interaction.CHOOSEWEAPONACTION, Interaction.DISCARDPOWER, Interaction.CHOOSEROOM, Interaction.CHOOSEDIRECTION  };
 
+        return !Arrays.asList(noSkip).contains(actualInteraction);
+    }
 }

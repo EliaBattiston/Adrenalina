@@ -790,6 +790,16 @@ public class ActionLambdaMap {
     private static void run(Player pl, Map map, int steps, boolean mustChoose, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         List<Point> destinations = Map.possibleMovements(pl.getPosition(), steps, map);
+        
+        for(int i=0; i<destinations.size(); i++)
+        {
+            if( destinations.get(i).equals(pl.getPosition()) )
+            {
+                destinations.remove(i);
+                i--;
+            }
+        }
+
         Point chosen = pl.getConn().movePlayer(destinations, mustChoose);
 
         if(chosen != null) {

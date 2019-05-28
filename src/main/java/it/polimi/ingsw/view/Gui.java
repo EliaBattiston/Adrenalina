@@ -467,12 +467,12 @@ public class Gui extends Application{
         double size = 40*dimMult;
 
         StackPane root = new StackPane();
-        GuiInfo info;
+        GuiClickableInfo info;
 
         //todo show the button only if it'll show some info
         for(Player pl: players) {
             if(!pl.getNick().equals(match.getMyPlayer().getNick())) {
-                info = new GuiInfo(pl, size, size);
+                info = new GuiClickableInfo(pl, size, size);
 
                 info.setOnMousePressed(e -> {
                     uiExec.execute(() -> {
@@ -749,7 +749,7 @@ public class Gui extends Application{
             exchanger.waitRequestIncoming();
 
             //handle the mustChoose
-            if(!exchanger.isMustChoose() && exchanger.getActualInteraction() != Interaction.MOVEPLAYER){
+            if(!exchanger.isMustChoose() && exchanger.needsPopup() && exchanger.getActualInteraction()!=Interaction.MOVEPLAYER ){
                 uiExec.execute(()->{
                     masterPane.getChildren().add(skipAction);
                     skipAction.setOnMousePressed(e->{
@@ -1008,6 +1008,16 @@ public class Gui extends Application{
         grid.setTranslateX(xGridText);
         grid.setTranslateY(yGridText);
 
+        row++;
+        if(!exchanger.isMustChoose())
+        {
+            grid.add(skipAction, 0, row);
+            skipAction.setOnMousePressed(e->{
+                exchanger.setAnswer(null);
+                exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
+            });
+        }
+
         //Show the pane
         masterPane.getChildren().add(popupPane);
     }
@@ -1173,6 +1183,15 @@ public class Gui extends Application{
         grid.setTranslateX(xGridText);
         grid.setTranslateY(yGridText);
 
+        if(!exchanger.isMustChoose())
+        {
+            grid.add(skipAction, 0, 2);
+            skipAction.setOnMousePressed(e->{
+                exchanger.setAnswer(null);
+                exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
+            });
+        }
+
         //Show the pane
         masterPane.getChildren().add(popupPane);
     }
@@ -1256,16 +1275,15 @@ public class Gui extends Application{
         Canvas canvas = createPopupCanvas();
         popupPane.getChildren().addAll(canvas);
 
-        GridPane grid = gridMaker(backgroundWidth);
+        GridPane grid = gridMaker(500*dimMult);
         StackPane.setAlignment(grid, Pos.TOP_LEFT);
         grid.setAlignment(Pos.TOP_LEFT);
         grid.setTranslateX(backgroundWidth * 0.24 );
-        grid.setTranslateY(backgroundHeight * 0.23);
+        grid.setTranslateY(backgroundHeight * 0.25);
         popupPane.getChildren().addAll(grid);
 
         Label l = new Label(message);
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-        GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
 
         List<String> roomsNames = new ArrayList<>();
@@ -1288,7 +1306,6 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            GridPane.setHalignment(radio, HPos.CENTER);
             grid.add(radio,0,row++);
         }
 
@@ -1300,8 +1317,17 @@ public class Gui extends Application{
             exchanger.setActualInteraction(Interaction.NONE);
             masterPane.getChildren().remove(popupPane);
         });
-        GridPane.setHalignment(submit, HPos.CENTER);
         grid.add(submit,0,row);
+
+        row++;
+        if(!exchanger.isMustChoose())
+        {
+            grid.add(skipAction, 0, row);
+            skipAction.setOnMousePressed(e->{
+                exchanger.setAnswer(null);
+                exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
+            });
+        }
 
         //Show the pane
         masterPane.getChildren().add(popupPane);
@@ -1352,6 +1378,16 @@ public class Gui extends Application{
         });
         GridPane.setHalignment(submit, HPos.CENTER);
         grid.add(submit,0,row);
+
+        row++;
+        if(!exchanger.isMustChoose())
+        {
+            grid.add(skipAction, 0, row);
+            skipAction.setOnMousePressed(e->{
+                exchanger.setAnswer(null);
+                exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
+            });
+        }
 
         //Show the pane
         masterPane.getChildren().add(popupPane);
