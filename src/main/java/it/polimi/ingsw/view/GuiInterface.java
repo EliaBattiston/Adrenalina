@@ -70,7 +70,7 @@ public class GuiInterface implements UserInterface{
             players.add(new Player("p4", "!", Fighter.BANSHEE));
             players.add(new Player("p5", "!", Fighter.DOZER));*/
 
-            List<Integer> rooms = new ArrayList<>();
+            /*List<Integer> rooms = new ArrayList<>();
             rooms.add(1);
             rooms.add(2);
             rooms.add(3);
@@ -85,7 +85,7 @@ public class GuiInterface implements UserInterface{
             color.add(Color.YELLOW);
 
             Color chosen = chooseAmmo(color, false);
-            System.out.println(chosen==null?"null":chosen);
+            System.out.println(chosen==null?"null":chosen);*/
 
             /*List<Action> actions = new ArrayList<>();
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
@@ -196,6 +196,9 @@ public class GuiInterface implements UserInterface{
                 marks.addAll(Arrays.asList("p4", "p5", "p4"));
             }));
 
+            me.addSkull();
+            me.addSkull();
+
             players.get(1).applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 allGame.getWeaponsDeck().shuffle();
                 weapons[0] = allGame.getWeaponsDeck().draw();
@@ -218,6 +221,12 @@ public class GuiInterface implements UserInterface{
                 marks.addAll(Arrays.asList("p2", "p3", "p3"));
                 marks.addAll(Arrays.asList("p4", "p5", "p4"));
             }));
+
+            players.get(1).addSkull();
+            players.get(1).addSkull();
+            players.get(1).addSkull();
+            players.get(1).addSkull();
+            players.get(1).addSkull();
 
             me.addPoints(5);
 
@@ -245,7 +254,7 @@ public class GuiInterface implements UserInterface{
             allGame.getSkulls()[3].setKiller(me,true);
             allGame.getSkulls()[4].setKiller(me,false);
 
-            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.FRENZY, true, me);
+            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.REGULAR, true, me);
         }catch (Exception ex){
             ;
         }

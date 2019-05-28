@@ -601,6 +601,17 @@ public class Gui extends Application{
             xDrop += deltaX;
         }
 
+        //deaths
+        double xSkull = 115;
+        double ySkull = 92;
+        double wSkull = 30*dimMult;
+        double hSkull = 40*dimMult;
+        for(int i=0; i<player.getSkulls(); i++)
+        {
+            gc.drawImage(GuiImagesMap.getImage("skull.png"), x + (xSkull * dimMult), y + (ySkull * dimMult), wSkull, hSkull);
+            xSkull += 30;
+        }
+
         //for my player I need to ahve the actions clickable
         if(player.getNick().equals(match.getMyPlayer().getNick()) && !frenzyMode){
             double actionsY = ((float)45)/ 270 * height;
