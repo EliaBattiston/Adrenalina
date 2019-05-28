@@ -70,19 +70,36 @@ public class GuiInterface implements UserInterface{
             players.add(new Player("p4", "!", Fighter.BANSHEE));
             players.add(new Player("p5", "!", Fighter.DOZER));*/
 
+            List<Integer> rooms = new ArrayList<>();
+            rooms.add(1);
+            rooms.add(2);
+            rooms.add(3);
+
+            Integer choosen = chooseRoom(rooms, true);
+            System.out.println(choosen!=null?choosen:"null");
+
+
+            List<Color> color = new ArrayList<>();
+            color.add(Color.RED);
+            color.add(Color.BLUE);
+            color.add(Color.YELLOW);
+
+            Color chosen = chooseAmmo(color, false);
+            System.out.println(chosen==null?"null":chosen);
+
             /*List<Action> actions = new ArrayList<>();
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
             actions.add(new Action("try", "asvdsjnzfjbn jdzfnbkjdzfnbjknzfjbjzfdnbjzfndbjzdhjfjzfnvbjdf<nvijzdnfijbnbsd", null, "w2-a"));
 
             this.chooseAction(actions, false);*/
-/*
-            Player choosen = chooseTarget(players, false);
 
-            if(choosen != null)
-                System.out.println(choosen.toString());
+            /*Player chosen = chooseTarget(players, false);
+
+            if(chosen != null)
+                System.out.println(chosen.toString());
             else
-                System.out.println("NULLL");
-*/
+                System.out.println("NULL");*/
+
 
             /*List<Action> a = new ArrayList<>();
             a.addAll(Activities.getInstance().getAvailable(4, false, false));
@@ -98,8 +115,8 @@ public class GuiInterface implements UserInterface{
                 System.out.println("null");
             else
                 System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
-*/
-            /*List<Weapon> goodW = new ArrayList<>();
+
+            List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(2, "", "", null, null, null, Color.RED));
             goodW.add(new Weapon(3, "", "", null, null, null, Color.RED));
@@ -114,21 +131,16 @@ public class GuiInterface implements UserInterface{
 
             Thread.sleep(200);
 
-            System.out.println("Done, chosen weapon: " + w.getName());
+            if(w!=null)
+                System.out.println("Done, chosen weapon: " + w.getName());
 
-            Thread.sleep(500);*/
+            Thread.sleep(500);
             //getFighter();
 
-            //getNickname();
+            //getNickname();*/
 
-            /*List<Integer> rooms = new ArrayList<>();
-            rooms.add(1);
-            rooms.add(2);
-            rooms.add(3);
 
-            Integer choosen = chooseRoom(rooms, true);
 
-*/
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));
             players.add(new Player("aaa", "yay", Fighter.DOZER));
@@ -162,6 +174,29 @@ public class GuiInterface implements UserInterface{
             Player me = players.get(0);
 
             me.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                allGame.getWeaponsDeck().shuffle();
+                weapons[0] = allGame.getWeaponsDeck().draw();
+                weapons[1] = allGame.getWeaponsDeck().draw();
+                weapons[1].setLoaded(false);
+                weapons[2] = allGame.getWeaponsDeck().draw();
+                weapons[2].setLoaded(false);
+
+                allGame.getPowersDeck().shuffle();
+                powers[0] = allGame.getPowersDeck().draw();
+                powers[1] = allGame.getPowersDeck().draw();
+
+                ammo.add(Color.YELLOW, 2);
+                ammo.add(Color.BLUE, 1);
+
+                damage[0] = "p2";
+                damage[1] = "p2";
+                damage[2] = "p3";
+
+                marks.addAll(Arrays.asList("p2", "p3", "p3"));
+                marks.addAll(Arrays.asList("p4", "p5", "p4"));
+            }));
+
+            players.get(1).applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 allGame.getWeaponsDeck().shuffle();
                 weapons[0] = allGame.getWeaponsDeck().draw();
                 weapons[1] = allGame.getWeaponsDeck().draw();
@@ -414,6 +449,19 @@ public class GuiInterface implements UserInterface{
         exchanger.setRequest(Interaction.CHOOSEPOSITION, "Scegli una posizione", positions, mustChoose);
         exchanger.waitFreeToUse();
         return (Point) exchanger.getAnswer();
+    }
+
+    /**
+     * Asks the user which ammo he wants to use
+     * @param available List of powers on the player's board which can be used
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Color of the chosen ammo
+     */
+    @Override
+    public Color chooseAmmo(List<Color> available, boolean mustChoose){
+        exchanger.setRequest(Interaction.CHOOSEAMMO, "Scegli una munizione da scartare", available, mustChoose);
+        exchanger.waitFreeToUse();
+        return (Color) exchanger.getAnswer();
     }
 
     /**

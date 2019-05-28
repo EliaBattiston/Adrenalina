@@ -331,6 +331,9 @@ public class Match implements Runnable
                 disconnectPlayer(active, game.getPlayers());
             }
         }
+
+        //Clean used power cards
+        active.cleanUsedPowers(game.getPowersDeck());
     }
 
     /**

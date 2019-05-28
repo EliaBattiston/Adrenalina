@@ -177,6 +177,8 @@ public class CLInterface implements UserInterface {
         int num = 0;
         try {
             num = in.nextInt();
+            if(num == -1)
+                num = -10;
         }
         catch (InputMismatchException e) {
             String s = scan();
@@ -996,7 +998,7 @@ public class CLInterface implements UserInterface {
         for(Action disp: available) {
             i++;
             List<Color> cost = disp.getCost();
-            String s = "[" + i + "] " + disp.getName() + " (" + disp.getDescription() + "), costo: ";
+            String s = "[" + i + "] " + disp.getName() + " (" + disp.getDescription() + ")" + ( disp.getLambdaID().contains("a-")? "" : ", costo: " ) ;
             for(Color c: cost) {
                 s += formatColorBox(c) + " ";
             }
@@ -1590,6 +1592,47 @@ public class CLInterface implements UserInterface {
             return null;
         else
             return inHand.get(choose - 1);
+    }
+
+    /**
+     * Asks the user which ammo he wants to use
+     * @param available List of powers on the player's board which can be used
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Color of the chosen ammo
+     */
+    public Color chooseAmmo(List<Color> available, boolean mustChoose){
+        List<String> options = new ArrayList<>();
+        options.add("\nScegli quale munizione usare:");
+        int i = 0;
+        int starting = 1;
+        int choose;
+        if(!mustChoose) {
+            starting = 0;
+            options.add("[0] Nessuno");
+        }
+        for(Color ammo: available) {
+            i++;
+            options.add("[" + i + "] " + ammo.name());
+        }
+
+        choose = generalMenu(options, starting);
+
+        if(choose == 0)
+            return null;
+        else
+            return available.get(choose - 1);
+    }
+
+    public static void main(String[] args) {
+        List<Color> clist = new ArrayList<>();
+        clist.add(Color.YELLOW);
+        clist.add(Color.YELLOW);
+        clist.add(Color.BLUE);
+
+        CLInterface i = new CLInterface();
+        i.println(i.chooseAmmo(clist, false).name());
+        clist.add(Color.RED);
+        i.println(i.chooseAmmo(clist, true).name());
     }
 
     /**

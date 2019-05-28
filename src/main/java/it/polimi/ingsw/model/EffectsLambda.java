@@ -1,12 +1,15 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Class containing the static methods that are used to change the status of a player when they are targeted by an enemy action
@@ -38,9 +41,6 @@ public class EffectsLambda {
                 marks.remove(damageGiver.getNick());
                 i++;
             }
-
-            //TODO check the power up "mirino"
-            //TODO check the power up "granata venom"
         };
     }
 
@@ -136,5 +136,61 @@ public class EffectsLambda {
                 Logger.getGlobal().log(Level.SEVERE, "Weapon to be discarded is not in the player\'s hand");
             }
         });
+    }
+
+    public static void giveDamage(Player giver, Player taker, int damage) throws ClientDisconnectedException
+    {
+        taker.applyEffects(EffectsLambda.damage(damage, giver));
+
+        //Mirino
+        if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals("p1")) &&
+                (giver.getAmmo(Color.RED)>0 || giver.getAmmo(Color.BLUE)>0 || giver.getAmmo(Color.YELLOW)>0))
+        {
+            Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p1")).collect(Collectors.toList()), false);
+            if(chosen != null)
+            {
+                List<Color> available = new ArrayList<>();
+                for(Color c : Color.values())
+                {
+                    if(giver.getAmmo(c) > 0)
+                        available.add(c);
+                }
+
+                List<Color> cost = new ArrayList<>();
+                cost.add(giver.getConn().chooseAmmo(available, true));
+
+                //Give additional damage
+                taker.applyEffects(EffectsLambda.damage(1, giver));
+
+                //Remove power
+                giver.applyEffects(((damage1, marks, position, weapons, powers, ammo) -> {
+                    int index = Arrays.asList(powers).indexOf(chosen);
+                    giver.throwPower(powers[index]);
+
+                    powers[index] = null;
+                }));
+
+                giver.applyEffects(EffectsLambda.payAmmo(cost));
+            }
+        }
+
+        //Granata venom
+        if(taker.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals("p3")))
+        {
+            Power chosen = taker.getConn().discardPower(taker.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p3")).collect(Collectors.toList()), false);
+            if(chosen != null);
+            {
+                //Give mark
+                giver.applyEffects(EffectsLambda.marks(1, taker));
+
+                //Remove power
+                taker.applyEffects(((damage1, marks, position, weapons, powers, ammo) -> {
+                    int index = Arrays.asList(powers).indexOf(chosen);
+                    taker.throwPower(powers[index]);
+
+                    powers[index] = null;
+                }));
+            }
+        }
     }
 }

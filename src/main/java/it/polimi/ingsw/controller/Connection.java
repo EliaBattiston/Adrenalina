@@ -181,6 +181,15 @@ public interface Connection extends Remote
     public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException;
 
     /**
+     * Asks the user which ammo he wants to use
+     * @param available List of powers on the player's board which can be used
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Color of the chosen ammo
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
+     */
+    public Color chooseAmmo(List<Color> available, boolean mustChoose) throws ClientDisconnectedException;
+
+    /**
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      * @throws ClientDisconnectedException In case of client unexpected disconnection

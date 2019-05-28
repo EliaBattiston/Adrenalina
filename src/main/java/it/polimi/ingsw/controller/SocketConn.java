@@ -483,6 +483,29 @@ public class SocketConn implements Connection {
     }
 
     /**
+     * Asks the user which ammo he wants to use
+     * @param available List of powers on the player's board which can be used
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Color of the chosen ammo
+     * @throws ClientDisconnectedException in case of client unexpected disconnection
+     */
+    public Color chooseAmmo(List<Color> available, boolean mustChoose) throws ClientDisconnectedException
+    {
+        synchronized (lock) {
+            Payload load = new Payload();
+            load.setType(Interaction.CHOOSEAMMO);
+            load.setParameters(gson.toJson(available));
+            load.setMustChoose(mustChoose);
+            send(gson.toJson(load));
+            Payload answer = jsonDeserialize(receive());
+            List<Color> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Color>>() {
+            }.getType());
+
+            return ansParam.get(0);
+        }
+    }
+
+    /**
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      * @throws ClientDisconnectedException In case of client unexpected disconnection

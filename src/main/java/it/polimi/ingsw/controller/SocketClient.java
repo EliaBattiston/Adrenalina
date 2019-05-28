@@ -244,6 +244,14 @@ public class SocketClient implements Client {
     }
 
     /**
+     * Asks the user which ammo he wants to use
+     * @param available List of powers on the player's board which can be used
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Color of the chosen ammo
+     */
+    public Color chooseAmmo(List<Color> available, boolean mustChoose) { return user.chooseAmmo(available, mustChoose); }
+
+    /**
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      */
@@ -464,6 +472,14 @@ public class SocketClient implements Client {
                     answer.setType(Interaction.CHOOSEPOWER);
                     ArrayList<Power> ansParam = new ArrayList<>();
                     ansParam.add(choosePower(param, message.isMustChoose()));
+                    answer.setParameters(gson.toJson(ansParam));
+                    break;
+                }
+                case CHOOSEAMMO: {
+                    ArrayList<Color> param = gson.fromJson(message.getParameters(), new TypeToken<List<Color>>() {}.getType());
+                    answer.setType(Interaction.CHOOSEAMMO);
+                    ArrayList<Color> ansParam = new ArrayList<>();
+                    ansParam.add(chooseAmmo(param, message.isMustChoose()));
                     answer.setParameters(gson.toJson(ansParam));
                     break;
                 }

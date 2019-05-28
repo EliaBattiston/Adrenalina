@@ -71,6 +71,11 @@ public class Player implements Serializable
     private boolean spawned;
 
     /**
+     * List of used power cards, waiting to be sent to the scraps deck at the end of the turn
+     */
+    private List<Power> usedPowers;
+
+    /**
      * Creates a new user, in a suitable configuration to start the game
      * @param nick Nickname
      * @param phrase Action phrase
@@ -90,6 +95,7 @@ public class Player implements Serializable
         this.powers = new Power[3];
         this.position = new Point(0, 0);
         this.spawned = false;
+        this.usedPowers = new ArrayList<>();
 
         this.conn = null;
     }
@@ -285,7 +291,23 @@ public class Player implements Serializable
     {
         spawned = s;
     }
-    
+
+    public void throwPower(Power p)
+    {
+        usedPowers.add(p);
+    }
+
+    public void cleanUsedPowers(EndlessDeck<Power> powersDeck)
+    {
+        for(Power p: usedPowers)
+        {
+            powersDeck.scrapCard(p);
+        }
+
+        usedPowers.clear();
+    }
+
+    //TODO use existing game method instead of this
     public static Fighter fighterFromNick(List<Player> players, String nick){
         for(Player p : players)
             if(p.getNick().equals(nick))
