@@ -16,10 +16,10 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -34,7 +34,6 @@ import static java.lang.Math.max;
  * The Gui class that extends the JavaFX Application
  */
 public class Gui extends Application{
-    private final static String MYFONT = "EthnocentricRg-Italic"; //todo fix the import of the font
     private final static double SETTINGSFONTDIM = 28;
     private final static double POPUPFONTDIM = 22;
 
@@ -84,7 +83,6 @@ public class Gui extends Application{
      */
     @Override
     public void start(Stage primaryStage){
-        Font.loadFont(getClass().getResourceAsStream("font/ethnocentric_rg.ttf"), 14);
         loggedText = "";
 
         primaryS = primaryStage;
@@ -194,7 +192,7 @@ public class Gui extends Application{
 
         //logArea
         logArea = new TextArea();
-        logArea.setFont(new Font(MYFONT, 16*dimMult));
+        logArea.setFont(new Font("Verdana", 16*dimMult));
         logArea.setLayoutX(1222 * dimMult);
         logArea.setLayoutY(920 * dimMult);
         logArea.setMaxWidth(560 * dimMult);
@@ -559,7 +557,7 @@ public class Gui extends Application{
         double deltaX = (frenzyMode?61:63) * pbMult;
 
         gc.setFill(javafx.scene.paint.Color.WHITE);
-        gc.setFont(new Font(MYFONT,18*dimMult));
+        gc.setFont(getFont(18*dimMult));
         gc.fillText(player.getNick() + " - " + player.getCharacter().toString(), x, y-(8*dimMult));
 
         gc.drawImage( GuiImagesMap.getImage("playerBoard/" + player.getCharacter().toString() + (frenzyMode?"_F":"") + ".png"), x, y, width, height);
@@ -719,7 +717,7 @@ public class Gui extends Application{
 
         String str = (points<10 ? "0":"") + points;
 
-        gc.setFont(new Font(MYFONT,32*dimMult));
+        gc.setFont(getFont(32*dimMult));
         gc.setFill(javafx.scene.paint.Color.WHITE);
         gc.setStroke(javafx.scene.paint.Color.BLACK);
         gc.fillText( str, x, y);
@@ -850,7 +848,7 @@ public class Gui extends Application{
         infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);//we use always the same canvas
 
         infoTextCanvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.WHITE);
-        infoTextCanvas.getGraphicsContext2D().setFont(new Font(MYFONT,34*dimMult));
+        infoTextCanvas.getGraphicsContext2D().setFont(getFont(34*dimMult));
         infoTextCanvas.getGraphicsContext2D().fillText(message, x, y);
         infoTextCanvas.setPickOnBounds(false);
     }
@@ -965,23 +963,23 @@ public class Gui extends Application{
         grid.setVgap(4);
         popupPane.getChildren().addAll(grid);
         Label popupTitle = new Label(exchanger.getMessage());
-        popupTitle.setFont(new Font(MYFONT,POPUPFONTDIM * 1.5 * dimMult));
+        popupTitle.setFont(getFont(POPUPFONTDIM * 1.5 * dimMult));
         popupTitle.setWrapText(true);
         grid.add(popupTitle,0,0);
         int row = 1;
         for(Action a: possible) {
             Label title = new Label(a.getName());
-            title.setFont(new Font(MYFONT,POPUPFONTDIM * 1.3 * dimMult));
+            title.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
             title.setWrapText(true);
             grid.add(title,0,row++);
 
             Label description = new Label(a.getDescription());
-            description.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult));
+            description.setFont(getFont(POPUPFONTDIM*dimMult));
             description.setWrapText(true);
             grid.add(description,0,row++);
 
             Button buttonAction = new Button("Usa " + a.getName());
-            buttonAction.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult*0.8));
+            buttonAction.setFont(getFont(POPUPFONTDIM*dimMult*0.8));
             buttonAction.setOnAction((e)->{
                 System.out.println("Scelto: " + a.getName());
                 exchanger.setAnswer(a);
@@ -1015,7 +1013,7 @@ public class Gui extends Application{
 
         //Close button
         Button closeButton = new Button("Chiudi" );
-        closeButton.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult*0.8));
+        closeButton.setFont(getFont(POPUPFONTDIM*dimMult*0.8));
         closeButton.setOnAction((e)->{
             masterPane.getChildren().remove(popupPane);
         });
@@ -1025,8 +1023,8 @@ public class Gui extends Application{
 
         //Player name
         Label nameLbl = new Label(pl.getNick() + " - " + pl.getCharacter() + " - Punti: " + pl.getPoints());
-        nameLbl.setTextFill(Color.WHITE);
-        nameLbl.setFont(new Font(MYFONT,POPUPFONTDIM * 1.3 * dimMult));
+        nameLbl.setTextFill(javafx.scene.paint.Color.WHITE);
+        nameLbl.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         nameLbl.setWrapText(true);
         StackPane.setAlignment(nameLbl, Pos.CENTER_LEFT);
         nameLbl.setTranslateX(420*dimMult);
@@ -1157,7 +1155,7 @@ public class Gui extends Application{
 
         //Title
         Label popupTitle = new Label(exchanger.getMessage());
-        popupTitle.setFont(new Font(MYFONT,POPUPFONTDIM * 1.5 * dimMult));
+        popupTitle.setFont(getFont(POPUPFONTDIM * 1.5 * dimMult));
         popupTitle.setWrapText(true);
         grid.add(popupTitle,0,0, 4,1);
 
@@ -1414,14 +1412,14 @@ public class Gui extends Application{
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         TextField field = new TextField("localhost");
-        field.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        field.setFont(getFont(SETTINGSFONTDIM*dimMult));
 
         Button submit = new Button("Conferma");
-        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
         submit.setOnAction((e)->{
             String answer = field.getText();
             System.out.println(answer);
@@ -1460,7 +1458,7 @@ public class Gui extends Application{
         l.setPrefSize(480 * dimMult, 420 * dimMult);
 
         l.setWrapText(true);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         GridPane.setHalignment(l, HPos.RIGHT);
@@ -1484,7 +1482,7 @@ public class Gui extends Application{
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
@@ -1495,7 +1493,7 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(group);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+            radio.setFont(getFont( SETTINGSFONTDIM*dimMult));
             if(row==1)
                 radio.setSelected(true);
 
@@ -1503,7 +1501,7 @@ public class Gui extends Application{
         }
 
         Button submit = new Button("Conferma");
-        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
         submit.setOnAction(eventHandler);
         submit.setDefaultButton(true);
         GridPane.setHalignment(submit, HPos.CENTER);
@@ -1638,5 +1636,11 @@ public class Gui extends Application{
         });
 
         askWithRadio(message, group, buttons, eventHandler);
+    }
+
+    public Font getFont(double dim){
+        InputStream streamFont = getClass().getClassLoader().getResourceAsStream("font/ethnocentric_rg.ttf");
+
+        return Font.loadFont(streamFont, dim);
     }
 }
