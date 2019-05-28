@@ -154,6 +154,14 @@ public class SMain
                 timer[i] = new Timer();
                 startedTimer[i] = false;
             }
+
+            println("    ___    __  _______  _____    _____                          ");
+            println("   /   |  /  |/  / __ \\/ ___/   / ___/___  ______   _____  _____");
+            println("  / /| | / /|_/ / / / / __ \\    \\__ \\/ _ \\/ ___/ | / / _ \\/ ___/");
+            println(" / ___ |/ /  / / /_/ / /_/ /   ___/ /  __/ /   | |/ /  __/ /    ");
+            println("/_/  |_/_/  /_/\\____/\\____/   /____/\\___/_/    |___/\\___/_/     ");
+            println("");
+
             println("Adrenalina Server ready");
 
             Runtime.getRuntime().addShutdownHook(
