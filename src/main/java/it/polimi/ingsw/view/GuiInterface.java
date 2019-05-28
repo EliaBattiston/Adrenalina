@@ -245,7 +245,7 @@ public class GuiInterface implements UserInterface{
             allGame.getSkulls()[3].setKiller(me,true);
             allGame.getSkulls()[4].setKiller(me,false);
 
-            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.FRENZY, true, me);
+            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.FRENZY, true, me, 120);
         }catch (Exception ex){
             ;
         }
@@ -549,7 +549,7 @@ public class GuiInterface implements UserInterface{
      * @param winnerList Ordered players' list
      */
     public void endGame(List<Player> winnerList) {
-        exchanger.setActualInteraction(Interaction.CLOSEAPP);
+        exchanger.setActualInteraction(Interaction.CLOSEAPP);//todo implement the popu of the info
     }
 
     /**

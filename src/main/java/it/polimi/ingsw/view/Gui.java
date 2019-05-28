@@ -44,6 +44,9 @@ public class Gui extends Application{
     //Ui Executor
     private static Executor uiExec = Platform::runLater;
 
+    //timer
+    private Thread myTimer;
+
     //Data
     private MatchView match;
     private GuiExchanger exchanger;
@@ -756,6 +759,36 @@ public class Gui extends Application{
             }
 
             System.out.println(exchanger.getActualInteraction().toString());
+
+            //start the timer
+            if(match!=null && exchanger.getActualInteraction() != Interaction.UPDATEVIEW && exchanger.getActualInteraction()!=Interaction.LOG) {
+                if(myTimer != null)
+                    myTimer.interrupt();
+
+                long time = match.getTimeForAction();
+                myTimer = new Thread(() -> {
+                    try {
+                        wait(time * 1000);
+                        //if I reach this point the server should have disconnected me
+                        Pane popupPane = new StackPane();
+                        Canvas canvas = createPopupCanvas();
+                        popupPane.getChildren().addAll(canvas);
+
+                        double x = backgroundWidth * 0.215;
+                        double y = backgroundHeight * 0.48;
+                        canvas.getGraphicsContext2D().setFont(getFont(30));
+                        canvas.getGraphicsContext2D().fillText("Disconnesso dal server per inattività", x, y);
+                        uiExec.execute(()->masterPane.getChildren().addAll(popupPane));
+                        //exchanger.setActualInteraction(Interaction.WAITINGUSER);
+                    }catch (InterruptedException ignore){
+                        ;
+                    }
+
+                });
+
+                myTimer.start();
+            }
+
             switch (exchanger.getActualInteraction()) {
                 case CHOOSEBASEACTION:
                     chooseBaseAction();
