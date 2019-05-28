@@ -168,7 +168,7 @@ public class Gui extends Application{
         gc.drawImage( GuiImagesMap.getImage("background/gameBoard.png"), 0, 0, backgroundWidth, backgroundHeight);
         drawMap(match.getGame().getMap());
 
-        drawAllPlayersBoards(match.getGame().getPlayers(),match.getPhase() == GamePhase.FRENZY);
+        drawAllPlayersBoards(match.getGame().getPlayers());
         drawMyAmmo(match.getMyPlayer().getAmmo());
         drawSkulls(match.getGame().getSkullsBoard());
 
@@ -533,9 +533,8 @@ public class Gui extends Application{
     /**
      * Draw all the players boards
      * @param players the players
-     * @param frenzyMode true if we are during the frenzy mode
      */
-    private void drawAllPlayersBoards(List<Player> players, boolean frenzyMode){
+    private void drawAllPlayersBoards(List<Player> players){
         //dimensions are the same for all the players
         double width = 560 * dimMult;
         double height = 134 * dimMult;
@@ -546,7 +545,7 @@ public class Gui extends Application{
         double deltaY = 169 * dimMult;
 
         for(Player p : players){
-            drawPlayerBoard(p, players, frenzyMode, width, height, x, y);
+            drawPlayerBoard(p, players, width, height, x, y);
             y += deltaY;
         }
     }
@@ -555,13 +554,15 @@ public class Gui extends Application{
      * Draw a single player board
      * @param player the player who the board belong
      * @param players all the players (needed for the drawing of the damage)
-     * @param frenzyMode true if during frenzy
      * @param width width of the card
      * @param height height of the card
      * @param x x pos
      * @param y y pos
      */
-    private void drawPlayerBoard(Player player, List<Player> players, boolean frenzyMode, double width, double height, double x, double y){
+    private void drawPlayerBoard(Player player, List<Player> players, double width, double height, double x, double y){
+
+        boolean frenzyMode = player.getFrenzyBoard();
+
         double pbMult = width/1123; //(dimMult * width@1080p)/textureWidth -> internal reference based on the card
         double xDrop = (frenzyMode?130:116) * pbMult + x;
         double yDrop = 116 * pbMult + y;
@@ -602,11 +603,12 @@ public class Gui extends Application{
         }
 
         //deaths
-        double xSkull = 115;
+        double xSkull = frenzyMode? 152:115;
         double ySkull = 92;
         double wSkull = 30*dimMult;
         double hSkull = 40*dimMult;
-        for(int i=0; i<player.getSkulls(); i++)
+
+        for(int i=0; i<player.getSkulls() && i< (frenzyMode?4:6); i++)
         {
             gc.drawImage(GuiImagesMap.getImage("skull.png"), x + (xSkull * dimMult), y + (ySkull * dimMult), wSkull, hSkull);
             xSkull += 30;

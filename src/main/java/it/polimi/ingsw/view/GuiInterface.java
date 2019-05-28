@@ -199,6 +199,8 @@ public class GuiInterface implements UserInterface{
             me.addSkull();
             me.addSkull();
 
+            me.setFrenzyBoard(true);
+
             players.get(1).applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
                 allGame.getWeaponsDeck().shuffle();
                 weapons[0] = allGame.getWeaponsDeck().draw();
@@ -227,6 +229,14 @@ public class GuiInterface implements UserInterface{
             players.get(1).addSkull();
             players.get(1).addSkull();
             players.get(1).addSkull();
+            players.get(1).addSkull();
+            players.get(1).addSkull();
+            players.get(1).addSkull();
+
+            players.get(1).setFrenzyBoard(true);
+
+            players.get(2).addSkull();
+            players.get(2).addSkull();
 
             me.addPoints(5);
 
