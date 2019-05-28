@@ -64,25 +64,25 @@ public class GuiInterface implements UserInterface{
             p.add(new Power(18, "sdb", null, Color.RED));
 
             discardPower(p, true);*/
-
+/*
             List<Player> players = new ArrayList<>();
 
             players.add(new Player("p4", "!", Fighter.BANSHEE));
-            players.add(new Player("p5", "!", Fighter.DOZER));
+            players.add(new Player("p5", "!", Fighter.DOZER));*/
 
             /*List<Action> actions = new ArrayList<>();
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
             actions.add(new Action("try", "asvdsjnzfjbn jdzfnbkjdzfnbjknzfjbjzfdnbjzfndbjzdhjfjzfnvbjdf<nvijzdnfijbnbsd", null, "w2-a"));
 
             this.chooseAction(actions, false);*/
-
+/*
             Player choosen = chooseTarget(players, false);
 
             if(choosen != null)
                 System.out.println(choosen.toString());
             else
                 System.out.println("NULLL");
-
+*/
 
             /*List<Action> a = new ArrayList<>();
             a.addAll(Activities.getInstance().getAvailable(4, false, false));
@@ -210,7 +210,7 @@ public class GuiInterface implements UserInterface{
             allGame.getSkulls()[3].setKiller(me,true);
             allGame.getSkulls()[4].setKiller(me,false);
 
-            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.REGULAR, true, me);
+            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.FRENZY, true, me);
         }catch (Exception ex){
             ;
         }

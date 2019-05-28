@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
@@ -16,10 +17,10 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -30,11 +31,12 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 //FIXME It looks like the additional actions don't work.
+//TODO draw the end game screen
+//TODO handle the frenzy in the right way
 /**
  * The Gui class that extends the JavaFX Application
  */
 public class Gui extends Application{
-    private final static String MYFONT = "EthnocentricRg-Italic"; //todo fix the import of the font
     private final static double SETTINGSFONTDIM = 28;
     private final static double POPUPFONTDIM = 22;
 
@@ -67,6 +69,12 @@ public class Gui extends Application{
     private GuiClickableObjectNoImage adrPickAction;
     private GuiClickableObjectNoImage adrShootAction;
     private GuiClickableObjectNoImage powerAction;
+    //frenzy ones
+    private GuiClickableObjectNoImage frenzyRunReloadShoot;
+    private GuiClickableObjectNoImage frenzyRunFour;
+    private GuiClickableObjectNoImage frenzyRunTwoPick;
+    private GuiClickableObjectNoImage frenzyRunTwoPickShoot;
+    private GuiClickableObjectNoImage frenzyRunTreePick;
 
     private Canvas skipAction;
 
@@ -84,7 +92,6 @@ public class Gui extends Application{
      */
     @Override
     public void start(Stage primaryStage){
-        Font.loadFont(getClass().getResourceAsStream("font/ethnocentric_rg.ttf"), 14);
         loggedText = "";
 
         primaryS = primaryStage;
@@ -160,9 +167,8 @@ public class Gui extends Application{
         gc.drawImage( GuiImagesMap.getImage("background/gameBoard.png"), 0, 0, backgroundWidth, backgroundHeight);
         drawMap(match.getGame().getMap());
 
-        drawAllPlayersBoards(match.getGame().getPlayers(),false); //FRENZY?
+        drawAllPlayersBoards(match.getGame().getPlayers(),match.getPhase() == GamePhase.FRENZY);
         drawMyAmmo(match.getMyPlayer().getAmmo());
-        drawPoints(match.getMyPlayer().getPoints());
         drawSkulls(match.getGame().getSkullsBoard());
 
         myWeapons = drawMyWeapons(match.getMyPlayer().getWeapons());
@@ -194,7 +200,7 @@ public class Gui extends Application{
 
         //logArea
         logArea = new TextArea();
-        logArea.setFont(new Font(MYFONT, 16*dimMult));
+        logArea.setFont(new Font("Verdana", 16*dimMult));
         logArea.setLayoutX(1222 * dimMult);
         logArea.setLayoutY(920 * dimMult);
         logArea.setMaxWidth(560 * dimMult);
@@ -214,8 +220,12 @@ public class Gui extends Application{
         skipAction.setOnMouseExited(e-> skipAction.setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0);") );
         skipAction.setPickOnBounds(false);
 
-        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info,
-                runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction, logArea);
+        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
+
+        if(runAction!=null)//check if one it's initialized all are
+            masterPane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
+        else if(frenzyRunTreePick != null)
+            masterPane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot);
 
         return masterPane;
     }
@@ -559,7 +569,7 @@ public class Gui extends Application{
         double deltaX = (frenzyMode?61:63) * pbMult;
 
         gc.setFill(javafx.scene.paint.Color.WHITE);
-        gc.setFont(new Font(MYFONT,18*dimMult));
+        gc.setFont(getFont(18*dimMult));
         gc.fillText(player.getNick() + " - " + player.getCharacter().toString(), x, y-(8*dimMult));
 
         gc.drawImage( GuiImagesMap.getImage("playerBoard/" + player.getCharacter().toString() + (frenzyMode?"_F":"") + ".png"), x, y, width, height);
@@ -605,7 +615,16 @@ public class Gui extends Application{
             adrShootAction = new GuiClickableObjectNoImage(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
         }
         else if(frenzyMode && player.getNick().equals(match.getMyPlayer().getNick())){
-            //todo
+            double actionsY = ((float)40)/ 270 * height;
+            double actionsHeight = ((float)35)/270*height;
+            double actionsWidth = ((float)69)/1121*width;
+            frenzyRunReloadShoot = new GuiClickableObjectNoImage(x, y+actionsY, actionsWidth, actionsHeight);
+            frenzyRunFour = new GuiClickableObjectNoImage(x, y+2*actionsY, actionsWidth, actionsHeight);
+            frenzyRunTwoPick = new GuiClickableObjectNoImage(x, y+3*actionsY, actionsWidth, actionsHeight);
+
+            double secondActionsY = ((float)184)/ 270 * height;
+            frenzyRunTwoPickShoot = new GuiClickableObjectNoImage(x, y+secondActionsY+actionsY, actionsWidth, actionsHeight);
+            frenzyRunTreePick = new GuiClickableObjectNoImage(x, y+secondActionsY+2*actionsY, actionsWidth, actionsHeight);
         }
     }
 
@@ -709,23 +728,6 @@ public class Gui extends Application{
         }
     }
 
-    /**
-     * Draw my points on the shared GC
-     * @param points my points
-     */
-    private void drawPoints(int points){
-        double x = 1050 * dimMult;
-        double y = 995 * dimMult;
-
-        String str = (points<10 ? "0":"") + points;
-
-        gc.setFont(new Font(MYFONT,32*dimMult));
-        gc.setFill(javafx.scene.paint.Color.WHITE);
-        gc.setStroke(javafx.scene.paint.Color.BLACK);
-        gc.fillText( str, x, y);
-        gc.strokeText( str, x, y);
-    }
-
     //
     //
     // NOW ALL THE METHODS FOR THE INTERACTIONS
@@ -826,7 +828,7 @@ public class Gui extends Application{
                             logArea.setScrollTop(90000000);
                         });
                     if(match == null) {
-                        showAlert(this::beforeStartMessage, loggedText);
+                        uiExec.execute(() -> this.settingsMessage(loggedText));
                     }
                     exchanger.setActualInteraction(Interaction.NONE);
                     break;
@@ -850,7 +852,7 @@ public class Gui extends Application{
         infoTextCanvas.getGraphicsContext2D().clearRect(0,0, backgroundWidth, backgroundHeight);//we use always the same canvas
 
         infoTextCanvas.getGraphicsContext2D().setFill(javafx.scene.paint.Color.WHITE);
-        infoTextCanvas.getGraphicsContext2D().setFont(new Font(MYFONT,34*dimMult));
+        infoTextCanvas.getGraphicsContext2D().setFont(getFont(34*dimMult));
         infoTextCanvas.getGraphicsContext2D().fillText(message, x, y);
         infoTextCanvas.setPickOnBounds(false);
     }
@@ -877,13 +879,21 @@ public class Gui extends Application{
                 exchanger.setAnswer(a);
                 clearInfoOnMap();
                 //clear the canvases
-                runAction.resetEventsStyle();
-                pickAction.resetEventsStyle();
-                shootAction.resetEventsStyle();
-                adrPickAction.resetEventsStyle();
-                adrShootAction.resetEventsStyle();
-                powerAction.resetEventsStyle();
-                //todo add the frenzy
+                if(runAction != null) {
+                    runAction.resetEventsStyle();
+                    pickAction.resetEventsStyle();
+                    shootAction.resetEventsStyle();
+                    adrPickAction.resetEventsStyle();
+                    adrShootAction.resetEventsStyle();
+                    powerAction.resetEventsStyle();
+                }
+                if(frenzyRunReloadShoot != null) {
+                    frenzyRunReloadShoot.resetEventsStyle();
+                    frenzyRunFour.resetEventsStyle();
+                    frenzyRunTwoPick.resetEventsStyle();
+                    frenzyRunTwoPickShoot.resetEventsStyle();
+                    frenzyRunTreePick.resetEventsStyle();
+                }
                 exchanger.setActualInteraction(Interaction.NONE);
                 //After finishing the click event, reset all the events to the original option -> just call the redraw game
             });
@@ -908,13 +918,28 @@ public class Gui extends Application{
                     adrShootAction.setOnMousePressed(onClick);
                     adrShootAction.setEventsChoosable();
                     break;
-                case "a-p":
-                    powerAction.setOnMousePressed(onClick);
-                    powerAction.setEventsChoosable();
+                case "a-f1":
+                    frenzyRunReloadShoot.setOnMousePressed(onClick);
+                    frenzyRunReloadShoot.setEventsChoosable();
+                    break;
+                case "a-f2":
+                    frenzyRunFour.setOnMousePressed(onClick);
+                    frenzyRunFour.setEventsChoosable();
+                    break;
+                case "a-f3":
+                    frenzyRunTwoPick.setOnMousePressed(onClick);
+                    frenzyRunTwoPick.setEventsChoosable();
+                    break;
+                case "a-f4":
+                    frenzyRunTwoPickShoot.setOnMousePressed(onClick);
+                    frenzyRunTwoPickShoot.setEventsChoosable();
+                    break;
+                case "a-f5":
+                    frenzyRunTreePick.setOnMousePressed(onClick);
+                    frenzyRunTreePick.setEventsChoosable();
                     break;
                 default:
                     break;
-                //todo add the finalfrenzy ones
             }
         }
     }
@@ -965,23 +990,23 @@ public class Gui extends Application{
         grid.setVgap(4);
         popupPane.getChildren().addAll(grid);
         Label popupTitle = new Label(exchanger.getMessage());
-        popupTitle.setFont(new Font(MYFONT,POPUPFONTDIM * 1.5 * dimMult));
+        popupTitle.setFont(getFont(POPUPFONTDIM * 1.5 * dimMult));
         popupTitle.setWrapText(true);
         grid.add(popupTitle,0,0);
         int row = 1;
         for(Action a: possible) {
             Label title = new Label(a.getName());
-            title.setFont(new Font(MYFONT,POPUPFONTDIM * 1.3 * dimMult));
+            title.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
             title.setWrapText(true);
             grid.add(title,0,row++);
 
             Label description = new Label(a.getDescription());
-            description.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult));
+            description.setFont(getFont(POPUPFONTDIM*dimMult));
             description.setWrapText(true);
             grid.add(description,0,row++);
 
             Button buttonAction = new Button("Usa " + a.getName());
-            buttonAction.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult*0.8));
+            buttonAction.setFont(getFont(POPUPFONTDIM*dimMult*0.8));
             buttonAction.setOnAction((e)->{
                 System.out.println("Scelto: " + a.getName());
                 exchanger.setAnswer(a);
@@ -1015,7 +1040,7 @@ public class Gui extends Application{
 
         //Close button
         Button closeButton = new Button("Chiudi" );
-        closeButton.setFont(new Font(MYFONT,POPUPFONTDIM*dimMult*0.8));
+        closeButton.setFont(getFont(POPUPFONTDIM*dimMult*0.8));
         closeButton.setOnAction((e)->{
             masterPane.getChildren().remove(popupPane);
         });
@@ -1025,8 +1050,8 @@ public class Gui extends Application{
 
         //Player name
         Label nameLbl = new Label(pl.getNick() + " - " + pl.getCharacter() + " - Punti: " + pl.getPoints());
-        nameLbl.setTextFill(Color.WHITE);
-        nameLbl.setFont(new Font(MYFONT,POPUPFONTDIM * 1.3 * dimMult));
+        nameLbl.setTextFill(javafx.scene.paint.Color.WHITE);
+        nameLbl.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         nameLbl.setWrapText(true);
         StackPane.setAlignment(nameLbl, Pos.CENTER_LEFT);
         nameLbl.setTranslateX(420*dimMult);
@@ -1157,7 +1182,7 @@ public class Gui extends Application{
 
         //Title
         Label popupTitle = new Label(exchanger.getMessage());
-        popupTitle.setFont(new Font(MYFONT,POPUPFONTDIM * 1.5 * dimMult));
+        popupTitle.setFont(getFont(POPUPFONTDIM * 1.5 * dimMult));
         popupTitle.setWrapText(true);
         grid.add(popupTitle,0,0, 4,1);
 
@@ -1374,7 +1399,6 @@ public class Gui extends Application{
      */
     private void showAlert(Consumer<String> dialog, String message){
         exchanger.setActualInteraction(Interaction.WAITINGUSER);
-        System.out.println("Waiting");
         uiExec.execute(() -> dialog.accept(message));
     }
 
@@ -1414,14 +1438,14 @@ public class Gui extends Application{
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         TextField field = new TextField("localhost");
-        field.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        field.setFont(getFont(SETTINGSFONTDIM*dimMult));
 
         Button submit = new Button("Conferma");
-        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
         submit.setOnAction((e)->{
             String answer = field.getText();
             System.out.println(answer);
@@ -1446,7 +1470,7 @@ public class Gui extends Application{
      * (Settings method) Prints out messages from server received before match start
      * @param message to show
      */
-    private void beforeStartMessage(String message){
+    private void settingsMessage(String message){
         StackPane root = initializerBackground();
         GridPane grid = gridMaker(480 * dimMult);
 
@@ -1460,7 +1484,7 @@ public class Gui extends Application{
         l.setPrefSize(480 * dimMult, 420 * dimMult);
 
         l.setWrapText(true);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         GridPane.setHalignment(l, HPos.RIGHT);
@@ -1484,7 +1508,7 @@ public class Gui extends Application{
         GridPane grid = gridMaker(480 * dimMult);
 
         Label l = new Label(message);
-        l.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
@@ -1495,7 +1519,7 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(group);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            radio.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+            radio.setFont(getFont( SETTINGSFONTDIM*dimMult));
             if(row==1)
                 radio.setSelected(true);
 
@@ -1503,7 +1527,7 @@ public class Gui extends Application{
         }
 
         Button submit = new Button("Conferma");
-        submit.setFont(Font.font(MYFONT, SETTINGSFONTDIM*dimMult));
+        submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
         submit.setOnAction(eventHandler);
         submit.setDefaultButton(true);
         GridPane.setHalignment(submit, HPos.CENTER);
@@ -1638,5 +1662,11 @@ public class Gui extends Application{
         });
 
         askWithRadio(message, group, buttons, eventHandler);
+    }
+
+    private Font getFont(double dim){
+        InputStream streamFont = getClass().getClassLoader().getResourceAsStream("font/ethnocentric_rg.ttf");
+
+        return Font.loadFont(streamFont, dim*0.8); //the new font it's bigger
     }
 }
