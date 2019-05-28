@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -148,6 +149,16 @@ public class EffectsLambda {
             Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p1")).collect(Collectors.toList()), false);
             if(chosen != null)
             {
+                List<Color> available = new ArrayList<>();
+                for(Color c : Color.values())
+                {
+                    if(giver.getAmmo(c) > 0)
+                        available.add(c);
+                }
+
+                List<Color> cost = new ArrayList<>();
+                cost.add(giver.getConn().chooseAmmo(available, true));
+
                 //Give additional damage
                 taker.applyEffects(EffectsLambda.damage(1, giver));
 
@@ -158,6 +169,8 @@ public class EffectsLambda {
 
                     powers[index] = null;
                 }));
+
+                giver.applyEffects(EffectsLambda.payAmmo(cost));
             }
         }
 
