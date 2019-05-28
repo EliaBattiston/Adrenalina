@@ -1623,18 +1623,6 @@ public class CLInterface implements UserInterface {
             return available.get(choose - 1);
     }
 
-    public static void main(String[] args) {
-        List<Color> clist = new ArrayList<>();
-        clist.add(Color.YELLOW);
-        clist.add(Color.YELLOW);
-        clist.add(Color.BLUE);
-
-        CLInterface i = new CLInterface();
-        i.println(i.chooseAmmo(clist, false).name());
-        clist.add(Color.RED);
-        i.println(i.chooseAmmo(clist, true).name());
-    }
-
     /**
      * Prints out a general message to the client interface
      * @param message Message to be printed

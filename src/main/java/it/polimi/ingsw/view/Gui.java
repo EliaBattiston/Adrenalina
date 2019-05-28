@@ -18,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
@@ -1525,6 +1526,8 @@ public class Gui extends Application{
         Label l = new Label(message);
         l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        l.setTextAlignment(TextAlignment.CENTER);
+        l.setWrapText(true);
 
         TextField field = new TextField("localhost");
         field.setFont(getFont(SETTINGSFONTDIM*dimMult));
@@ -1567,7 +1570,6 @@ public class Gui extends Application{
 
         Label l = new Label(formattedText);
         l.setPrefSize(480 * dimMult, 420 * dimMult);
-
         l.setWrapText(true);
         l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
@@ -1595,6 +1597,8 @@ public class Gui extends Application{
         Label l = new Label(message);
         l.setFont(getFont(SETTINGSFONTDIM*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        l.setWrapText(true);
+        l.setTextAlignment(TextAlignment.CENTER);
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
 
@@ -1752,6 +1756,6 @@ public class Gui extends Application{
     private Font getFont(double dim){
         InputStream streamFont = getClass().getClassLoader().getResourceAsStream("font/ethnocentric_rg.ttf");
 
-        return Font.loadFont(streamFont, dim*0.8); //the new font it's bigger
+        return Font.loadFont(streamFont, dim*0.8); //the new font is bigger
     }
 }
