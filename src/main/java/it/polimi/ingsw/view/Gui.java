@@ -792,6 +792,9 @@ public class Gui extends Application{
                 case CHOOSEROOM:
                     showAlert(this::askRoom, exchanger.getMessage());
                     break;
+                case CHOOSEAMMO:
+                    showAlert(this::askAmmo, exchanger.getMessage());
+                    break;
                 case CHOOSEDIRECTION:
                     showAlert(this::askDirection, exchanger.getMessage());
                     break;
@@ -1299,6 +1302,70 @@ public class Gui extends Application{
             roomsNames.add("Viola");
         if(rooms.contains(5))
             roomsNames.add("Verde");
+
+        ToggleGroup radioGroup = new ToggleGroup();
+        int row = 1;
+        for(String s : roomsNames){
+            RadioButton radio = new RadioButton(s);
+            radio.setToggleGroup(radioGroup);
+            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            grid.add(radio,0,row++);
+        }
+
+        Button submit = new Button("Conferma");
+        submit.setOnAction(rs -> {
+            String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+            System.out.println(answer + ": " + roomsNames.indexOf(answer));
+            exchanger.setAnswer(roomsNames.indexOf(answer));
+            exchanger.setActualInteraction(Interaction.NONE);
+            masterPane.getChildren().remove(popupPane);
+        });
+        grid.add(submit,0,row);
+
+        row++;
+        if(!exchanger.isMustChoose())
+        {
+            grid.add(skipAction, 0, row);
+            skipAction.setOnMousePressed(e->{
+                exchanger.setAnswer(null);
+                exchanger.setRequest(Interaction.UPDATEVIEW, "", match, true);
+            });
+        }
+
+        //Show the pane
+        masterPane.getChildren().add(popupPane);
+    }
+
+    /**
+     * Ask which ammo color to use
+     * @param message
+     */
+    private void askAmmo(String message)
+    {
+        List<Color> colors = (List<Color>) exchanger.getRequest();
+
+        Pane popupPane = new Pane();
+        Canvas canvas = createPopupCanvas();
+        popupPane.getChildren().addAll(canvas);
+
+        GridPane grid = gridMaker(500*dimMult);
+        StackPane.setAlignment(grid, Pos.TOP_LEFT);
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setTranslateX(backgroundWidth * 0.24 );
+        grid.setTranslateY(backgroundHeight * 0.25);
+        popupPane.getChildren().addAll(grid);
+
+        Label l = new Label(message);
+        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        grid.add(l,0,0);
+
+        List<String> roomsNames = new ArrayList<>();
+        if(colors.contains(Color.RED))
+            roomsNames.add("Rosso");
+        if(colors.contains(Color.BLUE))
+            roomsNames.add("Blu");
+        if(colors.contains(Color.YELLOW))
+            roomsNames.add("Giallo");
 
         ToggleGroup radioGroup = new ToggleGroup();
         int row = 1;

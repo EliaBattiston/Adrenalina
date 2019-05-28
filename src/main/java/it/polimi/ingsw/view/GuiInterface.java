@@ -70,6 +70,15 @@ public class GuiInterface implements UserInterface{
             players.add(new Player("p4", "!", Fighter.BANSHEE));
             players.add(new Player("p5", "!", Fighter.DOZER));
 
+
+            List<Color> color = new ArrayList<>();
+            color.add(Color.RED);
+            color.add(Color.BLUE);
+            color.add(Color.YELLOW);
+
+            Color chosen = chooseAmmo(color, false);
+            System.out.println(chosen==null?"null":chosen);
+
             /*List<Action> actions = new ArrayList<>();
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
             actions.add(new Action("try", "asvdsjnzfjbn jdzfnbkjdzfnbjknzfjbjzfdnbjzfndbjzdhjfjzfnvbjdf<nvijzdnfijbnbsd", null, "w2-a"));
@@ -91,7 +100,7 @@ public class GuiInterface implements UserInterface{
 
             System.out.println(cho.getName());
 */
-            List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
+            /*List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
 
             Point chosenP = movePlayer(dest,false);
             if(chosenP == null)
@@ -128,7 +137,7 @@ public class GuiInterface implements UserInterface{
             rooms.add(3);
 
             Integer choosen = chooseRoom(rooms, true);
-            System.out.println(choosen!=null?choosen:"null");
+            System.out.println(choosen!=null?choosen:"null");*/
 
             /*List<Player> players = new ArrayList<>();
             players.add(new Player("aaa", "yay", Fighter.SPROG));
@@ -438,6 +447,19 @@ public class GuiInterface implements UserInterface{
         exchanger.setRequest(Interaction.CHOOSEPOSITION, "Scegli una posizione", positions, mustChoose);
         exchanger.waitFreeToUse();
         return (Point) exchanger.getAnswer();
+    }
+
+    /**
+     * Asks the user which ammo he wants to use
+     * @param available List of powers on the player's board which can be used
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Color of the chosen ammo
+     */
+    @Override
+    public Color chooseAmmo(List<Color> available, boolean mustChoose){
+        exchanger.setRequest(Interaction.CHOOSEAMMO, "Scegli una munizione da scartare", available, mustChoose);
+        exchanger.waitFreeToUse();
+        return (Color) exchanger.getAnswer();
     }
 
     /**

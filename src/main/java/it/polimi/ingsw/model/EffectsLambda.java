@@ -40,8 +40,6 @@ public class EffectsLambda {
                 marks.remove(damageGiver.getNick());
                 i++;
             }
-
-            //TODO check the power up "mirino"
         };
     }
 
