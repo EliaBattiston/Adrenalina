@@ -8,6 +8,7 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -237,9 +238,62 @@ public class Map implements Serializable {
      * @param p2 player 2
      * @return the distance
      */
-    public static int distance(Player p1, Player p2){
-        //FIXME this method doesn't count if there's a wall and the players cannot move through it!!!!
-        return Math.abs(p1.getPosition().getX() - p2.getPosition().getX()) + Math.abs(p1.getPosition().getY() - p2.getPosition().getY());
+    public int distance(Player p1, Player p2){
+        Point start = p1.getPosition();
+        Point end = p2.getPosition();
+
+        if(start.equals(end))
+            return 0;
+
+        List<Point> visited = new ArrayList<>();
+        visited.add(start);
+
+        return pointDistance(start, end, visited);
+    }
+
+    public int pointDistance(Point p1, Point p2, List<Point> visited) {
+        List<Point> futures = new ArrayList<>();
+        Cell c1 = getCell(p1);
+        if(c1.getSides()[0] != Side.WALL)
+            futures.add(new Point(p1.getX(), p1.getY() - 1));
+        if(c1.getSides()[1] != Side.WALL)
+            futures.add(new Point(p1.getX() + 1, p1.getY()));
+        if(c1.getSides()[2] != Side.WALL)
+            futures.add(new Point(p1.getX(), p1.getY() + 1));
+        if(c1.getSides()[3] != Side.WALL)
+            futures.add(new Point(p1.getX() - 1, p1.getY()));
+
+        if(!futures.isEmpty())
+            for(Point vp: visited) {
+                boolean found = false;
+                for (int i = 0; i < futures.size() && !found; i++) {
+                    if (vp.equals(futures.get(i))) {
+                        futures.remove(futures.get(i));
+                        found = true;
+                    }
+                }
+            }
+
+        if(futures.isEmpty())
+            return 13;
+
+        for(Point fp: futures)
+            if(fp.equals(p2))
+                return 1;
+
+        visited.add(p1);
+
+        List<Integer> minDist = new ArrayList<>();
+        for(Point fp: futures) {
+            minDist.add(pointDistance(fp, p2, visited) + 1);
+        }
+
+        int min = minDist.get(0);
+        for(int i = 1; i < minDist.size(); i++)
+            if(minDist.get(i) < min)
+                min = minDist.get(i);
+
+        return min;
     }
 
     /**
