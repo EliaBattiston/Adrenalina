@@ -79,13 +79,21 @@ public class FeasibleLambdaMap
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
             List<Point> points = Map.visiblePoints(pl.getPosition(), map, 0);
-            points.remove(pl.getPosition());
+
+            boolean found = false;
+            for(int i = 0; i < points.size() && !found; i++) {
+                if(points.get(i).equals(pl.getPosition())) {
+                    points.remove(i);
+                    found = true;
+                }
+            }
 
             List<Player> targets = new ArrayList<>();
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
             for(Point p : points) {
                 fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(p));
                 targets.addAll(Map.playersAtGivenDistance(fakePlayer, map, true, (p1, p2)->map.distance(p1, p2)<=1));
+                targets.remove(pl);
             }
 
             return !targets.isEmpty();
