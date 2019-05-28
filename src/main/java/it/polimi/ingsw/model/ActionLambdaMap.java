@@ -22,14 +22,14 @@ public class ActionLambdaMap {
     private ActionLambdaMap() {
         data = new HashMap<>();
 
-    //Base weapon lambdas
+        //Base weapon lambdas
         //((Player[])memory)[0]
         data.put("w1-b", (pl, map, memory)->{
             //Dai 2 danni e un marchio a un bersaglio che puoi vedere
 
             List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
             chosen.applyEffects(EffectsLambda.marks(1, pl));
 
             ((Player[])memory)[0] = chosen;
@@ -46,9 +46,9 @@ public class ActionLambdaMap {
             if(!targets.isEmpty())
                 chosen2 = pl.getConn().chooseTarget(targets, false);
 
-            chosen1.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen1, 1);
             if(chosen2 != null)
-                chosen2.applyEffects(EffectsLambda.damage(1, pl));
+                EffectsLambda.giveDamage(pl, chosen2, 1);
 
             ((Player[])memory)[0] = chosen1;
             ((Player[])memory)[1] = chosen2;
@@ -61,7 +61,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen = pl.getConn().chooseTarget(targets,true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
 
             ((Player[])memory)[0] = chosen;
         });
@@ -73,7 +73,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
 
             ((Player[])memory)[0] = chosen;
         });
@@ -83,7 +83,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)>=2);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(3, pl));
+            EffectsLambda.giveDamage(pl, chosen, 3);
             chosen.applyEffects(EffectsLambda.marks(1, pl));
         });
 
@@ -93,7 +93,7 @@ public class ActionLambdaMap {
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             targets.remove(pl);
             for(Player p: targets)
-                p.applyEffects(EffectsLambda.damage(1, pl));
+                EffectsLambda.giveDamage(pl, p, 1);
         });
 
         data.put("w7-b", (pl, map, memory)->{
@@ -107,7 +107,7 @@ public class ActionLambdaMap {
 
             for(Player p:Map.playersInTheMap(map))
                 if(p!=pl && pointsAll.contains(p.getPosition()))
-                        targets.add(p);
+                    targets.add(p);
 
             Player chosen = pl.getConn().chooseTarget(targets, true);
 
@@ -119,7 +119,7 @@ public class ActionLambdaMap {
                 chosen.applyEffects(EffectsLambda.move(pl, newPos, map));
             }
 
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
         });
 
         //(Point) memory
@@ -145,7 +145,7 @@ public class ActionLambdaMap {
             Player chosen = pl.getConn().chooseTarget(targets, true);
 
             chosen.applyEffects(EffectsLambda.move(chosen, vortexPoint, map));
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
 
             ((Point) memory).set(vortexPoint);
         });
@@ -170,7 +170,7 @@ public class ActionLambdaMap {
 
             for(Player p:allInMap)
                 if(roomChosen == map.getCell(p.getPosition()).getRoomNumber() && p != pl)
-                    p.applyEffects(EffectsLambda.damage(1, pl));
+                    EffectsLambda.giveDamage(pl, p, 1);
         });
 
         data.put("w10-b", (pl, map, memory)->{
@@ -180,7 +180,7 @@ public class ActionLambdaMap {
             targets.remove(pl);
             targets.removeAll(Map.visiblePlayers(pl, map));
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(3, pl));
+            EffectsLambda.giveDamage(pl, chosen, 3);
         });
 
         data.put("w11-b", (pl, map, memory)->{
@@ -188,7 +188,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)>=1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
 
             //Mark him and the others in that square
             for(Player p:map.getCell(chosen.getPosition()).getPawns())
@@ -209,11 +209,11 @@ public class ActionLambdaMap {
                 if(!targets.isEmpty()) {
                     Player chosen2 = pl.getConn().chooseTarget(targets, false);
                     if(chosen2 != null)
-                        chosen2.applyEffects(EffectsLambda.damage(1, pl));
+                        EffectsLambda.giveDamage(pl, chosen2, 1);
                 }
             }
 
-            chosen1.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen1, 1);
         });
 
         data.put("w13-b", (pl, map, memory)->{
@@ -223,7 +223,7 @@ public class ActionLambdaMap {
             Player chosen = pl.getConn().chooseTarget(targets, true);
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
             if(where != null)
                 chosen.applyEffects(EffectsLambda.move(chosen, where, map));
         });
@@ -235,7 +235,7 @@ public class ActionLambdaMap {
             Player chosen = pl.getConn().chooseTarget(targets, true);
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
             if(where!=null)
                 chosen.applyEffects(EffectsLambda.move(chosen, where, map));
         });
@@ -251,7 +251,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.visiblePlayers(pl, map, dir);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(3, pl));
+            EffectsLambda.giveDamage(pl, chosen, 3);
         });
 
         //((Player[])memory)[0] = chosen;
@@ -260,7 +260,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
 
             ((Player[])memory)[0] = chosen;
         });
@@ -270,7 +270,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.visiblePlayers(pl, map);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
             chosen.applyEffects(EffectsLambda.marks(2, pl));
         });
 
@@ -281,7 +281,7 @@ public class ActionLambdaMap {
             Player chosen = pl.getConn().chooseTarget(targets, true);
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
-            chosen.applyEffects(EffectsLambda.damage(3, pl));
+            EffectsLambda.giveDamage(pl, chosen, 3);
             if(where != null)
                 chosen.applyEffects(EffectsLambda.move(chosen, where, map));
         });
@@ -292,7 +292,7 @@ public class ActionLambdaMap {
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             pl.applyEffects(EffectsLambda.move(pl, chosen.getPosition(), map));
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
             chosen.applyEffects(EffectsLambda.marks(2, pl));
         });
 
@@ -315,13 +315,13 @@ public class ActionLambdaMap {
                         Player chosen3 = pl.getConn().chooseTarget(targets, false);
 
                         if(chosen3!= null)
-                            chosen3.applyEffects(EffectsLambda.damage(1, pl));
+                            EffectsLambda.giveDamage(pl, chosen3, 1);
                     }
 
-                    chosen2.applyEffects(EffectsLambda.damage(1, pl));
+                    EffectsLambda.giveDamage(pl, chosen2, 1);
                 }
 
-                chosen1.applyEffects(EffectsLambda.damage(1, pl));
+                EffectsLambda.giveDamage(pl, chosen1, 1);
             }
         });
 
@@ -330,10 +330,10 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
         });
 
-    //Additional weapon lambdas
+        //Additional weapon lambdas
         //((Player[])memory)[0]
         data.put("w1-ad1", (pl, map, memory)->{
             //Dai 1 marchio a un altro bersaglio che puoi vedere.
@@ -346,7 +346,7 @@ public class ActionLambdaMap {
 
         //((Player[])memory)[0]
         //Dai 1 danno aggiuntivo a uno dei due bersagli.
-        data.put("w2-ad1", (pl, map, memory)-> ((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl)));
+        data.put("w2-ad1", (pl, map, memory)-> EffectsLambda.giveDamage(pl, ((Player[])memory)[0], 1));
 
         //((Player[])memory)[1]
         data.put("w2-ad2", (pl, map, memory)->{
@@ -356,7 +356,7 @@ public class ActionLambdaMap {
             targets.add(((Player[])memory)[1]);
             Player chosenOther = pl.getConn().chooseTarget(targets, false);
             if(chosenOther != null)
-                chosenOther.applyEffects(EffectsLambda.damage(1, pl));
+                EffectsLambda.giveDamage(pl, chosenOther, 1);
 
             targets = Map.visiblePlayers(pl, map);
             targets.remove(((Player[])memory)[0]);
@@ -365,7 +365,7 @@ public class ActionLambdaMap {
             if(!targets.isEmpty()) {
                 Player chosenDifferent = pl.getConn().chooseTarget(targets, false);
                 if (chosenDifferent != null)
-                    chosenDifferent.applyEffects(EffectsLambda.damage(1, pl));
+                    EffectsLambda.giveDamage(pl, chosenDifferent, 1);
             }
         });
 
@@ -375,7 +375,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.visiblePlayers(((Player[])memory)[0], map);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
 
             ((Player[])memory)[1] = chosen;
         });
@@ -386,7 +386,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.visiblePlayers(((Player[])memory)[1], map);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
         });
 
         data.put("w4-ad1", (pl, map, memory)->{
@@ -399,7 +399,7 @@ public class ActionLambdaMap {
 
         //((Player[])memory)[0]
         //Dai 1 danno aggiuntivo al tuo bersaglio.
-        data.put("w4-ad2", (pl, map, memory)->((Player[])memory)[0].applyEffects(EffectsLambda.damage(1, pl)));
+        data.put("w4-ad2", (pl, map, memory)-> EffectsLambda.giveDamage(pl, ((Player[])memory)[0], 1) );
 
         //FIXME the feasible told me I could do this but when asked, I didn't have any possible target even if I really could
         //(Point) memory
@@ -419,7 +419,7 @@ public class ActionLambdaMap {
             for(Player p:chosen){
                 if(p!=null){
                     p.applyEffects(EffectsLambda.move(p, (Point)memory, map));
-                    p.applyEffects(EffectsLambda.damage(1, pl));
+                    EffectsLambda.giveDamage(pl, p, 1);
                 }
             }
         });
@@ -432,7 +432,7 @@ public class ActionLambdaMap {
 
             for(Player p:map.getCell(chosenPoint).getPawns())
                 if(p!=pl)
-                    p.applyEffects(EffectsLambda.damage(1, pl));
+                    EffectsLambda.giveDamage(pl, p, 1);
         });
 
         data.put("w14-ad1", (pl, map, memory)->{
@@ -453,9 +453,9 @@ public class ActionLambdaMap {
             List<Point> dest = Map.possibleMovements(chosen.getPosition(), 1, map);
             Point where = pl.getConn().moveEnemy(chosen, dest, false);
 
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
             for(Player p:map.getCell(chosen.getPosition()).getPawns())
-                p.applyEffects(EffectsLambda.damage(1, pl));
+                EffectsLambda.giveDamage(pl, p, 1);
             if(where != null)
                 chosen.applyEffects(EffectsLambda.move(chosen, where, map));
         });
@@ -475,7 +475,7 @@ public class ActionLambdaMap {
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             targets.remove(((Player[])memory)[0]);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
         });
 
         //Alternative effects
@@ -484,7 +484,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             for(Player p:targets)
-                p.applyEffects(EffectsLambda.damage(2, pl));
+                EffectsLambda.giveDamage(pl, p, 2);
         });
 
         data.put("w7-al", (pl, map, memory)->{
@@ -493,7 +493,7 @@ public class ActionLambdaMap {
             List<Player> targets = Map.playersAtGivenDistance(pl, map, false, (p1, p2)-> Map.distance(p1, p2)<=2);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             chosen.applyEffects(EffectsLambda.move(chosen, pl.getPosition(), map));
-            chosen.applyEffects(EffectsLambda.damage(3, pl));
+            EffectsLambda.giveDamage(pl, chosen, 3);
         });
 
         data.put("w9-al", (pl, map, memory)->{
@@ -508,7 +508,7 @@ public class ActionLambdaMap {
             Point chosenPoint = pl.getConn().choosePosition(visiblePoints, true);
 
             for(Player p:map.getCell(chosenPoint).getPawns()){
-                p.applyEffects(EffectsLambda.damage(1, pl));
+                EffectsLambda.giveDamage(pl, p, 1);
                 p.applyEffects(EffectsLambda.marks(1, pl));
             }
         });
@@ -518,7 +518,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)>=1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
 
             //Mark him and the others in that square
             for(Player p:map.getCell(chosen.getPosition()).getPawns())
@@ -535,11 +535,11 @@ public class ActionLambdaMap {
             Point secondPoint = Map.nextPointSameDirection(pl.getPosition(), chosen, map);
 
             for(Player p:map.getCell(chosen).getPawns())
-                p.applyEffects(EffectsLambda.damage(2, pl));
+                EffectsLambda.giveDamage(pl, p, 2);
 
             if(secondPoint != null)
                 for(Player p:map.getCell(secondPoint).getPawns())
-                    p.applyEffects(EffectsLambda.damage(1, pl));
+                    EffectsLambda.giveDamage(pl, p, 1);
         });
 
         data.put("w15-al", (pl, map, memory)->{
@@ -557,7 +557,7 @@ public class ActionLambdaMap {
             Player chosen2 = null;
             if(!targets.isEmpty())
                 chosen2 = pl.getConn().chooseTarget(targets, false);
-            chosen1.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen1, 2);
             if(chosen2 != null)
                 chosen2.applyEffects(EffectsLambda.marks(2, pl));
         });
@@ -587,7 +587,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(2, pl));
+            EffectsLambda.giveDamage(pl, chosen, 2);
         });
 
         data.put("w19-al", (pl, map, memory)->{
@@ -607,7 +607,7 @@ public class ActionLambdaMap {
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->Map.distance(p1,p2)==0);
             if(!targets.isEmpty()){
                 Player chosen = pl.getConn().chooseTarget(targets, true);
-                chosen.applyEffects(EffectsLambda.damage(2, pl));
+                EffectsLambda.giveDamage(pl, chosen, 2);
             }
 
             //Next move
@@ -624,7 +624,7 @@ public class ActionLambdaMap {
                         if(!targets.isEmpty()){
                             Player chosen = pl.getConn().chooseTarget(targets, false);
                             if(chosen != null)
-                                chosen.applyEffects(EffectsLambda.damage(2, pl));
+                                EffectsLambda.giveDamage(pl, chosen, 2);
                         }
                     }
 
@@ -639,7 +639,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==1);
             for(Player p:targets)
-                p.applyEffects(EffectsLambda.damage(1, pl));
+                EffectsLambda.giveDamage(pl, p, 1);
         });
 
         data.put("w21-al", (pl, map, memory)->{
@@ -647,14 +647,14 @@ public class ActionLambdaMap {
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> Map.distance(p1, p2)==0);
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(3, pl));
+            EffectsLambda.giveDamage(pl, chosen, 3);
 
             List<Point> possiblePos = Map.possibleMovementsAllSingleDirection(chosen.getPosition(), 2, map);
             Point newPos = pl.getConn().moveEnemy(chosen, possiblePos, true);
             chosen.applyEffects(EffectsLambda.move(chosen, newPos, map));
         });
 
-    //Powers lambdas
+        //Powers lambdas
         //memory = List<Player>
         data.put("p1", (pl, map, memory)->{
             //Puoi giocare questa carta quando stai dando danno a uno o più bersagli. Paga 1 cubo munizioni di qualsiasi colore. Scegli 1 dei bersagli
@@ -662,7 +662,7 @@ public class ActionLambdaMap {
 
             List<Player> targets = new ArrayList(Arrays.asList((Player[]) memory));
             Player chosen = pl.getConn().chooseTarget(targets, true);
-            chosen.applyEffects(EffectsLambda.damage(1, pl));
+            EffectsLambda.giveDamage(pl, chosen, 1);
         });
 
         data.put("p2", (pl, map, memory)->{
@@ -697,7 +697,7 @@ public class ActionLambdaMap {
             pl.applyEffects(EffectsLambda.move(pl, chosenPos, map));
         });
 
-    //Activities lambdas
+        //Activities lambdas
         //choose a powerup
         data.put("a-p", (pl, map, memory)->{
             Power chosen;
@@ -848,7 +848,7 @@ public class ActionLambdaMap {
             //If no weapon has suitable action, we can't propose to move to this position
             if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) &&
                     pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
-                    destinations.remove(p);
+                destinations.remove(p);
         }
 
         //Return the player to its real position
@@ -957,7 +957,7 @@ public class ActionLambdaMap {
         pl.applyEffects((damage, marks, position, weapons, powers, ammo) -> {
             for(Weapon w : weapons)
                 if(w != null && w.getId() == chosen.getId())
-                        w.setLoaded(false);
+                    w.setLoaded(false);
         });
     }
 

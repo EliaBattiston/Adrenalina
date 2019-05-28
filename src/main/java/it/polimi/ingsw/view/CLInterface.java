@@ -996,7 +996,7 @@ public class CLInterface implements UserInterface {
         for(Action disp: available) {
             i++;
             List<Color> cost = disp.getCost();
-            String s = "[" + i + "] " + disp.getName() + " (" + disp.getDescription() + "), costo: ";
+            String s = "[" + i + "] " + disp.getName() + " (" + disp.getDescription() + ")" + ( disp.getLambdaID().contains("a-")? "" : ", costo: " ) ;
             for(Color c: cost) {
                 s += formatColorBox(c) + " ";
             }
