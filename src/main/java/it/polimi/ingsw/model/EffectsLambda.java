@@ -42,7 +42,6 @@ public class EffectsLambda {
             }
 
             //TODO check the power up "mirino"
-            //TODO check the power up "granata venom"
         };
     }
 
@@ -144,12 +143,30 @@ public class EffectsLambda {
     {
         taker.applyEffects(EffectsLambda.damage(damage, giver));
 
-        Power chosen;
+        //Mirino
+        if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals("p1")) &&
+                (giver.getAmmo(Color.RED)>0 || giver.getAmmo(Color.BLUE)>0 || giver.getAmmo(Color.YELLOW)>0))
+        {
+            Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p1")).collect(Collectors.toList()), false);
+            if(chosen != null)
+            {
+                //Give additional damage
+                taker.applyEffects(EffectsLambda.damage(1, giver));
+
+                //Remove power
+                giver.applyEffects(((damage1, marks, position, weapons, powers, ammo) -> {
+                    int index = Arrays.asList(powers).indexOf(chosen);
+                    giver.throwPower(powers[index]);
+
+                    powers[index] = null;
+                }));
+            }
+        }
 
         //Granata venom
         if(taker.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals("p3")))
         {
-            chosen = taker.getConn().discardPower(taker.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p3")).collect(Collectors.toList()), false);
+            Power chosen = taker.getConn().discardPower(taker.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p3")).collect(Collectors.toList()), false);
             if(chosen != null);
             {
                 //Give mark

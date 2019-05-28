@@ -246,6 +246,14 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
     }
 
     /**
+     * Asks the user which ammo he wants to use
+     * @param available List of powers on the player's board which can be used
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Color of the chosen ammo
+     */
+    public Color chooseAmmo(List<Color> available, boolean mustChoose) { return available.get(0); /*TODO make UI method for this*/ }
+
+    /**
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      */

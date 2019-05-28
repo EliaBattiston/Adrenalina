@@ -33,5 +33,6 @@ public enum Interaction {
     PING,
     ENDGAME,
     CHOOSEWEAPONACTION,
-    LOG
+    LOG,
+    CHOOSEAMMO
 }
