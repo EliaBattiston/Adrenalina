@@ -92,6 +92,8 @@ public abstract class Cell implements Serializable {
      * @param pl Player who picks
      * @param lootDeck Loot cards' deck
      * @param powersDeck Power cards' deck
+     * @param  messageReceivers Players who will receive broadcast messages used in the method
+     * @throws ClientDisconnectedException If the client disconnects while choosing
      */
     public abstract void pickItem(Player pl, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException;
 

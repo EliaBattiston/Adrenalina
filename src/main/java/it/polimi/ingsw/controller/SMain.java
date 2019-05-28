@@ -56,6 +56,7 @@ public class SMain
 
     /**
      * Creates a new SMain
+     * @param passedIp IP address to use
      */
     public SMain(String passedIp)
     {

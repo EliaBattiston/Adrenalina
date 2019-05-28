@@ -117,6 +117,7 @@ public class CLInterface implements UserInterface {
     /**
      *General text formatting (spacing insertion on the right of the text)
      * @param toPrint Text to be formatted
+     * @param totChar Total number of characters to display
      * @return Formatted text
      */
     private String stringFormat(String toPrint, int totChar) {

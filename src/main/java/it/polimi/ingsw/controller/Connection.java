@@ -199,12 +199,13 @@ public interface Connection extends Remote
     /**
      * Sends a general message to the user to be displayed
      * @param payload Message payload
-     * @throws ClientDisconnectedException
+     * @throws ClientDisconnectedException If the client disconnects
      */
     public void sendMessage(String payload) throws ClientDisconnectedException;
 
     /**
      * Returns true indifferently, needed from the server to ping the client
+     * @throws ClientDisconnectedException If the client disconnects
      */
     public void clientPing() throws ClientDisconnectedException;
 

@@ -119,6 +119,7 @@ public class EffectsLambda {
     /**
      * Remove weapon card from the player's hand
      * @param toRemove Card to remove
+     * @param cell Spawn cell where to leave the weapon
      * @return Desired lambda function
      */
     public static PlayerLambda removeWeapon(Weapon toRemove, SpawnCell cell)
@@ -127,7 +128,7 @@ public class EffectsLambda {
             int pos = Arrays.asList(weapons).indexOf(toRemove);
             if(pos>-1 && pos<=3)
             {
-                weapons[pos].setLoaded(false);
+                weapons[pos].setLoaded(true);
                 cell.refillWeapon(weapons[pos]);
                 weapons[pos] = null;
             }

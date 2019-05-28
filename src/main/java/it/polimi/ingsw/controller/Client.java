@@ -207,6 +207,7 @@ public interface Client extends Remote
     /**
      * Returns true indifferently, needed from the server to ping the client
      * @return True
+     * @throws RemoteException In case of network problems
      */
     public Boolean clientPing() throws RemoteException;
 }

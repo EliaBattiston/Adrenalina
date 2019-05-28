@@ -794,7 +794,8 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param steps number of allowed steps
      * @param mustChoose False if the player doesn't have to run
-     * @param messageReceivers Players to receive the broadcasted message of the action
+     * @param messageReceivers Players to receive the broadcast message of the action
+     * @throws ClientDisconnectedException If the player disconnects
      */
     private static void run(Player pl, Map map, int steps, boolean mustChoose, List<Player> messageReceivers) throws ClientDisconnectedException
     {
@@ -822,6 +823,8 @@ public class ActionLambdaMap {
      * @param pl Lambda's player
      * @param map Lambda's map
      * @param steps number of allowed steps
+     * @param messageReceivers Players who will receive broadcast messages
+     * @throws ClientDisconnectedException If the client disconnects
      */
     private static void runToLoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
@@ -851,6 +854,8 @@ public class ActionLambdaMap {
      * @param pl Lambda's player
      * @param map Lambda's map
      * @param steps number of allowed steps
+     * @param messageReceivers Players who will receive broadcast messages
+     * @throws ClientDisconnectedException If the client disconnects
      */
     private static void runToShoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
@@ -887,6 +892,8 @@ public class ActionLambdaMap {
      * @param map Lambda's map
      * @param lootDeck Deck where to scrap the picked loot card
      * @param powersDeck Deck for picking a power card
+     * @param messageReceivers Players who will receive broadcast messages
+     * @throws ClientDisconnectedException If the client disconnects
      */
     private static void pick(Player pl, Map map, EndlessDeck<Loot> lootDeck, EndlessDeck<Power> powersDeck, List<Player> messageReceivers) throws ClientDisconnectedException
     {
@@ -898,6 +905,8 @@ public class ActionLambdaMap {
      * Basic shoot action
      * @param pl Lambda's player
      * @param map Lambda's map
+     * @param messageReceivers Player who will receive broadcast messages
+     * @throws ClientDisconnectedException If the player disconnects
      */
     private static void shoot(Player pl, Map map, List<Player> messageReceivers) throws ClientDisconnectedException
     {
@@ -983,6 +992,8 @@ public class ActionLambdaMap {
     /**
      * Basic reload action
      * @param pl Lambda's player
+     * @param messageReceivers List of players who will receive broadcast messages
+     * @throws ClientDisconnectedException If the client disconnects
      */
     public static void reload(Player pl, List<Player> messageReceivers) throws ClientDisconnectedException
     {

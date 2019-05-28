@@ -35,6 +35,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param host IP address of the server
      * @param userint gui/cli user interface
      * @throws RemoteException in case of connection error
+     * @throws ServerNotFoundException If no RMI server is found on the given host
      */
     public RMIClient(String host, UserInterface userint) throws RemoteException, ServerNotFoundException
     {

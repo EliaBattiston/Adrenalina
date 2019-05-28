@@ -88,6 +88,7 @@ public interface UserInterface
 
     /**
      * Asks the player to choose a direction
+     * @param possible List of direction which can be chosen
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return chosen direction
      */
@@ -188,6 +189,7 @@ public interface UserInterface
 
     /**
      * Asks the user for the IP address of the local machine
+     * @param possibleIP List of IP addresses of available network interfaces
      * @return Server's IP address
      */
     String getLocalAddress(List<String> possibleIP);

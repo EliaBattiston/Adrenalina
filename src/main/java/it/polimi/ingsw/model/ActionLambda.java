@@ -12,6 +12,7 @@ public interface ActionLambda {
      * @param pl player who makes the action
      * @param m map representing the actual game board
      * @param memory additional parameter used by some lambdas for additional actions
+     * @throws ClientDisconnectedException If the client disconnects
      */
     void execute(Player pl, Map m, Object memory) throws ClientDisconnectedException;
 }

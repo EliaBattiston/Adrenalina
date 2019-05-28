@@ -1368,7 +1368,7 @@ public class Gui extends Application{
 
     /**
      * Ask which ammo color to use
-     * @param message
+     * @param message Message to show to the user in the popup
      */
     private void askAmmo(String message)
     {

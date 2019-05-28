@@ -38,6 +38,8 @@ public class SocketClient implements Client {
      * @param ipAddr IP address of the server
      * @param port TCP port of the Server's socket
      * @param userint gui/cli interface instance
+     * @throws ServerDisconnectedException If the server disconnects
+     * @throws ServerNotFoundException If the provided IP is wrong or no server is listening on that address
      */
     public SocketClient(String ipAddr, int port, UserInterface userint) throws ServerNotFoundException, ServerDisconnectedException {
         user = userint;
@@ -278,6 +280,7 @@ public class SocketClient implements Client {
      * Opens the writer and sends the message to the server, then closes the writer
      * @param payload Content to be delivered to the client
      * @return true on success, false in case of connection error
+     * @throws ServerDisconnectedException If the server disconnects
      */
     public boolean send(String payload) throws ServerDisconnectedException {
         boolean success = false;
@@ -298,7 +301,8 @@ public class SocketClient implements Client {
     }
 
     /**
-     *deserializes the received string from server and executes it
+     * Deserializes the received string from the server and executes it
+     * @throws ServerDisconnectedException If the server disconnects
      */
     public void receive() throws ServerDisconnectedException {
         try {
