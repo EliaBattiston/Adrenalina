@@ -182,12 +182,13 @@ public class SpawnCell extends Cell{
      * @param game Game which contains needed decks
      */
     public void refill(Game game){
-        while (getWeapons().size() < 3)
+        boolean empty = false;
+        while (getWeapons().size() < 3 && !empty)
             try {
                 refillWeapon(game.getWeaponsDeck().draw());
             }
-            catch(EmptyDeckException ex) {
-                Logger.getGlobal().log( Level.INFO, ex.toString(), ex );
+            catch(EmptyDeckException ignore) {
+                empty = true;
             }
     }
 

@@ -1,6 +1,13 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.Fighter;
+import it.polimi.ingsw.model.Player;
 import org.junit.jupiter.api.Test;
+
+import java.io.FileNotFoundException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RunningGameTest {
 
@@ -9,32 +16,37 @@ public class RunningGameTest {
      */
     @Test
     public void checkGameWithAI(){
-        //This method is commented because it's not fully implemented yet and we don't want to break jenkins
-        /*String ip = "localhost";
-        int nAis = 4;
+        try
+        {
+            Match m = new Match(8);
 
-        ServerThread server = new ServerThread();
-        List<AIThread> ais = new ArrayList<>();
+            Player simulated;
+            for(int i=0; i<5; i++)
+            {
+                simulated = new Player(Integer.toString(i), "Testing is hard work, but someone has to do it!", Fighter.values()[i]);
+                simulated.setConn(new AIConnection());
+                m.getGame().addPlayer(simulated);
+            }
 
-        server.run();
+            Thread runner = new Thread(m);
+            runner.start();
 
-        for(int i=0; i<nAis; i++)
-            ais.add(new AIThread());
+            try
+            {
+                runner.join();
+            }
+            catch(InterruptedException e)
+            {
+                fail();
+            }
 
-        // change this with something that check the server is ready before spowning the clients
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        }catch (Exception e){
-            ;
+            assertTrue(true);
+        }
+        catch(FileNotFoundException e)
+        {
+            fail();
         }
 
-        for(AIThread a: ais)
-            a.run();
-
-        while(server.isAlive())
-            ;
-
-        assert (true);*/
     }
 
 }
