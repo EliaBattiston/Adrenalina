@@ -34,5 +34,6 @@ public enum Interaction {
     ENDGAME,
     CHOOSEWEAPONACTION,
     LOG,
-    CHOOSEAMMO
+    CHOOSEAMMO,
+    DISCONNECTION
 }

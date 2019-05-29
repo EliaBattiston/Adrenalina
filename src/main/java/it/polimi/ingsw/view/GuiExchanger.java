@@ -17,6 +17,7 @@ public class GuiExchanger {
     private Object answer;
     private String message;
     private boolean mustChoose;
+    private Thread myTimer;
 
     private GuiExchanger(){
         actualInteraction = Interaction.NONE;
@@ -65,14 +66,18 @@ public class GuiExchanger {
     }
 
     /**
-     * Set the actual interaction
+     * Set the actual interaction, if it's a NONE one, it stops the timer
      * @param actualInteraction whill be the new actual interaction
      */
     public synchronized void setActualInteraction(Interaction actualInteraction) {
         this.lastRealInteraction = this.actualInteraction;
         this.actualInteraction = actualInteraction;
-        if(actualInteraction == Interaction.NONE)
+        if(actualInteraction == Interaction.NONE) {
+            if(myTimer != null)
+                myTimer.interrupt();
+            setMyTimer(null);
             notifyAll(); //notify the GuiInterface
+        }
     }
 
     /**
@@ -102,7 +107,7 @@ public class GuiExchanger {
     public synchronized void waitRequestIncoming(){
         while(actualInteraction == Interaction.NONE ||
                 actualInteraction == Interaction.WAITINGUSER ||
-                actualInteraction ==Interaction.SHOWINGMESSAGE)
+                actualInteraction == Interaction.SHOWINGMESSAGE)
             try {
                 wait();
             }catch(InterruptedException e){
@@ -161,5 +166,13 @@ public class GuiExchanger {
         Interaction[] noSkip = { Interaction.CHOOSEWEAPONACTION, Interaction.DISCARDPOWER, Interaction.CHOOSEROOM, Interaction.CHOOSEDIRECTION  };
 
         return !Arrays.asList(noSkip).contains(actualInteraction);
+    }
+
+    public synchronized Thread getMyTimer() {
+        return myTimer;
+    }
+
+    public synchronized void setMyTimer(Thread myTimer) {
+        this.myTimer = myTimer;
     }
 }

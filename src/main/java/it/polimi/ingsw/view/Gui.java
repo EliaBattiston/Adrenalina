@@ -9,6 +9,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -41,11 +42,11 @@ public class Gui extends Application{
     private final static double SETTINGSFONTDIM = 28;
     private final static double POPUPFONTDIM = 22;
 
+    //flag for the disconnection type
+    private static boolean serverDisconnectedOnHisOwn = false;
+
     //Ui Executor
     private static Executor uiExec = Platform::runLater;
-
-    //timer
-    private Thread myTimer;
 
     //Data
     private MatchView match;
@@ -760,34 +761,8 @@ public class Gui extends Application{
 
             System.out.println(exchanger.getActualInteraction().toString());
 
-            //start the timer
-            if(match!=null && exchanger.getActualInteraction() != Interaction.UPDATEVIEW && exchanger.getActualInteraction()!=Interaction.LOG) {
-                if(myTimer != null)
-                    myTimer.interrupt();
-
-                long time = match.getTimeForAction();
-                myTimer = new Thread(() -> {
-                    try {
-                        wait(time * 1000);
-                        //if I reach this point the server should have disconnected me
-                        Pane popupPane = new StackPane();
-                        Canvas canvas = createPopupCanvas();
-                        popupPane.getChildren().addAll(canvas);
-
-                        double x = backgroundWidth * 0.215;
-                        double y = backgroundHeight * 0.48;
-                        canvas.getGraphicsContext2D().setFont(getFont(30));
-                        canvas.getGraphicsContext2D().fillText("Disconnesso dal server per inattività", x, y);
-                        uiExec.execute(()->masterPane.getChildren().addAll(popupPane));
-                        //exchanger.setActualInteraction(Interaction.WAITINGUSER);
-                    }catch (InterruptedException ignore){
-                        ;
-                    }
-
-                });
-
-                myTimer.start();
-            }
+            //start the timer -> it starts only if already in game
+            timerDisconnectionStart();
 
             switch (exchanger.getActualInteraction()) {
                 case CHOOSEBASEACTION:
@@ -795,7 +770,9 @@ public class Gui extends Application{
                     break;
                 case CHOOSEWEAPONACTION:
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
-                    uiExec.execute(this::chooseWeaponAction);
+                    uiExec.execute(()->{
+                        chooseWeaponAction();
+                    });
                     break;
                 case CHOOSEWEAPON:
                 case GRABWEAPON:
@@ -805,7 +782,9 @@ public class Gui extends Application{
                     break;
                 case DISCARDPOWER:
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
-                    uiExec.execute(this::discardPower);
+                    uiExec.execute(()->{
+                        discardPower();
+                    });
                     break;
                 case CHOOSEPOWER:
                     choosePowerCard();
@@ -859,24 +838,62 @@ public class Gui extends Application{
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
                     break;
                 case LOG:
-                    loggedText += exchanger.getMessage() + "\n";
-                    if(logArea != null)
-                        uiExec.execute(()->{
-                            logArea.setText(loggedText);
-                            logArea.setScrollTop(90000000);
-                        });
-                    if(match == null) {
-                        uiExec.execute(() -> this.settingsMessage(loggedText));
+                    if(!exchanger.getMessage().equalsIgnoreCase("Server disconnesso inaspettatamente, rilancia il client e riprova\n")) {
+                        loggedText += exchanger.getMessage() + "\n";
+                        if (logArea != null)
+                            uiExec.execute(() -> {
+                                logArea.setText(loggedText);
+                                logArea.setScrollTop(90000000);
+                            });
+                        if (match == null) {
+                            uiExec.execute(() -> this.settingsMessage(loggedText));
+                        }
+                        exchanger.setActualInteraction(Interaction.NONE);
                     }
-                    exchanger.setActualInteraction(Interaction.NONE);
+                    else {
+                        serverDisconnectedOnHisOwn = true;
+                        exchanger.setActualInteraction(Interaction.DISCONNECTION);
+                    }
                     break;
+                case DISCONNECTION:
+                    if(!serverDisconnectedOnHisOwn)
+                        uiExec.execute(()-> settingsMessage("Disconnesso dal server per inattività"));
+                    else
+                        uiExec.execute(()-> settingsMessage(exchanger.getMessage()));
+                    exchanger.setActualInteraction(Interaction.WAITINGUSER);
+                    break;
+                case ENDGAME:
+                    uiExec.execute(()-> settingsMessage(exchanger.getMessage()));
+                    exchanger.setActualInteraction(Interaction.WAITINGUSER);
                 case NONE:
                 default:
                     break;
             }
-
         }
         Platform.exit();
+    }
+
+    /**
+     * Start the disconnection timer inside the exchanger
+     */
+    private void timerDisconnectionStart(){
+        if(match!=null && exchanger.getActualInteraction() != Interaction.UPDATEVIEW && exchanger.getActualInteraction()!=Interaction.LOG) {
+            if(exchanger.getMyTimer() != null)
+                exchanger.getMyTimer().interrupt();
+
+            long time = match.getTimeForAction();
+            exchanger.setMyTimer(new Thread(() -> {
+                try {
+                    Thread.sleep(time * 1000);
+                    uiExec.execute(()-> settingsMessage("Disconnesso dal server per inattività"));
+                    exchanger.setActualInteraction(Interaction.DISCONNECTION);
+                    exchanger.setActualInteraction(Interaction.DISCONNECTION); //so BOTH the actual and the one before are DISCONNECTION
+                }catch (InterruptedException ignore){
+                    ;
+                }
+            }));
+            exchanger.getMyTimer().start();
+        }
     }
 
     /**
@@ -1359,6 +1376,7 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
@@ -1423,6 +1441,7 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
@@ -1480,6 +1499,7 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(d.toString());
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setSelected(true);
             GridPane.setHalignment(radio, HPos.CENTER);
             grid.add(radio,0,row++);
         }
@@ -1642,9 +1662,7 @@ public class Gui extends Application{
             radio.setToggleGroup(group);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
             radio.setFont(getFont( SETTINGSFONTDIM*dimMult));
-            if(row==1)
-                radio.setSelected(true);
-
+            radio.setSelected(true);
             grid.add(radio, 0, row++);
         }
 

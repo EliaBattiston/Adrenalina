@@ -549,7 +549,17 @@ public class GuiInterface implements UserInterface{
      * @param winnerList Ordered players' list
      */
     public void endGame(List<Player> winnerList) {
-        exchanger.setActualInteraction(Interaction.CLOSEAPP);//todo implement the popu of the info
+        String message = "ENDGAME\n";
+
+        int i=1;
+        for(Player p:winnerList){
+            if(p!=null) {
+                message += i +"° @" + p.getPoints() + " punti è " + p.getNick();
+                i++;
+            }
+        }
+
+        exchanger.setRequest(Interaction.ENDGAME, message, null, true);
     }
 
     /**
