@@ -372,10 +372,10 @@ public class Gui extends Application{
                     for (Player p : map.getCell(i, j).getPawns()) {
                         GuiClickableObjectPawn pawn = new GuiClickableObjectPawn(p, size);
                         if(n==1 || n==3)
-                            y = baseY + size;
+                            y = baseY +  j * deltaCellY + size;
                         if(n==2 || n==4){
                             x += size;
-                            y=baseY;
+                            y=baseY + j * deltaCellY;
                         }
                         n++;
                         pawn.setPosition(x, y);
@@ -839,13 +839,14 @@ public class Gui extends Application{
                     showAlert(this::askFighter, exchanger.getMessage());
                     break;
                 case UPDATEVIEW:
+                    exchanger.setActualInteraction(Interaction.WAITINGUSER);
+
                     uiExec.execute(() -> {
                         match = (MatchView) exchanger.getRequest();
                         masterPane = drawGame();
                         appStage.setScene(new Scene(masterPane));
                         exchanger.setActualInteraction(Interaction.NONE);
                     });
-                    exchanger.setActualInteraction(Interaction.WAITINGUSER);
                     break;
                 case LOG:
                     if(!exchanger.getMessage().equalsIgnoreCase("Server disconnesso inaspettatamente, rilancia il client e riprova\n")) {
