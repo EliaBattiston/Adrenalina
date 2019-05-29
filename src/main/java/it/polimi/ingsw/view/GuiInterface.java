@@ -233,8 +233,6 @@ public class GuiInterface implements UserInterface{
             players.get(1).addSkull();
             players.get(1).addSkull();
 
-            players.get(1).setFrenzyBoard(true);
-
             players.get(2).addSkull();
             players.get(2).addSkull();
 

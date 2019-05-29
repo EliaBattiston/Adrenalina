@@ -564,10 +564,10 @@ public class Gui extends Application{
         boolean frenzyMode = player.getFrenzyBoard();
 
         double pbMult = width/1123; //(dimMult * width@1080p)/textureWidth -> internal reference based on the card
-        double xDrop = (frenzyMode?130:116) * pbMult + x;
-        double yDrop = 116 * pbMult + y;
-        double widthDrop = 30 * pbMult;
-        double heightDrop = 45 * pbMult;
+        double xDrop = (frenzyMode?123:109) * pbMult + x;
+        double yDrop = 100 * pbMult + y;
+        double widthDrop = 45 * pbMult;
+        double heightDrop = 68 * pbMult;
 
         double deltaX = (frenzyMode?61:63) * pbMult;
 
@@ -593,7 +593,7 @@ public class Gui extends Application{
 
         //marks
         xDrop = 537 * pbMult + x;
-        yDrop = 4 * pbMult + y;
+        yDrop = -8 * pbMult + y;
         deltaX = widthDrop * 1.1; //put just a little bit of space, we don't know how many marks a player will get
         for(String p: player.getReceivedMarks()){
             if(p != null)
