@@ -10,12 +10,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class RunningGameTest {
+    @Test
+    public void multipleGames(){
+        for(int i = 0; i<5; i++)
+            new Thread(this::checkGameWithAI).run();
+    }
 
     /**
      * Run a server and some AI clients, wait until the end of the match. Check the game ends with no problems
      */
-    @Test
-    public void checkGameWithAI(){
+    private void checkGameWithAI(){
         try
         {
             Match m = new Match(8);
