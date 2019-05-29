@@ -3,8 +3,8 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.CLInterface;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 public class AInterface extends CLInterface {
 
@@ -23,7 +23,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Action chooseAction(List<Action> available, boolean mustChoose) {
-        return available.get(new Random().nextInt(available.size()));
+        return available.get(new SecureRandom().nextInt(available.size()));
     }
 
     /**
@@ -35,7 +35,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) {
-        return available.get(new Random().nextInt(available.size()));
+        return available.get(new SecureRandom().nextInt(available.size()));
     }
 
     /**
@@ -46,7 +46,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) {
-        return grabbable.get(new Random().nextInt(grabbable.size()));
+        return grabbable.get(new SecureRandom().nextInt(grabbable.size()));
     }
 
     /**
@@ -57,7 +57,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) {
-        return reloadable.get(new Random().nextInt(reloadable.size()));
+        return reloadable.get(new SecureRandom().nextInt(reloadable.size()));
     }
 
     /**
@@ -68,7 +68,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Point movePlayer(List<Point> destinations, boolean mustChoose) {
-        return destinations.get(new Random().nextInt(destinations.size()));
+        return destinations.get(new SecureRandom().nextInt(destinations.size()));
     }
 
     /**
@@ -79,7 +79,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Player chooseTarget(List<Player> targets, boolean mustChoose) {
-        return targets.get(new Random().nextInt(targets.size()));
+        return targets.get(new SecureRandom().nextInt(targets.size()));
     }
 
     /**
@@ -91,7 +91,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) {
-        return destinations.get(new Random().nextInt(destinations.size()));
+        return destinations.get(new SecureRandom().nextInt(destinations.size()));
     }
 
     /**
@@ -102,7 +102,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Power discardPower(List<Power> powers, boolean mustChoose) {
-        return powers.get(new Random().nextInt(powers.size()));
+        return powers.get(new SecureRandom().nextInt(powers.size()));
     }
 
     /**
@@ -113,7 +113,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) {
-        return rooms.get(new Random().nextInt(rooms.size()));
+        return rooms.get(new SecureRandom().nextInt(rooms.size()));
     }
 
     /**
@@ -123,7 +123,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
-        return possible.get(new Random().nextInt(possible.size()));
+        return possible.get(new SecureRandom().nextInt(possible.size()));
     }
 
     /**
@@ -134,7 +134,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Point choosePosition(List<Point> positions, boolean mustChoose) {
-        return positions.get(new Random().nextInt(positions.size()));
+        return positions.get(new SecureRandom().nextInt(positions.size()));
     }
 
     /**
@@ -143,7 +143,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public String getNickname() {
-        String nick = Integer.toString( new Random().nextInt() );
+        String nick = Integer.toString( new SecureRandom().nextInt() );
         System.out.println("Giocatore " +  nick);
         return nick;
     }
@@ -164,7 +164,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Fighter getFighter(List<Fighter> available) {
-        return available.get(new Random().nextInt(available.size()));
+        return available.get(new SecureRandom().nextInt(available.size()));
     }
 
     /**
@@ -184,7 +184,7 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) {
-        return inHand.get(new Random().nextInt(inHand.size()));
+        return inHand.get(new SecureRandom().nextInt(inHand.size()));
     }
 
     /**
@@ -213,6 +213,12 @@ public class AInterface extends CLInterface {
      */
     @Override
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
-        return inHand.get(new Random().nextInt(inHand.size()));
+        return inHand.get(new SecureRandom().nextInt(inHand.size()));
+    }
+
+    @Override
+    public Color chooseAmmo(List<Color> available, boolean mustChoose)
+    {
+        return available.get(new SecureRandom().nextInt(available.size()));
     }
 }
