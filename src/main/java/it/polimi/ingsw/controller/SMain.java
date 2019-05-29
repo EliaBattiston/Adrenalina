@@ -131,7 +131,11 @@ public class SMain
                             reader = new JsonReader(new FileReader(file));
                             loadedMatches.add(gson.fromJson(reader, Match.class));
                             reader.close();
-                            file.delete();
+                            if(file.delete())
+                                System.out.println("File" + file.getName() + " correctly deleted");
+                            else
+                                System.out.println("Couldn't delete file" + file.getName());
+
                         }
                         catch(Exception e){
                             Logger.getGlobal().log(Level.SEVERE, file.getName() + " is corrupted");
@@ -445,8 +449,8 @@ public class SMain
                         matchThread.join();
                         matches.remove(match);
                     }
-                    catch (InterruptedException e) {
-                        ;
+                    catch (InterruptedException ignore) {
+                        Thread.currentThread().interrupt();
                     }
                 });
                 waitingComplete.start();

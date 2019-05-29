@@ -21,7 +21,8 @@ public class Timeout
             future.get(timeout, unit);
         }
         catch (InterruptedException ie) {
-            Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly InterruptedException");
+            Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly InterruptedException ");
+            Thread.currentThread().interrupt();
         }
         catch (ExecutionException ee) {
             Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly ExecutionException");

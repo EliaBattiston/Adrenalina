@@ -271,7 +271,11 @@ public class Match implements Runnable
         if(phase == GamePhase.ENDED)
         {
             File saved = new File("matches/" + this.hashCode() + ".adr");
-            saved.delete();
+            if(saved.delete())
+                System.out.println("File" + this.hashCode() + ".adr correctly deleted");
+            else
+                System.out.println("Couldn't delete file" + this.hashCode() + ".adr");
+
         }
     }
 

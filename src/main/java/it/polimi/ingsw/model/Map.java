@@ -8,7 +8,6 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -242,7 +241,7 @@ public class Map implements Serializable {
         Point start = p1.getPosition();
         Point end = p2.getPosition();
 
-        if(start.equals(end))
+        if(start.samePoint(end))
             return 0;
 
         List<Point> visited = new ArrayList<>();
@@ -267,7 +266,7 @@ public class Map implements Serializable {
             for(Point vp: visited) {
                 boolean found = false;
                 for (int i = 0; i < futures.size() && !found; i++) {
-                    if (vp.equals(futures.get(i))) {
+                    if (vp.samePoint(futures.get(i))) {
                         futures.remove(futures.get(i));
                         found = true;
                     }
@@ -278,7 +277,7 @@ public class Map implements Serializable {
             return 13;
 
         for(Point fp: futures)
-            if(fp.equals(p2))
+            if(fp.samePoint(p2))
                 return 1;
 
         visited.add(p1);

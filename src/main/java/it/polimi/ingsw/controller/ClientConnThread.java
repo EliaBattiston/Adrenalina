@@ -23,6 +23,8 @@ public class ClientConnThread implements Runnable {
             main.cancelConnection(player.getNick());
             return;
         }
-        catch (InterruptedException e) { ; }
+        catch (InterruptedException ignore) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

@@ -96,7 +96,7 @@ public class GuiExchanger {
             try {
                 wait();
             }catch(InterruptedException e){
-                ;
+                Thread.currentThread().interrupt();
             }
         return;
     }
@@ -111,7 +111,7 @@ public class GuiExchanger {
             try {
                 wait();
             }catch(InterruptedException e){
-                ;
+                Thread.currentThread().interrupt();
             }
         return;
     }

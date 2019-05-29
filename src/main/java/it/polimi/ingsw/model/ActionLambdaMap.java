@@ -130,7 +130,7 @@ public class ActionLambdaMap {
 
             boolean found = false;
             for(int i = 0; i < pointsAround.size() && !found; i++) {
-                if(pointsAround.get(i).equals(pl.getPosition())) {
+                if(pointsAround.get(i).samePoint(pl.getPosition())) {
                     pointsAround.remove(i);
                     found = true;
                 }
@@ -803,7 +803,7 @@ public class ActionLambdaMap {
 
         for(int i=0; i<destinations.size(); i++)
         {
-            if( destinations.get(i).equals(pl.getPosition()) )
+            if( destinations.get(i).samePoint(pl.getPosition()) )
             {
                 destinations.remove(i);
                 i--;

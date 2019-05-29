@@ -70,7 +70,7 @@ public class CMain
                                     .getHostAddress();
                             if (address.contains(".")) {
                                 String[] split = address.split("\\.");
-                                //if(!split[0].equals("127") && !split[0].equals("169") && !split[0].equals("172"))
+                                //if(!split[0].samePoint("127") && !split[0].samePoint("169") && !split[0].samePoint("172"))
                                 addresses.add(address);
                             }
                         }

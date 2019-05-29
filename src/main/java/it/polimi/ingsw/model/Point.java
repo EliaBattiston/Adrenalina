@@ -73,7 +73,7 @@ public class Point implements Serializable {
         return y;
     }
 
-    public boolean equals(Point x)
+    public boolean samePoint(Point x)
     {
         return x.getX() == this.getX() && x.getY() == this.getY();
     }

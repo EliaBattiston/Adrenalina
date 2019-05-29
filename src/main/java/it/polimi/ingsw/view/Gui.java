@@ -902,7 +902,7 @@ public class Gui extends Application{
                     exchanger.setActualInteraction(Interaction.DISCONNECTION);
                     exchanger.setActualInteraction(Interaction.DISCONNECTION); //so BOTH the actual and the one before are DISCONNECTION
                 }catch (InterruptedException ignore){
-                    ;
+                    Thread.currentThread().interrupt();
                 }
             }));
             exchanger.getMyTimer().start();
@@ -1298,7 +1298,7 @@ public class Gui extends Application{
             if (mapOfCells[p.getX()][p.getY()] != null) {
                 Point answer;
 
-                if(p.equals(match.getMyPlayer().getPosition()) && dontMove)
+                if(p.samePoint(match.getMyPlayer().getPosition()) && dontMove)
                     answer = null;
                 else
                     answer = p;

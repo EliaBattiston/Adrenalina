@@ -82,7 +82,7 @@ public class FeasibleLambdaMap
 
             boolean found = false;
             for(int i = 0; i < points.size() && !found; i++) {
-                if(points.get(i).equals(pl.getPosition())) {
+                if(points.get(i).samePoint(pl.getPosition())) {
                     points.remove(i);
                     found = true;
                 }
