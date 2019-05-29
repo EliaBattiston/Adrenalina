@@ -845,8 +845,8 @@ public class Gui extends Application{
                         masterPane = drawGame();
                         appStage.setScene(new Scene(masterPane));
 
-                        if(!match.getActive().getNick().equals(match.getMyPlayer().getNick()))
-                            showInfoOnMap("È il turno di " + match.getActive().getNick());
+                        if(match.getActive()!= null && match.getMyPlayer()!=null && !match.getActive().getNick().equals(match.getMyPlayer().getNick()))
+                            uiExec.execute(()->showInfoOnMap("È il turno di " + match.getActive().getNick()));
 
                         exchanger.setActualInteraction(Interaction.NONE);
                     });

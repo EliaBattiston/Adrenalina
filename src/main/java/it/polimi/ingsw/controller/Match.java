@@ -193,7 +193,8 @@ public class Match implements Runnable
             if(active.getConn() != null)
             {
                 //Run the player's turn until the timeout runs out
-                new Timeout(Configuration.getInstance().getPlayerTurnSeconds(), TimeUnit.SECONDS, this);
+                //new Timeout(Configuration.getInstance().getPlayerTurnSeconds(), TimeUnit.SECONDS, this);
+                playerTurn(); //FIXME
             }
             else
                 broadcastMessage(active.getNick() + " non esegue mosse poichè non è connesso", game.getPlayers());
