@@ -34,8 +34,10 @@ public class CMain
     {
         Client connection;
 
-        String ip;
+        String ip, localIP;
         boolean socket;
+
+        localIP = null;
 
         if(!gui) {
             ui = new CLInterface();
@@ -49,16 +51,15 @@ public class CMain
 
         boolean instanced = false;
         do {
+            ip = ui.getIPAddress();
 
             try {
                 if (socket) {
-                    ip = ui.getIPAddress();
                     connection = new SocketClient(ip, 1906, ui);
                 }
                 else {
 
                     List<String> addresses = new ArrayList<>();
-                    String localIP;
 
                     Enumeration<NetworkInterface> nInterfaces = NetworkInterface.getNetworkInterfaces();
                     while (nInterfaces.hasMoreElements()) {
@@ -69,22 +70,29 @@ public class CMain
                                     .getHostAddress();
                             if (address.contains(".")) {
                                 String[] split = address.split("\\.");
-                                if(!split[0].equals("127") && !split[0].equals("169"))
-                                    addresses.add(address);
+                                //if(!split[0].equals("127") && !split[0].equals("169") && !split[0].equals("172"))
+                                addresses.add(address);
                             }
                         }
                     }
 
-                    if(addresses.size() > 1) {
-                        localIP = ui.getLocalAddress(addresses);
+                    if(addresses.size() > 1 && !ip.equals("localhost")) {
+                        int maxeq = 0;
+                        for(String address: addresses) {
+                            int i;
+                            for(i = 0; i < address.length() && address.charAt(i) == ip.charAt(i); i++);
+                            if(i > maxeq) {
+                                localIP = address;
+                                maxeq = i;
+                            }
+                        }
+                        //localIP = ui.getLocalAddress(addresses);
                     }
                     else {
                         localIP = addresses.get(0);
                     }
 
                     System.setProperty("java.rmi.server.hostname", localIP);
-
-                    ip = ui.getIPAddress();
 
                     connection = new RMIClient(ip, ui);
                 }
