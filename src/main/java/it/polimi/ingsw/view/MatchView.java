@@ -45,6 +45,11 @@ public class MatchView implements Serializable {
     private Player firstFrenzy;
 
     /**
+     * Send the user the time he has for the turn
+     */
+    private long timeForAction;
+
+    /**
      * Instances a new MatchView object with current parameters
      * @param game Active game
      * @param active Active player
@@ -53,8 +58,9 @@ public class MatchView implements Serializable {
      * @param phase Game phase
      * @param useFrenzy true in case of Frenzy turn, false otherwise
      * @param firstFrenzy First Frenzy player
+     * @param timeForAction is the time the user has to do his action
      */
-    public MatchView(GameView game, Player active, Player viewer, int actionsNumber, GamePhase phase, boolean useFrenzy, Player firstFrenzy) {
+    public MatchView(GameView game, Player active, Player viewer, int actionsNumber, GamePhase phase, boolean useFrenzy, Player firstFrenzy, long timeForAction) {
         this.game = game;
         this.active = active;
         this.myPlayer = viewer;
@@ -62,6 +68,7 @@ public class MatchView implements Serializable {
         this.phase = phase;
         this.useFrenzy = useFrenzy;
         this.firstFrenzy = firstFrenzy;
+        this.timeForAction = timeForAction;
     }
 
     /**
@@ -110,5 +117,13 @@ public class MatchView implements Serializable {
      */
     public GamePhase getPhase() {
         return phase;
+    }
+
+    /**
+     * Return the max amount of time in seconds the user have to do his turn
+     * @return the max amount of time
+     */
+    public long getTimeForAction() {
+        return timeForAction;
     }
 }

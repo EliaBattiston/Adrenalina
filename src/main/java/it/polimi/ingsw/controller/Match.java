@@ -749,7 +749,7 @@ public class Match implements Runnable
      * @return View of the match, ready to be serialized and sent
      */
     public MatchView getMatchView(Player viewer){
-        return new MatchView(game.getGameView(viewer), active, viewer, actionsNumber, phase, useFrenzy, firstFrenzy);
+        return new MatchView(game.getGameView(viewer), active, viewer, actionsNumber, phase, useFrenzy, firstFrenzy, Configuration.getInstance().getPlayerTurnSeconds());
     }
 
     /**

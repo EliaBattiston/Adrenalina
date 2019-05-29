@@ -99,6 +99,7 @@ public class CMain
                 ui.generalMessage("Server non trovato, riprova\n");
             }
             catch (ServerDisconnectedException e) {
+                //the EXACT same string is used to check if this message has been sent inside the GUI, change it here and change it there if you need
                 ui.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
                 return;
             }
