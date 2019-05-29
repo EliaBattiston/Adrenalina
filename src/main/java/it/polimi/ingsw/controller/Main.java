@@ -21,11 +21,15 @@ public class Main {
             else
                 new SMain(null);
         }
+        else if(flags.contains("-ai")){
+            new AIMain();
+        }
         else {
             System.out.println("Flag errati");
             System.out.println("\t-s\tAvvia Server");
             System.out.println("\t-c\tAvvia CLI Client");
             System.out.println("\t-g\tAvvia GUI Client");
+            System.out.println("\t-ai\tAvvia CLI AIClient");
         }
     }
 }

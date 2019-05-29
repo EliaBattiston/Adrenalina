@@ -840,11 +840,14 @@ public class Gui extends Application{
                     break;
                 case UPDATEVIEW:
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
-
                     uiExec.execute(() -> {
                         match = (MatchView) exchanger.getRequest();
                         masterPane = drawGame();
                         appStage.setScene(new Scene(masterPane));
+
+                        if(!match.getActive().getNick().equals(match.getMyPlayer().getNick()))
+                            showInfoOnMap("È il turno di " + match.getActive().getNick());
+
                         exchanger.setActualInteraction(Interaction.NONE);
                     });
                     break;

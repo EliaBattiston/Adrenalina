@@ -65,9 +65,4 @@ public class AIMain
             return;
         }
     }
-
-    public static void main(String[] args)
-    {
-        AIMain base = new AIMain();
-    }
 }
