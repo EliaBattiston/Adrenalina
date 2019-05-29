@@ -31,7 +31,6 @@ public abstract class GuiClickableObject extends Canvas {
     public void resetEventsStyle(){
         setOnMouseEntered(e -> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 10, 0.5, 0, 0);"));
         setOnMouseExited(e-> setStyle("-fx-effect: innershadow(gaussian, #d1d331, 0, 0, 0, 0);") );
-
         setStyle("-fx-effect: innershadow(gaussian, #ffffff, 0, 0, 0, 0);");
     }
 

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
@@ -9,7 +8,6 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -88,7 +86,7 @@ public class Gui extends Application{
     private Canvas infoTextCanvas; //canvas where we write the infos for the users
 
     //Stage
-    private Stage primaryS;
+    private Stage appStage;
 
     /**
      * Main method of the GUI that draws the settings and ask for request on the GuiExchanger instance
@@ -97,7 +95,7 @@ public class Gui extends Application{
     public void start(Stage primaryStage){
         loggedText = "";
 
-        primaryS = primaryStage;
+        appStage = primaryStage;
 
         backgroundWidth = 960;
         backgroundHeight = backgroundWidth*9/16;
@@ -119,8 +117,10 @@ public class Gui extends Application{
                 backgroundHeight = backgroundWidth * 9 / 16;
                 dimMult = backgroundWidth / 1920;
 
-                if(match != null) //if it's null it's still in the settings
-                    primaryStage.setScene(new Scene(drawGame()));
+                if(match != null) { //if it's null it's still in the settings
+                    masterPane = drawGame();
+                    primaryStage.setScene(new Scene(masterPane));
+                }
 
                 //ANDREA: on my linux with tiling, when one of these are called, the window is going to be resized
                 if(exchanger.getLastRealInteraction() != Interaction.CHOOSEDIRECTION && exchanger.getLastRealInteraction() != Interaction.CHOOSEROOM)
@@ -160,6 +160,7 @@ public class Gui extends Application{
      * @return the pane that contains the new board
      */
     private Pane drawGame(){
+        Pane pane = new Pane();
         Canvas canvas;
         StackPane myWeapons, MyPowers, weaponsLoot, mapLoot, pawns, info;
 
@@ -211,7 +212,6 @@ public class Gui extends Application{
         logArea.setEditable(false);
         logArea.setStyle("-fx-focus-color: transparent; -fx-text-box-border: transparent;");
         logArea.setText(loggedText);
-        logArea.setScrollTop(90000000);
 
         //SkipAction
         skipAction = new Canvas(45*((float)1588/500)*dimMult, 45*dimMult);
@@ -223,14 +223,16 @@ public class Gui extends Application{
         skipAction.setOnMouseExited(e-> skipAction.setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0);") );
         skipAction.setPickOnBounds(false);
 
-        masterPane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
+        pane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
 
         if(runAction!=null)//check if one it's initialized all are
-            masterPane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
+            pane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
         else if(frenzyRunTreePick != null)
-            masterPane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot);
+            pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot);
 
-        return masterPane;
+
+        System.out.println("Re-drawn the pane!");
+        return pane;
     }
 
     /**
@@ -781,9 +783,7 @@ public class Gui extends Application{
                     break;
                 case CHOOSEWEAPONACTION:
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
-                    uiExec.execute(()->{
-                        chooseWeaponAction();
-                    });
+                    uiExec.execute(this::chooseWeaponAction);
                     break;
                 case CHOOSEWEAPON:
                 case GRABWEAPON:
@@ -793,9 +793,7 @@ public class Gui extends Application{
                     break;
                 case DISCARDPOWER:
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
-                    uiExec.execute(()->{
-                        discardPower();
-                    });
+                    uiExec.execute(this::discardPower);
                     break;
                 case CHOOSEPOWER:
                     choosePowerCard();
@@ -843,18 +841,18 @@ public class Gui extends Application{
                 case UPDATEVIEW:
                     uiExec.execute(() -> {
                         match = (MatchView) exchanger.getRequest();
-                        primaryS.setScene(new Scene(drawGame()));
+                        masterPane = drawGame();
+                        appStage.setScene(new Scene(masterPane));
                         exchanger.setActualInteraction(Interaction.NONE);
                     });
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
                     break;
                 case LOG:
                     if(!exchanger.getMessage().equalsIgnoreCase("Server disconnesso inaspettatamente, rilancia il client e riprova\n")) {
-                        loggedText += exchanger.getMessage() + "\n";
+                        loggedText = exchanger.getMessage() + "\n" + loggedText;
                         if (logArea != null)
                             uiExec.execute(() -> {
                                 logArea.setText(loggedText);
-                                logArea.setScrollTop(90000000);
                             });
                         if (match == null) {
                             uiExec.execute(() -> this.settingsMessage(loggedText));
@@ -1387,7 +1385,8 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            radio.setSelected(true);
+            if(row==1)
+                radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
@@ -1452,7 +1451,8 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            radio.setSelected(true);
+            if(row==1)
+                radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
@@ -1510,7 +1510,8 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(d.toString());
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
-            radio.setSelected(true);
+            if(row==1)
+                radio.setSelected(true);
             GridPane.setHalignment(radio, HPos.CENTER);
             grid.add(radio,0,row++);
         }
@@ -1594,7 +1595,7 @@ public class Gui extends Application{
         l.setWrapText(true);
 
         TextField field = new TextField("localhost");
-        field.setFont(getFont(SETTINGSFONTDIM*dimMult));
+        //field.setFont(getFont(SETTINGSFONTDIM*dimMult));
 
         Button submit = new Button("Conferma");
         submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
@@ -1603,7 +1604,7 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(answer);
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(initializerBackground()));
+            appStage.setScene(new Scene(initializerBackground()));
         });
         submit.setDefaultButton(true);
 
@@ -1615,7 +1616,7 @@ public class Gui extends Application{
 
         root.getChildren().addAll(grid);
 
-        primaryS.setScene(new Scene(root));
+        appStage.setScene(new Scene(root));
     }
 
     /**
@@ -1644,7 +1645,7 @@ public class Gui extends Application{
 
         root.getChildren().addAll(grid);
 
-        primaryS.setScene(new Scene(root));
+        appStage.setScene(new Scene(root));
     }
 
     /**
@@ -1673,7 +1674,8 @@ public class Gui extends Application{
             radio.setToggleGroup(group);
             radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
             radio.setFont(getFont( SETTINGSFONTDIM*dimMult));
-            radio.setSelected(true);
+            if(row==1)
+                radio.setSelected(true);
             grid.add(radio, 0, row++);
         }
 
@@ -1685,7 +1687,7 @@ public class Gui extends Application{
         grid.add(submit,0,row);
 
         root.getChildren().addAll(grid);
-        primaryS.setScene(new Scene(root));
+        appStage.setScene(new Scene(root));
     }
 
     /**
@@ -1701,7 +1703,7 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(answer);
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(initializerBackground()));
+            appStage.setScene(new Scene(initializerBackground()));
         });
 
         askWithRadio(message, group, buttons, eventHandler);
@@ -1721,7 +1723,7 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(answer.equalsIgnoreCase("RMI"));
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(initializerBackground()));
+            appStage.setScene(new Scene(initializerBackground()));
         });
 
         askWithRadio(message, group, buttons, eventHandler);
@@ -1744,7 +1746,7 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(Fighter.valueOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(initializerBackground()));
+            appStage.setScene(new Scene(initializerBackground()));
         });
 
         askWithRadio(message, group, buttons, eventHandler);
@@ -1766,7 +1768,7 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(initializerBackground()));
+            appStage.setScene(new Scene(initializerBackground()));
         });
 
         askWithRadio(message, group, buttons, eventHandler);
@@ -1789,7 +1791,7 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(initializerBackground()));
+            appStage.setScene(new Scene(initializerBackground()));
         });
 
         askWithRadio(message, group, buttons, eventHandler);
@@ -1809,7 +1811,7 @@ public class Gui extends Application{
             System.out.println(answer);
             exchanger.setAnswer(answer.equalsIgnoreCase("Con Frenesia"));
             exchanger.setActualInteraction(Interaction.NONE);
-            primaryS.setScene(new Scene(initializerBackground()));
+            appStage.setScene(new Scene(initializerBackground()));
         });
 
         askWithRadio(message, group, buttons, eventHandler);

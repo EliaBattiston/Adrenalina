@@ -11,12 +11,7 @@ public class Timeout
 
     public Timeout(long timeout, TimeUnit unit, Match m)
     {
-        final Runnable stuffToDo = new Thread() {
-            @Override
-            public void run() {
-                m.playerTurn();
-            }
-        };
+        final Runnable stuffToDo = new Thread(() -> m.playerTurn());
 
         executor = Executors.newSingleThreadExecutor();
         future = executor.submit(stuffToDo);
@@ -26,17 +21,16 @@ public class Timeout
             future.get(timeout, unit);
         }
         catch (InterruptedException ie) {
-            Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly");
+            Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly InterruptedException");
         }
         catch (ExecutionException ee) {
-            Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly");
+            Logger.getGlobal().log(Level.SEVERE, "PlayerTurn interrupted unexpectedly ExecutionException");
         }
         catch (TimeoutException te) {
             Match.disconnectPlayer(m.getActive(), m.getGame().getPlayers());
             Match.broadcastMessage(m.getActive().getNick() + " è stato troppo lento, il turno è terminato", m.getGame().getPlayers());
         }
 
-        if (!executor.isTerminated())
-            executor.shutdownNow(); // If you want to stop the code that hasn't finished.
+        executor.shutdownNow(); // If you want to stop the code that hasn't finished.
     }
 }

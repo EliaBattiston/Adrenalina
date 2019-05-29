@@ -16,6 +16,8 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
         img = GuiImagesMap.getImage( "playerPawn/" + pl.getCharacter().toString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
+
+        setStyle("-fx-effect: dropshadow(gaussian, #ffffff, 15, 0.7, 0, 0);");
     }
 
     /**
