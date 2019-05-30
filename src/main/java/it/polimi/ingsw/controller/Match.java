@@ -371,31 +371,46 @@ public class Match implements Runnable
     private boolean spawnPlayer(Player pl)
     {
         boolean spawned = false;
-        //Draw powers if not enough to choose
-        switch(pl.getPowers().size())
+
+        if(pl.getSkulls() == 0) //First spawn
         {
-            case 0:
-            {
-                pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                    powers[0] = game.getPowersDeck().draw();
-                    powers[1] = game.getPowersDeck().draw();
-                }));
-                break;
-            }
-            case 1:
-            case 2:
-            {
-                pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
-                    int i;
-                    for(i = 0; i < 3 && powers[i] == null; i++)
-                        ;
-                    powers[i] = game.getPowersDeck().draw();
-                }));
-                break;
-            }
-            default:
-                break;
+            pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+                powers[0] = game.getPowersDeck().draw();
+                powers[1] = game.getPowersDeck().draw();
+            }));
         }
+        else //Draw a power
+        {
+            pl.applyEffects((damage, marks, position, weapons, powers, ammo) -> {
+                Power newPower = game.getPowersDeck().draw();
+                Power discarded = null;
+
+                if (Arrays.stream(powers).noneMatch(Objects::isNull))
+                {
+                    List<Power> inHand = new ArrayList<>(Arrays.asList(powers));
+                    inHand.add(newPower);
+                    try
+                    {
+                        discarded = pl.getConn().discardPower(inHand, true);
+                    } catch (ClientDisconnectedException e)
+                    {
+                        Match.disconnectPlayer(pl, game.getPlayers());
+                        discarded = inHand.get(new Random().nextInt(inHand.size()));
+                    }
+
+                    game.getPowersDeck().scrapCard(discarded);
+
+                    Match.broadcastMessage(pl.getNick() + " scarta " + discarded.getName() + " per pescare un nuovo potenziamento", game.getPlayers());
+                }
+
+                int empty = Arrays.asList(powers).indexOf(discarded);
+
+                if (empty != -1) //if it was null put in the first null, if it was a specific card discarded, put where the card was
+                    powers[empty] = newPower;
+            });
+        }
+
+
 
         updateViews();
 
