@@ -123,7 +123,8 @@ public class Gui extends Application{
                 }
 
                 //ANDREA: on my linux with tiling, when one of these are called, the window is going to be resized
-                if(exchanger.getLastRealInteraction() != Interaction.CHOOSEDIRECTION && exchanger.getLastRealInteraction() != Interaction.CHOOSEROOM)
+                if(exchanger != null && exchanger.getLastRealInteraction() != null && exchanger.getLastRealInteraction() != Interaction.CHOOSEDIRECTION &&
+                        exchanger.getLastRealInteraction() != Interaction.CHOOSEROOM)
                     exchanger.resetLastRealInteraction();
             }
         });
@@ -228,7 +229,7 @@ public class Gui extends Application{
         if(runAction!=null)//check if one it's initialized all are
             pane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
         else if(frenzyRunTreePick != null)
-            pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot);
+            pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot); //fixme add the power here
 
 
         System.out.println("Re-drawn the pane!");
@@ -965,6 +966,7 @@ public class Gui extends Application{
                 exchanger.setActualInteraction(Interaction.NONE);
                 //After finishing the click event, reset all the events to the original option -> just call the redraw game
             });
+
             switch (a.getLambdaID()){
                 case "a-b1":
                     runAction.setOnMousePressed(onClick);
@@ -985,6 +987,10 @@ public class Gui extends Application{
                 case "a-a2":
                     adrShootAction.setOnMousePressed(onClick);
                     adrShootAction.setEventsChoosable();
+                    break;
+                case "a-p":
+                    powerAction.setOnMousePressed(onClick);
+                    powerAction.setEventsChoosable();
                     break;
                 case "a-f1":
                     frenzyRunReloadShoot.setOnMousePressed(onClick);
@@ -1463,8 +1469,15 @@ public class Gui extends Application{
         Button submit = new Button("Conferma");
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
+            Color c = null;
+            if(answer.equals("Rosso"))
+                c = Color.RED;
+            else if (answer.equals("Blu"))
+                c= Color.BLUE;
+            else if(answer.equals("Giallo"))
+                c=Color.YELLOW;
             System.out.println(answer + ": " + colorNames.indexOf(answer));
-            exchanger.setAnswer(colorNames.indexOf(answer));
+            exchanger.setAnswer(c);
             exchanger.setActualInteraction(Interaction.NONE);
             masterPane.getChildren().remove(popupPane);
         });

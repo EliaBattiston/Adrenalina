@@ -77,7 +77,7 @@ public class GuiInterface implements UserInterface{
 
             Integer choosen = chooseRoom(rooms, true);
             System.out.println(choosen!=null?choosen:"null");
-
+*/
 
             List<Color> color = new ArrayList<>();
             color.add(Color.RED);
@@ -85,7 +85,7 @@ public class GuiInterface implements UserInterface{
             color.add(Color.YELLOW);
 
             Color chosen = chooseAmmo(color, false);
-            System.out.println(chosen==null?"null":chosen);*/
+            System.out.println(chosen==null?"null":chosen);
 
             /*List<Action> actions = new ArrayList<>();
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
@@ -476,7 +476,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Color chooseAmmo(List<Color> available, boolean mustChoose){
-        exchanger.setRequest(Interaction.CHOOSEAMMO, "Scegli una munizione da scartare", available, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEAMMO, "Scegli una munizione da usare", available, mustChoose);
         exchanger.waitFreeToUse();
         return (Color) exchanger.getAnswer();
     }
