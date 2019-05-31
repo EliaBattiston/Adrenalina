@@ -105,6 +105,7 @@ public class Match implements Runnable
      */
     private void initialize() throws ClientDisconnectedException
     {
+        broadcastMessage(game.getPlayers().get(0).getNick() + " sta configurando la partita", game.getPlayers());
 
         //Ask the user which maps he wants to use and if he wants to use frenzy mode
         int mapNum = game.getPlayers().get(0).getConn().chooseMap();
@@ -184,6 +185,8 @@ public class Match implements Runnable
         {
             this.gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
         }
+
+        updateViews();
 
         while(phase != GamePhase.ENDED)
         {
@@ -337,6 +340,8 @@ public class Match implements Runnable
             catch(ClientDisconnectedException e) {
                 disconnectPlayer(active, game.getPlayers());
             }
+
+            updateViews();
         }
 
         //Clean used power cards

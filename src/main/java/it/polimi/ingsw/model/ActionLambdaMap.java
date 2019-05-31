@@ -715,17 +715,13 @@ public class ActionLambdaMap {
             if(!inHand.isEmpty())
             {
                 chosen = pl.getConn().choosePower(inHand, true);
-                while (!inHand.isEmpty() && chosen != null)
+                if(chosen != null)
                 {
                     chosen.getBase().execute(pl, map, null);
 
                     Match.broadcastMessage(pl.getNick() + " usa il potenziamento " + chosen.getName(), ((Game)memory).getPlayers());
 
                     pl.applyEffects(EffectsLambda.removePower(chosen, ((Game)memory).getPowersDeck()));
-
-                    inHand = pl.getPowers().stream().filter(power -> power.getBase().getLambdaID().equals("p2") || power.getBase().getLambdaID().equals("p4")).filter(power -> power.getBase().isFeasible(pl, map, null)).collect(Collectors.toList());
-                    if(!inHand.isEmpty())
-                        chosen = pl.getConn().choosePower(inHand, false);
                 }
             }
 
@@ -960,23 +956,29 @@ public class ActionLambdaMap {
 
             if(!weaponActions.isEmpty()){
                 toExecute = pl.getConn().chooseAction(weaponActions, false);
-                toExecute.execute(pl, map, mem);
-
-                pl.applyEffects(EffectsLambda.payAmmo(toExecute.getCost()));
-
-                Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
-
-                weaponActions.clear();
-                weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
-                weaponActions.remove(toExecute);
-                if(!weaponActions.isEmpty())
+                if(toExecute!=null)
                 {
-                    toExecute = pl.getConn().chooseAction(weaponActions, false);
                     toExecute.execute(pl, map, mem);
 
                     pl.applyEffects(EffectsLambda.payAmmo(toExecute.getCost()));
 
-                    Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
+                    Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " + toExecute.getName(), messageReceivers);
+
+                    weaponActions.clear();
+                    weaponActions.addAll(chosen.getAdditional().stream().filter(action -> action.isFeasible(pl, map, mem)).collect(Collectors.toList()));
+                    weaponActions.remove(toExecute);
+                    if (!weaponActions.isEmpty())
+                    {
+                        toExecute = pl.getConn().chooseAction(weaponActions, false);
+                        if(toExecute!= null)
+                        {
+                            toExecute.execute(pl, map, mem);
+
+                            pl.applyEffects(EffectsLambda.payAmmo(toExecute.getCost()));
+
+                            Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " + toExecute.getName(), messageReceivers);
+                        }
+                    }
                 }
             }
         }
