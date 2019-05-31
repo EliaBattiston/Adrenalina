@@ -1,6 +1,8 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.Player;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
         img = GuiImagesMap.getImage( "playerPawn/" + pl.getCharacter().toString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
+
+        this.setEffect(makeGlow("#ffffff"));
     }
 
     /**
@@ -33,5 +37,28 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
 
     public Player getPlayer() {
         return pl;
+    }
+
+    /**
+     * Resets the styles to the basic ones
+     */
+    public void resetEventsStyle(){
+        setOnMouseEntered(e -> setEffect(makeGlow("#d1d331")));
+        setOnMouseExited(e-> setEffect(makeGlow("#ffffff")) );
+        setEffect(makeGlow("#ffffff"));
+    }
+
+    /**
+     * Sets the styles to clickable ones
+     */
+    public void setEventsChoosable(){
+        setEffect(makeGlow("#36ff0e"));
+        setOnMouseEntered(e -> setEffect(makeGlow("#e2ff24")) );//different green
+        setOnMouseExited(e-> setEffect(makeGlow("#36ff0e")) );
+    }
+
+    private DropShadow makeGlow(String color)
+    {
+        return new DropShadow(BlurType.GAUSSIAN, javafx.scene.paint.Color.web(color), 10, 0.7, 0, 0);
     }
 }

@@ -619,7 +619,7 @@ public class Gui extends Application{
             xSkull += 30;
         }
 
-        //for my player I need to ahve the actions clickable
+        //My player needs clickable actions
         if(player.getNick().equals(match.getMyPlayer().getNick()) && !frenzyMode){
             double actionsY = ((float)45)/ 270 * height;
             double actionsHeight = ((float)42)/270*height;
@@ -1132,7 +1132,7 @@ public class Gui extends Application{
         closeButton.setTranslateY(-290*dimMult);
 
         //Player name
-        Label nameLbl = new Label(pl.getNick() + " - " + pl.getCharacter());
+        Label nameLbl = new Label("Armi scariche di " + pl.getNick() + " - " + pl.getCharacter());
         nameLbl.setTextFill(javafx.scene.paint.Color.WHITE);
         nameLbl.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         nameLbl.setWrapText(true);

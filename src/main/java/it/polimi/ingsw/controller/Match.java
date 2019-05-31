@@ -332,6 +332,23 @@ public class Match implements Runnable
             updateViews();
         }
 
+        //The player can use a power before the turn ends
+        if(activities.getPlayPower().isFeasible(active, game.getMap(), game))
+        {
+            availableActions = new ArrayList<>();
+            availableActions.add(activities.getPlayPower());
+            try {
+                chosen = active.getConn().chooseAction(availableActions, false);
+                if(chosen != null)
+                    chosen.execute(active, game.getMap(), game);
+            }
+            catch(ClientDisconnectedException e) {
+                disconnectPlayer(active, game.getPlayers());
+                return;
+            }
+
+        }
+
         //Reload weapons
         if(FeasibleLambdaMap.possibleReload(active)) {
             try {

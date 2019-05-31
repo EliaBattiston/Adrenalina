@@ -145,4 +145,8 @@ public class Activities {
 
         return returnList;
     }
+
+    public Action getPlayPower(){
+        return playPower;
+    }
 }

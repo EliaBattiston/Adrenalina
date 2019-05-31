@@ -79,13 +79,13 @@ public class GuiInterface implements UserInterface{
             System.out.println(choosen!=null?choosen:"null");
 */
 
-            List<Color> color = new ArrayList<>();
+            /*List<Color> color = new ArrayList<>();
             color.add(Color.RED);
             color.add(Color.BLUE);
             color.add(Color.YELLOW);
 
             Color chosen = chooseAmmo(color, false);
-            System.out.println(chosen==null?"null":chosen);
+            System.out.println(chosen==null?"null":chosen);*/
 
             /*List<Action> actions = new ArrayList<>();
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
