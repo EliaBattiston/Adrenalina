@@ -854,7 +854,7 @@ public class Gui extends Application{
                     break;
                 case LOG:
                     if(!exchanger.getMessage().equalsIgnoreCase("Server disconnesso inaspettatamente, rilancia il client e riprova\n")) {
-                        loggedText = exchanger.getMessage() + "\n" + loggedText;
+                        loggedText = loggedText + "\n" + exchanger.getMessage();
                         if (logArea != null)
                             uiExec.execute(() -> {
                                 logArea.setText(loggedText);

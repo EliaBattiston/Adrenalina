@@ -83,7 +83,7 @@ public class SMain
                                 .getHostAddress();
                         if (address.contains(".")) {
                             String[] split = address.split("\\.");
-                            if (!split[0].equals("127") && !split[0].equals("169"))
+                            if (!split[0].equals("127") && !split[0].equals("169") && !split[0].equals("172"))
                                 addresses.add(address);
                         }
                     }
@@ -322,20 +322,21 @@ public class SMain
                     }
 
                     fighter = connection.getFighter(available);
-                }
-                player = new Player(nickname, phrase, fighter);
-                player.setConn(connection);
-                ClientConnThread clientT = new ClientConnThread(this, player);
-                new Thread(clientT).start();
 
-                if (waiting[index] == null) {
-                    try {
-                        waiting[index] = new Match(skulls);
-                    } catch (FileNotFoundException e) {
-                        Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
+                    player = new Player(nickname, phrase, fighter);
+                    player.setConn(connection);
+                    ClientConnThread clientT = new ClientConnThread(this, player);
+                    new Thread(clientT).start();
+
+                    if (waiting[index] == null) {
+                        try {
+                            waiting[index] = new Match(skulls);
+                        } catch (FileNotFoundException e) {
+                            Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
+                        }
                     }
+                    waiting[index].getGame().addPlayer(player);
                 }
-                waiting[index].getGame().addPlayer(player);
                 player.getConn().sendMessage("Benvenuto in Adrenalina!");
 
                 waiting[index].broadcastMessage("Utenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size(), waiting[index].getGame().getPlayers());
