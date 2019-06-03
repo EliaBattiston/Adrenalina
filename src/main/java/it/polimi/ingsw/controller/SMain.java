@@ -167,6 +167,7 @@ public class SMain
             println("/_/  |_/_/  /_/\\____/\\____/   /____/\\___/_/    |___/\\___/_/     ");
             println("");
 
+            println("Server IP: " + localIP);
             println("Adrenalina Server ready");
 
             Runtime.getRuntime().addShutdownHook(
