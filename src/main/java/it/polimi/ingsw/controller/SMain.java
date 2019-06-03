@@ -167,8 +167,9 @@ public class SMain
             println("/_/  |_/_/  /_/\\____/\\____/   /____/\\___/_/    |___/\\___/_/     ");
             println("");
 
-            println("Server IP: " + localIP);
-            println("Adrenalina Server ready");
+            println("Sono state caricate " + loadedMatches.size() + " partite salvate");
+            println("Server IP: " + localIP + "\n");
+            println("Adrenalina Server ready\n");
 
             Runtime.getRuntime().addShutdownHook(
                 new Thread("app-shutdown-hook") {
