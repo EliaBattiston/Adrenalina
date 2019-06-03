@@ -49,8 +49,9 @@ public class SMain
 
     private boolean stop;
     private Timer[] timer;
-    Object lock, cancelLock;
-    Object matchLock[];
+    private final Object lock;
+    private final Object cancelLock;
+    private final Object matchLock[];
     private static final int MINSKULLS = 5;
     private boolean[] startedTimer;
 
@@ -132,9 +133,9 @@ public class SMain
                             loadedMatches.add(gson.fromJson(reader, Match.class));
                             reader.close();
                             if(file.delete())
-                                System.out.println("File" + file.getName() + " correctly deleted");
+                                println("File" + file.getName() + " correctly deleted");
                             else
-                                System.out.println("Couldn't delete file" + file.getName());
+                                println("Couldn't delete file" + file.getName());
 
                         }
                         catch(Exception e){
@@ -167,7 +168,8 @@ public class SMain
             println("/_/  |_/_/  /_/\\____/\\____/   /____/\\___/_/    |___/\\___/_/     ");
             println("");
 
-            println("Sono state caricate " + loadedMatches.size() + " partite salvate");
+            if(!loadedMatches.isEmpty())
+                println("Sono state caricate " + loadedMatches.size() + " partite salvate");
             println("Server IP: " + localIP + "\n");
             println("Adrenalina Server ready\n");
 
@@ -190,7 +192,7 @@ public class SMain
         }
         catch (SocketException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            System.out.println("Impossibile trovate interfacce di rete, riprova");
+            println("Impossibile trovate interfacce di rete, riprova");
         }
         catch (RemoteException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
@@ -265,7 +267,7 @@ public class SMain
                                     List<Player> broadcast = new ArrayList<>();
                                     broadcast.addAll(m.getGame().getPlayers());
                                     broadcast.remove(p);
-                                    m.broadcastMessage(p.getNick() + " si è riconnesso", broadcast);
+                                    Match.broadcastMessage(p.getNick() + " si è riconnesso", broadcast);
                                 }
                             }
                         }
@@ -288,7 +290,7 @@ public class SMain
 
                 for(int i = 0; i < loadedMatches.size(); i++) {
                     Match m = loadedMatches.get(i);
-                    Boolean complete = true;
+                    boolean complete = true;
                     for(Player p: m.getGame().getPlayers()) {
                         if(p.getConn() == null)
                             complete = false;
@@ -341,7 +343,7 @@ public class SMain
                 }
                 player.getConn().sendMessage("Benvenuto in Adrenalina!");
 
-                waiting[index].broadcastMessage("Utenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size(), waiting[index].getGame().getPlayers());
+                Match.broadcastMessage("Utenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size(), waiting[index].getGame().getPlayers());
 
                 println("Il giocatore " + player.getNick() + " si è connesso.");
 
@@ -375,7 +377,7 @@ public class SMain
                             if (waiting[i].getGame().getPlayers().size() == 2)
                             {
                                 cancelTimer(i + MINSKULLS);
-                                waiting[i].broadcastMessage("Avvio partita annullato", waiting[i].getGame().getPlayers());
+                                Match.broadcastMessage("Avvio partita annullato", waiting[i].getGame().getPlayers());
                             }
                             found = true;
                         }
@@ -462,7 +464,7 @@ public class SMain
             }
             else {
                 println("Ripristino - giocatori insufficienti");
-                waiting[index].broadcastMessage("Errore - troppi utenti disconnessi. Ripristino a stanza di attesa", waiting[index].getGame().getPlayers());
+                Match.broadcastMessage("Errore - troppi utenti disconnessi. Ripristino a stanza di attesa", waiting[index].getGame().getPlayers());
             }
         }
     }
