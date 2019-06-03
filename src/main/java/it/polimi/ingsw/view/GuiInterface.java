@@ -188,9 +188,9 @@ public class GuiInterface implements UserInterface{
                 ammo.add(Color.YELLOW, 2);
                 ammo.add(Color.BLUE, 1);
 
-                damage[0] = "p2";
-                damage[1] = "p2";
-                damage[2] = "p3";
+                damage[0] = "p5";
+                damage[1] = "p5";
+                damage[2] = "p5";
 
                 marks.addAll(Arrays.asList("p2", "p3", "p3"));
                 marks.addAll(Arrays.asList("p4", "p5", "p4"));

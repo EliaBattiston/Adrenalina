@@ -522,11 +522,11 @@ public class Gui extends Application{
                     gc.drawImage(GuiImagesMap.getImage("skull.png"), x * dimMult, y * dimMult, w, skullH);
                 else {
                     if(kills[s].getOverkill()) {
-                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), (x-6) * dimMult, (y-6) * dimMult, w, dropH);
-                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), (x+6) * dimMult, y * dimMult, w, dropH);
+                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills[s].getKiller().getCharacter() + ".png", w, dropH), (x-6) * dimMult, (y-6) * dimMult);
+                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills[s].getKiller().getCharacter() + ".png", w, dropH), (x+6) * dimMult, y * dimMult);
                     }
                     else
-                        gc.drawImage(GuiImagesMap.getImage("drops/" + kills[s].getKiller().getCharacter() + ".png"), x * dimMult, (y-3) * dimMult, w, dropH);
+                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills[s].getKiller().getCharacter() + ".png", w, dropH), x * dimMult, (y-3) * dimMult);
                 }
             }
 
@@ -591,7 +591,7 @@ public class Gui extends Application{
         //damages
         for(int i=0; i<12; i++){
             if(player.getReceivedDamage()[i] != null)
-                gc.drawImage( GuiImagesMap.getImage("drops/" + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+                gc.drawImage( GuiImagesMap.getImageWithShadow("drops/" + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png", widthDrop, heightDrop), xDrop, yDrop);
 
             xDrop += deltaX;
         }
@@ -602,7 +602,7 @@ public class Gui extends Application{
         deltaX = widthDrop * 1.1; //put just a little bit of space, we don't know how many marks a player will get
         for(String p: player.getReceivedMarks()){
             if(p != null)
-                gc.drawImage( GuiImagesMap.getImage("drops/" + Player.fighterFromNick(players, p) + ".png"), xDrop, yDrop, widthDrop, heightDrop);
+                gc.drawImage( GuiImagesMap.getImageWithShadow("drops/" + Player.fighterFromNick(players, p) + ".png", widthDrop, heightDrop), xDrop, yDrop);
 
             xDrop += deltaX;
         }
