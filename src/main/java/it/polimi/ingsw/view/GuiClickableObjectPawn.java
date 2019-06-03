@@ -11,15 +11,21 @@ import java.util.List;
  */
 public class GuiClickableObjectPawn extends GuiClickableObject {
     private Player pl;
+    private boolean viewer;
 
-    public GuiClickableObjectPawn(Player pl, double size){
+    public GuiClickableObjectPawn(Player pl, double size, boolean viewer){
         super(size, size);
         this.pl = pl;
         img = GuiImagesMap.getImage( "playerPawn/" + pl.getCharacter().toString() + ".png" );
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
 
-        this.setEffect(makeGlow("#ffffff"));
+        this.viewer = viewer;
+
+        if(this.viewer)
+            this.setEffect(makeGlow("#123aff"));
+        else
+            this.setEffect(makeGlow("#ffffff"));
     }
 
     /**

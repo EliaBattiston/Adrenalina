@@ -371,7 +371,7 @@ public class Gui extends Application{
                 y = baseY + j * deltaCellY;
                 if(map.getCell(i, j) != null) { //here X and Y are pointing at the top-left corner of the cell
                     for (Player p : map.getCell(i, j).getPawns()) {
-                        GuiClickableObjectPawn pawn = new GuiClickableObjectPawn(p, size);
+                        GuiClickableObjectPawn pawn = new GuiClickableObjectPawn(p, size, p.getNick().equals(match.getMyPlayer().getNick()));
                         if(n==1 || n==3)
                             y = baseY +  j * deltaCellY + size;
                         if(n==2 || n==4){
