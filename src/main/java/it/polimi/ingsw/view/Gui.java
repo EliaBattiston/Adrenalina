@@ -229,7 +229,7 @@ public class Gui extends Application{
         if(runAction!=null)//check if one it's initialized all are
             pane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
         else if(frenzyRunTreePick != null)
-            pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot); //fixme add the power here
+            pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot, powerAction); //fixme add the power here
 
 
         System.out.println("Re-drawn the pane!");
@@ -635,6 +635,7 @@ public class Gui extends Application{
             adrShootAction = new GuiClickableObjectNoImage(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
         }
         else if(frenzyMode && player.getNick().equals(match.getMyPlayer().getNick())){
+            //TODO check x and y positions
             double actionsY = ((float)40)/ 270 * height;
             double actionsHeight = ((float)35)/270*height;
             double actionsWidth = ((float)69)/1121*width;
@@ -643,6 +644,7 @@ public class Gui extends Application{
             frenzyRunTwoPick = new GuiClickableObjectNoImage(x, y+3*actionsY, actionsWidth, actionsHeight);
 
             double secondActionsY = ((float)184)/ 270 * height;
+            powerAction = new GuiClickableObjectNoImage(x + ((float)116)/1121*width, y+actionsY, actionsWidth, actionsHeight);
             frenzyRunTwoPickShoot = new GuiClickableObjectNoImage(x, y+secondActionsY+actionsY, actionsWidth, actionsHeight);
             frenzyRunTreePick = new GuiClickableObjectNoImage(x, y+secondActionsY+2*actionsY, actionsWidth, actionsHeight);
         }
@@ -948,13 +950,13 @@ public class Gui extends Application{
                 exchanger.setAnswer(a);
                 clearInfoOnMap();
                 //clear the canvases
+                powerAction.resetEventsStyle();
                 if(runAction != null) {
                     runAction.resetEventsStyle();
                     pickAction.resetEventsStyle();
                     shootAction.resetEventsStyle();
                     adrPickAction.resetEventsStyle();
                     adrShootAction.resetEventsStyle();
-                    powerAction.resetEventsStyle();
                 }
                 if(frenzyRunReloadShoot != null) {
                     frenzyRunReloadShoot.resetEventsStyle();

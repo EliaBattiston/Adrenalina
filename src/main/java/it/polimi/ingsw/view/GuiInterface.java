@@ -57,6 +57,20 @@ public class GuiInterface implements UserInterface{
             MatchView testView = initForTest();
             this.updateGame( testView );
 
+            Activities ac = Activities.getInstance();
+
+            List<Action> available = ac.getAvailable(9, true, true);
+
+            Action chosen = chooseAction(available, false);
+
+            System.out.println(chosen==null?"null":chosen.getName() + " scelta");
+
+            available = ac.getAvailable(9, true, false);
+
+            chosen = chooseAction(available, false);
+
+            System.out.println(chosen==null?"null":chosen.getName() + " scelta");
+
             /*List<Power> p = new ArrayList<>();
             p.add(new Power(1, "sdb", null, Color.RED));
             p.add(new Power(4, "sdb", null, Color.RED));
