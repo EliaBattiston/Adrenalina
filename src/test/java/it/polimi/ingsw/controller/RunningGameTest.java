@@ -25,8 +25,7 @@ public class RunningGameTest {
             Match m = new Match(8);
 
             Player simulated;
-            for(int i=0; i<5; i++)
-            {
+            for(int i=0; i<5; i++) {
                 simulated = new Player(Integer.toString(i), "Testing is hard work, but someone has to do it!", Fighter.values()[i]);
                 simulated.setConn(new AIConnection());
                 m.getGame().addPlayer(simulated);
@@ -35,12 +34,9 @@ public class RunningGameTest {
             Thread runner = new Thread(m);
             runner.start();
 
-            try
-            {
+            try {
                 runner.join();
-            }
-            catch(InterruptedException e)
-            {
+            } catch(InterruptedException e) {
                 fail();
             }
 

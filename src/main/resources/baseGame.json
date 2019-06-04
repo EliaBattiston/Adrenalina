@@ -82,7 +82,7 @@
                 "lambdaIdentifier": "w4-b"
             },
             "additional": [{
-                "description": "Muovi di 1 o 2 quadrati. Questo effetto può essere usato prima o dopo l'effetto base.",
+                "description": "Muovi di 1 o 2 quadrati.",
                 "name": "Slittamento di fase",
                 "cost": [],
                 "lambdaIdentifier": "w4-ad1"

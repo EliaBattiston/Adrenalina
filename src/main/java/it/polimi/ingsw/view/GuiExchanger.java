@@ -2,9 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.Interaction;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Singleton that handles the information sharing through the GuiInterface and the Gui

@@ -30,7 +30,11 @@ import java.util.stream.Collectors;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
-//FIXME It looks like the additional actions don't work.
+//?fxme? a weapon already unloaded from the precedent turn won't be asked to be reloaded on the next one even if you have the ammo
+//fixme before the start of the game, during the settings we don't check if the server disconnects
+//todo delete purple lines in the maps images
+//todo check torpedine and vortex
+//fixme skipAction on second additional needs to be repositioned (maybe only if you can skip the choose position/choose player, it's an "old" bug)
 /**
  * The Gui class that extends the JavaFX Application
  */
@@ -110,6 +114,8 @@ public class Gui extends Application{
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
+
+        //FIXME skipAction is not removed before trying to add it when we reset the last real interaction so it tries to add another
         //Event handlers
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
             if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
@@ -229,7 +235,7 @@ public class Gui extends Application{
         if(runAction!=null)//check if one it's initialized all are
             pane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
         else if(frenzyRunTreePick != null)
-            pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot, powerAction); //fixme add the power here
+            pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot, powerAction);
 
 
         System.out.println("Re-drawn the pane!");
@@ -635,16 +641,15 @@ public class Gui extends Application{
             adrShootAction = new GuiClickableObjectNoImage(x + ((float)423)/1121*width, y+actionsY, actionsWidth, actionsHeight);
         }
         else if(frenzyMode && player.getNick().equals(match.getMyPlayer().getNick())){
-            //TODO check x and y positions
             double actionsY = ((float)40)/ 270 * height;
-            double actionsHeight = ((float)35)/270*height;
+            double actionsHeight = ((float)33)/270*height;
             double actionsWidth = ((float)69)/1121*width;
             frenzyRunReloadShoot = new GuiClickableObjectNoImage(x, y+actionsY, actionsWidth, actionsHeight);
-            frenzyRunFour = new GuiClickableObjectNoImage(x, y+2*actionsY, actionsWidth, actionsHeight);
-            frenzyRunTwoPick = new GuiClickableObjectNoImage(x, y+3*actionsY, actionsWidth, actionsHeight);
+            frenzyRunFour = new GuiClickableObjectNoImage(x, y+actionsY + actionsHeight, actionsWidth, actionsHeight);
+            frenzyRunTwoPick = new GuiClickableObjectNoImage(x, y+actionsY +actionsHeight*2, actionsWidth, actionsHeight);
 
             double secondActionsY = ((float)184)/ 270 * height;
-            powerAction = new GuiClickableObjectNoImage(x + ((float)116)/1121*width, y+actionsY, actionsWidth, actionsHeight);
+            powerAction = new GuiClickableObjectNoImage(x + ((float)134)/1121*width, y+actionsY + 6*dimMult, actionsWidth, actionsHeight);
             frenzyRunTwoPickShoot = new GuiClickableObjectNoImage(x, y+secondActionsY+actionsY, actionsWidth, actionsHeight);
             frenzyRunTreePick = new GuiClickableObjectNoImage(x, y+secondActionsY+2*actionsY, actionsWidth, actionsHeight);
         }
@@ -856,7 +861,7 @@ public class Gui extends Application{
                     break;
                 case LOG:
                     if(!exchanger.getMessage().equalsIgnoreCase("Server disconnesso inaspettatamente, rilancia il client e riprova\n")) {
-                        loggedText = loggedText + "\n" + exchanger.getMessage();
+                        loggedText = exchanger.getMessage() + "\n" + loggedText ;
                         if (logArea != null)
                             uiExec.execute(() -> {
                                 logArea.setText(loggedText);
@@ -1345,6 +1350,7 @@ public class Gui extends Application{
                 exchanger.setAnswer(p.getPlayer());
                 exchanger.setActualInteraction(Interaction.NONE);
                 clearInfoOnMap();
+                showInfoOnMap("Attendi che il nemico scelga un power");
                 //After finishing the click event, reset all the events to the original option
                 for(GuiClickableObjectPawn p2 : pawns)
                     p2.resetEventsStyle();
@@ -1430,8 +1436,7 @@ public class Gui extends Application{
      * Ask which ammo color to use
      * @param message Message to show to the user in the popup
      */
-    private void askAmmo(String message)
-    {
+    private void askAmmo(String message) {
         List<Color> colors = (List<Color>) exchanger.getRequest();
 
         Pane popupPane = new Pane();
@@ -1614,7 +1619,7 @@ public class Gui extends Application{
         l.setWrapText(true);
 
         TextField field = new TextField("localhost");
-        //field.setFont(getFont(SETTINGSFONTDIM*dimMult));
+        field.setFont(Font.font(SETTINGSFONTDIM*dimMult));
 
         Button submit = new Button("Conferma");
         submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
@@ -1648,14 +1653,14 @@ public class Gui extends Application{
 
         String[] pieces = message.split("\n");
         String formattedText = "";
-        for(int i = max(0, pieces.length - 1 - 4); i < pieces.length; i++) {
-            formattedText += pieces[i] + "\n";
+        for(int i = max(0, pieces.length - 1 - 3); i < pieces.length; i++) {
+            formattedText += pieces[i] + "\n\n";
         }
 
         Label l = new Label(formattedText);
         l.setPrefSize(480 * dimMult, 420 * dimMult);
         l.setWrapText(true);
-        l.setFont(getFont(SETTINGSFONTDIM*dimMult));
+        l.setFont(getFont(SETTINGSFONTDIM*0.8*dimMult));
         l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
 
         GridPane.setHalignment(l, HPos.RIGHT);

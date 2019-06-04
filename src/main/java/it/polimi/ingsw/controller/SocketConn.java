@@ -79,10 +79,13 @@ public class SocketConn implements Connection {
             List<Action> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Action>>() {
             }.getType());
 
-            String lambdaID = ansParam.get(0).getLambdaID();
-            for (Action a : available)
-                if (a.getLambdaID().equals(lambdaID))
-                    return a;
+            if(ansParam != null && ansParam.get(0) != null) {
+                String lambdaID = ansParam.get(0).getLambdaID();
+                for (Action a : available)
+                    if (a!=null && a.getLambdaID().equals(lambdaID))
+                        return a;
+            }
+
             return null;
         }
     }
@@ -106,10 +109,12 @@ public class SocketConn implements Connection {
             List<Weapon> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Weapon>>() {
             }.getType());
 
-            int id = ansParam.get(0).getId();
-            for (Weapon w : available)
-                if (w.getId() == id)
-                    return w;
+            if(ansParam != null && ansParam.get(0) != null) {
+                int id = ansParam.get(0).getId();
+                for (Weapon w : available)
+                    if (w.getId() == id)
+                        return w;
+            }
             return null;
         }
     }
@@ -133,11 +138,14 @@ public class SocketConn implements Connection {
             List<Weapon> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Weapon>>() {
             }.getType());
 
-            int id = ansParam.get(0).getId();
-            for (Weapon w : grabbable)
-                if (w.getId() == id)
-                    return w;
+            if(ansParam != null && ansParam.get(0) != null) {
+                int id = ansParam.get(0).getId();
+                for (Weapon w : grabbable)
+                    if (w.getId() == id)
+                        return w;
+            }
             return null;
+
         }
     }
 
@@ -160,10 +168,12 @@ public class SocketConn implements Connection {
             List<Weapon> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Weapon>>() {
             }.getType());
 
-            int id = ansParam.get(0).getId();
-            for (Weapon w : reloadable)
-                if (w.getId() == id)
-                    return w;
+            if(ansParam != null && ansParam.get(0) != null) {
+                int id = ansParam.get(0).getId();
+                for (Weapon w : reloadable)
+                    if (w.getId() == id)
+                        return w;
+            }
             return null;
         }
     }
@@ -187,10 +197,12 @@ public class SocketConn implements Connection {
             List<Player> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Player>>() {
             }.getType());
 
-            String nickChosen = ansParam.get(0).getNick();
-            for (Player p : targets)
-                if (p.getNick().equals(nickChosen))
-                    return p;
+            if(ansParam != null && ansParam.get(0) != null) {
+                String nickChosen = ansParam.get(0).getNick();
+                for (Player p : targets)
+                    if (p.getNick().equals(nickChosen))
+                        return p;
+            }
             return null;
         }
     }
@@ -261,8 +273,11 @@ public class SocketConn implements Connection {
             List<Power> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Power>>() {
             }.getType());
 
-            int id = ansParam.get(0).getId();
-            return powers.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+            if(ansParam != null && ansParam.get(0) != null) {
+                int id = ansParam.get(0).getId();
+                return powers.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+            }
+            return null;
         }
     }
 
@@ -285,7 +300,11 @@ public class SocketConn implements Connection {
             List<Integer> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Integer>>() {
             }.getType());
 
-            return rooms.stream().filter(r -> r.equals(ansParam.get(0))).findFirst().orElse(null);
+            if(ansParam != null && ansParam.get(0) != null) {
+                return rooms.stream().filter(r -> r.equals(ansParam.get(0))).findFirst().orElse(null);
+            }
+            else
+                return null;
         }
     }
 
@@ -386,7 +405,10 @@ public class SocketConn implements Connection {
             List<Weapon> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Weapon>>() {
             }.getType());
 
-            return inHand.stream().filter(w -> w.getId() == ansParam.get(0).getId()).findFirst().orElse(null);
+            if(ansParam != null && ansParam.get(0) != null)
+                return inHand.stream().filter(w -> w.getId() == ansParam.get(0).getId()).findFirst().orElse(null);
+            else
+                return null;
         }
     }
 
@@ -478,7 +500,10 @@ public class SocketConn implements Connection {
             List<Power> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Power>>() {
             }.getType());
 
-            return inHand.stream().filter(p -> p.getId() == ansParam.get(0).getId()).findFirst().orElse(null);
+            if(ansParam != null && ansParam.get(0) != null)
+                return inHand.stream().filter(p -> p.getId() == ansParam.get(0).getId()).findFirst().orElse(null);
+            else
+                return null;
         }
     }
 
@@ -551,8 +576,6 @@ public class SocketConn implements Connection {
         }
     }
 
-
-
     /**
      * Opens the writer and sends the message, then closes the writer
      * @param payload Content to be delivered to the client
@@ -603,8 +626,7 @@ public class SocketConn implements Connection {
      * @param response the string containing the json representation of the class
      * @return the object made from the json
      */
-    public Payload jsonDeserialize(String response)
-    {
+    public Payload jsonDeserialize(String response) {
         return gson.fromJson(response, Payload.class);
     }
 
@@ -615,7 +637,7 @@ public class SocketConn implements Connection {
         try {
             playerSocket.close();
         }
-        catch (IOException e) {
+        catch (IOException ignore) {
             ;
         }
     }

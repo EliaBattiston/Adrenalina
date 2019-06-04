@@ -437,7 +437,14 @@ public class ActionLambdaMap {
             //Dai 1 danno a ogni giocatore in quadrato che puoi vedere. Puoi usare questo effetto prima o dopo il movimento dell'effetto base.
 
             List<Point> visiblePoints = Map.visiblePoints(pl.getPosition(), map, 0);
-            Point chosenPoint = pl.getConn().choosePosition(visiblePoints, true);
+            List<Point> pointsWithPlayers = new ArrayList<>();
+
+            //Let the user choose only between the points with at least one pawn
+            for(Point p:visiblePoints)
+                if(p!=null && map.getCell(p).getPawns() != null && !map.getCell(p).getPawns().isEmpty())
+                    pointsWithPlayers.add(p);
+
+            Point chosenPoint = pl.getConn().choosePosition(pointsWithPlayers, true);
 
             for(Player p:map.getCell(chosenPoint).getPawns())
                 if(p!=pl)
