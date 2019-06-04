@@ -727,7 +727,7 @@ public class CLInterface implements UserInterface {
                         break;
 
                 }
-                if(c.getPawns().size() >= 1) {
+                if(!c.getPawns().isEmpty()) {
                     Player p = c.getPawns().get(0);
                     String bgd = "";
                     if(marked != null) {
@@ -1325,11 +1325,9 @@ public class CLInterface implements UserInterface {
      */
     public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
         println("\nScegli una direzione:");
-        int i = 0;
-        int starting = 1;
+
         String choose;
         if(!mustChoose) {
-            starting = 0;
             println("0 - Nessuna scelta");
         }
 
@@ -1386,8 +1384,8 @@ public class CLInterface implements UserInterface {
      */
     public Point choosePosition(List<Point> positions, boolean mustChoose) {
         List<Integer> options = new ArrayList<>();
-        int choose, actPos;
-        actPos = -1;
+        int choose;
+        int actPos = -1;
         if(!mustChoose)
             positions.add(view.getActive().getPosition());
         for(Point disp: positions) {
@@ -1563,7 +1561,7 @@ public class CLInterface implements UserInterface {
             ans = scan();
         }
         while(!ans.equalsIgnoreCase("s") && !ans.equalsIgnoreCase("n"));
-        return ans.toLowerCase().equals("s");
+        return ans.equalsIgnoreCase("s");
     }
 
     /**
@@ -1650,10 +1648,7 @@ public class CLInterface implements UserInterface {
         }
         while (!buffer.equalsIgnoreCase("r") && !buffer.equalsIgnoreCase("s"));
 
-        if(buffer.equalsIgnoreCase("r"))
-            return true;
-        else
-            return false;
+        return buffer.equalsIgnoreCase("r");
     }
 
     /**
@@ -1674,7 +1669,7 @@ public class CLInterface implements UserInterface {
     }
 
     private boolean checkIP(String ip) {
-        String pieces[];
+        String[] pieces;
         pieces = ip.split("\\.");
         if(ip.equals("localhost"))
             return true;

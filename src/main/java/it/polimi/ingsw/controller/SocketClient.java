@@ -34,6 +34,11 @@ public class SocketClient implements Client {
     private UserInterface user;
 
     /**
+     * Flag that says if a game is ended
+     */
+    private boolean gameEnded;
+
+    /**
      * Open socket reference to the server
      * @param ipAddr IP address of the server
      * @param port TCP port of the Server's socket
@@ -43,6 +48,8 @@ public class SocketClient implements Client {
      */
     public SocketClient(String ipAddr, int port, UserInterface userint) throws ServerNotFoundException, ServerDisconnectedException {
         user = userint;
+        gameEnded = false;
+
         boolean instanced = false;
         do {
             try {
@@ -58,7 +65,7 @@ public class SocketClient implements Client {
         } while(!instanced);
 
         try {
-            while (true)
+            while (!gameEnded)
                 receive();
         }
         catch (ServerDisconnectedException e) {
@@ -259,6 +266,7 @@ public class SocketClient implements Client {
      */
     public void endGame(List<Player> winnerList) {
         user.endGame(winnerList);
+        gameEnded = true;
     }
 
     /**
@@ -295,7 +303,6 @@ public class SocketClient implements Client {
         }
         catch (IOException e) {
             Logger.getGlobal().log( Level.SEVERE, e.toString(), e );
-            success = false;
         }
         return success;
     }

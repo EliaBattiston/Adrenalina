@@ -31,7 +31,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 //?fxme? a weapon already unloaded from the precedent turn won't be asked to be reloaded on the next one even if you have the ammo
-//fixme before the start of the game, during the settings we don't check if the server disconnects
 //todo delete purple lines in the maps images
 //todo check torpedine and vortex
 //fixme skipAction on second additional needs to be repositioned (maybe only if you can skip the choose position/choose player, it's an "old" bug)
