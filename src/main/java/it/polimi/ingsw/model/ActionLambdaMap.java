@@ -954,8 +954,20 @@ public class ActionLambdaMap {
             if(chosen.getAdditional() != null)
                 weaponActions.addAll( chosen.getAdditional().stream().filter(action->action.isFeasible(pl, map, mem)).collect(Collectors.toList()) );
 
-            if(!weaponActions.isEmpty()){
-                toExecute = pl.getConn().chooseAction(weaponActions, false);
+            List<Action> purchaseable = new ArrayList<>();
+
+            for(Action a : weaponActions)
+            {
+                if(pl.getAmmo(Color.RED) < a.getCost().stream().filter(c -> c == Color.RED).count()
+                        || pl.getAmmo(Color.BLUE) < a.getCost().stream().filter(c -> c == Color.BLUE).count()
+                        || pl.getAmmo(Color.YELLOW) < a.getCost().stream().filter(c -> c == Color.YELLOW).count())
+                {
+                    purchaseable.add(a);
+                }
+            }
+
+            if(!purchaseable.isEmpty()){
+                toExecute = pl.getConn().chooseAction(purchaseable, false);
                 if(toExecute!=null)
                 {
                     toExecute.execute(pl, map, mem);
@@ -967,7 +979,19 @@ public class ActionLambdaMap {
                     weaponActions.clear();
                     weaponActions.addAll(chosen.getAdditional().stream().filter(action -> action.isFeasible(pl, map, mem)).collect(Collectors.toList()));
                     weaponActions.remove(toExecute);
-                    if (!weaponActions.isEmpty())
+
+                    purchaseable.clear();
+                    for(Action a : weaponActions)
+                    {
+                        if(pl.getAmmo(Color.RED) < a.getCost().stream().filter(c -> c == Color.RED).count()
+                                || pl.getAmmo(Color.BLUE) < a.getCost().stream().filter(c -> c == Color.BLUE).count()
+                                || pl.getAmmo(Color.YELLOW) < a.getCost().stream().filter(c -> c == Color.YELLOW).count())
+                        {
+                            purchaseable.add(a);
+                        }
+                    }
+
+                    if (!purchaseable.isEmpty())
                     {
                         toExecute = pl.getConn().chooseAction(weaponActions, false);
                         if(toExecute!= null)
