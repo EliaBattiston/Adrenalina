@@ -43,6 +43,9 @@ public class CLInterface implements UserInterface {
     private static final int WEAPONSNUM = 21;
     private static final int POWERSNUM = 4;
 
+    private static final int CELLROWNUM = 8;
+    private static final int DOORHEIGHT = 2;
+
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BOLD = "\u001B[1m";
     private static final String ANSI_BLACK = "\u001B[30m";
@@ -658,51 +661,57 @@ public class CLInterface implements UserInterface {
                     highlight = ANSI_CYAN_BACKGROUND;
             }
         }
-        switch (row) {
-            case 0:
-                ret = ANSI_COLORS[c.getRoomNumber()] + corner(x,y,true,true);
-                switch (c.getSides()[0]) {
-                    case DOOR:
-                        for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
-                            ret += HOR;
-                        for(int i = 0; i < DOORDIM; i++)
-                            ret += SPACE;
-                        for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
-                            ret += HOR;
 
-                        break;
-                    case WALL:
-                        for(int i = 0; i < CELLDIM - 2; i++)
-                            ret += HOR;
-                        break;
-                    case NOTHING:
-                        for(int i = 0; i < CELLDIM - 2; i++)
-                            ret += L_HOR;
-                        break;
-                    default:
-                        break;
-                }
-                ret += corner(x,y,true, false) + ANSI_RESET;
-                break;
-            case 1:
-                if(c.getSides()[3] != Side.NOTHING)
+
+        if(row == 0) {
+            ret = ANSI_COLORS[c.getRoomNumber()] + corner(x,y,true,true);
+            switch (c.getSides()[0]) {
+                case DOOR:
+                    for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
+                        ret += HOR;
+                    for(int i = 0; i < DOORDIM; i++)
+                        ret += SPACE;
+                    for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
+                        ret += HOR;
+
+                    break;
+                case WALL:
+                    for(int i = 0; i < CELLDIM - 2; i++)
+                        ret += HOR;
+                    break;
+                case NOTHING:
+                    for(int i = 0; i < CELLDIM - 2; i++)
+                        ret += L_HOR;
+                    break;
+                default:
+                    break;
+            }
+            ret += corner(x,y,true, false) + ANSI_RESET;
+        }
+        else if(row == 1) {
+            if(c.getSides()[3] != Side.NOTHING)
+                ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
+            else
+                ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
+
+            ret += highlight + innerCellFormat(String.format("CELLA %-2d", (x + 4* y + 1))) + ANSI_RESET;
+
+            if(c.getSides()[1] != Side.NOTHING)
+                ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
+            else
+                ret += SPACE;
+        }
+        else if(row >= 2 && row < CELLROWNUM) {
+            if (c.getSides()[3] == Side.NOTHING)
+                ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
+            else {
+                if (c.getSides()[3] == Side.DOOR && row > DOORHEIGHT && row < CELLROWNUM - DOORHEIGHT) {
+                    ret = SPACE;
+                } else
                     ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
+            }
 
-                ret += highlight + innerCellFormat(String.format("CELLA %-2d", (x + 4* y + 1))) + ANSI_RESET;
-
-                if(c.getSides()[1] != Side.NOTHING)
-                    ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret += SPACE;
-                break;
-            case 2:
-                if(c.getSides()[3] != Side.NOTHING)
-                    ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
-
+            if (row == 2) {
                 String loot = "";
                 if(c.getRoomNumber() < 3 && c.hasSpawn(Color.values()[c.getRoomNumber()])) {
                     loot += highlight + ANSI_COLORS[c.getRoomNumber()] + "S" + SPACE;
@@ -731,30 +740,14 @@ public class CLInterface implements UserInterface {
                     }
                 }
                 ret += highlight + innerCellFormatRight(loot) + ANSI_RESET;
-                if(c.getSides()[1] != Side.NOTHING)
-                    ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret += SPACE;
-                break;
-            case 3:
-                switch (c.getSides()[3]) {
-                    case WALL:
-                        ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                        break;
-                    case NOTHING:
-                        ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
-                        break;
-                    case DOOR:
-                        ret = SPACE;
-                        break;
-
-                }
-                if(c.getPawns().size() >= 1) {
-                    Player p = c.getPawns().get(0);
+            }
+            else {
+                if (c.getPawns().size() >= row - 2) {
+                    Player p = c.getPawns().get(row - 3);
                     String bgd = "";
-                    if(marked != null) {
-                        for(Player mark: marked) {
-                            if (p.equals(mark)) {
+                    if (marked != null) {
+                        for (Player mark : marked) {
+                            if (p.getNick().equals(mark.getNick())) {
                                 bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
                             }
                         }
@@ -762,156 +755,48 @@ public class CLInterface implements UserInterface {
                     ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
                 }
                 else
-                    ret += highlight + innerCellFormat("") + ANSI_RESET;
+                ret += highlight + innerCellFormat("") + ANSI_RESET;
+            }
 
-                if(c.getSides()[1] == Side.WALL)
+            switch (c.getSides()[1]) {
+                case WALL:
                     ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
+                    break;
+                case NOTHING:
                     ret += SPACE;
-                break;
-            case 4:
-                switch (c.getSides()[3]) {
-                    case WALL:
-                        ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                        break;
-                    case NOTHING:
-                        ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
-                        break;
-                    case DOOR:
-                        ret = SPACE;
-                        break;
-
-                }
-                if(c.getPawns().size() >= 2) {
-                    Player p = c.getPawns().get(1);
-                    String bgd = "";
-                    if(marked != null) {
-                        for(Player mark: marked) {
-                            if (p.equals(mark)) {
-                                bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
-                            }
-                        }
-                    }
-                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
-                }
-                else
-                    ret += highlight + innerCellFormat("") + ANSI_RESET;
-
-                if(c.getSides()[1] == Side.WALL)
-                    ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret += SPACE;
-                break;
-            case 5:
-                switch (c.getSides()[3]) {
-                    case WALL:
-                        ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                        break;
-                    case NOTHING:
-                        ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
-                        break;
-                    case DOOR:
-                        ret = SPACE;
-                        break;
-
-                }
-                if(c.getPawns().size() >= 3) {
-                    Player p = c.getPawns().get(2);
-                    String bgd = "";
-                    if(marked != null) {
-                        for(Player mark: marked) {
-                            if (p.equals(mark)) {
-                                bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
-                            }
-                        }
-                    }
-                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
-                }
-                else
-                    ret += highlight + innerCellFormat("") + ANSI_RESET;
-
-                if(c.getSides()[1] == Side.WALL)
-                    ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret += SPACE;
-                break;
-            case 6:
-                if(c.getSides()[3] != Side.NOTHING)
-                    ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
-
-                if(c.getPawns().size() >= 4) {
-                    Player p = c.getPawns().get(3);
-                    String bgd = "";
-                    if(marked != null) {
-                        for(Player mark: marked) {
-                            if (p.equals(mark)) {
-                                bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
-                            }
-                        }
-                    }
-                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
-                }
-                else
-                    ret += highlight + innerCellFormat("") + ANSI_RESET;
-
-                if(c.getSides()[1] != Side.NOTHING)
-                    ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret += SPACE;
-                break;
-            case 7:
-                if(c.getSides()[3] != Side.NOTHING)
-                    ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
-
-                if(c.getPawns().size() >= 5) {
-                    Player p = c.getPawns().get(4);
-                    String bgd = "";
-                    if(marked != null) {
-                        for(Player mark: marked) {
-                            if (p.equals(mark)) {
-                                bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
-                            }
-                        }
-                    }
-                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
-                }
-                else
-                    ret += highlight + innerCellFormat("") + ANSI_RESET;
-
-                if(c.getSides()[1] != Side.NOTHING)
-                    ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
-                else
-                    ret += SPACE;
-                break;
-            case 8:
-                ret = ANSI_COLORS[c.getRoomNumber()] + corner(x,y,false,true);
-                switch (c.getSides()[2]) {
-                    case DOOR:
-                        for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
-                            ret += HOR;
-                        for(int i = 0; i < DOORDIM; i++)
-                            ret += SPACE;
-                        for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
-                            ret += HOR;
-
-                        break;
-                    case WALL:
-                        for(int i = 0; i < CELLDIM - 2; i++)
-                            ret += HOR;
-                        break;
-                    case NOTHING:
-                        for(int i = 0; i < CELLDIM - 2; i++)
-                            ret += SPACE;
-                        break;
-                }
-                ret += corner(x,y,false,false) + ANSI_RESET;
-                break;
-
+                    break;
+                case DOOR:
+                    if (row > DOORHEIGHT && row < CELLROWNUM - DOORHEIGHT) {
+                        ret += SPACE;
+                    } else
+                        ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
+                    break;
+            }
         }
+        else if(row == CELLROWNUM) {
+            ret = ANSI_COLORS[c.getRoomNumber()] + corner(x,y,false,true);
+            switch (c.getSides()[2]) {
+                case DOOR:
+                    for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
+                        ret += HOR;
+                    for(int i = 0; i < DOORDIM; i++)
+                        ret += SPACE;
+                    for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
+                        ret += HOR;
+
+                    break;
+                case WALL:
+                    for(int i = 0; i < CELLDIM - 2; i++)
+                        ret += HOR;
+                    break;
+                case NOTHING:
+                    for(int i = 0; i < CELLDIM - 2; i++)
+                        ret += SPACE;
+                    break;
+            }
+            ret += corner(x,y,false,false) + ANSI_RESET;
+        }
+
         return ret;
     }
 

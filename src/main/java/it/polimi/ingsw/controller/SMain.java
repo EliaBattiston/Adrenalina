@@ -206,6 +206,8 @@ public class SMain
         System.out.println(payload);
     }
 
+    public boolean inStopProcedure() { return false; }
+
     /**
      * Starts listening for new users' connections
      */
