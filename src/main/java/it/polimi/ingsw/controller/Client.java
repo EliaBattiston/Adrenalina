@@ -1,7 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.MatchView;
+import it.polimi.ingsw.clientmodel.MatchView;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

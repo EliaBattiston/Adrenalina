@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.clientmodel.CellView;
+import it.polimi.ingsw.clientmodel.PlayerView;
+import it.polimi.ingsw.clientmodel.RegularCellView;
 import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 
@@ -130,5 +133,16 @@ public class RegularCell extends Cell {
      */
     public boolean hasSpawn(Color c){
         return false;
+    }
+
+    public CellView getView()
+    {
+        List<PlayerView> pawnsView = new ArrayList<>();
+        for(Player p: getPawns())
+        {
+            pawnsView.add(p.getView());
+        }
+
+        return new RegularCellView(pawnsView, loot);
     }
 }

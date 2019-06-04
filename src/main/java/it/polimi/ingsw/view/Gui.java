@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.clientmodel.*;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
@@ -248,7 +249,7 @@ public class Gui extends Application{
      * Draw the map and the clickable areas on it
      * @param map the map that has to be drawn
      */
-    private void drawMap(Map map){
+    private void drawMap(MapView map){
         double width = 1142 * dimMult;
         double height = 866 * dimMult;
         double x = 18 * dimMult;
@@ -279,7 +280,7 @@ public class Gui extends Application{
      * @param map the map
      * @return the Pane that contains the loot
      */
-    private StackPane drawLootOnMap (Map map){
+    private StackPane drawLootOnMap (MapView map){
         StackPane root = new StackPane();
 
         //dimensions are the same
@@ -288,66 +289,66 @@ public class Gui extends Application{
         double y;
 
         //Manually add for each cell because they haven't the same dim. Create row by row from the top one
-        if(map.getCell(0, 0) != null && ((RegularCell)map.getCell(0, 0)).getLoot() != null) {
+        if(map.getCell(0, 0) != null && ((RegularCellView)map.getCell(0, 0)).getLoot() != null) {
             x = 310 * dimMult;
             y = 325 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(0, 0)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(0, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(1, 0) != null && ((RegularCell)map.getCell(1, 0)).getLoot() != null) {
+        if(map.getCell(1, 0) != null && ((RegularCellView)map.getCell(1, 0)).getLoot() != null) {
             x = 526 * dimMult;
             y = 325 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(1, 0)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(1, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(3, 0) != null && ((RegularCell)map.getCell(3, 0)).getLoot() != null) {
+        if(map.getCell(3, 0) != null && ((RegularCellView)map.getCell(3, 0)).getLoot() != null) {
             x = 900 * dimMult;
             y = 325 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(3, 0)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(3, 0)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(1, 1) != null && ((RegularCell)map.getCell(1, 1)).getLoot() != null) {
+        if(map.getCell(1, 1) != null && ((RegularCellView)map.getCell(1, 1)).getLoot() != null) {
             x = 526 * dimMult;
             y = 530 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(1, 1)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(1, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(2, 1) != null && ((RegularCell)map.getCell(2, 1)).getLoot() != null) {
+        if(map.getCell(2, 1) != null && ((RegularCellView)map.getCell(2, 1)).getLoot() != null) {
             x = 725 * dimMult;
             y = 530 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(2, 1)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(2, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(3, 1) != null && ((RegularCell)map.getCell(3, 1)).getLoot() != null) {
+        if(map.getCell(3, 1) != null && ((RegularCellView)map.getCell(3, 1)).getLoot() != null) {
             x = 900 * dimMult;
             y = 530 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(3, 1)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(3, 1)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(0, 2) != null && ((RegularCell)map.getCell(0, 2)).getLoot() != null) {
+        if(map.getCell(0, 2) != null && ((RegularCellView)map.getCell(0, 2)).getLoot() != null) {
             x = 335 * dimMult;
             y = 730 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(0, 2)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(0, 2)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(1, 2) != null && ((RegularCell)map.getCell(1, 2)).getLoot() != null) {
+        if(map.getCell(1, 2) != null && ((RegularCellView)map.getCell(1, 2)).getLoot() != null) {
             x = 526 * dimMult;
             y = 730 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(1, 2)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(1, 2)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
-        if(map.getCell(2, 2) != null && ((RegularCell)map.getCell(2, 2)).getLoot() != null) {
+        if(map.getCell(2, 2) != null && ((RegularCellView)map.getCell(2, 2)).getLoot() != null) {
             x = 725 * dimMult;
             y = 730 * dimMult;
-            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCell)map.getCell(2,2)).getLoot(), size);
+            GuiClickableObjectLoot card = new GuiClickableObjectLoot(((RegularCellView)map.getCell(2,2)).getLoot(), size);
             card.setPosition(x, y);
             root.getChildren().add(card);
         }
@@ -360,7 +361,7 @@ public class Gui extends Application{
      * @param map the map
      * @return the pane that contains the pawns
      */
-    private StackPane drawPawnsOnMap (Map map){
+    private StackPane drawPawnsOnMap (MapView map){
         StackPane root = new StackPane();
         double size = 50 * dimMult;
         double baseX = 224 * dimMult;
@@ -378,7 +379,7 @@ public class Gui extends Application{
                 x = baseX + i * (deltaCellX + (i==3?10:0)); //the last column is farther
                 y = baseY + j * deltaCellY;
                 if(map.getCell(i, j) != null) { //here X and Y are pointing at the top-left corner of the cell
-                    for (Player p : map.getCell(i, j).getPawns()) {
+                    for (PlayerView p : map.getCell(i, j).getPawns()) {
                         GuiClickableObjectPawn pawn = new GuiClickableObjectPawn(p, size, p.getNick().equals(match.getMyPlayer().getNick()));
                         if(n==1 || n==3)
                             y = baseY +  j * deltaCellY + size;
@@ -404,7 +405,7 @@ public class Gui extends Application{
      * @param map the map
      * @return the pane with the loot
      */
-    private StackPane drawWeaponsLoot(Map map){
+    private StackPane drawWeaponsLoot(MapView map){
         StackPane root = new StackPane();
         GuiClickableObjectWeapon card;
 
@@ -421,7 +422,7 @@ public class Gui extends Application{
 
         lootWeapons = new ArrayList<>();
         //First the blue spawn
-        SpawnCell c = (SpawnCell) map.getCell(2,0);
+        SpawnCellView c = (SpawnCellView) map.getCell(2,0);
         for(Weapon w:c.getWeapons()){
             card = new GuiClickableObjectWeapon(w, width, height, 0);
             lootWeapons.add(card);
@@ -438,7 +439,7 @@ public class Gui extends Application{
         x = 4 * dimMult;
         y = (335 - positionFix) * dimMult;
         //Red spawn
-        c = (SpawnCell) map.getCell(0, 1);
+        c = (SpawnCellView) map.getCell(0, 1);
         for(Weapon w:c.getWeapons()){
             card = new GuiClickableObjectWeapon(w, width, height, -90);
 
@@ -456,7 +457,7 @@ public class Gui extends Application{
         x = 1006 * dimMult;
         y = (510 - positionFix) * dimMult;
         //Yellow spawn
-        c = (SpawnCell) map.getCell(3, 2);
+        c = (SpawnCellView) map.getCell(3, 2);
         for(Weapon w:c.getWeapons()){
             card = new GuiClickableObjectWeapon(w, width, height, +90);
 
@@ -477,7 +478,7 @@ public class Gui extends Application{
      * @param players the players
      * @return the pane with the info buttons
      */
-    private StackPane drawEnemyInfo(List<Player> players) {
+    private StackPane drawEnemyInfo(List<PlayerView> players) {
         double boardW = 560 * dimMult;
         double boardX = 1222 * dimMult;
         double boardY = 74 * dimMult;
@@ -490,7 +491,7 @@ public class Gui extends Application{
         StackPane root = new StackPane();
         GuiClickableInfo info;
 
-        for(Player pl: players) {
+        for(PlayerView pl: players) {
             if(!pl.getNick().equals(match.getMyPlayer().getNick())) {
                 info = new GuiClickableInfo(pl, size, size);
 
@@ -515,7 +516,7 @@ public class Gui extends Application{
      * Draw the skulls
      * @param kills the array of kills
      */
-    private void drawSkulls(Kill[] kills) {
+    private void drawSkulls(List<KillView> kills) {
         double x = 108;
         double y = 73;
 
@@ -524,16 +525,16 @@ public class Gui extends Application{
         double skullH = 40 * dimMult;
 
         for(int s = 0; s<8; s++) {
-            if(kills[s].isUsed()) {
-                if(kills[s].getSkull())
+            if(kills.get(s).isUsed()) {
+                if(kills.get(s).getSkull())
                     gc.drawImage(GuiImagesMap.getImage("skull.png"), x * dimMult, y * dimMult, w, skullH);
                 else {
-                    if(kills[s].getOverkill()) {
-                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills[s].getKiller().getCharacter() + ".png", w, dropH), (x-6) * dimMult, (y-6) * dimMult);
-                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills[s].getKiller().getCharacter() + ".png", w, dropH), (x+6) * dimMult, y * dimMult);
+                    if(kills.get(s).getOverkill()) {
+                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), (x-6) * dimMult, (y-6) * dimMult);
+                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), (x+6) * dimMult, y * dimMult);
                     }
                     else
-                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills[s].getKiller().getCharacter() + ".png", w, dropH), x * dimMult, (y-3) * dimMult);
+                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), x * dimMult, (y-3) * dimMult);
                 }
             }
 
@@ -546,7 +547,7 @@ public class Gui extends Application{
      * Draw all the players boards
      * @param players the players
      */
-    private void drawAllPlayersBoards(List<Player> players){
+    private void drawAllPlayersBoards(List<PlayerView> players){
         //dimensions are the same for all the players
         double width = 560 * dimMult;
         double height = 134 * dimMult;
@@ -556,7 +557,7 @@ public class Gui extends Application{
         //calculate distance from board to board
         double deltaY = 169 * dimMult;
 
-        for(Player p : players){
+        for(PlayerView p : players){
             drawPlayerBoard(p, players, width, height, x, y);
             y += deltaY;
         }
@@ -571,7 +572,7 @@ public class Gui extends Application{
      * @param x x pos
      * @param y y pos
      */
-    private void drawPlayerBoard(Player player, List<Player> players, double width, double height, double x, double y){
+    private void drawPlayerBoard(PlayerView player, List<PlayerView> players, double width, double height, double x, double y){
 
         boolean frenzyMode = player.getFrenzyBoard();
 
@@ -597,8 +598,8 @@ public class Gui extends Application{
 
         //damages
         for(int i=0; i<12; i++){
-            if(player.getReceivedDamage()[i] != null)
-                gc.drawImage( GuiImagesMap.getImageWithShadow("drops/" + Player.fighterFromNick(players, player.getReceivedDamage()[i]) + ".png", widthDrop, heightDrop), xDrop, yDrop);
+            if(player.getDamage(i) != null)
+                gc.drawImage( GuiImagesMap.getImageWithShadow("drops/" + PlayerView.fighterFromNick(players, player.getDamage(i)) + ".png", widthDrop, heightDrop), xDrop, yDrop);
 
             xDrop += deltaX;
         }
@@ -609,7 +610,7 @@ public class Gui extends Application{
         deltaX = widthDrop * 1.1; //put just a little bit of space, we don't know how many marks a player will get
         for(String p: player.getReceivedMarks()){
             if(p != null)
-                gc.drawImage( GuiImagesMap.getImageWithShadow("drops/" + Player.fighterFromNick(players, p) + ".png", widthDrop, heightDrop), xDrop, yDrop);
+                gc.drawImage( GuiImagesMap.getImageWithShadow("drops/" + PlayerView.fighterFromNick(players, p) + ".png", widthDrop, heightDrop), xDrop, yDrop);
 
             xDrop += deltaX;
         }
@@ -722,7 +723,7 @@ public class Gui extends Application{
      * Draw my ammo on the shared GC
      * @param ammo my ammo
      */
-    private void drawMyAmmo(Ammunitions ammo){
+    private void drawMyAmmo(AmmoView ammo){
         //dimensions are the same
         double width = 35 * dimMult;
         double x = 837 * dimMult;
@@ -1125,7 +1126,7 @@ public class Gui extends Application{
      * Show enemy info
      * @param pl the player which the infos'll be shown
      */
-    private void showEnemyInfo(Player pl) {
+    private void showEnemyInfo(PlayerView pl) {
         Pane popupPane = new StackPane();
         Canvas canvas = createPopupCanvas();
         popupPane.getChildren().addAll(canvas);

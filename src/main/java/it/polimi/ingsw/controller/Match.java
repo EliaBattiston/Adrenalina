@@ -2,9 +2,10 @@ package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.polimi.ingsw.clientmodel.KillView;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.MatchView;
+import it.polimi.ingsw.clientmodel.MatchView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -371,7 +372,7 @@ public class Match implements Runnable
             if(p.getConn() != null)
             {
                 try{
-                    p.getConn().updateGame(getMatchView(p));
+                    p.getConn().updateGame(this.getView(p));
                 }
                 catch(ClientDisconnectedException e)
                 {
@@ -787,8 +788,8 @@ public class Match implements Runnable
      * @param viewer Player whose perspective will be reflected in the MatchView
      * @return View of the match, ready to be serialized and sent
      */
-    public MatchView getMatchView(Player viewer){
-        return new MatchView(game.getGameView(viewer), active, viewer, actionsNumber, phase, useFrenzy, firstFrenzy, Configuration.getInstance().getPlayerTurnSeconds());
+    public MatchView getView(Player viewer){
+        return new MatchView(viewer.getFullView(), active.getView(), game.getView(viewer), Configuration.getInstance().getPlayerTurnSeconds());
     }
 
     /**

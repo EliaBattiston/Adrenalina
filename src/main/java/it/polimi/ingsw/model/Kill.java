@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.clientmodel.KillView;
+
 import java.io.Serializable;
 
 /**
@@ -92,5 +94,10 @@ public class Kill implements Serializable {
     public boolean isUsed()
     {
         return skull || killer != null;
+    }
+
+    public KillView getView()
+    {
+        return new KillView(skull, killer==null?null:killer.getView(), overkill);
     }
 }

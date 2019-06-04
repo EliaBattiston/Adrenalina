@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.model.*;
 
 import java.util.List;

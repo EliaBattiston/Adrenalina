@@ -3,6 +3,8 @@ package it.polimi.ingsw.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import it.polimi.ingsw.clientmodel.CellView;
+import it.polimi.ingsw.clientmodel.MapView;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.io.FileNotFoundException;
@@ -20,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class Map implements Serializable {
     /**
-     *
+     * Identifying number of the map
      */
     private int id;
 
@@ -28,6 +30,11 @@ public class Map implements Serializable {
      * Matrix of cells representing the map
      */
     private Cell[][] cells;
+
+    //Defines block
+    private transient static final int mapWidth = 4;
+    private transient static final int mapHeight = 3;
+    private transient static final int mapsNumber = 4;
 
     public int getId() {
         return id;
@@ -40,7 +47,7 @@ public class Map implements Serializable {
      * @return cell reference (or null in case of out of bound coordinates or missing cell)
      */
     public Cell getCell(int x, int y) {
-        if(x >= 0 && x < 4 && y >= 0 && y < 3)
+        if(x >= 0 && x < mapWidth && y >= 0 && y < mapHeight)
             return cells[x][y];
         return null;
     }
@@ -76,7 +83,7 @@ public class Map implements Serializable {
      */
     public static Map jsonDeserialize(int mapNumber) {
         try{
-            if(mapNumber >= 1 && mapNumber <= 4)
+            if(mapNumber >= 1 && mapNumber <= mapsNumber)
             {
                 return Map.jsonDeserialize("map" + mapNumber + ".json");
             }
@@ -211,12 +218,12 @@ public class Map implements Serializable {
                         visible.addAll(map.getCell(viewer.getPosition().getX(), y).getPawns());
                 break;
             case EAST:
-                for(int x=viewer.getPosition().getX()+1; x<4; x++)
+                for(int x=viewer.getPosition().getX()+1; x<mapWidth; x++)
                     if(map.getCell(x, viewer.getPosition().getY()) != null)
                         visible.addAll(map.getCell(x, viewer.getPosition().getY()).getPawns());
                 break;
             case SOUTH:
-                for(int y=viewer.getPosition().getY()+1; y<3; y++)
+                for(int y=viewer.getPosition().getY()+1; y<mapHeight; y++)
                     if(map.getCell(viewer.getPosition().getX(), y) != null)
                         visible.addAll(map.getCell(viewer.getPosition().getX(), y).getPawns());
                 break;
@@ -527,9 +534,9 @@ public class Map implements Serializable {
         Cell selectedCell = null;
         List<Player> pawnsList = null;
 
-        for(int x = 0; x < 4; x++)
+        for(int x = 0; x < mapWidth; x++)
         {
-            for(int y = 0; y < 3; y++)
+            for(int y = 0; y < mapHeight; y++)
             {
                 //Don't check if the cell is unused
                 selectedCell = getCell(x, y);
@@ -546,5 +553,19 @@ public class Map implements Serializable {
                 }
             }
         }
+    }
+
+    public MapView getView()
+    {
+        CellView[][] cellsV = new CellView[mapWidth][mapHeight];
+        for(int x = 0; x < mapWidth; x++)
+        {
+            for (int y = 0; y < mapHeight; y++)
+            {
+                cellsV[x][y] = cells[x][y] == null ? null : cells[x][y].getView();
+            }
+        }
+
+        return new MapView(id, cellsV);
     }
 }

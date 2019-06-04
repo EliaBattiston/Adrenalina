@@ -3,8 +3,9 @@ package it.polimi.ingsw.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import it.polimi.ingsw.clientmodel.KillView;
 import it.polimi.ingsw.exceptions.UsedNameException;
-import it.polimi.ingsw.view.GameView;
+import it.polimi.ingsw.clientmodel.GameView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -194,19 +195,14 @@ public class Game {
      * @param viewer Client's player
      * @return GameView of this game
      */
-    public GameView getGameView(Player viewer){
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
-        Gson gson = gsonBuilder.create();
-
-        Game cleanable = gson.fromJson( this.jsonSerialize(), Game.class );
-
-        for(Player p : cleanable.players){
-            if(p!=viewer)
-                p.clearForView();
+    public GameView getView(Player viewer){
+        List<KillView> kills = new ArrayList<>();
+        for(Kill k: skullsBoard)
+        {
+            kills.add(k.getView());
         }
 
-        return new GameView(map, cleanable.players, skullsBoard);
+        return new GameView(map.getView(), kills);
     }
 
     /**

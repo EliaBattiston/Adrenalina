@@ -2,6 +2,8 @@ package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import it.polimi.ingsw.clientmodel.CellView;
+import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.model.*;
 
@@ -364,7 +366,7 @@ public class CLInterface implements UserInterface {
                     int y = cellN / 4;
                     int x = cellN - (y * 4);
                     if(view.getGame().getMap().getCell(x,y) != null) {
-                        Cell cell = view.getGame().getMap().getCell(x,y);
+                        CellView cell = view.getGame().getMap().getCell(x,y);
                         if(cell.getRoomNumber() < 3 && cell.hasSpawn(Color.values()[cell.getRoomNumber()])) {
                             print("ARMI: ");
                             SpawnCell sc = (SpawnCell) cell;

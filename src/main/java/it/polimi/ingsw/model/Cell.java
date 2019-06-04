@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.clientmodel.CellView;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 
 import java.io.Serializable;
@@ -110,4 +111,5 @@ public abstract class Cell implements Serializable {
      */
     public abstract boolean hasSpawn(Color c);
 
+    public abstract CellView getView();
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.Player;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -10,11 +11,11 @@ import java.util.List;
  * A GuiClickableObject that draws a pawn
  */
 public class GuiClickableObjectPawn extends GuiClickableObject {
-    private Player pl;
+    private PlayerView pl;
     private boolean viewer;
     private final static String whiteHex = "#ffffff";
 
-    public GuiClickableObjectPawn(Player pl, double size, boolean viewer){
+    public GuiClickableObjectPawn(PlayerView pl, double size, boolean viewer){
         super(size, size);
         this.pl = pl;
         img = GuiImagesMap.getImage( "playerPawn/" + pl.getCharacter().toString() + ".png" );
@@ -42,7 +43,7 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
         return false;
     }
 
-    public Player getPlayer() {
+    public PlayerView getPlayer() {
         return pl;
     }
 

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.clientmodel.GameView;
+import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
@@ -276,7 +278,7 @@ public class GuiInterface implements UserInterface{
             allGame.getSkulls()[3].setKiller(me,true);
             allGame.getSkulls()[4].setKiller(me,false);
 
-            return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.FRENZY, true, me, 120);
+            //return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.FRENZY, true, me, 120);
         }catch (Exception ex){
             ;
         }
