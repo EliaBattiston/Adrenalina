@@ -104,9 +104,9 @@ public class SpawnCell extends Cell{
             if(w.getBase().getCost() != null)
                 cost.addAll(w.getBase().getCost());
 
-            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
-                || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
-                || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            if(pl.getAmmo(Color.RED, true) < cost.stream().filter(c -> c == Color.RED).count()
+                || pl.getAmmo(Color.BLUE, true) < cost.stream().filter(c -> c == Color.BLUE).count()
+                || pl.getAmmo(Color.YELLOW, true) < cost.stream().filter(c -> c == Color.YELLOW).count())
             {
                 purchasable.remove(w);
             }
@@ -133,9 +133,9 @@ public class SpawnCell extends Cell{
             if(w.getBase().getCost() != null)
                 cost.addAll(w.getBase().getCost());
 
-            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
-                    || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
-                    || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            if(pl.getAmmo(Color.RED, true) < cost.stream().filter(c -> c == Color.RED).count()
+                    || pl.getAmmo(Color.BLUE, true) < cost.stream().filter(c -> c == Color.BLUE).count()
+                    || pl.getAmmo(Color.YELLOW, true) < cost.stream().filter(c -> c == Color.YELLOW).count())
             {
                 purchasable.remove(w);
             }
@@ -156,7 +156,8 @@ public class SpawnCell extends Cell{
         cost.clear();
         if(picked.getBase().getCost() != null)
             cost.addAll(picked.getBase().getCost());
-        pl.applyEffects(EffectsLambda.payAmmo(cost));
+
+        ActionLambdaMap.purchase(pl, cost);
 
         //Give the new weapon to the player
         pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {

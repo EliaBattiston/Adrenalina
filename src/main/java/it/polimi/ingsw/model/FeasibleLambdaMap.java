@@ -491,9 +491,9 @@ public class FeasibleLambdaMap
             if(w.getBase().getCost() != null)
                 cost.addAll(w.getBase().getCost());
 
-            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
-                    || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
-                    || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            if(pl.getAmmo(Color.RED, true) < cost.stream().filter(c -> c == Color.RED).count()
+                    || pl.getAmmo(Color.BLUE, true) < cost.stream().filter(c -> c == Color.BLUE).count()
+                    || pl.getAmmo(Color.YELLOW, true) < cost.stream().filter(c -> c == Color.YELLOW).count())
             {
                 reloadable.remove(w);
             }

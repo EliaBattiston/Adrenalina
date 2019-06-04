@@ -958,9 +958,9 @@ public class ActionLambdaMap {
 
             for(Action a : weaponActions)
             {
-                if(pl.getAmmo(Color.RED) < a.getCost().stream().filter(c -> c == Color.RED).count()
-                        || pl.getAmmo(Color.BLUE) < a.getCost().stream().filter(c -> c == Color.BLUE).count()
-                        || pl.getAmmo(Color.YELLOW) < a.getCost().stream().filter(c -> c == Color.YELLOW).count())
+                if(pl.getAmmo(Color.RED, true) < a.getCost().stream().filter(c -> c == Color.RED).count()
+                        || pl.getAmmo(Color.BLUE, true) < a.getCost().stream().filter(c -> c == Color.BLUE).count()
+                        || pl.getAmmo(Color.YELLOW, true) < a.getCost().stream().filter(c -> c == Color.YELLOW).count())
                 {
                     purchaseable.add(a);
                 }
@@ -970,9 +970,9 @@ public class ActionLambdaMap {
                 toExecute = pl.getConn().chooseAction(purchaseable, false);
                 if(toExecute!=null)
                 {
-                    toExecute.execute(pl, map, mem);
+                    purchase(pl, toExecute.getCost());
 
-                    pl.applyEffects(EffectsLambda.payAmmo(toExecute.getCost()));
+                    toExecute.execute(pl, map, mem);
 
                     Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " + toExecute.getName(), messageReceivers);
 
@@ -983,9 +983,9 @@ public class ActionLambdaMap {
                     purchaseable.clear();
                     for(Action a : weaponActions)
                     {
-                        if(pl.getAmmo(Color.RED) < a.getCost().stream().filter(c -> c == Color.RED).count()
-                                || pl.getAmmo(Color.BLUE) < a.getCost().stream().filter(c -> c == Color.BLUE).count()
-                                || pl.getAmmo(Color.YELLOW) < a.getCost().stream().filter(c -> c == Color.YELLOW).count())
+                        if(pl.getAmmo(Color.RED, true) < a.getCost().stream().filter(c -> c == Color.RED).count()
+                                || pl.getAmmo(Color.BLUE, true) < a.getCost().stream().filter(c -> c == Color.BLUE).count()
+                                || pl.getAmmo(Color.YELLOW, true) < a.getCost().stream().filter(c -> c == Color.YELLOW).count())
                         {
                             purchaseable.add(a);
                         }
@@ -996,9 +996,9 @@ public class ActionLambdaMap {
                         toExecute = pl.getConn().chooseAction(weaponActions, false);
                         if(toExecute!= null)
                         {
-                            toExecute.execute(pl, map, mem);
+                            purchase(pl, toExecute.getCost());
 
-                            pl.applyEffects(EffectsLambda.payAmmo(toExecute.getCost()));
+                            toExecute.execute(pl, map, mem);
 
                             Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " + toExecute.getName(), messageReceivers);
                         }
@@ -1035,9 +1035,9 @@ public class ActionLambdaMap {
             if(w.getBase().getCost() != null)
                 cost.addAll(w.getBase().getCost());
 
-            if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
-                    || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
-                    || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            if(pl.getAmmo(Color.RED, true) < cost.stream().filter(c -> c == Color.RED).count()
+                    || pl.getAmmo(Color.BLUE, true) < cost.stream().filter(c -> c == Color.BLUE).count()
+                    || pl.getAmmo(Color.YELLOW, true) < cost.stream().filter(c -> c == Color.YELLOW).count())
             {
                 reloadable.remove(w);
             }
@@ -1059,7 +1059,8 @@ public class ActionLambdaMap {
                 cost.add(chosen.getColor());
                 if(chosen.getBase().getCost() != null)
                     cost.addAll(chosen.getBase().getCost());
-                pl.applyEffects(EffectsLambda.payAmmo(cost));
+
+                purchase(pl, cost);
 
                 unloaded.remove(chosen);
 
@@ -1076,13 +1077,51 @@ public class ActionLambdaMap {
                 if(w.getBase().getCost() != null)
                     cost.addAll(w.getBase().getCost());
 
-                if(pl.getAmmo(Color.RED) < cost.stream().filter(c -> c == Color.RED).count()
-                        || pl.getAmmo(Color.BLUE) < cost.stream().filter(c -> c == Color.BLUE).count()
-                        || pl.getAmmo(Color.YELLOW) < cost.stream().filter(c -> c == Color.YELLOW).count())
+                if(pl.getAmmo(Color.RED, true) < cost.stream().filter(c -> c == Color.RED).count()
+                        || pl.getAmmo(Color.BLUE, true) < cost.stream().filter(c -> c == Color.BLUE).count()
+                        || pl.getAmmo(Color.YELLOW, true) < cost.stream().filter(c -> c == Color.YELLOW).count())
                 {
                     reloadable.remove(w);
                 }
             }
+        }
+    }
+
+    /**
+     * Perform actions needed to complete a purchase, by letting the user pay with powers too
+     * @param pl Player who has to make the purchase
+     * @param cost List of colors the player has to pay
+     */
+    public static void purchase(Player pl, List<Color> cost) throws ClientDisconnectedException
+    {
+        Color[] ammoColors = {Color.RED, Color.BLUE, Color.YELLOW};
+        List<Color> normalCost = new ArrayList<>();
+        int amount;
+
+        //Use normal ammo if they are available
+        for(Color c : ammoColors)
+        {
+            amount = (int)cost.stream().filter(color -> color == c).count();
+            for(int i=0; i<amount; i++)
+                normalCost.add(c);
+        }
+
+        pl.applyEffects(EffectsLambda.payAmmo(normalCost));
+        cost.removeAll(normalCost);
+
+        List<Power> usable = new ArrayList<>();
+        Power chosen;
+        int index;
+        //If normal ammo are not enough, ask the player which powers he wants to use
+        while(!cost.isEmpty())
+        {
+            usable.clear();
+            usable.addAll(pl.getPowers().stream().filter(p->p.getColor() == cost.get(0)).collect(Collectors.toList()));
+
+            chosen = pl.getConn().discardPower(usable, true);
+            pl.applyEffects(EffectsLambda.removePower(chosen, pl));
+
+            cost.remove(0);
         }
     }
 }
