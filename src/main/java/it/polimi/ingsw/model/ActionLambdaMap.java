@@ -122,7 +122,7 @@ public class ActionLambdaMap {
             EffectsLambda.giveDamage(pl, chosen, 1);
         });
 
-        //(Point) memory
+        //((Player[])memory)[0]
         data.put("w8-b", (pl, map, memory)->{
             //Scegli un quadrato che puoi vedere ad almeno 1 movimento di distanza. Un vortice si apre in quel punto. Scegli un bersaglio nel quadrato
             //in cui si trova il vortice o distante 1 movimento. Muovi il bersaglio nel quadrato in cui si trova il vortice e dagli 2 danni.
@@ -156,7 +156,7 @@ public class ActionLambdaMap {
             chosen.applyEffects(EffectsLambda.move(chosen, vortexPoint, map));
             EffectsLambda.giveDamage(pl, chosen, 2);
 
-            ((Point) memory).set(vortexPoint);
+            ((Player[])memory)[0] = chosen;
         });
 
         data.put("w9-b", (pl, map, memory)->{
@@ -368,8 +368,20 @@ public class ActionLambdaMap {
                 EffectsLambda.giveDamage(pl, chosenOther, 1);
 
             targets = Map.visiblePlayers(pl, map);
-            targets.remove(((Player[])memory)[0]);
-            targets.remove(((Player[])memory)[1]);
+            boolean found = false;
+            for(int i = 0; i < targets.size() && !found; i++) {
+                if(targets.get(i).getNick().equals(((Player[])memory)[0].getNick())) {
+                    targets.remove(i);
+                    found = true;
+                }
+            }
+            found = false;
+            for(int i = 0; i < targets.size() && !found; i++) {
+                if(targets.get(i).getNick().equals(((Player[])memory)[1].getNick())) {
+                    targets.remove(i);
+                    found = true;
+                }
+            }
 
             if(!targets.isEmpty()) {
                 Player chosenDifferent = pl.getConn().chooseTarget(targets, false);
@@ -383,6 +395,7 @@ public class ActionLambdaMap {
             //Dai 1 danno a un secondo bersaglio che il tuo primo bersaglio può vedere.
 
             List<Player> targets = Map.visiblePlayers(((Player[])memory)[0], map);
+            targets.remove(pl);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             EffectsLambda.giveDamage(pl, chosen, 1);
 
@@ -392,8 +405,9 @@ public class ActionLambdaMap {
         //((Player[])memory)[1]
         data.put("w3-ad2", (pl, map, memory)->{
             //Dai 2 danni a un terzo bersaglio che il tuo secondo bersaglio può vedere. Non puoi usare questo effetto se prima non hai usato reazione a catena.
-
             List<Player> targets = Map.visiblePlayers(((Player[])memory)[1], map);
+            targets.remove(pl);
+            targets.remove(((Player[]) memory)[0]);
             Player chosen = pl.getConn().chooseTarget(targets, true);
             EffectsLambda.giveDamage(pl, chosen, 1);
         });
@@ -410,15 +424,18 @@ public class ActionLambdaMap {
         //Dai 1 danno aggiuntivo al tuo bersaglio.
         data.put("w4-ad2", (pl, map, memory)-> EffectsLambda.giveDamage(pl, ((Player[])memory)[0], 1) );
 
-        //FIXME the feasible told me I could do this but when asked, I didn't have any possible target even if I really could
-        //(Point) memory
+        //((Player[])memory)[0]
         data.put("w8-ad1", (pl, map, memory)->{
             //Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.
 
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
-            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set((Point)memory));
+            Player shot = ((Player[])memory)[0];
+            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) -> position.set(shot.getPosition()));
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, ((p1, p2) -> map.distance(p1,p2)<=1));
             List<Player> chosen = new ArrayList<>();
+
+            targets.remove(shot);
+            targets.remove(pl);
 
             chosen.add(pl.getConn().chooseTarget(targets, true));
             targets.removeAll(chosen);
@@ -427,7 +444,7 @@ public class ActionLambdaMap {
 
             for(Player p:chosen){
                 if(p!=null){
-                    p.applyEffects(EffectsLambda.move(p, (Point)memory, map));
+                    p.applyEffects(EffectsLambda.move(p, shot.getPosition(), map));
                     EffectsLambda.giveDamage(pl, p, 1);
                 }
             }
@@ -939,11 +956,8 @@ public class ActionLambdaMap {
             case "w3-b":
             case "w4-b":
             case "w16-b":
-                mem = new Player[2];
-                break;
-
             case "w8-b":
-                mem = new Point(0, 0);
+                mem = new Player[2];
                 break;
 
             default:
