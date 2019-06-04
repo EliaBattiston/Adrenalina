@@ -40,6 +40,8 @@ public class CLInterface implements UserInterface {
     private static final int CELLDIM = 20;
     private static final int DOORDIM = 4;
     private static final int TOPSPACE = 50;
+    private static final int WEAPONSNUM = 21;
+    private static final int POWERSNUM = 4;
 
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BOLD = "\u001B[1m";
@@ -297,25 +299,29 @@ public class CLInterface implements UserInterface {
         }
         println("");
         println("Effetti:");
-        println(String.format("%13s: %s", "Base", weapon.getBase().getDescription()));
+
+        String formatter = "%13s: %s";
+        String costString = ", costo";
+
+        println(String.format(formatter, "Base", weapon.getBase().getDescription()));
         if(weapon.getAlternative() != null) {
             String cost = "";
             for(Color c: weapon.getAlternative().getCost()) {
                 cost += " " + formatColorBox(c);
             }
-            println(String.format("%13s: %s", "Alternativo", "(" + weapon.getAlternative().getName() + ", costo" + cost + ") " + weapon.getAlternative().getDescription()));
+            println(String.format(formatter, "Alternativo", "(" + weapon.getAlternative().getName() + costString + cost + ") " + weapon.getAlternative().getDescription()));
         }
         if(weapon.getAdditional() != null) {
             String cost = "";
             for(Color c: weapon.getAdditional().get(0).getCost()) {
                 cost += " " + formatColorBox(c);
             }
-            println(String.format("%13s: %s", "Addizionale", "(" + weapon.getAdditional().get(0).getName() + ", costo" + cost + ") " + weapon.getAdditional().get(0).getDescription()));
+            println(String.format(formatter, "Addizionale", "(" + weapon.getAdditional().get(0).getName() + costString + cost + ") " + weapon.getAdditional().get(0).getDescription()));
             if(weapon.getAdditional().size() == 2) {
                 for(Color c: weapon.getAdditional().get(1).getCost()) {
                     cost += " " + formatColorBox(c);
                 }
-                println(String.format("%13s: %s", "Addizionale", "(" + weapon.getAdditional().get(1).getName() + ", costo" + cost + ") " + weapon.getAdditional().get(1).getDescription()));
+                println(String.format(formatter, "Addizionale", "(" + weapon.getAdditional().get(1).getName() + costString + cost + ") " + weapon.getAdditional().get(1).getDescription()));
             }
         }
     }
@@ -400,7 +406,7 @@ public class CLInterface implements UserInterface {
                     Gson gson = new Gson();
                     Game baseGame = gson.fromJson(reader, Game.class);
                     List<Weapon> weaplist = new ArrayList<>();
-                    while(weaplist.size() < 21) {
+                    while(weaplist.size() < WEAPONSNUM) {
                         weaplist.add(baseGame.getWeaponsDeck().draw());
                     }
                     Collections.sort(weaplist, new Comparator<Weapon>() {
@@ -428,7 +434,7 @@ public class CLInterface implements UserInterface {
                     Gson gsonb = new Gson();
                     Game baseGameb = gsonb.fromJson(readerb, Game.class);
                     List<Power> powlist = new ArrayList<>();
-                    while(powlist.size() < 4) {
+                    while(powlist.size() < POWERSNUM) {
                         powlist.add(baseGameb.getPowersDeck().draw());
                     }
                     for(int i = 0; i < powlist.size(); i++) {
@@ -541,6 +547,9 @@ public class CLInterface implements UserInterface {
         }
     }
 
+    /**
+     * Prints out infos about the Skulls board
+     */
     public void skullsInfo() {
         print("\nTeschi: ");
         for(Kill k: view.getGame().getSkullsBoard()) {
@@ -559,10 +568,23 @@ public class CLInterface implements UserInterface {
         }
     }
 
+    /**
+     * Overload of the generalMenu method, with gameInfo parameter fixed to true
+     * @param options List of options and strings to be printed
+     * @param starting Starting value of the menu
+     * @return Menu index choose
+     */
     private int generalMenu(List<String> options, int starting) {
         return generalMenu(options, starting, true);
     }
 
+    /**
+     * General method to print out a choosing menu and to check out the user's answer before ending
+     * @param options List of options and strings to be printed
+     * @param starting Starting value of the menu
+     * @param gameInfo If true enables the Game info submenu
+     * @return Menu index choose
+     */
     private int generalMenu(List<String> options, int starting, boolean gameInfo) {
         int choose;
 
