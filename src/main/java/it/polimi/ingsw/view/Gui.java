@@ -34,15 +34,18 @@ import static java.lang.Math.max;
 //todo delete purple lines in the maps images
 //todo check torpedine and vortex
 //fixme skipAction on second additional needs to be repositioned (maybe only if you can skip the choose position/choose player, it's an "old" bug)
+
+//todo move all the strings printed in final Strings
+//todo move the ratios in defines
+//todo break this class in multiple ones and the gui class too
 /**
  * The Gui class that extends the JavaFX Application
  */
 public class Gui extends Application{
     private final static double SETTINGSFONTDIM = 28;
     private final static double POPUPFONTDIM = 22;
-
-    //flag for the disconnection type
-    private static boolean serverDisconnectedOnHisOwn = false;
+    private final static String whiteHex = "#ffffff";
+    private final static String confirmButtonText = "Conferma";
 
     //Ui Executor
     private static Executor uiExec = Platform::runLater;
@@ -168,7 +171,7 @@ public class Gui extends Application{
     private Pane drawGame(){
         Pane pane = new Pane();
         Canvas canvas;
-        StackPane myWeapons, MyPowers, weaponsLoot, mapLoot, pawns, info;
+        StackPane myWeaponsPane, MyPowers, weaponsLoot, mapLoot, pawns, info;
 
         masterPane = new Pane();
         canvas = new Canvas(backgroundWidth, backgroundHeight);
@@ -181,14 +184,14 @@ public class Gui extends Application{
         drawMyAmmo(match.getMyPlayer().getAmmo());
         drawSkulls(match.getGame().getSkullsBoard());
 
-        myWeapons = drawMyWeapons(match.getMyPlayer().getWeapons());
+        myWeaponsPane = drawMyWeapons(match.getMyPlayer().getWeapons());
         MyPowers = drawMyPowers(match.getMyPlayer().getPowers());
         weaponsLoot = drawWeaponsLoot(match.getGame().getMap());
         mapLoot = drawLootOnMap(match.getGame().getMap());
         pawns = drawPawnsOnMap(match.getGame().getMap());
         info = drawEnemyInfo(match.getGame().getPlayers());
 
-        myWeapons.setPickOnBounds(false);
+        myWeaponsPane.setPickOnBounds(false);
         MyPowers.setPickOnBounds(false);
         weaponsLoot.setPickOnBounds(false);
         mapLoot.setPickOnBounds(false);
@@ -229,7 +232,7 @@ public class Gui extends Application{
         skipAction.setOnMouseExited(e-> skipAction.setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0);") );
         skipAction.setPickOnBounds(false);
 
-        pane.getChildren().addAll( canvas, infoTextCanvas,  myWeapons, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
+        pane.getChildren().addAll( canvas, infoTextCanvas,  myWeaponsPane, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
 
         if(runAction!=null)//check if one it's initialized all are
             pane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
@@ -476,7 +479,6 @@ public class Gui extends Application{
      */
     private StackPane drawEnemyInfo(List<Player> players) {
         double boardW = 560 * dimMult;
-        double boardH = 134 * dimMult;
         double boardX = 1222 * dimMult;
         double boardY = 74 * dimMult;
 
@@ -765,6 +767,7 @@ public class Gui extends Application{
      */
     private void listenRequests(){
         exchanger = GuiExchanger.getInstance();
+        boolean serverDisconnectedOnHisOwn = false; //todo check it works
         while(exchanger.getActualInteraction()!=Interaction.CLOSEAPP) {
             exchanger.waitRequestIncoming();
 
@@ -885,6 +888,7 @@ public class Gui extends Application{
                 case ENDGAME:
                     uiExec.execute(()-> settingsMessage(exchanger.getMessage()));
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
+                    break;
                 case NONE:
                 default:
                     break;
@@ -1379,7 +1383,7 @@ public class Gui extends Application{
         popupPane.getChildren().addAll(grid);
 
         Label l = new Label(message);
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
         grid.add(l,0,0);
 
         List<String> roomsNames = new ArrayList<>();
@@ -1401,13 +1405,13 @@ public class Gui extends Application{
         for(String s : roomsNames){
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
             if(row==1)
                 radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
-        Button submit = new Button("Conferma");
+        Button submit = new Button(confirmButtonText);
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             System.out.println(answer + ": " + roomsNames.indexOf(answer));
@@ -1450,7 +1454,7 @@ public class Gui extends Application{
         popupPane.getChildren().addAll(grid);
 
         Label l = new Label(message);
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
         grid.add(l,0,0);
 
         List<String> colorNames = new ArrayList<>();
@@ -1466,13 +1470,13 @@ public class Gui extends Application{
         for(String s : colorNames){
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
             if(row==1)
                 radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
-        Button submit = new Button("Conferma");
+        Button submit = new Button(confirmButtonText);
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             Color c = null;
@@ -1522,7 +1526,7 @@ public class Gui extends Application{
         popupPane.getChildren().addAll(grid);
 
         Label l = new Label(message);
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
 
@@ -1532,7 +1536,7 @@ public class Gui extends Application{
         for(Direction d:dirs){
             RadioButton radio = new RadioButton(d.toString());
             radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
             if(row==1)
                 radio.setSelected(true);
             GridPane.setHalignment(radio, HPos.CENTER);
@@ -1540,7 +1544,7 @@ public class Gui extends Application{
         }
 
         //continue here
-        Button submit = new Button("Conferma");
+        Button submit = new Button(confirmButtonText);
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             System.out.println(answer);
@@ -1585,7 +1589,6 @@ public class Gui extends Application{
         GridPane grid = new GridPane();
 
         grid.setAlignment(Pos.CENTER);
-        //grid.setHgap(10);
         grid.setVgap(10);
         grid.setMaxWidth(width);
         grid.setMinWidth(width);
@@ -1613,14 +1616,14 @@ public class Gui extends Application{
 
         Label l = new Label(message);
         l.setFont(getFont(SETTINGSFONTDIM*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
         l.setTextAlignment(TextAlignment.CENTER);
         l.setWrapText(true);
 
         TextField field = new TextField("localhost");
         field.setFont(Font.font(SETTINGSFONTDIM*dimMult));
 
-        Button submit = new Button("Conferma");
+        Button submit = new Button(confirmButtonText);
         submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
         submit.setOnAction((e)->{
             String answer = field.getText();
@@ -1660,7 +1663,7 @@ public class Gui extends Application{
         l.setPrefSize(480 * dimMult, 420 * dimMult);
         l.setWrapText(true);
         l.setFont(getFont(SETTINGSFONTDIM*0.8*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
 
         GridPane.setHalignment(l, HPos.RIGHT);
         GridPane.setValignment(l, VPos.TOP);
@@ -1684,7 +1687,7 @@ public class Gui extends Application{
 
         Label l = new Label(message);
         l.setFont(getFont(SETTINGSFONTDIM*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
         l.setWrapText(true);
         l.setTextAlignment(TextAlignment.CENTER);
         GridPane.setHalignment(l, HPos.CENTER);
@@ -1695,14 +1698,14 @@ public class Gui extends Application{
         for(String s:buttons){
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(group);
-            radio.setTextFill(javafx.scene.paint.Color.web("#ffffff"));
+            radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
             radio.setFont(getFont( SETTINGSFONTDIM*dimMult));
             if(row==1)
                 radio.setSelected(true);
             grid.add(radio, 0, row++);
         }
 
-        Button submit = new Button("Conferma");
+        Button submit = new Button(confirmButtonText);
         submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
         submit.setOnAction(eventHandler);
         submit.setDefaultButton(true);

@@ -30,7 +30,7 @@ public class CellAdapter implements JsonSerializer<Cell>, JsonDeserializer<Cell>
             return context.deserialize(element, Class.forName("it.polimi.ingsw.model." + type));
         } catch (ClassNotFoundException cnfe) {
             Logger.getGlobal().log( Level.SEVERE, cnfe.toString());
-            throw new JsonParseException("Unknown element type: " + type, cnfe);
+            return null;
         }
     }
 }

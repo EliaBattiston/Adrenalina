@@ -510,6 +510,7 @@ public class SocketClient implements Client {
                 case ENDGAME:
                     ArrayList<Player> param = gson.fromJson(message.getParameters(), new TypeToken<List<Player>>() {}.getType());
                     endGame(param);
+                    break;
                 default:
                     answer.setType(null);
             }

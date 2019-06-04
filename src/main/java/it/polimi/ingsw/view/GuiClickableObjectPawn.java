@@ -12,6 +12,7 @@ import java.util.List;
 public class GuiClickableObjectPawn extends GuiClickableObject {
     private Player pl;
     private boolean viewer;
+    private final static String whiteHex = "#ffffff";
 
     public GuiClickableObjectPawn(Player pl, double size, boolean viewer){
         super(size, size);
@@ -25,7 +26,7 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
         if(this.viewer)
             this.setEffect(makeGlow("#123aff"));
         else
-            this.setEffect(makeGlow("#ffffff"));
+            this.setEffect(makeGlow(whiteHex));
     }
 
     /**
@@ -48,23 +49,24 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
     /**
      * Resets the styles to the basic ones
      */
+    @Override
     public void resetEventsStyle(){
         setOnMouseEntered(e -> setEffect(makeGlow("#d1d331")));
-        setOnMouseExited(e-> setEffect(makeGlow("#ffffff")) );
-        setEffect(makeGlow("#ffffff"));
+        setOnMouseExited(e-> setEffect(makeGlow(whiteHex)) );
+        setEffect(makeGlow(whiteHex));
     }
 
     /**
      * Sets the styles to clickable ones
      */
+    @Override
     public void setEventsChoosable(){
         setEffect(makeGlow("#36ff0e"));
         setOnMouseEntered(e -> setEffect(makeGlow("#e2ff24")) );//different green
         setOnMouseExited(e-> setEffect(makeGlow("#36ff0e")) );
     }
 
-    private DropShadow makeGlow(String color)
-    {
+    private DropShadow makeGlow(String color) {
         return new DropShadow(BlurType.GAUSSIAN, javafx.scene.paint.Color.web(color), 10, 0.7, 0, 0);
     }
 }

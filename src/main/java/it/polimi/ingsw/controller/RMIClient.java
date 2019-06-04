@@ -52,7 +52,8 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
                         sleep(2000);
                     }
                 }
-                catch (Exception e) {
+                catch (Exception ignore) {
+                    ;
                 }
                 user.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
                 System.exit(0);

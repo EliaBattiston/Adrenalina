@@ -16,6 +16,13 @@ public class GuiImagesMap {
     private static HashMap<String, Image> map = null;
 
     /**
+     * The constructor is private because it's a Singleton Class
+     */
+    private GuiImagesMap(){
+
+    }
+
+    /**
      * Return the image at the path requested. The root path where this method look for the image is '/images/' inside
      * the resources folder.
      * It caches the image too.

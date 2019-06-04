@@ -63,7 +63,7 @@ public class CLInterface implements UserInterface {
     private static final String[] ANSI_COLORS = {ANSI_RED, ANSI_BLUE, ANSI_YELLOW, ANSI_WHITE, ANSI_PURPLE, ANSI_GREEN, ANSI_CYAN, ANSI_BLACK};
     private static final String[] ANSI_BACKGROUNDS = {ANSI_RED_BACKGROUND, ANSI_BLUE_BACKGROUND, ANSI_YELLOW_BACKGROUND, ANSI_WHITE_BACKGROUND, ANSI_PURPLE_BACKGROUND, ANSI_GREEN_BACKGROUND, ANSI_CYAN_BACKGROUND, ANSI_BLACK_BACKGROUND};
 
-    private static final String BOX = "◼";//"\u25FC";
+    private static final String BOX = "◼";
     private static final String SKULL = "☠";
 
     private static final String SPACE = "\u0020";
@@ -889,6 +889,8 @@ public class CLInterface implements UserInterface {
                 ret += corner(x,y,false,false) + ANSI_RESET;
                 break;
 
+            default:
+                break;
         }
         return ret;
     }
@@ -1305,6 +1307,9 @@ public class CLInterface implements UserInterface {
                     break;
                 case 5:
                     s += ANSI_GREEN + "VERDE";
+                    break;
+                default:
+                    break;
             }
             s += ANSI_RESET;
             options.add(s);
@@ -1521,6 +1526,8 @@ public class CLInterface implements UserInterface {
                     break;
                 case YELLOW:
                     s += ANSI_YELLOW + BOX + ANSI_RESET + " ";
+                    break;
+                default:
                     break;
             }
             options.add(s);

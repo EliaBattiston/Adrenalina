@@ -63,7 +63,7 @@ public class Match implements Runnable
     /**
      * Number of skulls
      */
-    private int skullsNum;
+    private int skullsNum; //keep this even if Sonarqube ask to delete it
 
     /**
      * Number of the current turn
@@ -290,11 +290,8 @@ public class Match implements Runnable
         Action chosen;
 
         //Check if spawning is needed
-        if(!active.isSpawned())
-        {
-            if(!spawnPlayer(active))
-                return;
-        }
+        if(!active.isSpawned() && !spawnPlayer(active))
+            return;
 
         //Let players use their actions
         for( ; actionsNumber>0 ; actionsNumber--)
@@ -778,7 +775,8 @@ public class Match implements Runnable
                 if(p.getConn() != null)
                     p.getConn().endGame(winners);
             }
-            catch (ClientDisconnectedException e) {
+            catch (ClientDisconnectedException ignore) {
+                ;
             }
         }
         System.out.println("\u001b[34mIl gioco è terminato\u001B[0m");

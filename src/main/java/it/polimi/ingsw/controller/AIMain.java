@@ -11,17 +11,6 @@ import it.polimi.ingsw.view.UserInterface;
 public class AIMain
 {
     /**
-     * Client's representation of the game data
-     */
-    private Game game;
-
-    /**
-     * Connection to the server
-     */
-    private Client connection;
-
-
-    /**
      * Endpoint for interface control
      */
     private UserInterface ui;
@@ -35,14 +24,13 @@ public class AIMain
         ui = new AInterface();
 
         try {
-            connection = new SocketClient(ip, 1906, ui);
+            new SocketClient(ip, 1906, ui);
         }
         catch (ServerNotFoundException e) {
             ui.generalMessage("Server non trovato, riprova\n");
         }
         catch (ServerDisconnectedException e) {
             ui.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
-            return;
         }
     }
 
@@ -55,14 +43,13 @@ public class AIMain
         ui = new AInterface();
 
         try {
-            connection = new SocketClient(ip, 1906, ui);
+            new SocketClient(ip, 1906, ui);
         }
         catch (ServerNotFoundException e) {
             ui.generalMessage("Server non trovato, riprova\n");
         }
         catch (ServerDisconnectedException e) {
             ui.generalMessage("Server disconnesso inaspettatamente, rilancia il client e riprova\n");
-            return;
         }
     }
 }
