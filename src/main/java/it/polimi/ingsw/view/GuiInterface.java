@@ -585,7 +585,7 @@ public class GuiInterface implements UserInterface{
         int i=1;
         for(Player p:winnerList){
             if(p!=null) {
-                message += i +"° @" + p.getPoints() + " punti è " + p.getNick();
+                message += i +"° @" + p.getPoints() + " punti è " + p.getNick() + "\n";
                 i++;
             }
         }
