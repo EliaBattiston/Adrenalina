@@ -61,11 +61,6 @@ public class Match implements Runnable
     private Activities activities;
 
     /**
-     * Number of skulls
-     */
-    private int skullsNum; //keep this even if Sonarqube ask to delete it
-
-    /**
      * Number of the current turn
      */
     private int turnNumber;
@@ -88,7 +83,6 @@ public class Match implements Runnable
         this.phase = GamePhase.INITIALIZING;
         this.firstFrenzy = null;
         this.frenzyKills = new ArrayList<>();
-        this.skullsNum = skullsNum;
         this.turnNumber = 0;
         this.gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
 
