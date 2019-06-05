@@ -10,6 +10,7 @@ import it.polimi.ingsw.view.MatchView;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -590,7 +591,7 @@ public class SocketConn implements Connection {
             out.flush();
             success = true;
         }
-        catch (NoSuchElementException e) {
+        catch (NoSuchElementException | SocketException e) {
             throw new ClientDisconnectedException();
         }
         catch (IOException e) {
@@ -611,7 +612,7 @@ public class SocketConn implements Connection {
             Scanner in = new Scanner(playerSocket.getInputStream());
             response = in.nextLine();
         }
-        catch (NoSuchElementException e) {
+        catch (NoSuchElementException | SocketException e) {
             throw new ClientDisconnectedException();
         }
         catch (IOException e) {

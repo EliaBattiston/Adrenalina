@@ -47,12 +47,12 @@ public class SMain
      */
     private List<Match> loadedMatches;
 
-    private boolean stop;
     private Timer[] timer;
     private final Object lock;
     private final Object cancelLock;
     private final Object matchLock[];
     private static final int MINSKULLS = 5;
+    private static final int MAXSKULLS = 8;
     private boolean[] startedTimer;
 
     /**
@@ -64,7 +64,7 @@ public class SMain
 
         lock = new Object();
         cancelLock = new Object();
-        matchLock = new Object[8 - MINSKULLS + 1];
+        matchLock = new Object[MAXSKULLS - MINSKULLS + 1];
         for(int i = 0; i <  matchLock.length; i++) {
             matchLock[i] = new Object();
         }
@@ -150,11 +150,9 @@ public class SMain
                 }
             }
 
-            stop = false;
-
-            waiting = new Match[8 - MINSKULLS + 1];
-            timer = new Timer[8 - MINSKULLS + 1];
-            startedTimer = new boolean[8 - MINSKULLS + 1];
+            waiting = new Match[MAXSKULLS - MINSKULLS + 1];
+            timer = new Timer[MAXSKULLS - MINSKULLS + 1];
+            startedTimer = new boolean[MAXSKULLS - MINSKULLS + 1];
 
             for(int i = 0; i < timer.length; i++) {
                 timer[i] = new Timer();
@@ -208,6 +206,8 @@ public class SMain
         System.out.println(payload);
     }
 
+    public boolean inStopProcedure() { return false; }
+
     /**
      * Starts listening for new users' connections
      */
@@ -219,14 +219,6 @@ public class SMain
         Thread rmiT = new Thread(rmiHandler);
         socketT.start();
         rmiT.start();
-    }
-
-    /**
-     * Checks for server going to stop (running stopping routine)
-     * @return true in case of running stopping  routine, false elsewhere
-     */
-    public boolean inStopProcedure() {
-        return stop;
     }
 
     public void newConnection(Connection connection) {

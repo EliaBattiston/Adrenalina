@@ -123,6 +123,7 @@ public class FeasibleLambdaMap
             //Scegli 1 bersaglio che non puoi vedere e dagli 3 danni.
 
             List<Player> targets = Map.playersInTheMap(map);
+            boolean found = false;
             targets.remove(pl);
             targets.removeAll(Map.visiblePlayers(pl, map));
             return !targets.isEmpty();
@@ -242,6 +243,8 @@ public class FeasibleLambdaMap
             if(memory != null) {
                 if (((Player[]) memory).length > 1 && ((Player[]) memory)[1] != null) {
                     List<Player> targets = Map.visiblePlayers(((Player[]) memory)[1], map);
+                    targets.remove(pl);
+                    targets.remove(((Player[]) memory)[0]);
                     return !targets.isEmpty();
                 }
                 else return false; //if ad1 has not been used
@@ -257,14 +260,16 @@ public class FeasibleLambdaMap
         //Dai 1 danno aggiuntivo al tuo bersaglio.
         data.put("w4-ad2", (pl, map, memory)-> memory != null && ((Player[])memory).length > 0 && ((Player[])memory)[0] != null);
 
-        //Point memory
+        //((Player[])memory)[0]
         data.put("w8-ad1", (pl, map, memory)->{
             //Scegli fino ad altri 2 bersagli nel quadrato in cui si trova il vortice o distanti 1 movimento. Muovili nel quadrato in cui si trova il vortice e dai loro 1 danno ciascuno.
 
             Player fakePlayer = new Player("vortex", "", Fighter.VIOLETTA);
-            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) ->  position.set((Point)memory));
+            Player shot = ((Player[])memory)[0];
+            fakePlayer.applyEffects((damage, marks, position, weapons, powers, ammo) ->  position.set(shot.getPosition()));
             List<Player> targets = Map.playersAtGivenDistance(fakePlayer, map, true, ((p1, p2) -> map.distance(p1,p2)<=1));
-
+            targets.remove(shot);
+            targets.remove(pl);
             return !targets.isEmpty() && memory != null;
         });
 
