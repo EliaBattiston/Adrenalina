@@ -39,7 +39,7 @@ public class CLInterface implements UserInterface {
      *Color and symbol constants
      */
     private static final int CELLDIM = 20;
-    private static final int DOORDIM = 4;
+    private static final int DOORDIM = 6;
     private static final int TOPSPACE = 50;
 
     private static final String ANSI_RESET = "\u001B[0m";

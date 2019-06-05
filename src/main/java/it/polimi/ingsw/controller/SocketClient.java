@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.clientmodel.CellView;
+import it.polimi.ingsw.clientmodel.CellViewAdapter;
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
@@ -317,6 +319,7 @@ public class SocketClient implements Client {
 
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+            gsonBuilder.registerTypeAdapter(CellView.class, new CellViewAdapter());
             gson = gsonBuilder.create();
 
             String response;

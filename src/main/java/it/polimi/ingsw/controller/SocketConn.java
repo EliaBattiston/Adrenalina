@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.clientmodel.CellView;
+import it.polimi.ingsw.clientmodel.CellViewAdapter;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.clientmodel.MatchView;
@@ -39,6 +41,7 @@ public class SocketConn implements Connection {
 
         GsonBuilder gsonBilder = new GsonBuilder();
         gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        gsonBilder.registerTypeAdapter(CellView.class, new CellViewAdapter());
         gson = gsonBilder.create();
         lock = new Object();
     }

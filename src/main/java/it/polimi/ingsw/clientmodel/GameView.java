@@ -19,7 +19,7 @@ public class GameView implements Serializable {
 
     public GameView(MapView mv, List<KillView> kills, List<PlayerView> players)
     {
-        this.map = map;
+        this.map = mv;
         this.kills = kills;
         this.players = players;
     }
