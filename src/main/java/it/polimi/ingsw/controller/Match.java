@@ -76,7 +76,7 @@ public class Match implements Runnable
     private transient Gson gson;
 
     //Block of defines
-    private transient final static int numberOfSkullsOnKillsBoard = 7;
+    private transient final static int numberOfSkullsOnKillsBoard = 8;
     private transient final static int regularActionsNumber = 2;
     private transient final static int frenzyActionsNumber = 1;
     private transient final static int numberOfMaps = 4;
@@ -598,7 +598,7 @@ public class Match implements Runnable
         if(phase != GamePhase.FRENZY)
         {
             //Register the kill on the board
-            for (nextSkull = numberOfSkullsOnKillsBoard; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
+            for (nextSkull = numberOfSkullsOnKillsBoard - 1; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
                 ;
             if (nextSkull > -1)
             {
@@ -658,7 +658,7 @@ public class Match implements Runnable
         {
             damageNum = 0;
 
-            for(int k = numberOfSkullsOnKillsBoard; k >= 0; k--)
+            for(int k = numberOfSkullsOnKillsBoard - 1; k >= 0; k--)
             {
                 if(game.getSkulls()[k].isUsed() && game.getSkulls()[k].getKiller() == p)
                 {
@@ -688,7 +688,7 @@ public class Match implements Runnable
             else
             {
                 //Check who inflicted damage first
-                for(int k = numberOfSkullsOnKillsBoard; k >= 0; k--)
+                for(int k = numberOfSkullsOnKillsBoard - 1 ; k >= 0; k--)
                 {
                     if(game.getSkulls()[k].isUsed())
                     {
