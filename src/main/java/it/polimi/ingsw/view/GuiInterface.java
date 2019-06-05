@@ -187,6 +187,9 @@ public class GuiInterface implements UserInterface{
             players.add(new Player("p4", "!", Fighter.BANSHEE));
             players.add(new Player("p5", "!", Fighter.DOZER));
 
+            for(Player p: players)
+                allGame.addPlayer(p);
+
             Player me = players.get(0);
 
             me.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
@@ -278,7 +281,7 @@ public class GuiInterface implements UserInterface{
             allGame.getSkulls()[3].setKiller(me,true);
             allGame.getSkulls()[4].setKiller(me,false);
 
-            //return new MatchView(new GameView(allGame.getMap(), players, allGame.getSkulls()), me, me, 3, GamePhase.FRENZY, true, me, 120);
+            return new MatchView(me.getFullView(), me.getView(), allGame.getView(), GamePhase.REGULAR, 99999);
         }catch (Exception ex){
             ;
         }
