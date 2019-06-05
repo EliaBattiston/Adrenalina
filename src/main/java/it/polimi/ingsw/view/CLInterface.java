@@ -2,8 +2,7 @@ package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import it.polimi.ingsw.clientmodel.CellView;
-import it.polimi.ingsw.clientmodel.MatchView;
+import it.polimi.ingsw.clientmodel.*;
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.model.*;
 
@@ -79,6 +78,9 @@ public class CLInterface implements UserInterface {
 
     private static final String L_HOR = "-";
     private static final String L_VERT = "|";
+
+    //Other defines
+    private static final int damagesNumber = 12;
 
 
     /**
@@ -369,12 +371,12 @@ public class CLInterface implements UserInterface {
                         CellView cell = view.getGame().getMap().getCell(x,y);
                         if(cell.getRoomNumber() < 3 && cell.hasSpawn(Color.values()[cell.getRoomNumber()])) {
                             print("ARMI: ");
-                            SpawnCell sc = (SpawnCell) cell;
+                            SpawnCellView sc = (SpawnCellView) cell;
                             for(Weapon w: sc.getWeapons())
                                 print(w.getName() + " ");
                         }
                         else {
-                            RegularCell rc = (RegularCell) cell;
+                            RegularCellView rc = (RegularCellView) cell;
                             for (Color color : rc.getLoot().getContent()) {
                                 switch (color) {
                                     case RED:
@@ -445,8 +447,6 @@ public class CLInterface implements UserInterface {
                     println(ANSI_BOLD + powlist.get(sel3).getName() + ANSI_RESET + ": " + powlist.get(sel3).getBase().getDescription());
                     break;
                 case 4:
-                    println("Punti accumulati: " + view.getMyPlayer().getPoints());
-
                     if(view.getMyPlayer().getWeapons() != null && !view.getMyPlayer().getWeapons().isEmpty()) {
                         println("Armi in mano: ");
                         for (Weapon w : view.getMyPlayer().getWeapons()) {
@@ -499,7 +499,7 @@ public class CLInterface implements UserInterface {
      */
     private void playerInfo() {
         println("\nGiocatori: ");
-        for(Player p: view.getGame().getPlayers()) {
+        for(PlayerView p: view.getGame().getPlayers()) {
             String print = "";
             String background = "";
             if(p.getNick().equals(view.getMyPlayer().getNick())) {
@@ -517,10 +517,10 @@ public class CLInterface implements UserInterface {
             print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";
             print += p.getAmmo(Color.RED) + "x" + formatColorBox(Color.RED) + " ";
             print += "Danni: ";
-            for(int i = 0; i < p.getReceivedDamage().length; i++) {
+            for(int i = 0; i < damagesNumber; i++) {
                 boolean found = false;
-                for(Player pl: view.getGame().getPlayers()) {
-                    if (p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(pl.getNick())) {
+                for(PlayerView pl: view.getGame().getPlayers()) {
+                    if (p.getDamage(i) != null && p.getDamage(i).equals(pl.getNick())) {
                         print += fighterToLetter(pl.getCharacter());
                         found = true;
                     }
@@ -533,7 +533,7 @@ public class CLInterface implements UserInterface {
                 print += "-";
             else {
                 for (String mark : p.getReceivedMarks()) {
-                    for (Player pl : view.getGame().getPlayers())
+                    for (PlayerView pl : view.getGame().getPlayers())
                         if (mark.equals(pl.getNick()))
                             print += fighterToLetter(pl.getCharacter());
                 }
@@ -545,7 +545,7 @@ public class CLInterface implements UserInterface {
 
     public void skullsInfo() {
         print("\nTeschi: ");
-        for(Kill k: view.getGame().getSkullsBoard()) {
+        for(KillView k: view.getGame().getSkullsBoard()) {
             if(k.isUsed()) {
                 if(k.getSkull())
                     print(SKULL + " ");
@@ -629,7 +629,7 @@ public class CLInterface implements UserInterface {
      * @return Cell part formatted string
      */
     private String printCell(int x, int y, int row, List<Player> marked, List<Point> highlighted) {
-        Cell c = view.getGame().getMap().getCell(x,y);
+        CellView c = view.getGame().getMap().getCell(x,y);
         String ret = "";
         String highlight = "";
         if(highlighted != null) {
@@ -641,7 +641,7 @@ public class CLInterface implements UserInterface {
         switch (row) {
             case 0:
                 ret = ANSI_COLORS[c.getRoomNumber()] + corner(x,y,true,true);
-                switch (c.getSides()[0]) {
+                switch (c.getSide(Direction.NORTH)) {
                     case DOOR:
                         for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
                             ret += HOR;
@@ -665,20 +665,20 @@ public class CLInterface implements UserInterface {
                 ret += corner(x,y,true, false) + ANSI_RESET;
                 break;
             case 1:
-                if(c.getSides()[3] != Side.NOTHING)
+                if(c.getSide(Direction.WEST) != Side.NOTHING)
                     ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
 
                 ret += highlight + innerCellFormat(String.format("CELLA %-2d", (x + 4* y + 1))) + ANSI_RESET;
 
-                if(c.getSides()[1] != Side.NOTHING)
+                if(c.getSide(Direction.EAST) != Side.NOTHING)
                     ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret += SPACE;
                 break;
             case 2:
-                if(c.getSides()[3] != Side.NOTHING)
+                if(c.getSide(Direction.WEST) != Side.NOTHING)
                     ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
@@ -688,7 +688,7 @@ public class CLInterface implements UserInterface {
                     loot += highlight + ANSI_COLORS[c.getRoomNumber()] + "S" + SPACE;
                 }
                 else {
-                    RegularCell rc = (RegularCell) c;
+                    RegularCellView rc = (RegularCellView) c;
                     if(rc.getLoot() != null)
                     {
                         for(Color color : rc.getLoot().getContent()) {
@@ -711,13 +711,13 @@ public class CLInterface implements UserInterface {
                     }
                 }
                 ret += highlight + innerCellFormatRight(loot) + ANSI_RESET;
-                if(c.getSides()[1] != Side.NOTHING)
+                if(c.getSide(Direction.EAST) != Side.NOTHING)
                     ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret += SPACE;
                 break;
             case 3:
-                switch (c.getSides()[3]) {
+                switch (c.getSide(Direction.WEST)) {
                     case WALL:
                         ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                         break;
@@ -730,7 +730,7 @@ public class CLInterface implements UserInterface {
 
                 }
                 if(!c.getPawns().isEmpty()) {
-                    Player p = c.getPawns().get(0);
+                    PlayerView p = c.getPawns().get(0);
                     String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
@@ -744,13 +744,13 @@ public class CLInterface implements UserInterface {
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
 
-                if(c.getSides()[1] == Side.WALL)
+                if(c.getSide(Direction.EAST) == Side.WALL)
                     ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret += SPACE;
                 break;
             case 4:
-                switch (c.getSides()[3]) {
+                switch (c.getSide(Direction.WEST)) {
                     case WALL:
                         ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                         break;
@@ -763,7 +763,7 @@ public class CLInterface implements UserInterface {
 
                 }
                 if(c.getPawns().size() >= 2) {
-                    Player p = c.getPawns().get(1);
+                    PlayerView p = c.getPawns().get(1);
                     String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
@@ -777,13 +777,13 @@ public class CLInterface implements UserInterface {
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
 
-                if(c.getSides()[1] == Side.WALL)
+                if(c.getSide(Direction.EAST) == Side.WALL)
                     ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret += SPACE;
                 break;
             case 5:
-                switch (c.getSides()[3]) {
+                switch (c.getSide(Direction.WEST)) {
                     case WALL:
                         ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                         break;
@@ -796,7 +796,7 @@ public class CLInterface implements UserInterface {
 
                 }
                 if(c.getPawns().size() >= 3) {
-                    Player p = c.getPawns().get(2);
+                    PlayerView p = c.getPawns().get(2);
                     String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
@@ -810,19 +810,19 @@ public class CLInterface implements UserInterface {
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
 
-                if(c.getSides()[1] == Side.WALL)
+                if(c.getSide(Direction.EAST) == Side.WALL)
                     ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret += SPACE;
                 break;
             case 6:
-                if(c.getSides()[3] != Side.NOTHING)
+                if(c.getSide(Direction.WEST) != Side.NOTHING)
                     ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
 
                 if(c.getPawns().size() >= 4) {
-                    Player p = c.getPawns().get(3);
+                    PlayerView p = c.getPawns().get(3);
                     String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
@@ -836,19 +836,19 @@ public class CLInterface implements UserInterface {
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
 
-                if(c.getSides()[1] != Side.NOTHING)
+                if(c.getSide(Direction.EAST) != Side.NOTHING)
                     ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret += SPACE;
                 break;
             case 7:
-                if(c.getSides()[3] != Side.NOTHING)
+                if(c.getSide(Direction.WEST) != Side.NOTHING)
                     ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
 
                 if(c.getPawns().size() >= 5) {
-                    Player p = c.getPawns().get(4);
+                    PlayerView p = c.getPawns().get(4);
                     String bgd = "";
                     if(marked != null) {
                         for(Player mark: marked) {
@@ -862,14 +862,14 @@ public class CLInterface implements UserInterface {
                 else
                     ret += highlight + innerCellFormat("") + ANSI_RESET;
 
-                if(c.getSides()[1] != Side.NOTHING)
+                if(c.getSide(Direction.EAST) != Side.NOTHING)
                     ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
                 else
                     ret += SPACE;
                 break;
             case 8:
                 ret = ANSI_COLORS[c.getRoomNumber()] + corner(x,y,false,true);
-                switch (c.getSides()[2]) {
+                switch (c.getSide(Direction.SOUTH)) {
                     case DOOR:
                         for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
                             ret += HOR;
@@ -906,20 +906,20 @@ public class CLInterface implements UserInterface {
      * @return Formatted corner string
      */
     private String corner(int x, int y, boolean north, boolean west) {
-        Cell center = view.getGame().getMap().getCell(x,y);
+        CellView center = view.getGame().getMap().getCell(x,y);
         String ret = null;
         if(north) {
             if(west) {
-                switch (center.getSides()[0]) {
+                switch (center.getSide(Direction.NORTH)) {
                     case WALL:
                     case DOOR:
-                        if(center.getSides()[3] != Side.NOTHING)
+                        if(center.getSide(Direction.WEST) != Side.NOTHING)
                             ret =  TL_CORNER;
                         else
                             ret =  HOR;
                         break;
                     case NOTHING:
-                        if(center.getSides()[3] != Side.NOTHING)
+                        if(center.getSide(Direction.WEST) != Side.NOTHING)
                             ret =  VERT;
                         else
                             ret =  BR_CORNER;
@@ -927,16 +927,16 @@ public class CLInterface implements UserInterface {
                 }
             }
             else {
-                switch (center.getSides()[0]) {
+                switch (center.getSide(Direction.NORTH)) {
                     case WALL:
                     case DOOR:
-                        if(center.getSides()[1] != Side.NOTHING)
+                        if(center.getSide(Direction.EAST) != Side.NOTHING)
                             ret =  TR_CORNER;
                         else
                             ret =  HOR;
                         break;
                     case NOTHING:
-                        if(center.getSides()[1] != Side.NOTHING)
+                        if(center.getSide(Direction.EAST) != Side.NOTHING)
                             ret =  VERT;
                         else
                             ret =  BL_CORNER;
@@ -946,16 +946,16 @@ public class CLInterface implements UserInterface {
         }
         else {
             if(west) {
-                switch (center.getSides()[2]) {
+                switch (center.getSide(Direction.SOUTH)) {
                     case WALL:
                     case DOOR:
-                        if(center.getSides()[3] != Side.NOTHING)
+                        if(center.getSide(Direction.WEST) != Side.NOTHING)
                             ret =  BL_CORNER;
                         else
                             ret =  HOR;
                         break;
                     case NOTHING:
-                        if(center.getSides()[3] != Side.NOTHING)
+                        if(center.getSide(Direction.WEST) != Side.NOTHING)
                             ret =  VERT;
                         else
                             ret =  TR_CORNER;
@@ -964,16 +964,16 @@ public class CLInterface implements UserInterface {
             }
 
             else {
-                switch (center.getSides()[2]) {
+                switch (center.getSide(Direction.SOUTH)) {
                     case WALL:
                     case DOOR:
-                        if(center.getSides()[1] != Side.NOTHING)
+                        if(center.getSide(Direction.EAST) != Side.NOTHING)
                             ret =  BR_CORNER;
                         else
                             ret =  HOR;
                         break;
                     case NOTHING:
-                        if(center.getSides()[1] != Side.NOTHING)
+                        if(center.getSide(Direction.EAST) != Side.NOTHING)
                             ret =  VERT;
                         else
                             ret =  TL_CORNER;

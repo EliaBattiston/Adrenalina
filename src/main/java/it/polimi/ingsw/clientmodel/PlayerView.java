@@ -1,9 +1,6 @@
 package it.polimi.ingsw.clientmodel;
 
-import it.polimi.ingsw.model.Fighter;
-import it.polimi.ingsw.model.Point;
-import it.polimi.ingsw.model.Power;
-import it.polimi.ingsw.model.Weapon;
+import it.polimi.ingsw.model.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,8 +26,11 @@ public class PlayerView implements Serializable
 
     private Point position;
 
+    private AmmoView ammo;
+
     public PlayerView(String nick, Fighter character, List<Weapon> weapons, boolean frenzyBoard,
-                      List<String> receivedDamage, List<String> receivedMarks, int skullsNum, Point position)
+                      List<String> receivedDamage, List<String> receivedMarks, int skullsNum, Point position,
+                      AmmoView av)
     {
         this.nickname = nick;
         this.character = character;
@@ -40,6 +40,7 @@ public class PlayerView implements Serializable
         this.receivedMarks = receivedMarks;
         this.skullsNum = skullsNum;
         this.position = position;
+        this.ammo = av;
     }
 
     public String getNick()
@@ -85,6 +86,31 @@ public class PlayerView implements Serializable
     public Point getPosition()
     {
         return position;
+    }
+
+    public AmmoView getAmmo()
+    {
+        return ammo;
+    }
+
+    /**
+     * Gives the number of requested ammunition
+     * @param c Color of desired ammo
+     * @return Number of available ammo for that color
+     */
+    public int getAmmo(Color c)
+    {
+        switch(c)
+        {
+            case RED:
+                return ammo.getRed();
+            case BLUE:
+                return ammo.getBlue();
+            case YELLOW:
+                return ammo.getYellow();
+            default:
+                return 0;
+        }
     }
 
     /**

@@ -17,10 +17,11 @@ public class GameView implements Serializable {
 
     private List<KillView> kills;
 
-    public GameView(MapView mv, List<KillView> kills)
+    public GameView(MapView mv, List<KillView> kills, List<PlayerView> players)
     {
         this.map = map;
         this.kills = kills;
+        this.players = players;
     }
 
     public MapView getMap()

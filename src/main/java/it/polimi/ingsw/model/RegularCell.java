@@ -143,6 +143,6 @@ public class RegularCell extends Cell {
             pawnsView.add(p.getView());
         }
 
-        return new RegularCellView(pawnsView, loot);
+        return new RegularCellView(pawnsView, getRoomNumber(), getSides(), loot);
     }
 }

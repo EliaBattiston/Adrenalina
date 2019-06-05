@@ -10,22 +10,14 @@ import java.util.List;
 
 public class MyPlayerView extends PlayerView implements Serializable
 {
-    private AmmoView ammo;
-
     private List<Power> powers;
 
     public MyPlayerView(String nick, Fighter character, List<Weapon> weapons, boolean frenzyBoard,
                         List<String> receivedDamage, List<String> receivedMarks, int skullsNum, Point position,
-                        List<Power> powers, AmmoView av)
+                        AmmoView av, List<Power> powers)
     {
-        super(nick, character, weapons, frenzyBoard, receivedDamage, receivedMarks, skullsNum, position);
-        this.ammo = av;
+        super(nick, character, weapons, frenzyBoard, receivedDamage, receivedMarks, skullsNum, position, av);
         this.powers = powers;
-    }
-
-    public AmmoView getAmmo()
-    {
-        return ammo;
     }
 
     @Override

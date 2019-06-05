@@ -2,10 +2,9 @@ package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.clientmodel.KillView;
+import it.polimi.ingsw.clientmodel.*;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.clientmodel.MatchView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -127,7 +126,6 @@ public class Match implements Runnable
         new File("matches").mkdirs();
 
         refillMap();
-
 
         updateViews();
 
@@ -789,7 +787,10 @@ public class Match implements Runnable
      * @return View of the match, ready to be serialized and sent
      */
     public MatchView getView(Player viewer){
-        return new MatchView(viewer.getFullView(), active.getView(), game.getView(viewer), Configuration.getInstance().getPlayerTurnSeconds());
+        MyPlayerView v = viewer.getFullView();
+        PlayerView act = active==null?null:active.getView();
+        GameView gv = game.getView();
+        return new MatchView(v, act, gv, phase, Configuration.getInstance().getPlayerTurnSeconds());
     }
 
     /**

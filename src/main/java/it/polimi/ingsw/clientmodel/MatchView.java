@@ -18,15 +18,18 @@ public class MatchView implements Serializable {
 
     private PlayerView active;
 
+    private GamePhase phase;
+
     private long playerTurnDuration;
 
     /**
      * Instances a MatchView object representing the current Match
      */
-    public MatchView(MyPlayerView viewer, PlayerView active, GameView gv, long playerTurnDuration) {
+    public MatchView(MyPlayerView viewer, PlayerView active, GameView gv, GamePhase phase, long playerTurnDuration) {
         this.viewer = viewer;
         this.active = active;
         this.game = gv;
+        this.phase = phase;
         this.playerTurnDuration = playerTurnDuration;
     }
 
@@ -35,6 +38,8 @@ public class MatchView implements Serializable {
     public MyPlayerView getMyPlayer(){ return viewer; }
 
     public PlayerView getActive(){ return active; }
+
+    public GamePhase getPhase() { return phase; }
 
     public long getTimeForAction() { return playerTurnDuration; }
 }

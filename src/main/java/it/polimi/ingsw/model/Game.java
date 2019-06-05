@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import it.polimi.ingsw.clientmodel.KillView;
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.clientmodel.GameView;
 
@@ -192,17 +193,22 @@ public class Game {
 
     /**
      * Gives a simpler representation of the game, to be sent to a client
-     * @param viewer Client's player
      * @return GameView of this game
      */
-    public GameView getView(Player viewer){
+    public GameView getView(){
         List<KillView> kills = new ArrayList<>();
         for(Kill k: skullsBoard)
         {
             kills.add(k.getView());
         }
 
-        return new GameView(map.getView(), kills);
+        List<PlayerView> playerViews = new ArrayList<>();
+        for(Player p: players)
+        {
+            playerViews.add(p.getView());
+        }
+
+        return new GameView(map.getView(), kills, playerViews);
     }
 
     /**

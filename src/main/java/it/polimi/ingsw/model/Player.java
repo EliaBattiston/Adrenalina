@@ -351,8 +351,8 @@ public class Player implements Serializable
                 receivedMarks,
                 skulls,
                 position,
-                getPowers(),
-                ammo.getView()
+                ammo.getView(),
+                getPowers()
         );
     }
 
@@ -366,7 +366,8 @@ public class Player implements Serializable
                 Arrays.asList(receivedDamage),
                 receivedMarks,
                 skulls,
-                position
+                position,
+                ammo.getView()
         );
     }
 }

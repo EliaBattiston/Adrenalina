@@ -212,6 +212,6 @@ public class SpawnCell extends Cell{
             pawnsView.add(p.getView());
         }
 
-        return new SpawnCellView(pawnsView, getWeapons());
+        return new SpawnCellView(pawnsView, getRoomNumber(), getSides(), getWeapons(), spawn);
     }
 }
