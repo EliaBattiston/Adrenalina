@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.clientmodel.MatchView;
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
 
 import java.util.List;
@@ -60,7 +61,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen target
      */
-    Player chooseTarget(List<Player> targets, boolean mustChoose);
+    PlayerView chooseTarget(List<PlayerView> targets, boolean mustChoose);
 
     /**
      * Asks the user where to movePlayer an enemy
@@ -69,7 +70,7 @@ public interface UserInterface
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Point where the enemy will be after being moved
      */
-    Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose);
+    Point moveEnemy(PlayerView enemy, List<Point> destinations, boolean mustChoose);
 
     /**
      * Asks the user to discard one power card
@@ -168,7 +169,7 @@ public interface UserInterface
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      */
-    public void endGame(List<Player> winnerList);
+    public void endGame(List<PlayerView> winnerList);
 
     /**
      * Prints out a general message to the client interface

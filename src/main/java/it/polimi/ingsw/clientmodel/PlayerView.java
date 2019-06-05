@@ -28,9 +28,11 @@ public class PlayerView implements Serializable
 
     private AmmoView ammo;
 
+    private int points;
+
     public PlayerView(String nick, Fighter character, List<Weapon> weapons, boolean frenzyBoard,
                       List<String> receivedDamage, List<String> receivedMarks, int skullsNum, Point position,
-                      AmmoView av)
+                      AmmoView av, int points)
     {
         this.nickname = nick;
         this.character = character;
@@ -41,6 +43,7 @@ public class PlayerView implements Serializable
         this.skullsNum = skullsNum;
         this.position = position;
         this.ammo = av;
+        this.points = points;
     }
 
     public String getNick()
@@ -111,6 +114,11 @@ public class PlayerView implements Serializable
             default:
                 return 0;
         }
+    }
+
+    public int getPoints()
+    {
+        return points;
     }
 
     /**

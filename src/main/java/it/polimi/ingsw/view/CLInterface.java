@@ -600,7 +600,7 @@ public class CLInterface implements UserInterface {
      * @param marked Players to be highlighted
      * @param highlighted Cells to be highlighted
      */
-    private void map(List<Player> marked, List<Point> highlighted) {
+    private void map(List<PlayerView> marked, List<Point> highlighted) {
 
         println("\n\n");
 
@@ -628,7 +628,7 @@ public class CLInterface implements UserInterface {
      * @param highlighted Cells to be highlighted
      * @return Cell part formatted string
      */
-    private String printCell(int x, int y, int row, List<Player> marked, List<Point> highlighted) {
+    private String printCell(int x, int y, int row, List<PlayerView> marked, List<Point> highlighted) {
         CellView c = view.getGame().getMap().getCell(x,y);
         String ret = "";
         String highlight = "";
@@ -733,7 +733,7 @@ public class CLInterface implements UserInterface {
                     PlayerView p = c.getPawns().get(0);
                     String bgd = "";
                     if(marked != null) {
-                        for(Player mark: marked) {
+                        for(PlayerView mark: marked) {
                             if (p.equals(mark)) {
                                 bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
                             }
@@ -766,7 +766,7 @@ public class CLInterface implements UserInterface {
                     PlayerView p = c.getPawns().get(1);
                     String bgd = "";
                     if(marked != null) {
-                        for(Player mark: marked) {
+                        for(PlayerView mark: marked) {
                             if (p.equals(mark)) {
                                 bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
                             }
@@ -799,7 +799,7 @@ public class CLInterface implements UserInterface {
                     PlayerView p = c.getPawns().get(2);
                     String bgd = "";
                     if(marked != null) {
-                        for(Player mark: marked) {
+                        for(PlayerView mark: marked) {
                             if (p.equals(mark)) {
                                 bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
                             }
@@ -825,7 +825,7 @@ public class CLInterface implements UserInterface {
                     PlayerView p = c.getPawns().get(3);
                     String bgd = "";
                     if(marked != null) {
-                        for(Player mark: marked) {
+                        for(PlayerView mark: marked) {
                             if (p.equals(mark)) {
                                 bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
                             }
@@ -851,7 +851,7 @@ public class CLInterface implements UserInterface {
                     PlayerView p = c.getPawns().get(4);
                     String bgd = "";
                     if(marked != null) {
-                        for(Player mark: marked) {
+                        for(PlayerView mark: marked) {
                             if (p.equals(mark)) {
                                 bgd += ANSI_RED_BACKGROUND + ANSI_BLACK;
                             }
@@ -1164,7 +1164,7 @@ public class CLInterface implements UserInterface {
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Chosen target
      */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose) {
+    public PlayerView chooseTarget(List<PlayerView> targets, boolean mustChoose) {
         map(targets, null);
         List<String> options = new ArrayList<>();
         options.add("\nScegli un bersaglio:");
@@ -1175,7 +1175,7 @@ public class CLInterface implements UserInterface {
             starting = 0;
             options.add("[0] Non scegliere nessuno");
         }
-        for(Player p: targets) {
+        for(PlayerView p: targets) {
             i++;
             options.add("[" + i + "] " + p.getNick());
         }
@@ -1195,8 +1195,8 @@ public class CLInterface implements UserInterface {
      * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
      * @return Point where the enemy will be after being moved
      */
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) {
-        List<Player> plist = new ArrayList<>();
+    public Point moveEnemy(PlayerView enemy, List<Point> destinations, boolean mustChoose) {
+        List<PlayerView> plist = new ArrayList<>();
         List<Integer> options = new ArrayList<>();
         plist.add(enemy);
 
@@ -1727,7 +1727,7 @@ public class CLInterface implements UserInterface {
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      */
-    public void endGame(List<Player> winnerList) {
+    public void endGame(List<PlayerView> winnerList) {
         for(int i = 0; i < TOPSPACE; i++)
             println("");
         println("----------------- La partità è terminata --------------------\n");

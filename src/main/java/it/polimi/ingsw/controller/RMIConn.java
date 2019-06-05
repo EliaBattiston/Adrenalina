@@ -1,11 +1,13 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.clientmodel.MatchView;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RMIConn implements Connection, Serializable
@@ -150,7 +152,13 @@ public class RMIConn implements Connection, Serializable
     public Player chooseTarget(List<Player> targets, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            String nickChosen = client.chooseTarget(targets, mustChoose).getNick();
+            List<PlayerView> targetsViews = new ArrayList<>();
+            for(Player t: targets)
+            {
+                targetsViews.add(t.getView());
+            }
+
+            String nickChosen = client.chooseTarget(targetsViews, mustChoose).getNick();
             for(Player p : targets)
                 if(p.getNick().equals(nickChosen))
                     return p;
@@ -174,7 +182,7 @@ public class RMIConn implements Connection, Serializable
     public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            return client.moveEnemy(enemy, destinations, mustChoose);
+            return client.moveEnemy(enemy.getView(), destinations, mustChoose);
         }
         catch (Exception e) {
 
@@ -402,7 +410,13 @@ public class RMIConn implements Connection, Serializable
      */
     public void endGame(List<Player> winnerList) throws ClientDisconnectedException {
         try {
-            client.endGame(winnerList);
+            List<PlayerView> winners = new ArrayList<>();
+            for(Player p : winnerList)
+            {
+                winners.add(p.getView());
+            }
+
+            client.endGame(winners);
         }
         catch (Exception e) {
             throw new ClientDisconnectedException();

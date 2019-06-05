@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.clientmodel.MatchView;
@@ -132,7 +133,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @param targets List of player that can be targeted
      * @return Chosen target
      */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose)
+    public PlayerView chooseTarget(List<PlayerView> targets, boolean mustChoose)
     {
         return user.chooseTarget(targets, mustChoose);
     }
@@ -144,7 +145,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * @return Point where the enemy will be after being moved
      */
 
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose)
+    public Point moveEnemy(PlayerView enemy, List<Point> destinations, boolean mustChoose)
     {
         return user.moveEnemy(enemy, destinations, mustChoose);
     }
@@ -259,7 +260,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      */
-    public void endGame(List<Player> winnerList) {
+    public void endGame(List<PlayerView> winnerList) {
         user.endGame(winnerList);
     }
 

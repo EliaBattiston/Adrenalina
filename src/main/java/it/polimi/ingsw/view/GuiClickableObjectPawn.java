@@ -35,8 +35,8 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
      * @param list of possible matches
      * @return true if in the list
      */
-    public boolean inList(List<Player> list){
-        for(Player p:list)
+    public boolean inList(List<PlayerView> list){
+        for(PlayerView p:list)
             if(p.getCharacter() == this.pl.getCharacter())
                 return true;
 

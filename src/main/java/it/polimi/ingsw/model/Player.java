@@ -352,6 +352,7 @@ public class Player implements Serializable
                 skulls,
                 position,
                 ammo.getView(),
+                points,
                 getPowers()
         );
     }
@@ -367,7 +368,8 @@ public class Player implements Serializable
                 receivedMarks,
                 skulls,
                 position,
-                ammo.getView()
+                ammo.getView(),
+                points
         );
     }
 }

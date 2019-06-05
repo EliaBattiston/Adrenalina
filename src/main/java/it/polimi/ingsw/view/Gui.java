@@ -1343,7 +1343,7 @@ public class Gui extends Application{
     private void chooseTarget(){
         showInfoOnMap(exchanger.getMessage());
 
-        List<Player> choosable = (List<Player>) exchanger.getRequest();
+        List<PlayerView> choosable = (List<PlayerView>) exchanger.getRequest();
 
         List<GuiClickableObjectPawn> pawns = playersPawns.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
@@ -1628,10 +1628,13 @@ public class Gui extends Application{
         submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
         submit.setOnAction((e)->{
             String answer = field.getText();
-            System.out.println(answer);
-            exchanger.setAnswer(answer);
-            exchanger.setActualInteraction(Interaction.NONE);
-            appStage.setScene(new Scene(initializerBackground()));
+            if(!answer.isEmpty() && !answer.isBlank())
+            {
+                System.out.println(answer);
+                exchanger.setAnswer(answer);
+                exchanger.setActualInteraction(Interaction.NONE);
+                appStage.setScene(new Scene(initializerBackground()));
+            }
         });
         submit.setDefaultButton(true);
 

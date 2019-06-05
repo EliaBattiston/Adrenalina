@@ -1,11 +1,11 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.clientmodel.PlayerView;
 
 class Payload {
     private Interaction type;
     private String parameters;
-    private Player enemy;
+    private PlayerView enemy;
     private boolean mustChoose;
 
     public Interaction getType() {
@@ -24,11 +24,11 @@ class Payload {
         this.parameters = parameters;
     }
 
-    public Player getEnemy() {
+    public PlayerView getEnemy() {
         return enemy;
     }
 
-    public void setEnemy(Player enemy) {
+    public void setEnemy(PlayerView enemy) {
         this.enemy = enemy;
     }
 

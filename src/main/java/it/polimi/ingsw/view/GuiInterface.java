@@ -2,6 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.clientmodel.GameView;
 import it.polimi.ingsw.clientmodel.MatchView;
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
@@ -509,7 +510,7 @@ public class GuiInterface implements UserInterface{
      * @return Point where the enemy will be after being moved
      */
     @Override
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) {
+    public Point moveEnemy(PlayerView enemy, List<Point> destinations, boolean mustChoose) {
         exchanger.setRequest(Interaction.MOVEENEMY, "Scegli dove muovere il nemico", destinations, mustChoose);
         exchanger.waitFreeToUse();
         return (Point) exchanger.getAnswer();
@@ -523,10 +524,10 @@ public class GuiInterface implements UserInterface{
      * @return Chosen target
      */
     @Override
-    public Player chooseTarget(List<Player> targets, boolean mustChoose) {
+    public PlayerView chooseTarget(List<PlayerView> targets, boolean mustChoose) {
         exchanger.setRequest(Interaction.CHOOSETARGET, "Scegli un nemico", targets, mustChoose);
         exchanger.waitFreeToUse();
-        return (Player) exchanger.getAnswer();
+        return (PlayerView) exchanger.getAnswer();
     }
 
     /**
@@ -584,11 +585,11 @@ public class GuiInterface implements UserInterface{
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      */
-    public void endGame(List<Player> winnerList) {
+    public void endGame(List<PlayerView> winnerList) {
         String message = "ENDGAME\n";
 
         int i=1;
-        for(Player p:winnerList){
+        for(PlayerView p:winnerList){
             if(p!=null) {
                 message += i +"° @" + p.getPoints() + " punti è " + p.getNick();
                 i++;

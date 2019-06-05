@@ -14,9 +14,9 @@ public class MyPlayerView extends PlayerView implements Serializable
 
     public MyPlayerView(String nick, Fighter character, List<Weapon> weapons, boolean frenzyBoard,
                         List<String> receivedDamage, List<String> receivedMarks, int skullsNum, Point position,
-                        AmmoView av, List<Power> powers)
+                        AmmoView av, int points, List<Power> powers)
     {
-        super(nick, character, weapons, frenzyBoard, receivedDamage, receivedMarks, skullsNum, position, av);
+        super(nick, character, weapons, frenzyBoard, receivedDamage, receivedMarks, skullsNum, position, av, points);
         this.powers = powers;
     }
 
