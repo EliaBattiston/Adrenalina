@@ -783,11 +783,6 @@ public class CLInterface implements UserInterface {
                         ret += SPACE;
                     for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
                         ret += HOR;
-
-<<<<<<< HEAD
-            default:
-                break;
-=======
                     break;
                 case WALL:
                     for(int i = 0; i < CELLDIM - 2; i++)
@@ -799,7 +794,6 @@ public class CLInterface implements UserInterface {
                     break;
             }
             ret += corner(x,y,false,false) + ANSI_RESET;
->>>>>>> weapons-fix
         }
 
         return ret;
