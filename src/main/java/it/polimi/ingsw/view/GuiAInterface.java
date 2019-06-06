@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
@@ -7,12 +7,12 @@ import it.polimi.ingsw.view.GuiInterface;
 import java.util.List;
 import java.util.Random;
 
-public class GAInterface extends GuiInterface {
+public class GuiAInterface extends GuiInterface {
 
     /**
      * Initialization of the interface, in particular instantiation of scanne and writer over System in and out
      */
-    public GAInterface() {
+    public GuiAInterface() {
         super();
     }
 
@@ -215,5 +215,40 @@ public class GAInterface extends GuiInterface {
     @Override
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
         return inHand.get(new Random().nextInt(inHand.size()));
+    }
+
+    /**
+     * Asks the user to choose between TCP and RMI connection
+     * @return true in case of RMI connection, false elsewhere
+     */
+    public boolean useRMI(){
+        return false;
+    }
+
+    /**
+     * Asks the user for the IP address of the server
+     * @return Server's IP address
+     */
+    public String getIPAddress(){
+        return "localhost";
+    }
+
+    /**
+     * Asks the user for the IP address of the local machine
+     * @return Server's IP address
+     */
+    public String getLocalAddress(List<String> possibleIP){
+        return "localhost";
+    }
+
+    /**
+     * Asks the user which ammo he wants to use
+     * @param available List of powers on the player's board which can be used
+     * @param mustChoose If false, the user can choose not to choose. In this case the function returns null
+     * @return Color of the chosen ammo
+     */
+    @Override
+    public Color chooseAmmo(List<Color> available, boolean mustChoose){
+        return available.get(new Random().nextInt(available.size()));
     }
 }

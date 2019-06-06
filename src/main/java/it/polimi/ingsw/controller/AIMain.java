@@ -2,7 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
-import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.view.GuiAInterface;
 import it.polimi.ingsw.view.UserInterface;
 
 /**
@@ -18,10 +18,14 @@ public class AIMain
     /**
      * Creates a new AIMain
      */
-    public AIMain()
+    public AIMain(boolean gui)
     {
         String ip = "localhost";
-        ui = new AInterface();
+
+        if(gui)
+            ui = new GuiAInterface();
+        else
+            ui = new AInterface();
 
         try {
             new SocketClient(ip, 1906, ui);

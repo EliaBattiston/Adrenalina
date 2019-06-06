@@ -20,7 +20,10 @@ public class Main {
                 new SMain(null);
         }
         else if(flags.contains("-ai")){
-            new AIMain();
+            new AIMain(false);
+        }
+        else if(flags.contains("-gai")){
+            new AIMain(true);
         }
         else {
             System.out.println("Flag errati");
@@ -28,6 +31,7 @@ public class Main {
             System.out.println("\t-c\tAvvia CLI Client");
             System.out.println("\t-g\tAvvia GUI Client");
             System.out.println("\t-ai\tAvvia CLI AIClient");
+            System.out.println("\t-gai\tAvvia GUI AIClient");
         }
     }
 }
