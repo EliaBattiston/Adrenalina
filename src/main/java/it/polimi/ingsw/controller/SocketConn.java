@@ -3,14 +3,18 @@ package it.polimi.ingsw.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.clientmodel.CellView;
+import it.polimi.ingsw.clientmodel.CellViewAdapter;
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.MatchView;
+import it.polimi.ingsw.clientmodel.MatchView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -40,6 +44,7 @@ public class SocketConn implements Connection {
 
         GsonBuilder gsonBilder = new GsonBuilder();
         gsonBilder.registerTypeAdapter(Cell.class, new CellAdapter());
+        gsonBilder.registerTypeAdapter(CellView.class, new CellViewAdapter());
         gson = gsonBilder.create();
         lock = new Object();
     }
@@ -188,14 +193,20 @@ public class SocketConn implements Connection {
      */
     public Player chooseTarget(List<Player> targets, boolean mustChoose) throws ClientDisconnectedException
     {
+        List<PlayerView> targetsViews = new ArrayList<>();
+        for(Player t: targets)
+        {
+            targetsViews.add(t.getView());
+        }
+
         synchronized (lock) {
             Payload load = new Payload();
             load.setType(Interaction.CHOOSETARGET);
-            load.setParameters(gson.toJson(targets));
+            load.setParameters(gson.toJson(targetsViews));
             load.setMustChoose(mustChoose);
             send(gson.toJson(load));
             Payload answer = jsonDeserialize(receive());
-            List<Player> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Player>>() {
+            List<PlayerView> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<PlayerView>>() {
             }.getType());
 
             if(ansParam != null && ansParam.get(0) != null) {
@@ -246,7 +257,7 @@ public class SocketConn implements Connection {
             load.setType(Interaction.MOVEENEMY);
             load.setParameters(gson.toJson(destinations));
             load.setMustChoose(mustChoose);
-            load.setEnemy(enemy);
+            load.setEnemy(enemy.getView());
             send(gson.toJson(load));
             Payload answer = jsonDeserialize(receive());
             List<Point> ansParam = gson.fromJson(answer.getParameters(), new TypeToken<List<Point>>() {
@@ -537,10 +548,16 @@ public class SocketConn implements Connection {
      * @throws ClientDisconnectedException In case of client unexpected disconnection
      */
     public void endGame(List<Player> winnerList) throws ClientDisconnectedException {
+        List<PlayerView> winners = new ArrayList<>();
+        for(Player p : winnerList)
+        {
+            winners.add(p.getView());
+        }
+
         synchronized (lock) {
             Payload load = new Payload();
             load.setType(Interaction.ENDGAME);
-            load.setParameters(gson.toJson(winnerList));
+            load.setParameters(gson.toJson(winners));
             send(gson.toJson(load));
             //Needed to complete the connection protocol
             receive();

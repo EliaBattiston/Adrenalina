@@ -2,9 +2,9 @@ package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.polimi.ingsw.clientmodel.*;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.MatchView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,11 +61,6 @@ public class Match implements Runnable
     private Activities activities;
 
     /**
-     * Number of skulls
-     */
-    private int skullsNum; //keep this even if Sonarqube ask to delete it
-
-    /**
      * Number of the current turn
      */
     private int turnNumber;
@@ -88,7 +83,6 @@ public class Match implements Runnable
         this.phase = GamePhase.INITIALIZING;
         this.firstFrenzy = null;
         this.frenzyKills = new ArrayList<>();
-        this.skullsNum = skullsNum;
         this.turnNumber = 0;
         this.gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
 
@@ -126,7 +120,6 @@ public class Match implements Runnable
         new File("matches").mkdirs();
 
         refillMap();
-
 
         updateViews();
 
@@ -371,7 +364,7 @@ public class Match implements Runnable
             if(p.getConn() != null)
             {
                 try{
-                    p.getConn().updateGame(getMatchView(p));
+                    p.getConn().updateGame(this.getView(p));
                 }
                 catch(ClientDisconnectedException e)
                 {
@@ -787,8 +780,11 @@ public class Match implements Runnable
      * @param viewer Player whose perspective will be reflected in the MatchView
      * @return View of the match, ready to be serialized and sent
      */
-    public MatchView getMatchView(Player viewer){
-        return new MatchView(game.getGameView(viewer), active, viewer, actionsNumber, phase, useFrenzy, firstFrenzy, Configuration.getInstance().getPlayerTurnSeconds());
+    public MatchView getView(Player viewer){
+        MyPlayerView v = viewer.getFullView();
+        PlayerView act = active==null?null:active.getView();
+        GameView gv = game.getView();
+        return new MatchView(v, act, gv, phase, Configuration.getInstance().getPlayerTurnSeconds());
     }
 
     /**

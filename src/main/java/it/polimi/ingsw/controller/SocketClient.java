@@ -3,10 +3,13 @@ package it.polimi.ingsw.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.clientmodel.CellView;
+import it.polimi.ingsw.clientmodel.CellViewAdapter;
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.MatchView;
+import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.io.IOException;
@@ -137,7 +140,7 @@ public class SocketClient implements Client {
      * @param targets List of player that can be targeted
      * @return Chosen target
      */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose)
+    public PlayerView chooseTarget(List<PlayerView> targets, boolean mustChoose)
     {
         return user.chooseTarget(targets, mustChoose);
     }
@@ -149,7 +152,7 @@ public class SocketClient implements Client {
      * @return Point where the enemy will be after being moved
      */
 
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose)
+    public Point moveEnemy(PlayerView enemy, List<Point> destinations, boolean mustChoose)
     {
         return user.moveEnemy(enemy, destinations, mustChoose);
     }
@@ -264,7 +267,7 @@ public class SocketClient implements Client {
      * Sends to the client the list of players in winning order and notifies the end of the game
      * @param winnerList Ordered players' list
      */
-    public void endGame(List<Player> winnerList) {
+    public void endGame(List<PlayerView> winnerList) {
         user.endGame(winnerList);
         gameEnded = true;
     }
@@ -317,6 +320,7 @@ public class SocketClient implements Client {
 
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.registerTypeAdapter(Cell.class, new CellAdapter());
+            gsonBuilder.registerTypeAdapter(CellView.class, new CellViewAdapter());
             gson = gsonBuilder.create();
 
             String response;
@@ -372,10 +376,10 @@ public class SocketClient implements Client {
                     break;
                 }
                 case CHOOSETARGET: {
-                    ArrayList<Player> param = gson.fromJson(message.getParameters(), new TypeToken<List<Player>>() {
+                    ArrayList<PlayerView> param = gson.fromJson(message.getParameters(), new TypeToken<List<PlayerView>>() {
                     }.getType());
                     answer.setType(Interaction.CHOOSETARGET);
-                    ArrayList<Player> ansParam = new ArrayList<>();
+                    ArrayList<PlayerView> ansParam = new ArrayList<>();
                     ansParam.add(chooseTarget(param, message.isMustChoose()));
                     answer.setParameters(gson.toJson(ansParam));
                     break;
@@ -508,7 +512,7 @@ public class SocketClient implements Client {
                     answer.setType(Interaction.PING);
                     break;
                 case ENDGAME:
-                    ArrayList<Player> param = gson.fromJson(message.getParameters(), new TypeToken<List<Player>>() {}.getType());
+                    ArrayList<PlayerView> param = gson.fromJson(message.getParameters(), new TypeToken<List<PlayerView>>() {}.getType());
                     endGame(param);
                     break;
                 default:

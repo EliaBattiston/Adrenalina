@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.clientmodel.AmmoView;
+
 import java.io.Serializable;
 
 /**
@@ -201,4 +203,8 @@ public class Ammunitions implements Serializable {
         return yellow;
     }
 
+    public AmmoView getView()
+    {
+        return new AmmoView(getRed(), getBlue(), getYellow());
+    }
 }

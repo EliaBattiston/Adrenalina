@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.Player;
 
 /**
@@ -7,7 +8,7 @@ import it.polimi.ingsw.model.Player;
  */
 public class GuiClickableInfo extends GuiClickableObject {
 
-    public GuiClickableInfo(Player pl, double width, double height){
+    public GuiClickableInfo(PlayerView pl, double width, double height){
         super(width, height);
 
         img = GuiImagesMap.getImage( "info.png" );

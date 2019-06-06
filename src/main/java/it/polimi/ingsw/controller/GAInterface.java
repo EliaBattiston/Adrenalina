@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.GuiInterface;
 
@@ -78,7 +79,7 @@ public class GAInterface extends GuiInterface {
      * @return Chosen target
      */
     @Override
-    public Player chooseTarget(List<Player> targets, boolean mustChoose) {
+    public PlayerView chooseTarget(List<PlayerView> targets, boolean mustChoose) {
         return targets.get(new Random().nextInt(targets.size()));
     }
 
@@ -90,7 +91,7 @@ public class GAInterface extends GuiInterface {
      * @return Point where the enemy will be after being moved
      */
     @Override
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) {
+    public Point moveEnemy(PlayerView enemy, List<Point> destinations, boolean mustChoose) {
         return destinations.get(new Random().nextInt(destinations.size()));
     }
 

@@ -1,7 +1,8 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.MatchView;
+import it.polimi.ingsw.clientmodel.MatchView;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -72,7 +73,7 @@ public interface Client extends Remote
      * @throws RemoteException If something goes wrong with the connection
      * @return Chosen target
      */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose) throws RemoteException;
+    public PlayerView chooseTarget(List<PlayerView> targets, boolean mustChoose) throws RemoteException;
 
     /**
      * Asks the user where to movePlayer an enemy
@@ -82,7 +83,7 @@ public interface Client extends Remote
      * @throws RemoteException If something goes wrong with the connection
      * @return Point where the enemy will be after being moved
      */
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) throws RemoteException;
+    public Point moveEnemy(PlayerView enemy, List<Point> destinations, boolean mustChoose) throws RemoteException;
 
     /**
      * Asks the user to discard one power card
@@ -195,7 +196,7 @@ public interface Client extends Remote
      * @param winnerList Ordered players' list
      * @throws RemoteException If something goes wrong with the connection
      */
-    public void endGame(List<Player> winnerList) throws RemoteException;
+    public void endGame(List<PlayerView> winnerList) throws RemoteException;
 
     /**
      * Sends a general message to the user to be displayed

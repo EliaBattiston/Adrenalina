@@ -1,13 +1,14 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.clientmodel.MyPlayerView;
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.controller.Connection;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Contains all the info about a Player, from his nick to the current status of his boards
@@ -339,19 +340,36 @@ public class Player implements Serializable
         frenzyBoard = val;
     }
 
+    public MyPlayerView getFullView()
+    {
+        return new MyPlayerView(
+                nick,
+                character,
+                getWeapons(),
+                frenzyBoard,
+                Arrays.asList(receivedDamage),
+                receivedMarks,
+                skulls,
+                position,
+                ammo.getView(),
+                points,
+                getPowers()
+        );
+    }
 
-    /**
-     * Helps getting the fighter of a player by providing his nickname
-     * @param players List of players to search for the nickname
-     * @param nick Nickname of the desired player
-     * @return Fighter of the player
-     */
-    public static Fighter fighterFromNick(List<Player> players, String nick){
-        for(Player p : players)
-            if(p.getNick().equals(nick))
-                return p.getCharacter();
-
-        Logger.getGlobal().log(Level.SEVERE, "Error while looking for Fighter from nick");
-        return null;
+    public PlayerView getView()
+    {
+        return new PlayerView(
+                nick,
+                character,
+                getWeapons().stream().filter(w->!w.isLoaded()).collect(Collectors.toList()),
+                frenzyBoard,
+                Arrays.asList(receivedDamage),
+                receivedMarks,
+                skulls,
+                position,
+                ammo.getView(),
+                points
+        );
     }
 }
