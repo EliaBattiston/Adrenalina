@@ -402,7 +402,7 @@ public class FeasibleLambdaMap
 
         data.put("a-b2", (pl, map, memory)->  possibleLoot(pl, map, 1));
 
-        data.put("a-b3",(pl, map, memory) -> pl.getWeapons().stream().filter(Weapon::isLoaded).anyMatch(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null))) );
+        data.put("a-b3",(pl, map, memory) -> pl.getWeapons().stream().filter(Weapon::isLoaded).anyMatch(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null) && ActionLambdaMap.enoughAmmo(pl, w.getAlternative().getCost(), true))) );
 
         data.put("a-a1", (pl, map, memory)-> possibleLoot(pl, map, 2));
 
@@ -447,7 +447,7 @@ public class FeasibleLambdaMap
 
             //If no weapon has suitable action, we can't propose to move to this position
             if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) &&
-                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
+                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null) && ActionLambdaMap.enoughAmmo(pl, w.getAlternative().getCost(), true)) )
                     destinations.remove(p);
         }
 

@@ -909,7 +909,7 @@ public class ActionLambdaMap {
         //Only loaded weapons
         List<Weapon> loaded = pl.getWeapons().stream()
                 .filter(Weapon::isLoaded)
-                .filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)))
+                .filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null) && enoughAmmo(pl, w.getAlternative().getCost(), true)))
                 .collect(Collectors.toList());
 
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
@@ -945,7 +945,9 @@ public class ActionLambdaMap {
                 break;
         }
 
-        purchase(pl, toExecute.getCost());
+        if(toExecute != chosen.getBase())
+            purchase(pl, toExecute.getCost());
+
         toExecute.execute(pl, map, mem);
 
         Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
