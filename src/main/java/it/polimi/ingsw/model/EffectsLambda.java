@@ -160,7 +160,7 @@ public class EffectsLambda {
 
         //Mirino
         if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals("p1")) &&
-                (giver.getAmmo(Color.RED, true)>0 || giver.getAmmo(Color.BLUE, true)>0 || giver.getAmmo(Color.YELLOW, true)>0))
+                (giver.getAmmo(Color.RED, false)>0 || giver.getAmmo(Color.BLUE, false)>0 || giver.getAmmo(Color.YELLOW, false)>0))
         {
             Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p1")).collect(Collectors.toList()), false);
             if(chosen != null)
@@ -168,7 +168,7 @@ public class EffectsLambda {
                 List<Color> available = new ArrayList<>();
                 for(Color c : Color.values())
                 {
-                    if(giver.getAmmo(c, true) > 0)
+                    if(giver.getAmmo(c, false) > 0)
                         available.add(c);
                 }
 

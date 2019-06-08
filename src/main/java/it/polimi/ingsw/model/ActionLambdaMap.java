@@ -918,12 +918,13 @@ public class ActionLambdaMap {
         List<Action> weaponActions = new ArrayList<>();
         if(chosen.getBase() != null && chosen.getBase().isFeasible(pl, map, null))
             weaponActions.add(chosen.getBase());
-        if(chosen.getAlternative() != null && chosen.getAlternative().isFeasible(pl, map, null))
+        if(chosen.getAlternative() != null && chosen.getAlternative().isFeasible(pl, map, null) && enoughAmmo(pl, chosen.getAlternative().getCost(), true))
             weaponActions.add(chosen.getAlternative());
 
         //Ask the user which one he wants to use
         Action toExecute = pl.getConn().chooseAction(weaponActions, true);
 
+        //Memory object used to store information between consecutive actions
         Object mem;
         switch (toExecute.getLambdaID())
         {
@@ -943,6 +944,8 @@ public class ActionLambdaMap {
                 mem = null;
                 break;
         }
+
+        purchase(pl, toExecute.getCost());
         toExecute.execute(pl, map, mem);
 
         Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
@@ -958,9 +961,7 @@ public class ActionLambdaMap {
 
             for(Action a : weaponActions)
             {
-                if(pl.getAmmo(Color.RED, true) < a.getCost().stream().filter(c -> c == Color.RED).count()
-                        || pl.getAmmo(Color.BLUE, true) < a.getCost().stream().filter(c -> c == Color.BLUE).count()
-                        || pl.getAmmo(Color.YELLOW, true) < a.getCost().stream().filter(c -> c == Color.YELLOW).count())
+                if(enoughAmmo(pl, a.getCost(), true))
                 {
                     purchaseable.add(a);
                 }
@@ -983,9 +984,7 @@ public class ActionLambdaMap {
                     purchaseable.clear();
                     for(Action a : weaponActions)
                     {
-                        if(pl.getAmmo(Color.RED, true) < a.getCost().stream().filter(c -> c == Color.RED).count()
-                                || pl.getAmmo(Color.BLUE, true) < a.getCost().stream().filter(c -> c == Color.BLUE).count()
-                                || pl.getAmmo(Color.YELLOW, true) < a.getCost().stream().filter(c -> c == Color.YELLOW).count())
+                        if(enoughAmmo(pl, a.getCost(), true))
                         {
                             purchaseable.add(a);
                         }
@@ -1035,9 +1034,7 @@ public class ActionLambdaMap {
             if(w.getBase().getCost() != null)
                 cost.addAll(w.getBase().getCost());
 
-            if(pl.getAmmo(Color.RED, true) < cost.stream().filter(c -> c == Color.RED).count()
-                    || pl.getAmmo(Color.BLUE, true) < cost.stream().filter(c -> c == Color.BLUE).count()
-                    || pl.getAmmo(Color.YELLOW, true) < cost.stream().filter(c -> c == Color.YELLOW).count())
+            if(!enoughAmmo(pl, cost, true))
             {
                 reloadable.remove(w);
             }
@@ -1077,9 +1074,7 @@ public class ActionLambdaMap {
                 if(w.getBase().getCost() != null)
                     cost.addAll(w.getBase().getCost());
 
-                if(pl.getAmmo(Color.RED, true) < cost.stream().filter(c -> c == Color.RED).count()
-                        || pl.getAmmo(Color.BLUE, true) < cost.stream().filter(c -> c == Color.BLUE).count()
-                        || pl.getAmmo(Color.YELLOW, true) < cost.stream().filter(c -> c == Color.YELLOW).count())
+                if(!enoughAmmo(pl, cost, true))
                 {
                     reloadable.remove(w);
                 }
@@ -1090,10 +1085,13 @@ public class ActionLambdaMap {
     /**
      * Perform actions needed to complete a purchase, by letting the user pay with powers too
      * @param pl Player who has to make the purchase
-     * @param cost List of colors the player has to pay
+     * @param originalCost List of colors the player has to pay
      */
-    public static void purchase(Player pl, List<Color> cost) throws ClientDisconnectedException
+    public static void purchase(Player pl, List<Color> originalCost) throws ClientDisconnectedException
     {
+        //We make a copy of the list because we have to remove elements from it later
+        List<Color> cost = new ArrayList<>(originalCost);
+
         Color[] ammoColors = {Color.RED, Color.BLUE, Color.YELLOW};
         List<Color> normalCost = new ArrayList<>();
         int amount;
@@ -1101,7 +1099,7 @@ public class ActionLambdaMap {
         //Use normal ammo if they are available
         for(Color c : ammoColors)
         {
-            amount = (int)cost.stream().filter(color -> color == c).count();
+            amount = Math.min((int)cost.stream().filter(color -> color == c).count(), pl.getAmmo(c, false));
             for(int i=0; i<amount; i++)
                 normalCost.add(c);
         }
@@ -1123,5 +1121,19 @@ public class ActionLambdaMap {
 
             cost.remove(0);
         }
+    }
+
+    /**
+     * Tell whether the user has enough ammo and/or powers to pay for something
+     * @param pl Player who has to pay
+     * @param cost Cost of what the player wants to purchase
+     * @param withPowers If true powers are counted as available ammo
+     * @return True if the user has enough to buy, false otherwise
+     */
+    public static boolean enoughAmmo(Player pl, List<Color> cost, boolean withPowers)
+    {
+        return pl.getAmmo(Color.RED, withPowers) >= cost.stream().filter(c -> c == Color.RED).count()
+                && pl.getAmmo(Color.BLUE, withPowers) >= cost.stream().filter(c -> c == Color.BLUE).count()
+                && pl.getAmmo(Color.YELLOW, withPowers) >= cost.stream().filter(c -> c == Color.YELLOW).count();
     }
 }
