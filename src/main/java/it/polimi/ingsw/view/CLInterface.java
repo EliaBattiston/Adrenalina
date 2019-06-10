@@ -522,9 +522,9 @@ public class CLInterface implements UserInterface {
             print += background + stringFormat(p.getNick() + " - " + background + fighterToString(p.getCharacter()), 32) + ANSI_RESET;
             print += "Morti: " + p.getSkulls() + "x" + SKULL;
             print += " Ammo: ";
-            print += p.getAmmo(Color.BLUE, false) + "x" + formatColorBox(Color.BLUE) + " ";
-            print += p.getAmmo(Color.YELLOW, false) + "x" + formatColorBox(Color.YELLOW) + " ";
-            print += p.getAmmo(Color.RED, false) + "x" + formatColorBox(Color.RED) + " ";
+            print += p.getAmmo(Color.BLUE) + "x" + formatColorBox(Color.BLUE) + " ";
+            print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";
+            print += p.getAmmo(Color.RED) + "x" + formatColorBox(Color.RED) + " ";
             print += "Danni: ";
             for(int i = 0; i < damagesNumber; i++) {
                 boolean found = false;
