@@ -103,12 +103,27 @@ public class EffectsLambda {
     }
 
     /**
+     * Remove power card from the player's hand
+     * @param toRemove Card to remove
+     * @param remover Player who removes the power card
+     * @return Desired lambda function
+     */
+    public static PlayerLambda removePower(Power toRemove, Player remover)
+    {
+        return ((damage, marks, position, weapons, powers, ammo) -> {
+            int index = Arrays.asList(powers).indexOf(toRemove);
+            remover.throwPower(powers[index]);
+
+            powers[index] = null;
+        });
+    }
+
+    /**
      * Make the player pay the due amount of ammunition
      * @param cost List of coloured ammunition
      * @return Desired lambda function
      */
-    public static PlayerLambda payAmmo(List<Color> cost)
-    {
+    public static PlayerLambda payAmmo(List<Color> cost){
         return ((damage, marks, position, weapons, powers, ammo) -> {
             ammo.useRed( (int)cost.stream().filter(c -> c == Color.RED).count() );
             ammo.useBlue( (int)cost.stream().filter(c -> c == Color.BLUE).count() );
@@ -145,7 +160,7 @@ public class EffectsLambda {
 
         //Mirino
         if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals("p1")) &&
-                (giver.getAmmo(Color.RED)>0 || giver.getAmmo(Color.BLUE)>0 || giver.getAmmo(Color.YELLOW)>0))
+                (giver.getAmmo(Color.RED, false)>0 || giver.getAmmo(Color.BLUE, false)>0 || giver.getAmmo(Color.YELLOW, false)>0))
         {
             Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p1")).collect(Collectors.toList()), false);
             if(chosen != null)
@@ -153,7 +168,7 @@ public class EffectsLambda {
                 List<Color> available = new ArrayList<>();
                 for(Color c : Color.values())
                 {
-                    if(giver.getAmmo(c) > 0)
+                    if(giver.getAmmo(c, false) > 0)
                         available.add(c);
                 }
 
@@ -164,12 +179,7 @@ public class EffectsLambda {
                 taker.applyEffects(EffectsLambda.damage(1, giver));
 
                 //Remove power
-                giver.applyEffects(((damage1, marks, position, weapons, powers, ammo) -> {
-                    int index = Arrays.asList(powers).indexOf(chosen);
-                    giver.throwPower(powers[index]);
-
-                    powers[index] = null;
-                }));
+                giver.applyEffects(EffectsLambda.removePower(chosen, giver));
 
                 giver.applyEffects(EffectsLambda.payAmmo(cost));
             }

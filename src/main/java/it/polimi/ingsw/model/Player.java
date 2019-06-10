@@ -198,21 +198,39 @@ public class Player implements Serializable
     /**
      * Gives the number of requested ammunition
      * @param c Color of desired ammo
+     * @param withPowers If true the available amount includes useable powers
      * @return Number of available ammo for that color
      */
-    public int getAmmo(Color c)
+    public int getAmmo(Color c, boolean withPowers)
     {
+        int amount = 0;
+
         switch(c)
         {
             case RED:
-                return ammo.getRed();
+                amount += ammo.getRed();
+                break;
             case BLUE:
-                return ammo.getBlue();
+                amount += ammo.getBlue();
+                break;
             case YELLOW:
-                return ammo.getYellow();
+                amount += ammo.getYellow();
+                break;
             default:
-                return 0;
+                amount = 0;
+                break;
         }
+
+        if(withPowers)
+        {
+            for (Power p : getPowers())
+            {
+                if (p.getColor() == c)
+                    amount++;
+            }
+        }
+
+        return amount;
     }
 
     /**

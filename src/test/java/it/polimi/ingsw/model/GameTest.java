@@ -135,8 +135,8 @@ public class GameTest {
         assertEquals(p.getPosition().getY(), 2);
         assertTrue(p.getWeapons().contains(weapon));
         assertTrue(p.getPowers().contains(power));
-        assertEquals(p.getAmmo(Color.RED), 3);
-        assertEquals(p.getAmmo(Color.BLUE), 2);
+        assertEquals(p.getAmmo(Color.RED, false), 3);
+        assertEquals(p.getAmmo(Color.BLUE, false), 2);
     }
 
     /**

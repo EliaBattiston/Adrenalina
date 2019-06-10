@@ -70,6 +70,20 @@ public class Match implements Runnable
      */
     private transient Gson gson;
 
+    //Block of defines
+    private transient final static int numberOfSkullsOnKillsBoard = 8;
+    private transient final static int regularActionsNumber = 2;
+    private transient final static int frenzyActionsNumber = 1;
+    private transient final static int numberOfMaps = 4;
+    private transient final static int damagesForKill = 10;
+    private transient final static int mapWidth = 4;
+    private transient final static int mapHeight = 3;
+    private transient final static int regularMaxKillPoints = 8;
+    private transient final static int frenzyMaxKillPoints = 2;
+    private transient final static int numberOfDamages = 12;
+    private transient final static int indexOfKillerInDamages = 10;
+    private transient final static int indexOfOverKillerInDamages = 11;
+
     /**
      * Creates a new empty match
      * @param skullsNum Number of skulls to be used in the game
@@ -125,7 +139,7 @@ public class Match implements Runnable
 
         //The first turn is played by the player in the first position of the list
         active = game.getPlayers().get(0);
-        actionsNumber = 2;
+        actionsNumber = regularActionsNumber;
 
         broadcastMessage("Partita avviata, è il turno di " + active.getNick(), game.getPlayers());
 
@@ -158,7 +172,7 @@ public class Match implements Runnable
                 //If the first player disconnects while trying to choose, the server choses randomly
                 if (game.getMap() == null)
                 {
-                    int mapNum = new Random().nextInt(4) + 1;
+                    int mapNum = new Random().nextInt(numberOfMaps) + 1;
                     try
                     {
                         game.loadMap(mapNum);
@@ -200,7 +214,7 @@ public class Match implements Runnable
             //Check if there is a kill
             for(Player current : game.getPlayers())
             {
-                if( Arrays.stream(current.getReceivedDamage()).filter(Objects::nonNull).count() > 10 )
+                if( Arrays.stream(current.getReceivedDamage()).filter(Objects::nonNull).count() > damagesForKill )
                 {
                     registerKill(current);
                     spawnPlayer(current);
@@ -236,11 +250,11 @@ public class Match implements Runnable
             //Set how many actions the player can make in his turn
             if (phase == GamePhase.FRENZY && game.getPlayers().indexOf(active) < game.getPlayers().indexOf(firstFrenzy) )
             {
-                actionsNumber = 1;
+                actionsNumber = frenzyActionsNumber;
             }
             else
             {
-                actionsNumber = 2;
+                actionsNumber = regularActionsNumber;
             }
 
             //If the game ended make the last points calculation
@@ -456,8 +470,8 @@ public class Match implements Runnable
         int spawnY = 0;
 
         //Move in the correct position
-        for (int x = 0; x < 4 && !found; x++) {
-            for (int y = 0; y < 3 && !found; y++) {
+        for (int x = 0; x < mapWidth && !found; x++) {
+            for (int y = 0; y < mapHeight && !found; y++) {
                 if (game.getMap().getCell(x, y) != null && game.getMap().getCell(x, y).hasSpawn(spawnColor)) {
                     spawnX = x;
                     spawnY = y;
@@ -473,7 +487,7 @@ public class Match implements Runnable
         }
         //If not found the map is incorrect
 
-        broadcastMessage(pl.getNick() + " scarta " + chosen.getName() + " e spawna nella cella " + ((spawnY*4)+spawnX+1), game.getPlayers() );
+        broadcastMessage(pl.getNick() + " scarta " + chosen.getName() + " e spawna nella cella " + ((spawnY*mapWidth)+spawnX+1), game.getPlayers() );
 
         pl.setSpawned(true);
 
@@ -488,9 +502,9 @@ public class Match implements Runnable
     {
         Cell selectedCell = null;
 
-        for(int x = 0; x < 4; x++)
+        for(int x = 0; x < mapWidth; x++)
         {
-            for(int y = 0; y < 3; y++)
+            for(int y = 0; y < mapHeight; y++)
             {
                 //Don't check if the cell is unused
                 selectedCell = game.getMap().getCell(x, y);
@@ -515,9 +529,9 @@ public class Match implements Runnable
 
         //Calculate max points
         if(phase == GamePhase.FRENZY)
-            maxPoints = 2 - (killed.getSkulls() * 2);
+            maxPoints = frenzyMaxKillPoints - (killed.getSkulls() * 2);
         else
-            maxPoints = 8 - (killed.getSkulls() * 2);
+            maxPoints = regularMaxKillPoints - (killed.getSkulls() * 2);
 
         if(maxPoints < 1)
             maxPoints = 1;
@@ -573,24 +587,24 @@ public class Match implements Runnable
         if(phase != GamePhase.FRENZY)
         {
             //Register the kill on the board
-            for (nextSkull = 7; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
+            for (nextSkull = numberOfSkullsOnKillsBoard - 1; nextSkull >= 0 && (!game.getSkulls()[nextSkull].isUsed() || game.getSkulls()[nextSkull].getKiller() != null); nextSkull--)
                 ;
             if (nextSkull > -1)
             {
-                game.getSkulls()[nextSkull].setKiller(game.getPlayer(killed.getReceivedDamage()[10]), killed.getReceivedDamage()[11] != null);
+                game.getSkulls()[nextSkull].setKiller(game.getPlayer(killed.getReceivedDamage()[indexOfKillerInDamages]), killed.getReceivedDamage()[indexOfOverKillerInDamages] != null);
                 killed.addSkull();
             }
 
             //Give a mark to the overkiller
-            if (killed.getReceivedDamage()[11] != null)
+            if (killed.getReceivedDamage()[indexOfOverKillerInDamages] != null)
             {
-                game.getPlayer(killed.getReceivedDamage()[11]).applyEffects(EffectsLambda.marks(1, killed));
+                game.getPlayer(killed.getReceivedDamage()[indexOfOverKillerInDamages]).applyEffects(EffectsLambda.marks(1, killed));
             }
 
-            broadcastMessage(killed.getNick() + " è stato ucciso da " + game.getPlayer(killed.getReceivedDamage()[10]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[10]).getActionPhrase(), game.getPlayers());
+            broadcastMessage(killed.getNick() + " è stato ucciso da " + game.getPlayer(killed.getReceivedDamage()[indexOfKillerInDamages]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[indexOfKillerInDamages]).getActionPhrase(), game.getPlayers());
 
             //Reset damages
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < numberOfDamages; i++)
             {
                 killed.getReceivedDamage()[i] = null;
             }
@@ -606,9 +620,9 @@ public class Match implements Runnable
         }
         else
         {
-            frenzyKills.add( game.getPlayer(killed.getReceivedDamage()[10]) );
-            if(killed.getReceivedDamage()[11] != null)
-                frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[10] ) );
+            frenzyKills.add( game.getPlayer(killed.getReceivedDamage()[indexOfKillerInDamages]) );
+            if(killed.getReceivedDamage()[indexOfOverKillerInDamages] != null)
+                frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[indexOfKillerInDamages] ) );
         }
 
         killed.setSpawned(false);
@@ -633,7 +647,7 @@ public class Match implements Runnable
         {
             damageNum = 0;
 
-            for(int k = 7; k >= 0; k--)
+            for(int k = numberOfSkullsOnKillsBoard - 1; k >= 0; k--)
             {
                 if(game.getSkulls()[k].isUsed() && game.getSkulls()[k].getKiller() == p)
                 {
@@ -663,7 +677,7 @@ public class Match implements Runnable
             else
             {
                 //Check who inflicted damage first
-                for(int k = 7; k >= 0; k--)
+                for(int k = numberOfSkullsOnKillsBoard - 1 ; k >= 0; k--)
                 {
                     if(game.getSkulls()[k].isUsed())
                     {
@@ -698,9 +712,9 @@ public class Match implements Runnable
 
             //Calculate max points
             if(!useFrenzy)
-                maxPoints = 2 - (damaged.getSkulls() * 2);
+                maxPoints = frenzyMaxKillPoints - (damaged.getSkulls() * 2);
             else
-                maxPoints = 8 - (damaged.getSkulls() * 2);
+                maxPoints = regularMaxKillPoints - (damaged.getSkulls() * 2);
 
             if(maxPoints < 1)
                 maxPoints = 1;
