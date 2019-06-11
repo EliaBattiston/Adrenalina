@@ -11,6 +11,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,6 +26,15 @@ public class CMain
      * Endpoint for interface control
      */
     private UserInterface ui;
+
+    public static void main(String[] args) {
+        System.setProperty("java.security.policy", "AM06.policy");
+        List<String> flags = Arrays.asList(args);
+        if(flags.contains("-g"))
+            new CMain(true);
+        else
+            new CMain(false);
+    }
 
     /**
      * Creates a new CMain

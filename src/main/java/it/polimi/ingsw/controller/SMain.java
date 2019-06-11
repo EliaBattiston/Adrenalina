@@ -55,6 +55,15 @@ public class SMain
     private static final int MAXSKULLS = 8;
     private boolean[] startedTimer;
 
+
+    public static void main(String[] args) {
+        System.setProperty("java.security.policy", "AM06.policy");
+        List<String> flags = Arrays.asList(args);
+        if(flags.contains("-l"))
+            new SMain("localhost");
+        else
+            new SMain(null);
+    }
     /**
      * Creates a new SMain
      * @param passedIp IP address to use

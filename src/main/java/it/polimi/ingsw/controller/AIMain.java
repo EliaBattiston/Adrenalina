@@ -5,6 +5,9 @@ import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.view.GuiAInterface;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Main class for the AInterface
  */
@@ -14,6 +17,15 @@ public class AIMain
      * Endpoint for interface control
      */
     private UserInterface ui;
+
+    public static void main(String[] args) {
+        System.setProperty("java.security.policy", "AM06.policy");
+        List<String> flags = Arrays.asList(args);
+        if(flags.contains("-g"))
+            new AIMain(true);
+        else
+            new AIMain(false);
+    }
 
     /**
      * Creates a new AIMain
