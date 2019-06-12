@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.UserInterface;
 
 import java.io.Serializable;
 import java.rmi.AlreadyBoundException;
+import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -42,6 +43,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
     {
         try {
             hostRegistry = LocateRegistry.getRegistry(host, 1099);
+            hostRegistry.list();
             RMIConnHandler RMIServer = (RMIConnHandler) hostRegistry.lookup("AM06");
 
             RMIServer.newConnection(this);
@@ -62,8 +64,7 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
             t.start();
 
         }
-        catch (AlreadyBoundException | NotBoundException ex) {
-            Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
+        catch (ConnectException | AlreadyBoundException | NotBoundException ex) {
             throw new ServerNotFoundException();
         }
     }

@@ -96,6 +96,19 @@ public class CMain
                                 maxeq = i;
                             }
                         }
+
+                        if(maxeq == 0) {
+                            List<String> reducedAddresses = new ArrayList<>();
+                            reducedAddresses.addAll(addresses);
+
+                            for(String address: addresses) {
+                                String[] split = address.split("\\.");
+                                if(split[0].equals("127") || split[0].equals("169") || split[0].equals("172"))
+                                    reducedAddresses.remove(address);
+                            }
+                            localIP = reducedAddresses.get(0);
+                        }
+
                         //localIP = ui.getLocalAddress(addresses);
                     }
                     else {
