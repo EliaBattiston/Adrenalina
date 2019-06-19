@@ -369,6 +369,7 @@ public class FeasibleLambdaMap
             //Dai 1 danno a tutti i bersagli che sono distanti esattamente 1 movimento.
 
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> map.distance(p1, p2)==1);
+            targets.remove(pl);
             return !targets.isEmpty();
         });
 

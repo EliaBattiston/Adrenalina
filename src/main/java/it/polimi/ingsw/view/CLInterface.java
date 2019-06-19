@@ -359,7 +359,7 @@ public class CLInterface implements UserInterface {
             println("[1] Oggetti presenti in una cella");
             println("[2] Informazioni su arma");
             println("[3] Informazioni su potenziamento");
-            println("[4] Informazioni su armi/potenziamenti in mano e punti accumulati");
+            println("[4] Informazioni su armi/potenziamenti in mano");
             println("[5] Log completo della partita");
             println("[0] Esci");
             print("Selezione: ");
