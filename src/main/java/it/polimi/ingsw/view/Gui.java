@@ -30,8 +30,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
+import static java.lang.Math.*;
 
 //?fxme? a weapon already unloaded from the precedent turn won't be asked to be reloaded on the next one even if you have the ammo
 //todo delete purple lines in the maps images
@@ -870,7 +869,7 @@ public class Gui extends Application{
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
                         String logMessage = dtf.format(now) + " " + exchanger.getMessage();
-                        loggedText = loggedText + "\n" + logMessage;
+                        loggedText = logMessage + "\n" + loggedText;
                         if (logArea != null)
                             uiExec.execute(() -> {
                                 logArea.setText(loggedText);
@@ -1665,7 +1664,8 @@ public class Gui extends Application{
 
         String[] pieces = message.split("\n");
         String formattedText = "";
-        for(int i = max(0, pieces.length - 1 - 3); i < pieces.length; i++) {
+
+        for(int i = min(3, pieces.length - 1); i >= 0; i--) {
             formattedText += pieces[i] + "\n\n";
         }
 

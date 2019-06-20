@@ -50,9 +50,10 @@ public class SMain
     private Timer[] timer;
     private final Object lock;
     private final Object cancelLock;
-    private final Object matchLock[];
+    private final Object[] matchLock;
     private static final int MINSKULLS = 5;
     private static final int MAXSKULLS = 8;
+    private final int MINPLAYERS;
     private boolean[] startedTimer;
 
 
@@ -70,6 +71,8 @@ public class SMain
      */
     public SMain(String passedIp)
     {
+
+        MINPLAYERS = Configuration.getInstance().getMinPlayers();
 
         lock = new Object();
         cancelLock = new Object();
@@ -348,7 +351,7 @@ public class SMain
 
                 println("Il giocatore " + player.getNick() + " si è connesso.");
 
-                if (waiting[index].getGame().getPlayers().size() >= 3) {
+                if (waiting[index].getGame().getPlayers().size() >= MINPLAYERS) {
                     if (!startedTimer[index]) {
                         matchTimer(skulls);
                         startedTimer[index] = true;
@@ -442,7 +445,7 @@ public class SMain
                 }
             }
 
-            if(waiting[index].getGame().getPlayers().size() >= 3) {
+            if(waiting[index].getGame().getPlayers().size() >= MINPLAYERS) {
                 println("Partita avviata");
                 Match match = waiting[index];
                 waiting[index] = null;
