@@ -870,7 +870,7 @@ public class Gui extends Application{
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
                         String logMessage = dtf.format(now) + " " + exchanger.getMessage();
-                        loggedText = logMessage + "\n" + loggedText ;
+                        loggedText = loggedText + "\n" + logMessage;
                         if (logArea != null)
                             uiExec.execute(() -> {
                                 logArea.setText(loggedText);
