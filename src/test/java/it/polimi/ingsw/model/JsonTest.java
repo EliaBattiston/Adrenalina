@@ -8,17 +8,20 @@ import it.polimi.ingsw.exceptions.EmptyDeckException;
 
 import java.io.FileNotFoundException;
 
+/**
+ * Tests about serialization and deserialization of games in JSON
+ */
 public class JsonTest {
     /**
      * Tests the json serialization using Gson
      */
     @Test
-    public void TestJsonGenerate()
+    public void TestJsonGeneration()
     {
         Deck<Weapon> dW = new Deck<>();
         dW.add(new Weapon(1, "WeaponOne", "desc",null, null, null, Color.BLUE));
-        dW.add(new Weapon(2, "WeaponOQwo", "desc",null, null, null, Color.RED));
-        dW.add(new Weapon(3, "WeaponTree", "desc",null, null, null, Color.YELLOW));
+        dW.add(new Weapon(2, "WeaponTwo", "desc",null, null, null, Color.RED));
+        dW.add(new Weapon(3, "WeaponThree", "desc",null, null, null, Color.YELLOW));
 
         EndlessDeck<Power> dP = new EndlessDeck<>();
         dP.add(new Power(1, "Pow1", null, Color.RED));
@@ -38,8 +41,11 @@ public class JsonTest {
         String json = g.jsonSerialize();
     }
 
+    /**
+     * Test deserialization of a game using Gson
+     */
     @Test
-    public void TestJsonBaseGame() throws EmptyDeckException {
+    public void TestJsonBaseGame() {
         String baseGame = "baseGame.json";
         String map1 = "map1.json";
 

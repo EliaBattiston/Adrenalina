@@ -9,6 +9,9 @@ import java.io.FileNotFoundException;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Tests about the correct execution of matches with simulated players
+ */
 public class RunningGameTest {
 
     /**
