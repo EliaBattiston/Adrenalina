@@ -40,6 +40,7 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>11.0.2</version>
+      <scope>provided</scope>
     </dependency>
 
     <!--end of JAVA FX-->
@@ -152,26 +153,6 @@
           <executions>
 
             <execution>
-              <id>client-jar-execution</id>
-              <phase>package</phase>
-              <goals>
-                <goal>single</goal>
-              </goals>
-              <configuration>
-                <archive>
-                  <manifest>
-                    <mainClass>it.polimi.ingsw.controller.CMain</mainClass>
-                  </manifest>
-                </archive>
-                <descriptorRefs>
-                  <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
-                <finalName>AM06_Client</finalName>
-                <appendAssemblyId>false</appendAssemblyId>
-              </configuration>
-            </execution>
-
-            <execution>
               <id>server-jar-execution</id>
               <phase>package</phase>
               <goals>
@@ -192,6 +173,29 @@
             </execution>
 
             <execution>
+              <id>client-jar-execution</id>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration>
+                <archive>
+                  <manifest>
+                    <mainClass>it.polimi.ingsw.controller.CMain</mainClass>
+                  </manifest>
+                  <manifestEntries>
+                    <Class-Path>./lib/javafx.base.jar ./lib/javafx.controls.jar ./lib/javafx.graphics.jar</Class-Path>
+                  </manifestEntries>
+                </archive>
+                <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+                <finalName>AM06_Client</finalName>
+                <appendAssemblyId>false</appendAssemblyId>
+              </configuration>
+            </execution>
+
+            <execution>
               <id>AI-jar-execution</id>
               <phase>package</phase>
               <goals>
@@ -202,6 +206,9 @@
                   <manifest>
                     <mainClass>it.polimi.ingsw.controller.AIMain</mainClass>
                   </manifest>
+                  <manifestEntries>
+                    <Class-Path>./lib/javafx.base.jar ./lib/javafx.controls.jar ./lib/javafx.graphics.jar</Class-Path>
+                  </manifestEntries>
                 </archive>
                 <descriptorRefs>
                   <descriptorRef>jar-with-dependencies</descriptorRef>
