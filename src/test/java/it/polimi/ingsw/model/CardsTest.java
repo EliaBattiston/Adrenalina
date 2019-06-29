@@ -53,10 +53,10 @@ public class CardsTest {
     }
 
     /**
-     * Check Weapon Class: check the functionality of the constructor and the function of the attribute loaded
+     * Check if a newly constructed weapon returns correct data
      */
     @Test
-    public void checkWeaponClass()
+    public void checkWeaponConstructor()
     {
         Action base = new Action("MyAction","description", new ArrayList<>(), null);
         Weapon w = new Weapon(1, "WeaponOne", "desc",base, null, null, Color.RED);
@@ -68,21 +68,33 @@ public class CardsTest {
         assertTrue(w.getColor() == Color.RED);
         assertTrue(w.getId() == 1);
         assertTrue(w.isLoaded()); //at true from the constructor
+    }
 
+    /**
+     * Check Weapon Class: check the functionality of the constructor and the function of the attribute loaded
+     */
+    @Test
+    public void checkWeaponLoaded()
+    {
+        Action base = new Action("MyAction","description", new ArrayList<>(), null);
+        Weapon w = new Weapon(1, "WeaponOne", "desc",base, null, null, Color.RED);
+
+        //Test both loaded states
         w.setLoaded(false);
         assertFalse(w.isLoaded());
-
         w.setLoaded(true);
         assertTrue(w.isLoaded());
+
+        //Test that setting the same load state again works as expected
         w.setLoaded(true);
         assertTrue(w.isLoaded());
     }
 
     /**
-     * Check Deck Class: check it can contain the cards and give them correctly, check the shuffle function and the behavior when it's empty
+     * Check if the Deck class correctly constructs by creating a new one or cloning
      */
     @Test
-    public void checkDeckClass()
+    public void checkDeckConstructor()
     {
         Deck<Power> dP = new Deck<>();
         Power p1, p2, p3;
@@ -102,6 +114,22 @@ public class CardsTest {
         //check the clone function
         Deck<Power> dP2 = new Deck<>(dP);
         assertTrue(dP.getCards().equals(dP2.getCards()));
+    }
+
+    /**
+     * Check the deck's shuffle function
+     */
+    @Test
+    public void checkDeckShuffle()
+    {
+        Deck<Power> dP = new Deck<>();
+        Power[] powers = new Power[6];
+
+        for(int i=0; i< powers.length; i++)
+        {
+            powers[i] = new Power(1, "Pow"+i, null, Color.RED);
+            dP.add(powers[i]);
+        }
 
         //check the shuffle function: try tree times to shuffle, if none of them change the order, there's probably a problem
         ArrayList<Power> powsConn = (ArrayList<Power>) dP.getCards();
@@ -121,18 +149,35 @@ public class CardsTest {
                     fail();
             }
         }
+    }
+
+    /**
+     * Check if drawing from the decks works correctly
+     */
+    @Test
+    public void checkDeckDraw()
+    {
+        Deck<Power> dP = new Deck<>();
+        Power[] powers = new Power[6];
+
+        for(int i=0; i< powers.length; i++)
+        {
+            powers[i] = new Power(1, "Pow"+i, null, Color.RED);
+            dP.add(powers[i]);
+        }
 
         //check the function of the draw -> use the cloned deck because dP has been shuffled
         try {
-            assertTrue(dP2.draw() == p1);
-            assertTrue(dP2.draw() == p2);
-            assertTrue(dP2.draw() == p3);
+            for(int i=0; i< powers.length; i++)
+            {
+                assertTrue(dP.draw() == powers[i]);
+            }
         }catch(EmptyDeckException e){
             fail(); //enter here if there's a problem in the try
         }
 
         try {
-            dP2.draw();
+            dP.draw();
 
             fail(); //arrives here if there's a new card
         }catch(EmptyDeckException e){

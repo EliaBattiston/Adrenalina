@@ -7,35 +7,66 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 
 import java.util.Collections;
 
+/**
+ * Tests about lambda functions used for the main logic of activities, weapons and effects on players
+ */
 public class LambdaTest {
+
+    /**
+     * Tests the correct dealing of damage using an EffectLambda
+     */
     @Test
-    public void TestEffectsLambda()
+    public void TestDamageLambda()
     {
         Map m = Map.jsonDeserialize(1);
         Player p = new Player("Andre", "Ciao ragazzi!", Fighter.BANSHEE);
         Player att = new Player("Ale", "Vi distrugg0o0o0o0o0o0o0o0!", Fighter.VIOLETTA);
 
-        int d;
+        int damages;
 
         //Check damage
         p.applyEffects(EffectsLambda.damage(3, att));
-        d=0;
+        damages=0;
         for(int i=0; i<12; i++)
             if(p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(att.getNick()))
-                d++;
-        assertEquals(d,3);
+                damages++;
+        assertEquals(damages,3);
+
+
+    }
+
+    /**
+     * Tests the correct dealing of marks using an EffectLambda
+     */
+    @Test
+    public void TestMarksLambda()
+    {
+        Map m = Map.jsonDeserialize(1);
+        Player p = new Player("Andre", "Ciao ragazzi!", Fighter.BANSHEE);
+        Player att = new Player("Ale", "Vi distrugg0o0o0o0o0o0o0o0!", Fighter.VIOLETTA);
+        int damages = 0;
 
         //Check marks
         p.applyEffects(EffectsLambda.marks(2, att));
         assertEquals(Collections.frequency(p.getReceivedMarks(), att.getNick()), 2);
 
-        //Give damage (+ the old marks becomes damage)
+        //Check that the mark correctly converts to damage after another damage
         p.applyEffects(EffectsLambda.damage(2, att));
-        d=0;
+        damages=0;
         for(int i=0; i<12; i++)
             if( p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(att.getNick()) )
-                d++;
-        assertEquals(d, (3+2+2));
+                damages++;
+        assertEquals(damages, (2+2));
+    }
+
+    /**
+     * Tests the correct movement of a player using an EffectLambda
+     */
+    @Test
+    public void TestMoveLambda()
+    {
+        Map m = Map.jsonDeserialize(1);
+        Player p = new Player("Andre", "Ciao ragazzi!", Fighter.BANSHEE);
 
         //Move the player
         try {
@@ -47,6 +78,7 @@ public class LambdaTest {
             fail();
         }
 
+        //Move the player again
         try {
             p.applyEffects(EffectsLambda.move(p, new Point(3, 2), m));
             assertEquals(p.getPosition().getX(),3);

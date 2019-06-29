@@ -8,12 +8,15 @@ import it.polimi.ingsw.exceptions.ArrayDimensionException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Tests about functions of the Map
+ */
 public class MapTest {
     /**
-     * Check Cell Abstract Class for edge cases
+     * Test the cell's constructor
      */
     @Test
-    public void checkCellClass()
+    public void checkCellConstructor()
     {
         Side[] sides = new Side[4];
         sides[Direction.NORTH.ordinal()] = Side.WALL;
@@ -34,20 +37,35 @@ public class MapTest {
 
         assertTrue(rc.getPawns().size() == 0);
         assertTrue(rc.getPawns().size() == 0);
+    }
+
+    /**
+     * Test
+     */
+    @Test
+    public void checkCellPawns()
+    {
+        Side[] sides = new Side[4];
+        sides[Direction.NORTH.ordinal()] = Side.WALL;
+        sides[Direction.EAST.ordinal()] = Side.WALL;
+        sides[Direction.SOUTH.ordinal()] = Side.NOTHING;
+        sides[Direction.WEST.ordinal()] = Side.DOOR;
+        RegularCell rc = new RegularCell( sides, 3);
+        SpawnCell sc = new SpawnCell(sides, 3, Color.BLUE);
 
         /**
          * Check the correct player insertion and deletion procedure in the cell
          */
         Player pl = new Player("nickname", "whoaaaa", Fighter.DSTRUTTOR3);
+        //Adding
         rc.addPawn(pl);
         sc.addPawn(pl);
-
         assertTrue(rc.getPawns().size() == 1 && rc.getPawns().contains(pl));
         assertTrue(sc.getPawns().size() == 1 && sc.getPawns().contains(pl));
 
+        //Removing
         sc.removePawn(pl);
         rc.removePawn(pl);
-
         assertTrue(rc.getPawns().size() == 0);
         assertTrue(rc.getPawns().size() == 0);
     }
@@ -65,6 +83,7 @@ public class MapTest {
         sides[Direction.WEST.ordinal()] = Side.DOOR;
         RegularCell rc = new RegularCell( sides, 3);
         Loot l = null;
+
         try
         {
             l = new Loot(new Color[]{Color.BLUE, Color.YELLOW, Color.RED});
@@ -83,6 +102,66 @@ public class MapTest {
         assertTrue(rc.pickLoot() == l); //now we don't have it
         assertTrue(rc.getLoot() == null);
         assertTrue(rc.pickLoot() == null);
+    }
+
+    /**
+     * Check shared functions for checking if there is a spawn point
+     */
+    @Test
+    public void checkSpawn()
+    {
+        Side[] sides = new Side[4];
+        sides[Direction.NORTH.ordinal()] = Side.WALL;
+        sides[Direction.EAST.ordinal()] = Side.WALL;
+        sides[Direction.SOUTH.ordinal()] = Side.NOTHING;
+        sides[Direction.WEST.ordinal()] = Side.DOOR;
+        RegularCell rc = new RegularCell( sides, 3);
+        SpawnCell sc = new SpawnCell(sides, 3, Color.BLUE);
+
+        assertFalse(sc.hasSpawn(Color.YELLOW));
+        assertFalse(sc.hasSpawn(Color.RED));
+        assertTrue(sc.hasSpawn(Color.BLUE));
+
+        assertFalse(rc.hasSpawn(Color.YELLOW));
+        assertFalse(rc.hasSpawn(Color.RED));
+        assertFalse(rc.hasSpawn(Color.BLUE));
+    }
+
+    /**
+     * Check shared functions for checking if there is an available item
+     */
+    @Test
+    public void checkItem()
+    {
+        Side[] sides = new Side[4];
+        sides[Direction.NORTH.ordinal()] = Side.WALL;
+        sides[Direction.EAST.ordinal()] = Side.WALL;
+        sides[Direction.SOUTH.ordinal()] = Side.NOTHING;
+        sides[Direction.WEST.ordinal()] = Side.DOOR;
+        RegularCell rc = new RegularCell( sides, 3);
+        SpawnCell sc = new SpawnCell(sides, 3, Color.BLUE);
+        Player pl = new Player("nickname", "whoaaaa", Fighter.DSTRUTTOR3);
+
+        //The regular cell doesn't currently have items
+        assertFalse(rc.hasItems(pl));
+
+        Loot l = null;
+        try
+        {
+            l = new Loot(new Color[]{Color.BLUE, Color.YELLOW, Color.RED});
+        }
+        catch(ArrayDimensionException e)
+        {
+            fail();
+        }
+
+        rc.refillLoot(l);
+
+        //The regular cell has an item
+        assertTrue(rc.hasItems(pl));
+
+        //The spawn cell has no weapons
+        assertFalse(sc.hasItems(pl));
     }
 
     /**
@@ -123,6 +202,9 @@ public class MapTest {
         assertTrue(sc.getWeapons().isEmpty());
     }
 
+    /**
+     * Tests the correct elaboration of visible rooms from the standpoint of a player
+     */
     @Test
     public void checkVisibleRooms()
     {
@@ -139,7 +221,7 @@ public class MapTest {
     }
 
     /**
-     * Tests both visiblePlayer methods
+     * Tests both visiblePlayer methods (the normal one and the one limited to a cardinal direction)
      */
     @Test
     public void checkVisiblePlayers()
@@ -173,6 +255,9 @@ public class MapTest {
         assertTrue(calculated.contains(pl.get(2)));
     }
 
+    /**
+     * Test elaboration of visible players
+     */
     @Test
     public void checkPlayersAtGivenDistance()
     {
@@ -202,6 +287,9 @@ public class MapTest {
         assertTrue(!calculated.contains(pl.get(2)));
     }
 
+    /**
+     * Tests the elaboration of positions a player can go to from its current position
+     */
     @Test
     public void checkPossibleMovements()
     {
@@ -229,6 +317,9 @@ public class MapTest {
         }
     }
 
+    /**
+     * Tests the correct elaboration of the visible cells from the standpoint of the user
+     */
     @Test
     public void checkVisiblePoints()
     {

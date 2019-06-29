@@ -5,9 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
+/**
+ * Tests about the action classes
+ */
 public class ActionsTest {
     /**
-     * Check Action Class for edge cases
+     * Tests if the getters of the Action class are correctly implemented
      */
     @Test
     public void checkActionClass()
@@ -22,14 +25,13 @@ public class ActionsTest {
         assertTrue(act.getName().equals("SimpleAction"));
         assertTrue(act.getDescription().equals("Simple action"));
         assertTrue(act.getCost() == cost);
-
     }
 
     /**
-     * Check Activities Class for edge cases
+     * Tests if the number of returned actions are consistent with the game's rules
      */
     @Test
-    public void checkActivitiesClass()
+    public void checkActivitiesNumber()
     {
         Activities singleton = Activities.getInstance();
 
@@ -60,11 +62,23 @@ public class ActionsTest {
             assertTrue(singleton.getAvailable(i, true, true).size() == 4);
             assertTrue(singleton.getAvailable(i, true, false).size() == 3);
         }
+    }
+
+    /**
+     * Tests if the returned actions are correctly matched
+     */
+    @Test
+    public void checkActivities()
+    {
+        Activities singleton = Activities.getInstance();
+
+        /**
+         * Check the correct instantiation of the singleton
+         */
+        assertTrue(singleton != null);
 
         /**
          * Check the dependency of the actions in relation with the input parameters
-         * Adrenaline actions include base actions
-         * Frenzy actions do NOT contain base and adrenaline actions except for the playPower one
          */
         ArrayList<Action> baseReturn = new ArrayList<>();
         ArrayList<Action> adr3Return = new ArrayList<>();
@@ -78,15 +92,17 @@ public class ActionsTest {
         freBReturn.addAll(singleton.getAvailable(0, true, true));
         freAReturn.addAll(singleton.getAvailable(0, true, false));
 
-        for (int i = 0; i < baseReturn.size(); i++) {
-            assertTrue(adr3Return.contains(baseReturn.get(i)));
-            assertTrue(adr6Return.contains(baseReturn.get(i)));
-        }
+        /**
+         * Adrenaline actions include base actions
+         */
+        assertTrue(adr3Return.containsAll(baseReturn));
+        assertTrue(adr6Return.containsAll(baseReturn));
+        assertTrue(adr6Return.containsAll(adr3Return));
 
-        for (int i = 0; i < adr3Return.size(); i++) {
-            assertTrue(adr6Return.contains(adr3Return.get(i)));
-        }
 
+        /**
+         * Frenzy actions do NOT contain base and adrenaline actions except for the playPower one
+         */
         int countA = 0;
         int countB = 0;
         for (int i = 0; i < adr6Return.size(); i++) {
@@ -99,6 +115,5 @@ public class ActionsTest {
         }
         assertTrue(countB == 1);
         assertTrue(countA == 1);
-
     }
 }

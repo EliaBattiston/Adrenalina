@@ -9,6 +9,9 @@ import it.polimi.ingsw.exceptions.WrongPointException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Tests about the correct functioning of Games
+ */
 public class GameTest {
     /**
      * Check Ammunitions Class for edge cases
@@ -73,24 +76,19 @@ public class GameTest {
         assertTrue(a.useBlue(3));
         assertTrue(a.useYellow(3));
 
-        //can't get ammo if there's no one
+        //can't get ammo if there's none
         assertFalse(a.useRed(1));
         assertFalse(a.useYellow(1));
         assertFalse(a.useBlue(1));
     }
 
     /**
-     * Check Player Class for edge cases
+     * Check the constructor of the Player class
      */
     @Test
-    public void checkPlayerClass()
+    public void checkPlayerConstructor()
     {
         Player p = new Player("Nick", "Phrase", Fighter.DOZER);
-
-        Player b = new Player("DamageGiver", "Phrase2", Fighter.DOZER);
-        Action doNothing = new Action("Do nothing", "Does nothing", new ArrayList<Color>(), null);
-        Weapon weapon = new Weapon(0, "Gun","desc", doNothing, null, null, Color.RED);
-        Power power = new Power(1, "POWER", doNothing, Color.BLUE);
 
         //check constructor
         assertEquals(p.getNick(), "Nick");
@@ -100,8 +98,23 @@ public class GameTest {
         //check that arrays are initially empty
         assertEquals(p.getWeapons().size(), 0);
         assertEquals(p.getPowers().size(), 0);
+    }
 
-        //check setting of values with lambda
+    /**
+     * Check how the player gets modified with PlayerLambdas
+     */
+    @Test
+    public void checkPlayerLambda()
+    {
+        Player p = new Player("Nick", "Phrase", Fighter.DOZER);
+
+        //Setting up an enemy, a weapon and a power
+        Player b = new Player("DamageGiver", "Phrase2", Fighter.DOZER);
+        Action doNothing = new Action("Do nothing", "Does nothing", new ArrayList<Color>(), null);
+        Weapon weapon = new Weapon(0, "Gun","desc", doNothing, null, null, Color.RED);
+        Power power = new Power(1, "POWER", doNothing, Color.BLUE);
+
+        //Check setting of values with lambda
         p.applyEffects( (damage, marks, position, weapons, powers, ammo) -> {
             damage[0] = b.getNick();
 
@@ -147,17 +160,19 @@ public class GameTest {
     {
         Point p = null;
 
+        //Correct instantiation of a point
         try
         {
             p = new Point(1, 1);
         }
         catch(WrongPointException e)
         { fail();};
-
-
         assertEquals(p.getX(),1);
         assertEquals(p.getY(),1);
 
+
+
+        //x value out of bounds, it shouldn't change the value from before
         try
         {
             p.set(5, 3);
@@ -167,11 +182,11 @@ public class GameTest {
         {
             ;
         }
-
-        //it didn't change the values
         assertEquals(p.getX(),1);
         assertEquals(p.getY(),1);
 
+
+        //Negative y value, it shouldn't change the value from before
         try
         {
             p.set(3, -5);
@@ -181,10 +196,10 @@ public class GameTest {
         {
             ;
         }
-        //it didn't change the values
         assertEquals(p.getX(),1);
         assertEquals(p.getY(),1);
 
+        //Correct setting
         try
         {
             p.set(3,2);
@@ -193,16 +208,15 @@ public class GameTest {
         {
             fail();
         }
-        //it changed the values
         assertEquals(p.getX(), 3);
         assertEquals(p.getY(), 2);
     }
 
     /**
-     * Tests the correct functioning of Kill class that has been initialized to true
+     * Tests the correct functioning of a Kill that has a skull
      */
     @Test
-    public void TreuKillClass()
+    public void KillClassWithSkull()
     {
         Player p = new Player("ERap320", "Yay!", Fighter.DSTRUTTOR3);
 
@@ -240,9 +254,9 @@ public class GameTest {
     /**
      * Test the correct initialization of a Game and the addition of players
      */
+    @Test
     public void TestGameClass()
     {
-
         Game g = new Game(5, new Map(), null, null, null);
         Player p1 = new Player("ERap320", "Yay!", Fighter.DSTRUTTOR3);
         Player p1_doubledNick = new Player("ERap320", "Yuy!", Fighter.DOZER);
@@ -255,6 +269,7 @@ public class GameTest {
         //Check if there are no players at creation
         assertEquals(g.getPlayers().size(), 0);
 
+        //Test addition of a single player
         try
         {
             assertTrue(g.addPlayer(p1));
@@ -267,6 +282,7 @@ public class GameTest {
             fail();
         }
 
+        //Test the addition of another player with the same name
         try
         {
             g.addPlayer(p1_doubledNick);
@@ -276,9 +292,9 @@ public class GameTest {
         {
             ;
         }
-
         assertEquals(g.getPlayers().size(), 1);
 
+        //Test the addition of too many players (More than 5)
         try
         {
             g.addPlayer(p2);
