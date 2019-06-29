@@ -32,14 +32,8 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.*;
 
-//?fxme? a weapon already unloaded from the precedent turn won't be asked to be reloaded on the next one even if you have the ammo
-//todo delete purple lines in the maps images
-//todo check torpedine and vortex
-//fixme skipAction on second additional needs to be repositioned (maybe only if you can skip the choose position/choose player, it's an "old" bug)
-
 //todo move all the strings printed in final Strings
 //todo move the ratios in defines
-//todo break this class in multiple ones and the gui class too
 /**
  * The Gui class that extends the JavaFX Application
  */
@@ -118,8 +112,6 @@ public class Gui extends Application{
         //primaryStage.setFullScreen(true);
         primaryStage.show();
 
-
-        //FIXME skipAction is not removed before trying to add it when we reset the last real interaction so it tries to add another
         //Event handlers
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
             if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
@@ -769,7 +761,7 @@ public class Gui extends Application{
      */
     private void listenRequests(){
         exchanger = GuiExchanger.getInstance();
-        boolean serverDisconnectedOnHisOwn = false; //todo check it works
+        boolean serverDisconnectedOnHisOwn = false;
         while(exchanger.getActualInteraction()!=Interaction.CLOSEAPP) {
             exchanger.waitRequestIncoming();
 
@@ -1381,7 +1373,7 @@ public class Gui extends Application{
         Canvas canvas = createPopupCanvas();
         popupPane.getChildren().addAll(canvas);
 
-        GridPane grid = gridMaker(500*dimMult);
+        GridPane grid = gridMaker(700*dimMult);
         StackPane.setAlignment(grid, Pos.TOP_LEFT);
         grid.setAlignment(Pos.TOP_LEFT);
         grid.setTranslateX(backgroundWidth * 0.24 );
@@ -1389,6 +1381,7 @@ public class Gui extends Application{
         popupPane.getChildren().addAll(grid);
 
         Label l = new Label(message);
+        l.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
         grid.add(l,0,0);
 
@@ -1410,6 +1403,7 @@ public class Gui extends Application{
         int row = 1;
         for(String s : roomsNames){
             RadioButton radio = new RadioButton(s);
+            radio.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
             if(row==1)
@@ -1418,6 +1412,7 @@ public class Gui extends Application{
         }
 
         Button submit = new Button(confirmButtonText);
+        submit.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             System.out.println(answer + ": " + roomsNames.indexOf(answer));
@@ -1452,7 +1447,7 @@ public class Gui extends Application{
         Canvas canvas = createPopupCanvas();
         popupPane.getChildren().addAll(canvas);
 
-        GridPane grid = gridMaker(500*dimMult);
+        GridPane grid = gridMaker(700*dimMult);
         StackPane.setAlignment(grid, Pos.TOP_LEFT);
         grid.setAlignment(Pos.TOP_LEFT);
         grid.setTranslateX(backgroundWidth * 0.24 );
@@ -1460,14 +1455,16 @@ public class Gui extends Application{
         popupPane.getChildren().addAll(grid);
 
         Label l = new Label(message);
+        l.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
         grid.add(l,0,0);
 
         List<String> colorNames = new ArrayList<>();
-        if(colors.contains(Color.RED))
-            colorNames.add("Rosso");
+
         if(colors.contains(Color.BLUE))
             colorNames.add("Blu");
+        if(colors.contains(Color.RED))
+            colorNames.add("Rosso");
         if(colors.contains(Color.YELLOW))
             colorNames.add("Giallo");
 
@@ -1477,12 +1474,14 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+            radio.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
             if(row==1)
                 radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
         Button submit = new Button(confirmButtonText);
+        submit.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             Color c = null;
@@ -1532,6 +1531,7 @@ public class Gui extends Application{
         popupPane.getChildren().addAll(grid);
 
         Label l = new Label(message);
+        l.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
@@ -1541,6 +1541,7 @@ public class Gui extends Application{
         int row = 1;
         for(Direction d:dirs){
             RadioButton radio = new RadioButton(d.toString());
+            radio.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
             radio.setToggleGroup(radioGroup);
             radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
             if(row==1)
@@ -1551,6 +1552,7 @@ public class Gui extends Application{
 
         //continue here
         Button submit = new Button(confirmButtonText);
+        submit.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             System.out.println(answer);
@@ -1691,7 +1693,7 @@ public class Gui extends Application{
      * @param buttons the buttons
      * @param eventHandler the event handler
      */
-    private void askWithRadio(String message, ToggleGroup group, List<String> buttons, javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler){
+    private void askSettingsRadio(String message, ToggleGroup group, List<String> buttons, javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler){
         Pane root = initializerBackground();
         GridPane grid = gridMaker(480 * dimMult);
 
@@ -1742,7 +1744,7 @@ public class Gui extends Application{
             appStage.setScene(new Scene(initializerBackground()));
         });
 
-        askWithRadio(message, group, buttons, eventHandler);
+        askSettingsRadio(message, group, buttons, eventHandler);
     }
 
     /**
@@ -1762,7 +1764,7 @@ public class Gui extends Application{
             appStage.setScene(new Scene(initializerBackground()));
         });
 
-        askWithRadio(message, group, buttons, eventHandler);
+        askSettingsRadio(message, group, buttons, eventHandler);
     }
 
     /**
@@ -1785,7 +1787,7 @@ public class Gui extends Application{
             appStage.setScene(new Scene(initializerBackground()));
         });
 
-        askWithRadio(message, group, buttons, eventHandler);
+        askSettingsRadio(message, group, buttons, eventHandler);
     }
 
     /**
@@ -1807,7 +1809,7 @@ public class Gui extends Application{
             appStage.setScene(new Scene(initializerBackground()));
         });
 
-        askWithRadio(message, group, buttons, eventHandler);
+        askSettingsRadio(message, group, buttons, eventHandler);
     }
 
     /**
@@ -1830,7 +1832,7 @@ public class Gui extends Application{
             appStage.setScene(new Scene(initializerBackground()));
         });
 
-        askWithRadio(message, group, buttons, eventHandler);
+        askSettingsRadio(message, group, buttons, eventHandler);
     }
 
     /**
@@ -1850,7 +1852,7 @@ public class Gui extends Application{
             appStage.setScene(new Scene(initializerBackground()));
         });
 
-        askWithRadio(message, group, buttons, eventHandler);
+        askSettingsRadio(message, group, buttons, eventHandler);
     }
 
     private Font getFont(double dim){

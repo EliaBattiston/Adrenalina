@@ -455,7 +455,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power discardPower(List<Power> powers, boolean mustChoose) {
-        exchanger.setRequest(Interaction.DISCARDPOWER, "Scegli una power da scartare", powers, mustChoose);
+        exchanger.setRequest(Interaction.DISCARDPOWER, "Scegli una carta power", powers, mustChoose);
         exchanger.waitFreeToUse();
         return (Power)exchanger.getAnswer();
     }
