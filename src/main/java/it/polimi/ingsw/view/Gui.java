@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -13,6 +14,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -114,17 +117,20 @@ public class Gui extends Application{
 
         //Event handlers
         primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
+
             if(abs(newVal.doubleValue() - backgroundWidth) > 20) {
                 backgroundWidth = newVal.doubleValue();
                 backgroundHeight = backgroundWidth * 9 / 16;
                 dimMult = backgroundWidth / 1920;
+
+                //primaryStage.setHeight(backgroundHeight);
 
                 if(match != null) { //if it's null it's still in the settings
                     masterPane = drawGame();
                     primaryStage.setScene(new Scene(masterPane));
                 }
 
-                //ANDREA: on my linux with tiling, when one of these are called, the window is going to be resized
+                //ANDREA: on my tiling window manager on linux, when one of these are called, the window is going to be resized
                 if(exchanger != null && exchanger.getLastRealInteraction() != null && exchanger.getLastRealInteraction() != Interaction.CHOOSEDIRECTION &&
                         exchanger.getLastRealInteraction() != Interaction.CHOOSEROOM)
                     exchanger.resetLastRealInteraction();
@@ -137,9 +143,18 @@ public class Gui extends Application{
             System.exit(0);
         });
 
-        //TODO use this for fixed ratio, find the good way to implement them
-        //primaryStage.minHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
-        //primaryStage.maxHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16));
+        primaryStage.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.F11) {
+                    primaryStage.setFullScreen(true);
+                }
+            }
+        });
+
+        //keep the aspect ratio
+        //primaryStage.minHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16).add(-15));
+        //primaryStage.maxHeightProperty().bind(primaryStage.widthProperty().multiply(((double) 9)/16).add(15));
 
         //Run the thread that handles the connection with the GuiInterface
 
