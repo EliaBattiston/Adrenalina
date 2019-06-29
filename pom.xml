@@ -164,9 +164,9 @@
                     <mainClass>it.polimi.ingsw.controller.SMain</mainClass>
                   </manifest>
                 </archive>
-                <descriptorRefs>
-                  <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
+                <descriptors>
+                  <descriptor>src/assembly/server.xml</descriptor>
+                </descriptors>
                 <finalName>AM06_Server</finalName>
                 <appendAssemblyId>false</appendAssemblyId>
               </configuration>
@@ -187,9 +187,9 @@
                     <Class-Path>./lib/javafx.base.jar ./lib/javafx.controls.jar ./lib/javafx.graphics.jar</Class-Path>
                   </manifestEntries>
                 </archive>
-                <descriptorRefs>
-                  <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
+                <descriptors>
+                  <descriptor>src/assembly/client.xml</descriptor>
+                </descriptors>
                 <finalName>AM06_Client</finalName>
                 <appendAssemblyId>false</appendAssemblyId>
               </configuration>
@@ -210,9 +210,14 @@
                     <Class-Path>./lib/javafx.base.jar ./lib/javafx.controls.jar ./lib/javafx.graphics.jar</Class-Path>
                   </manifestEntries>
                 </archive>
+                <descriptors>
+                  <descriptor>src/assembly/AI.xml</descriptor>
+                </descriptors>
+                <!--
                 <descriptorRefs>
                   <descriptorRef>jar-with-dependencies</descriptorRef>
                 </descriptorRefs>
+                -->
                 <finalName>AM06_AI</finalName>
                 <appendAssemblyId>false</appendAssemblyId>
               </configuration>

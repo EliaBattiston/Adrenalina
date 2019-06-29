@@ -588,12 +588,8 @@ public class GuiInterface implements UserInterface{
     public void endGame(List<PlayerView> winnerList) {
         String message = "ENDGAME\n";
 
-        int i=1;
-        for(PlayerView p:winnerList){
-            if(p!=null) {
-                message += i +"° @" + p.getPoints() + " punti è " + p.getNick() + "\n";
-                i++;
-            }
+        for(int i = winnerList.size() - 1; i >= 0; i--) {
+            message += (i + 1) +"° con " + winnerList.get(i).getPoints() + " punti è " + winnerList.get(i).getNick() + "\n";
         }
 
         exchanger.setRequest(Interaction.ENDGAME, message, null, true);

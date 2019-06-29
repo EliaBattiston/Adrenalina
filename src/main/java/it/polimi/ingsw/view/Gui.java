@@ -914,7 +914,8 @@ public class Gui extends Application{
      * Start the disconnection timer inside the exchanger
      */
     private void timerDisconnectionStart(){
-        if(match!=null && exchanger.getActualInteraction() != Interaction.UPDATEVIEW && exchanger.getActualInteraction()!=Interaction.LOG) {
+        if(match!=null && exchanger.getActualInteraction() != Interaction.UPDATEVIEW && exchanger.getActualInteraction()!=Interaction.LOG
+            && exchanger.getActualInteraction() != Interaction.ENDGAME) {
             if(exchanger.getMyTimer() != null)
                 exchanger.getMyTimer().interrupt();
 

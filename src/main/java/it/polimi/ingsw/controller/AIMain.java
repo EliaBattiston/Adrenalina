@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
+import it.polimi.ingsw.view.AInterface;
 import it.polimi.ingsw.view.GuiAInterface;
 import it.polimi.ingsw.view.UserInterface;
 
