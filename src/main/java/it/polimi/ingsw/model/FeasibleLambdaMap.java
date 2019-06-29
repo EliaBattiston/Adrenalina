@@ -453,7 +453,7 @@ public class FeasibleLambdaMap
 
             //If no weapon has suitable action, we can't propose to move to this position
             if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) &&
-                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null) && ActionLambdaMap.enoughAmmo(pl, w.getAlternative().getCost(), true)) )
+                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null) && ActionLambdaMap.enoughAmmo(pl, w.getAlternative().getCost(), true) ) )
                     destinations.remove(p);
         }
 

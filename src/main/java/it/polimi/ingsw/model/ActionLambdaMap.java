@@ -785,8 +785,8 @@ public class ActionLambdaMap {
         });
 
         data.put("a-f4", (pl, map, memory)->{
-            runToShoot(pl, map,2, ((Game)memory).getPlayers());
             reload(pl, ((Game)memory).getPlayers());
+            runToShoot(pl, map,2, ((Game)memory).getPlayers());
             shoot(pl, map, ((Game)memory).getPlayers());
         });
 
@@ -891,7 +891,7 @@ public class ActionLambdaMap {
 
             //If no weapon has suitable action, we can't propose to move to this position
             if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) &&
-                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null)) )
+                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null) && enoughAmmo(pl, w.getAlternative().getCost(), true) ) )
                 destinations.remove(p);
         }
 
@@ -933,7 +933,11 @@ public class ActionLambdaMap {
         //Only loaded weapons
         List<Weapon> loaded = pl.getWeapons().stream()
                 .filter(Weapon::isLoaded)
-                .filter(w -> w.getBase().isFeasible(pl, map, null) || (w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null) && enoughAmmo(pl, w.getAlternative().getCost(), true)))
+                .filter(w -> w.getBase().isFeasible(pl, map, null) || (
+                    w.getAlternative() != null
+                    && w.getAlternative().isFeasible(pl, map, null)
+                    && enoughAmmo(pl, w.getAlternative().getCost(), true)
+                ))
                 .collect(Collectors.toList());
 
         Weapon chosen = pl.getConn().chooseWeapon(loaded, true);
