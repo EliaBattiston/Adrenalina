@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
  */
 public class Player implements Serializable
 {
-    private final static int maxMarksNumber = 3;
-    private final static int maxWeaponsNumber = 3;
-    private final static int maxPowersNumber = 3;
-    private final static int damagesNumber = 12;
+    private transient final static int maxMarksNumber = 3;
+    private transient final static int maxWeaponsNumber = 3;
+    private transient final static int maxPowersNumber = 3;
+    private transient final static int damagesNumber = 12;
 
     /**
      * Nickname used to log in

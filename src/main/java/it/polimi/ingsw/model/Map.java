@@ -68,8 +68,8 @@ public class Map implements Serializable {
      * @return Point with X and Y coordinates of the cell in the map
      */
     public Point getCellPosition(Cell c){
-        for(int i=0; i<=3;i++)
-            for(int j=0; j<=2; j++)
+        for(int i=0; i < mapWidth;i++)
+            for(int j=0; j < mapHeight; j++)
                 if(cells[i][j] == c)
                     return new Point(i,j);
 

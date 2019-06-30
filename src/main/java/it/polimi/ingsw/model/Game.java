@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
+    private transient final static int killsNumber = 8;
+    private transient final static int minSkullsNumber = 5;
+    private transient final static int maxPlayersNumber = 5;
+
     /**
      * Map used in this match
      */
@@ -50,8 +54,8 @@ public class Game {
      */
     Game(int skullsNum, Map gameMap, EndlessDeck<Power> powersDeck, EndlessDeck<Loot> ammoDeck, Deck<Weapon> weaponsDeck)
     {
-        skullsBoard = new Kill[8];
-        for(int i=0; i<8; i++)
+        skullsBoard = new Kill[killsNumber];
+        for(int i=0; i<killsNumber; i++)
         {
             skullsBoard[i] = new Kill(i<skullsNum);
         }
@@ -81,7 +85,7 @@ public class Game {
      */
     public boolean addPlayer(Player pl)
     {
-        if(players.size() < 5 && !players.contains(pl))
+        if(players.size() < maxPlayersNumber && !players.contains(pl))
         {
             if(players.stream().anyMatch(player -> player.getNick().equals(pl.getNick()) ))
             {
@@ -181,9 +185,9 @@ public class Game {
      * @return true if the number of skulls was compatible with the specification
      */
     public boolean initializeSkullsBoard(int skullsNum){
-        if(skullsNum>=5 && skullsNum<=8){
-            skullsBoard = new Kill[8];
-            for(int i=0; i<8; i++)
+        if(skullsNum>=minSkullsNumber && skullsNum<=killsNumber){
+            skullsBoard = new Kill[killsNumber];
+            for(int i=0; i<killsNumber; i++)
                 skullsBoard[i] = new Kill(i<skullsNum);
 
             return true;

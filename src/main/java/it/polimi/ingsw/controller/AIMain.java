@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class AIMain
 {
+    private final static int socketPort = 1906;
+
     /**
      * Endpoint for interface control
      */
@@ -41,7 +43,7 @@ public class AIMain
             ui = new AInterface();
 
         try {
-            new SocketClient(ip, 1906, ui);
+            new SocketClient(ip, socketPort, ui);
         }
         catch (ServerNotFoundException e) {
             ui.generalMessage("Server non trovato, riprova\n");
@@ -60,7 +62,7 @@ public class AIMain
         ui = new AInterface();
 
         try {
-            new SocketClient(ip, 1906, ui);
+            new SocketClient(ip, socketPort, ui);
         }
         catch (ServerNotFoundException e) {
             ui.generalMessage("Server non trovato, riprova\n");

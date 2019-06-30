@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  */
 public class EffectsLambda {
     private final static int maxMarksNumber = 3;
+    private final static int maxWeaponsNumber = 3;
     private final static int damagesNumber = 12;
     private final static String mirinoID = "p1";
     private final static String granataVenomID = "p3";
@@ -147,7 +148,7 @@ public class EffectsLambda {
     {
         return ((damage, marks, position, weapons, powers, ammo) -> {
             int pos = Arrays.asList(weapons).indexOf(toRemove);
-            if(pos>-1 && pos<=3)
+            if(pos>-1 && pos<=maxWeaponsNumber)
             {
                 weapons[pos].setLoaded(true);
                 cell.refillWeapon(weapons[pos]);
@@ -168,7 +169,7 @@ public class EffectsLambda {
         if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals(mirinoID)) &&
                 (giver.getAmmo(Color.RED, false)>0 || giver.getAmmo(Color.BLUE, false)>0 || giver.getAmmo(Color.YELLOW, false)>0))
         {
-            Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p1")).collect(Collectors.toList()), false);
+            Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals(mirinoID)).collect(Collectors.toList()), false);
             if(chosen != null)
             {
                 List<Color> available = new ArrayList<>();
@@ -194,7 +195,7 @@ public class EffectsLambda {
         //Granata venom
         if(taker.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals(granataVenomID)))
         {
-            Power chosen = taker.getConn().discardPower(taker.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p3")).collect(Collectors.toList()), false);
+            Power chosen = taker.getConn().discardPower(taker.getPowers().stream().filter(p->p.getBase().getLambdaID().equals(granataVenomID)).collect(Collectors.toList()), false);
             if(chosen != null);
             {
                 //Give mark

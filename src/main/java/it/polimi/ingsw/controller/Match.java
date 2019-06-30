@@ -641,7 +641,7 @@ public class Match implements Runnable
         List<Entry<Player, Integer>> inflictedDamages = new ArrayList<>(); //Used to count how many damages every player inflicted
 
         inflictedDamages.clear();
-        maxPoints = 8;
+        maxPoints = regularMaxKillPoints;
 
         for(Player p : game.getPlayers())
         {

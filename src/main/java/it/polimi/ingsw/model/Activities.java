@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Activities {
+    private final static int firstDamageLimit = 3;
+    private final static int secondDamageLimit = 6;
+
     private Action playPower;
     private List<Action> base;
     private List<Action> adrenalin3;
@@ -125,9 +128,9 @@ public class Activities {
         ArrayList<Action> returnList = new ArrayList<>();
         if(!frenzy) {
             returnList.addAll(base);
-            if(damage >= 3) {
+            if(damage >= firstDamageLimit) {
                 returnList.addAll(adrenalin3);
-                if(damage >= 6) {
+                if(damage >= secondDamageLimit) {
                     returnList.addAll(adrenalin6);
                 }
             }

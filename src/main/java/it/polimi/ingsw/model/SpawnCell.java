@@ -16,6 +16,8 @@ import java.util.logging.Logger;
  * The class represents a spawning cell
  */
 public class SpawnCell extends Cell{
+    public transient final static int weaponsNumber = 3;
+
     /**
      * spawn represents the color of the cell (needed in spawning phase to identify the correct spawning point)
      */
@@ -35,7 +37,7 @@ public class SpawnCell extends Cell{
     {
         super(sides, roomNumber);
         this.spawn = spawn;
-        weapons = new Weapon[3];
+        weapons = new Weapon[weaponsNumber];
     }
     /**
      * returns a list with the weapons inside the cell, without modifying the list itself
@@ -144,7 +146,7 @@ public class SpawnCell extends Cell{
         pickWeapon(picked);
 
         //If the player already has 3 weapons he has to discard one
-        if(pl.getWeapons().size() >= 3)
+        if(pl.getWeapons().size() >= weaponsNumber)
         {
             Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
 
@@ -161,9 +163,9 @@ public class SpawnCell extends Cell{
         //Give the new weapon to the player
         pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
             int pos;
-            for(pos=0; pos<3 && weapons[pos] != null; pos++)
+            for(pos=0; pos<weaponsNumber && weapons[pos] != null; pos++)
                 ;
-            if(pos<=3 && weapons[pos] == null)
+            if(pos<=weaponsNumber && weapons[pos] == null)
             {
                 weapons[pos] = picked;
                 picked.setLoaded(true);
@@ -183,7 +185,7 @@ public class SpawnCell extends Cell{
      */
     public void refill(Game game){
         boolean empty = false;
-        while (getWeapons().size() < 3 && !empty)
+        while (getWeapons().size() < weaponsNumber && !empty)
             try {
                 refillWeapon(game.getWeaponsDeck().draw());
             }

@@ -22,6 +22,8 @@ import java.util.logging.Logger;
  */
 public class CMain
 {
+    public final static int socketPort = 1906;
+
     /**
      * Endpoint for interface control
      */
@@ -65,7 +67,7 @@ public class CMain
 
             try {
                 if (socket) {
-                    connection = new SocketClient(ip, 1906, ui);
+                    connection = new SocketClient(ip, socketPort, ui);
                 }
                 else {
 

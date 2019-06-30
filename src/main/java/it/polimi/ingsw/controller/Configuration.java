@@ -13,6 +13,10 @@ import java.io.FileReader;
  */
 public class Configuration
 {
+    private final static int defaultStartMatch = 60;
+    private final static int defaultTurn = 180;
+    private final static int defaultMinPlayers = 3;
+
     private final int startMatchSeconds;
     private final int playerTurnSeconds;
     private final int minPlayers;
@@ -41,9 +45,9 @@ public class Configuration
 
     public Configuration()
     {
-        startMatchSeconds = 1;
-        playerTurnSeconds = 120;
-        minPlayers = 3;
+        startMatchSeconds = defaultStartMatch;
+        playerTurnSeconds = defaultTurn;
+        minPlayers = defaultMinPlayers;
     }
 
     public int getStartMatchSeconds()

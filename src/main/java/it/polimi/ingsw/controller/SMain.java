@@ -23,6 +23,11 @@ import java.util.logging.Logger;
  */
 public class SMain
 {
+    private static final int MINSKULLS = 5;
+    private static final int MAXSKULLS = 8;
+    private static final int socketPort = 1906;
+    private static final int maxPlayersNumber = 5;
+
     /**
      * Socket server, waiting for socket clients' connections
      */
@@ -51,8 +56,6 @@ public class SMain
     private final Object lock;
     private final Object cancelLock;
     private final Object[] matchLock;
-    private static final int MINSKULLS = 5;
-    private static final int MAXSKULLS = 8;
     private final int MINPLAYERS;
     private boolean[] startedTimer;
 
@@ -126,7 +129,7 @@ public class SMain
 
             System.setProperty("java.rmi.server.hostname", localIP);
 
-            socket = new SocketServer(1906);
+            socket = new SocketServer(socketPort);
             rmi = new RMIServer();
             matches = new ArrayList<>();
             loadedMatches = new ArrayList<>();
@@ -355,7 +358,7 @@ public class SMain
                     if (!startedTimer[index]) {
                         matchTimer(skulls);
                         startedTimer[index] = true;
-                    } else if (waiting[index].getGame().getPlayers().size() == 5) {
+                    } else if (waiting[index].getGame().getPlayers().size() == maxPlayersNumber) {
                         cancelTimer(skulls);
                         startMatch(skulls);
                     }
@@ -378,7 +381,7 @@ public class SMain
                             String nick = p.getNick();
                             println("Giocatore " + nick + " rimosso dalla lista di attesa");
                             waiting[i].getGame().removePlayer(p);
-                            if (waiting[i].getGame().getPlayers().size() == 2)
+                            if (waiting[i].getGame().getPlayers().size() == MINPLAYERS - 1)
                             {
                                 cancelTimer(i + MINSKULLS);
                                 Match.broadcastMessage("Avvio partita annullato", waiting[i].getGame().getPlayers());
