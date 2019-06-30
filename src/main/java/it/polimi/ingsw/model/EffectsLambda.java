@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
  * Class containing the static methods that are used to change the status of a player when they are targeted by an enemy action
  */
 public class EffectsLambda {
+    private final static int maxMarksNumber = 3;
+    private final static int damagesNumber = 12;
+    private final static String mirinoID = "p1";
+    private final static String granataVenomID = "p3";
     private static final Logger LOGGER = Logger.getLogger( EffectsLambda.class.getName() );
 
     private EffectsLambda(){}
@@ -29,16 +33,17 @@ public class EffectsLambda {
         return (damage, marks, position, weapons, powers, ammo)->{
             int i=0;
             int d = damageReceived;
-            while(i<12 && damage[i]!=null)
+            while(i<damagesNumber && damage[i]!=null)
                 i++;
-            while(i<12 && d>0){
+            while(i<damagesNumber && d>0){
                 damage[i] = damageGiver.getNick();
                 d--;
                 i++;
             }
-            while(i<12 && marks.contains(damageGiver.getNick())){
+            while(i<damagesNumber && marks.contains(damageGiver.getNick())){
                 damage[i] = damageGiver.getNick();
                 marks.remove(damageGiver.getNick());
+                damageGiver.removeMarksCount(1);
                 i++;
             }
         };
@@ -76,12 +81,13 @@ public class EffectsLambda {
      */
     public static PlayerLambda marks(int marksReceived, Player damageGiver){
         return (damage, marks, position, weapons, powers, ammo)->{
-            int actualMarks = Collections.frequency(marks, damageGiver);
-            int recMarks = marksReceived;
-            while(actualMarks < 3 && recMarks> 0){
+            //Deal marks only if the amount dealt by the damageGiver is globally less or equal to 3
+            int possible = Math.min(maxMarksNumber - damageGiver.getMarksCount(), marksReceived);
+            damageGiver.addMarksCount(possible);
+
+            for(int i=0; i<possible; i++)
+            {
                 marks.add(damageGiver.getNick());
-                recMarks--;
-                actualMarks++;
             }
         };
     }
@@ -159,7 +165,7 @@ public class EffectsLambda {
         taker.applyEffects(EffectsLambda.damage(damage, giver));
 
         //Mirino
-        if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals("p1")) &&
+        if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals(mirinoID)) &&
                 (giver.getAmmo(Color.RED, false)>0 || giver.getAmmo(Color.BLUE, false)>0 || giver.getAmmo(Color.YELLOW, false)>0))
         {
             Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p1")).collect(Collectors.toList()), false);
@@ -186,7 +192,7 @@ public class EffectsLambda {
         }
 
         //Granata venom
-        if(taker.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals("p3")))
+        if(taker.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals(granataVenomID)))
         {
             Power chosen = taker.getConn().discardPower(taker.getPowers().stream().filter(p->p.getBase().getLambdaID().equals("p3")).collect(Collectors.toList()), false);
             if(chosen != null);

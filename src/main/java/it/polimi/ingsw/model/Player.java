@@ -16,6 +16,11 @@ import java.util.stream.Collectors;
  */
 public class Player implements Serializable
 {
+    private final static int maxMarksNumber = 3;
+    private final static int maxWeaponsNumber = 3;
+    private final static int maxPowersNumber = 3;
+    private final static int damagesNumber = 12;
+
     /**
      * Nickname used to log in
      */
@@ -82,6 +87,11 @@ public class Player implements Serializable
     private boolean frenzyBoard;
 
     /**
+     * Counter of marks dealt to other players, to avoid going over the limit of 3 marks
+     */
+    private int dealtMarks;
+
+    /**
      * Creates a new user, in a suitable configuration to start the game
      * @param nick Nickname
      * @param phrase Action phrase
@@ -93,16 +103,17 @@ public class Player implements Serializable
         this.actionPhrase = phrase;
         this.character = f;
         this.points = 0;
-        this.weapons = new Weapon[3];
-        this.receivedDamage = new String[12];
+        this.weapons = new Weapon[maxWeaponsNumber];
+        this.receivedDamage = new String[damagesNumber];
         this.receivedMarks = new ArrayList<>();
         this.skulls = 0;
         this.ammo = new Ammunitions();
-        this.powers = new Power[3];
+        this.powers = new Power[maxPowersNumber];
         this.position = new Point(0, 0);
         this.spawned = false;
         this.usedPowers = new ArrayList<>();
         this.frenzyBoard = false;
+        this.dealtMarks = 0;
 
         this.conn = null;
     }
@@ -291,7 +302,7 @@ public class Player implements Serializable
     }
 
     public void clearForView(){
-        for(int i=0; i<3; i++)
+        for(int i=0; i<maxWeaponsNumber; i++)
             if(weapons[i] != null && weapons[i].isLoaded())
                 weapons[i] = null;
 
@@ -356,6 +367,36 @@ public class Player implements Serializable
     public void setFrenzyBoard(boolean val)
     {
         frenzyBoard = val;
+    }
+
+    /**
+     * Returns the number of currently dealt marks of this player
+     */
+    public int getMarksCount()
+    {
+        return dealtMarks;
+    }
+
+    /**
+     * Adds some marks to the counter. The value of dealtMarks is capped at 3
+     * @param amount How many marks to add
+     */
+    public void addMarksCount(int amount)
+    {
+        dealtMarks += amount;
+        if(dealtMarks>maxMarksNumber)
+            dealtMarks = maxMarksNumber;
+    }
+
+    /**
+     * Removes some marks to the counter
+     * @param amount How many marks to remove
+     */
+    public void removeMarksCount(int amount)
+    {
+        dealtMarks -= amount;
+        if(dealtMarks<0)
+            dealtMarks = 0;
     }
 
     public MyPlayerView getFullView()
