@@ -465,7 +465,7 @@ public class ActionLambdaMap {
             for(Point p:visiblePoints)
             {
                 pawns = map.getCell(p).getPawns();
-                if (p != null && pawns != null && !pawns.isEmpty() && !(pawns.size() == 1 && pawns.get(0).getNick() == pl.getNick()))
+                if (p != null && pawns != null && !pawns.isEmpty() && !(pawns.size() == 1 && pawns.get(0).getNick().equals(pl.getNick())))
                     pointsWithPlayers.add(p);
             }
 

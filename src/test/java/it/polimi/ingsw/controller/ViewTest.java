@@ -1,8 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.clientmodel.KillView;
-import it.polimi.ingsw.clientmodel.MyPlayerView;
-import it.polimi.ingsw.clientmodel.PlayerView;
+import it.polimi.ingsw.clientmodel.*;
 import it.polimi.ingsw.model.*;
 import org.junit.jupiter.api.Test;
 
@@ -185,6 +183,65 @@ public class ViewTest {
                 }
                 assertTrue(found);
             }
+
+        }
+        catch (FileNotFoundException e) { ; }
+    }
+
+    @Test
+    public void checkMatchView() {
+        try {
+            Match m = new Match(5);
+            Player p = new Player("Pippo", "", Fighter.DSTRUTTOR3);
+            Player q = new Player("Pluto", "", Fighter.DSTRUTTOR3);
+            m.getGame().loadMap(1);
+            m.getGame().addPlayer(p);
+            m.getGame().addPlayer(q);
+
+            List<PlayerView> list = new ArrayList<>();
+            list.add(p.getView());
+            list.add(p.getView());
+
+            assertEquals(m.getGame().getView().getPlayers().size(), m.getView(p).getGame().getPlayers().size());
+            assertEquals(m.getGame().getView().getMap().getId(), m.getView(p).getGame().getMap().getId());
+            assertEquals(p.getNick(), m.getView(p).getMyPlayer().getNick());
+            assertNull(m.getView(p).getActive());
+            assertEquals(GamePhase.INITIALIZING, m.getView(p).getPhase());
+            assertEquals(Configuration.getInstance().getPlayerTurnSeconds(), m.getView(p).getTimeForAction());
+
+        }
+        catch (FileNotFoundException e) { ; }
+    }
+    
+    @Test
+    public void checkMapView() {
+        try {
+            Match m = new Match(5);
+            Player p = new Player("Pippo", "", Fighter.DSTRUTTOR3);
+            Player q = new Player("Pluto", "", Fighter.DSTRUTTOR3);
+            m.getGame().loadMap(1);
+            m.getGame().getMap().getCell(0,0).refill(m.getGame());
+            m.getGame().getMap().getCell(2,0).refill(m.getGame());
+
+            MapView view = m.getGame().getMap().getView();
+
+            assertEquals(m.getGame().getMap().getCell(0,0).getView().getRoomNumber(), view.getCell(0,0).getRoomNumber());
+            assertEquals(m.getGame().getMap().getCell(2,0).getView().getRoomNumber(), view.getCell(2,0).getRoomNumber());
+
+            assertNull(view.getCell(-1,0));
+            assertNull(view.getCell(-1,-1));
+            assertNull(view.getCell(-1,4));
+            assertNull(view.getCell(1,4));
+            assertNull(view.getCell(4,4));
+
+            RegularCell rc = (RegularCell) m.getGame().getMap().getCell(0,0);
+            SpawnCell sc = (SpawnCell) m.getGame().getMap().getCell(2,0);
+
+            RegularCellView rv = (RegularCellView) view.getCell(0,0);
+            SpawnCellView sv = (SpawnCellView) view.getCell(2,0);
+
+            assertEquals(rc.getLoot(), rv.getLoot());
+            assertEquals(sc.getWeapons(), sv.getWeapons());
 
         }
         catch (FileNotFoundException e) { ; }
