@@ -2,7 +2,6 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.CLInterface;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -145,7 +144,7 @@ public class AInterface extends CLInterface {
     @Override
     public String getNickname() {
         String nick = Integer.toString( new SecureRandom().nextInt() );
-        System.out.println("Giocatore " +  nick);
+        println("Giocatore " +  nick);
         return nick;
     }
 

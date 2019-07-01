@@ -6,6 +6,7 @@ import it.polimi.ingsw.view.AInterface;
 import it.polimi.ingsw.view.GuiAInterface;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public class AIMain
 {
-    private final static int socketPort = 1906;
+    private static final int SOCKETPORT = 1906;
 
     /**
      * Endpoint for interface control
@@ -24,16 +25,20 @@ public class AIMain
     public static void main(String[] args) {
         System.setProperty("java.security.policy", "AM06.policy");
         List<String> flags = Arrays.asList(args);
+
+        boolean rmi = false;
+        if(flags.contains("-rmi"))
+            rmi = true;
         if(flags.contains("-g"))
-            new AIMain(true);
+            new AIMain(true, rmi);
         else
-            new AIMain(false);
+            new AIMain(false, rmi);
     }
 
     /**
      * Creates a new AIMain
      */
-    public AIMain(boolean gui)
+    public AIMain(boolean gui, boolean rmi)
     {
         String ip = "localhost";
 
@@ -43,9 +48,12 @@ public class AIMain
             ui = new AInterface();
 
         try {
-            new SocketClient(ip, socketPort, ui);
+            if(rmi)
+                new RMIClient("localhost", ui);
+            else
+                new SocketClient(ip, SOCKETPORT, ui);
         }
-        catch (ServerNotFoundException e) {
+        catch (ServerNotFoundException | RemoteException e) {
             ui.generalMessage("Server non trovato, riprova\n");
         }
         catch (ServerDisconnectedException e) {
@@ -62,7 +70,7 @@ public class AIMain
         ui = new AInterface();
 
         try {
-            new SocketClient(ip, socketPort, ui);
+            new SocketClient(ip, SOCKETPORT, ui);
         }
         catch (ServerNotFoundException e) {
             ui.generalMessage("Server non trovato, riprova\n");

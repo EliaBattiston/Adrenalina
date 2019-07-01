@@ -12,9 +12,7 @@ public class ConnectionThreadHandler implements Runnable {
     public synchronized void run() {
         while(!main.inStopProcedure()) {
             Connection newConn = server.getConnection();
-            Thread t = new Thread(()-> {
-                main.newConnection(newConn);
-            });
+            Thread t = new Thread(()-> main.newConnection(newConn));
             t.start();
         }
     }

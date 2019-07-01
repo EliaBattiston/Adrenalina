@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 public class ActionLambdaMap {
     private HashMap<String, ActionLambda> data;
     private static ActionLambdaMap instance = null;
+    private final static transient String RUNSIN = " corre in ";
+    private final static transient String SHOOTSWITH = " spara con ";
 
     private ActionLambdaMap() {
         data = new HashMap<>();
@@ -834,7 +836,7 @@ public class ActionLambdaMap {
 
         if(chosen != null) {
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
-            Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY() * 4) + chosen.getX() + 1), messageReceivers);
+            Match.broadcastMessage(pl.getNick() + RUNSIN + ((chosen.getY() * 4) + chosen.getX() + 1), messageReceivers);
         }
     }
 
@@ -864,7 +866,7 @@ public class ActionLambdaMap {
         if(chosen != null)
         {
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
-            Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
+            Match.broadcastMessage(pl.getNick() + RUNSIN + ((chosen.getY()*4)+chosen.getX()+1) , messageReceivers);
         }
 
     }
@@ -902,7 +904,7 @@ public class ActionLambdaMap {
 
         if(chosen != null) {
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));
-            Match.broadcastMessage(pl.getNick() + " corre in " + ((chosen.getY() * 4) + chosen.getX() + 1), messageReceivers);
+            Match.broadcastMessage(pl.getNick() + RUNSIN + ((chosen.getY() * 4) + chosen.getX() + 1), messageReceivers);
         }
     }
 
@@ -975,7 +977,7 @@ public class ActionLambdaMap {
 
         toExecute.execute(pl, map, mem);
 
-        Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
+        Match.broadcastMessage(pl.getNick() + SHOOTSWITH + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
 
         if(toExecute.getLambdaID().contains("-b")) //Base action
         {
@@ -1002,7 +1004,7 @@ public class ActionLambdaMap {
 
                     toExecute.execute(pl, map, mem);
 
-                    Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " + toExecute.getName(), messageReceivers);
+                    Match.broadcastMessage(pl.getNick() + SHOOTSWITH + chosen.getName() + ": " + toExecute.getName(), messageReceivers);
 
                     weaponActions.clear();
                     weaponActions.addAll(chosen.getAdditional().stream().filter(action -> action.isFeasible(pl, map, mem)).collect(Collectors.toList()));
@@ -1026,7 +1028,7 @@ public class ActionLambdaMap {
 
                             toExecute.execute(pl, map, mem);
 
-                            Match.broadcastMessage(pl.getNick() + " spara con " + chosen.getName() + ": " + toExecute.getName(), messageReceivers);
+                            Match.broadcastMessage(pl.getNick() + SHOOTSWITH + chosen.getName() + ": " + toExecute.getName(), messageReceivers);
                         }
                     }
                 }
@@ -1136,7 +1138,6 @@ public class ActionLambdaMap {
 
         List<Power> usable = new ArrayList<>();
         Power chosen;
-        int index;
         //If normal ammo are not enough, ask the player which powers he wants to use
         while(!cost.isEmpty())
         {

@@ -30,7 +30,7 @@ public class LambdaTest {
         for(int i=0; i<12; i++)
             if(p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(att.getNick()))
                 damages++;
-        assertEquals(damages,3);
+        assertEquals(3, damages);
 
 
     }
@@ -48,7 +48,7 @@ public class LambdaTest {
 
         //Check marks
         p.applyEffects(EffectsLambda.marks(2, att));
-        assertEquals(Collections.frequency(p.getReceivedMarks(), att.getNick()), 2);
+        assertEquals( 2, Collections.frequency(p.getReceivedMarks(), att.getNick()));
 
         //Check that the mark correctly converts to damage after another damage
         p.applyEffects(EffectsLambda.damage(2, att));
@@ -56,7 +56,7 @@ public class LambdaTest {
         for(int i=0; i<12; i++)
             if( p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(att.getNick()) )
                 damages++;
-        assertEquals(damages, (2+2));
+        assertEquals(4, damages);
     }
 
     /**
@@ -71,8 +71,8 @@ public class LambdaTest {
         //Move the player
         try {
             p.applyEffects(EffectsLambda.move(p, new Point(2, 1), m));
-            assertEquals(p.getPosition().getX(), 2);
-            assertEquals(p.getPosition().getY(), 1);
+            assertEquals(2, p.getPosition().getX());
+            assertEquals(1, p.getPosition().getY());
             assertTrue(m.getCell(2, 1).getPawns().contains(p));
         }catch (WrongPointException ex){
             fail();

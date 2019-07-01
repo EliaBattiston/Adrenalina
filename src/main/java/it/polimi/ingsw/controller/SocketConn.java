@@ -656,7 +656,7 @@ public class SocketConn implements Connection {
             playerSocket.close();
         }
         catch (IOException ignore) {
-            ;
+            //If socket is already closed there is nothing to do
         }
     }
 }

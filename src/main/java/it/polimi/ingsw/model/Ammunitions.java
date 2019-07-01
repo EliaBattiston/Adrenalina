@@ -8,7 +8,7 @@ import java.io.Serializable;
  * This class represents the management of ammunitions that a player already has on his board, and can be used to pay for effects
  */
 public class Ammunitions implements Serializable {
-    private transient final static int ammoNumberLimit = 3;
+    private static final transient int AMMO_NUMBER_LIMIT = 3;
 
     /**
      * Number of red ammo
@@ -68,11 +68,11 @@ public class Ammunitions implements Serializable {
      */
     protected boolean addRed(int i)
     {
-        if(i>=0 && i<=ammoNumberLimit)
+        if(i>=0 && i<= AMMO_NUMBER_LIMIT)
         {
             red = red + i;
-            if (red > ammoNumberLimit)
-                red = ammoNumberLimit;
+            if (red > AMMO_NUMBER_LIMIT)
+                red = AMMO_NUMBER_LIMIT;
 
             return true;
         }
@@ -89,11 +89,11 @@ public class Ammunitions implements Serializable {
      */
     protected boolean addBlue(int i)
     {
-        if(i>=0 && i<=ammoNumberLimit)
+        if(i>=0 && i<= AMMO_NUMBER_LIMIT)
         {
             blue = blue + i;
-            if (blue > ammoNumberLimit)
-                blue = ammoNumberLimit;
+            if (blue > AMMO_NUMBER_LIMIT)
+                blue = AMMO_NUMBER_LIMIT;
 
             return true;
         }
@@ -110,11 +110,11 @@ public class Ammunitions implements Serializable {
      */
     protected boolean addYellow(int i)
     {
-        if(i>=0 && i<=ammoNumberLimit)
+        if(i>=0 && i<= AMMO_NUMBER_LIMIT)
         {
             yellow = yellow + i;
-            if (yellow > ammoNumberLimit)
-                yellow = ammoNumberLimit;
+            if (yellow > AMMO_NUMBER_LIMIT)
+                yellow = AMMO_NUMBER_LIMIT;
 
             return true;
         }

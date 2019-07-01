@@ -91,13 +91,13 @@ public class GameTest {
         Player p = new Player("Nick", "Phrase", Fighter.DOZER);
 
         //check constructor
-        assertEquals(p.getNick(), "Nick");
-        assertEquals(p.getActionPhrase(), "Phrase");
-        assertEquals(p.getCharacter(), Fighter.DOZER);
+        assertEquals("Nick", p.getNick());
+        assertEquals("Phrase", p.getActionPhrase());
+        assertEquals(Fighter.DOZER, p.getCharacter());
 
         //check that arrays are initially empty
-        assertEquals(p.getWeapons().size(), 0);
-        assertEquals(p.getPowers().size(), 0);
+        assertEquals(0, p.getWeapons().size());
+        assertEquals(0, p.getPowers().size());
     }
 
     /**
@@ -140,16 +140,16 @@ public class GameTest {
         } );
 
         assertSame(p.getReceivedDamage()[0], b.getNick());
-        assertSame(p.getReceivedDamage()[1], null);
-        assertEquals(p.getReceivedMarks().size(), 2);
+        assertSame(null, p.getReceivedDamage()[1]);
+        assertEquals(2, p.getReceivedMarks().size());
         assertTrue(p.getReceivedMarks().contains(b.getNick()));
-        assertEquals(Collections.frequency(p.getReceivedMarks(), b.getNick()), 2);
-        assertEquals(p.getPosition().getX(), 3);
-        assertEquals(p.getPosition().getY(), 2);
+        assertEquals(2, Collections.frequency(p.getReceivedMarks(), b.getNick()));
+        assertEquals(3, p.getPosition().getX());
+        assertEquals(2, p.getPosition().getY());
         assertTrue(p.getWeapons().contains(weapon));
         assertTrue(p.getPowers().contains(power));
-        assertEquals(p.getAmmo(Color.RED, false), 3);
-        assertEquals(p.getAmmo(Color.BLUE, false), 2);
+        assertEquals(3, p.getAmmo(Color.RED, false));
+        assertEquals(2, p.getAmmo(Color.BLUE, false));
     }
 
     /**
@@ -167,8 +167,8 @@ public class GameTest {
         }
         catch(WrongPointException e)
         { fail();};
-        assertEquals(p.getX(),1);
-        assertEquals(p.getY(),1);
+        assertEquals(1, p.getX());
+        assertEquals(1, p.getY());
 
 
 
@@ -182,8 +182,8 @@ public class GameTest {
         {
             ;
         }
-        assertEquals(p.getX(),1);
-        assertEquals(p.getY(),1);
+        assertEquals(1, p.getX());
+        assertEquals(1, p.getY());
 
 
         //Negative y value, it shouldn't change the value from before
@@ -196,8 +196,8 @@ public class GameTest {
         {
             ;
         }
-        assertEquals(p.getX(),1);
-        assertEquals(p.getY(),1);
+        assertEquals(1, p.getX());
+        assertEquals(1, p.getY());
 
         //Correct setting
         try
@@ -208,8 +208,8 @@ public class GameTest {
         {
             fail();
         }
-        assertEquals(p.getX(), 3);
-        assertEquals(p.getY(), 2);
+        assertEquals( 3, p.getX());
+        assertEquals( 2, p.getY());
     }
 
     /**
@@ -226,7 +226,7 @@ public class GameTest {
 
         k.setKiller(p, false);
         assertFalse(k.getSkull());
-        assertSame(k.getKiller(), p);
+        assertSame(p, k.getKiller());
         assertFalse(k.getOverkill());
         assertTrue(k.isUsed());
     }
@@ -267,15 +267,15 @@ public class GameTest {
         Player p6 = new Player("ERap325", "Yay!", Fighter.DSTRUTTOR3);
 
         //Check if there are no players at creation
-        assertEquals(g.getPlayers().size(), 0);
+        assertEquals( 0, g.getPlayers().size());
 
         //Test addition of a single player
         try
         {
             assertTrue(g.addPlayer(p1));
-            assertEquals(g.getPlayers().size(), 1);
+            assertEquals( 1, g.getPlayers().size());
             g.addPlayer(p1);
-            assertEquals(g.getPlayers().size(), 1);
+            assertEquals( 1, g.getPlayers().size());
         }
         catch(UsedNameException e)
         {

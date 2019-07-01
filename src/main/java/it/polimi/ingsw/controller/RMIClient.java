@@ -15,22 +15,15 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.lang.Thread.sleep;
 
 public class RMIClient extends UnicastRemoteObject implements Client, Serializable
 {
     /**
-     * Remote registry instance used to connect to the server
-     */
-    private Registry hostRegistry;
-
-    /**
      * User gui/cli interface
      */
-    private UserInterface user;
+    private transient UserInterface user;
 
     /**
      * CLient RMI constructor, it gets the Server interface and binds its interface to the server registry
@@ -42,16 +35,16 @@ public class RMIClient extends UnicastRemoteObject implements Client, Serializab
     public RMIClient(String host, UserInterface userint) throws RemoteException, ServerNotFoundException
     {
         try {
-            hostRegistry = LocateRegistry.getRegistry(host, 1099);
+            Registry hostRegistry = LocateRegistry.getRegistry(host, 1099);
             hostRegistry.list();
-            RMIConnHandler RMIServer = (RMIConnHandler) hostRegistry.lookup("AM06");
+            RMIConnHandler rmiserver = (RMIConnHandler) hostRegistry.lookup("AM06");
 
-            RMIServer.newConnection(this);
+            rmiserver.newConnection(this);
             user = userint;
 
             Thread t = new Thread(()-> {
                 try {
-                    while(RMIServer.ping()) {
+                    while(rmiserver.ping()) {
                         sleep(2000);
                     }
                 }

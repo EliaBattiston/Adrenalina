@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static it.polimi.ingsw.controller.Match.broadcastMessage;
+
 /**
  * Main class for the server's executable
  */
@@ -25,8 +27,8 @@ public class SMain
 {
     private static final int MINSKULLS = 5;
     private static final int MAXSKULLS = 8;
-    private static final int socketPort = 1906;
-    private static final int maxPlayersNumber = 5;
+    private static final int SOCKETPORT = 1906;
+    private static final int MAX_PLAYERS_NUMBER = 5;
 
     /**
      * Socket server, waiting for socket clients' connections
@@ -56,7 +58,7 @@ public class SMain
     private final Object lock;
     private final Object cancelLock;
     private final Object[] matchLock;
-    private final int MINPLAYERS;
+    private final int minPlayers;
     private boolean[] startedTimer;
 
 
@@ -75,7 +77,7 @@ public class SMain
     public SMain(String passedIp)
     {
 
-        MINPLAYERS = Configuration.getInstance().getMinPlayers();
+        minPlayers = Configuration.getInstance().getMinPlayers();
 
         lock = new Object();
         cancelLock = new Object();
@@ -106,9 +108,9 @@ public class SMain
                 }
 
                 if (addresses.size() > 1) {
-                    System.out.println("Seleziona l'IP della macchina");
+                    println("Seleziona l'IP della macchina");
                     for (int i = 0; i < addresses.size(); i++) {
-                        System.out.println("[" + (i + 1) + "] " + addresses.get(i));
+                        println("[" + (i + 1) + "] " + addresses.get(i));
                     }
                     Scanner in = new Scanner(System.in);
                     int pos;
@@ -129,7 +131,7 @@ public class SMain
 
             System.setProperty("java.rmi.server.hostname", localIP);
 
-            socket = new SocketServer(socketPort);
+            socket = new SocketServer(SOCKETPORT);
             rmi = new RMIServer();
             matches = new ArrayList<>();
             loadedMatches = new ArrayList<>();
@@ -248,23 +250,11 @@ public class SMain
 
                     nickname = connection.getNickname();
 
-                    for (Match m : loadedMatches) {
-                        for (Player p : m.getGame().getPlayers()) {
-                            if (p.getNick().equals(nickname)) {
-                                if (p.getConn() != null)
-                                    acceptedNick = false;
-                                else {
-                                    player = p;
-                                    List<Player> broadcast = new ArrayList<>();
-                                    broadcast.addAll(m.getGame().getPlayers());
-                                    broadcast.remove(p);
-                                    m.broadcastMessage(p.getNick() + " si è riconnesso", broadcast);
-                                }
-                            }
-                        }
-                    }
+                    List<Match> allMatches = new ArrayList<>();
+                    allMatches.addAll(loadedMatches);
+                    allMatches.addAll(matches);
 
-                    for (Match m : matches) {
+                    for (Match m : allMatches) {
                         for (Player p : m.getGame().getPlayers()) {
                             if (p.getNick().equals(nickname)) {
                                 if (p.getConn() != null)
@@ -274,7 +264,7 @@ public class SMain
                                     List<Player> broadcast = new ArrayList<>();
                                     broadcast.addAll(m.getGame().getPlayers());
                                     broadcast.remove(p);
-                                    Match.broadcastMessage(p.getNick() + " si è riconnesso", broadcast);
+                                    broadcastMessage(p.getNick() + " si è riconnesso", broadcast);
                                 }
                             }
                         }
@@ -350,15 +340,15 @@ public class SMain
                 }
                 player.getConn().sendMessage("Benvenuto in Adrenalina!");
 
-                Match.broadcastMessage("Utenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size(), waiting[index].getGame().getPlayers());
+                broadcastMessage("Utenti attualmente connessi alla waiting room: " + waiting[index].getGame().getPlayers().size(), waiting[index].getGame().getPlayers());
 
                 println("Il giocatore " + player.getNick() + " si è connesso.");
 
-                if (waiting[index].getGame().getPlayers().size() >= MINPLAYERS) {
+                if (waiting[index].getGame().getPlayers().size() >= minPlayers) {
                     if (!startedTimer[index]) {
                         matchTimer(skulls);
                         startedTimer[index] = true;
-                    } else if (waiting[index].getGame().getPlayers().size() == maxPlayersNumber) {
+                    } else if (waiting[index].getGame().getPlayers().size() == MAX_PLAYERS_NUMBER) {
                         cancelTimer(skulls);
                         startMatch(skulls);
                     }
@@ -381,10 +371,10 @@ public class SMain
                             String nick = p.getNick();
                             println("Giocatore " + nick + " rimosso dalla lista di attesa");
                             waiting[i].getGame().removePlayer(p);
-                            if (waiting[i].getGame().getPlayers().size() == MINPLAYERS - 1)
+                            if (waiting[i].getGame().getPlayers().size() == minPlayers - 1)
                             {
                                 cancelTimer(i + MINSKULLS);
-                                Match.broadcastMessage("Avvio partita annullato", waiting[i].getGame().getPlayers());
+                                broadcastMessage("Avvio partita annullato", waiting[i].getGame().getPlayers());
                             }
                             found = true;
                         }
@@ -448,7 +438,7 @@ public class SMain
                 }
             }
 
-            if(waiting[index].getGame().getPlayers().size() >= MINPLAYERS) {
+            if(waiting[index].getGame().getPlayers().size() >= minPlayers) {
                 println("Partita avviata");
                 Match match = waiting[index];
                 waiting[index] = null;
@@ -471,8 +461,9 @@ public class SMain
             }
             else {
                 println("Ripristino - giocatori insufficienti");
-                Match.broadcastMessage("Errore - troppi utenti disconnessi. Ripristino a stanza di attesa", waiting[index].getGame().getPlayers());
+                broadcastMessage("Errore - troppi utenti disconnessi. Ripristino a stanza di attesa", waiting[index].getGame().getPlayers());
             }
         }
     }
+
 }

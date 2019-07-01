@@ -47,10 +47,13 @@ public class RMIConn implements Connection, Serializable
     public Action chooseAction(List<Action> available, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            String lambdaID = client.chooseAction(available, mustChoose).getLambdaID();
-            for(Action a : available)
-                if(a.getLambdaID().equals(lambdaID))
-                    return a;
+            Action lambda = client.chooseAction(available, mustChoose);
+            if(lambda != null) {
+                String lambdaID = lambda.getLambdaID();
+                for (Action a : available)
+                    if (a.getLambdaID().equals(lambdaID))
+                        return a;
+            }
             return null;
         }
         catch (Exception e) {
@@ -68,10 +71,13 @@ public class RMIConn implements Connection, Serializable
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            int id = client.chooseWeapon(available, mustChoose).getId();
-            for(Weapon w : available)
-                if(w.getId() == id)
-                    return w;
+            Weapon chosen = client.chooseWeapon(available, mustChoose);
+            if(chosen != null) {
+                int id = chosen.getId();
+                for (Weapon w : available)
+                    if (w.getId() == id)
+                        return w;
+            }
             return null;
         }
         catch (Exception e) {
@@ -90,10 +96,13 @@ public class RMIConn implements Connection, Serializable
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            int id = client.grabWeapon(grabbable, mustChoose).getId();
-            for(Weapon w : grabbable)
-                if(w.getId() == id)
-                    return w;
+            Weapon chosen = client.grabWeapon(grabbable, mustChoose);
+            if(chosen != null) {
+                int id = chosen.getId();
+                for (Weapon w : grabbable)
+                    if (w.getId() == id)
+                        return w;
+            }
             return null;
         }
         catch (Exception e) {
@@ -112,10 +121,13 @@ public class RMIConn implements Connection, Serializable
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
-            int id = client.reload(reloadable, mustChoose).getId();
-            for(Weapon w : reloadable)
-                if(w.getId() == id)
-                    return w;
+            Weapon chosen = client.reload(reloadable, mustChoose);
+            if(chosen != null) {
+                int id = chosen.getId();
+                for (Weapon w : reloadable)
+                    if (w.getId() == id)
+                        return w;
+            }
             return null;
         }
         catch (Exception e) {
@@ -158,14 +170,16 @@ public class RMIConn implements Connection, Serializable
                 targetsViews.add(t.getView());
             }
 
-            String nickChosen = client.chooseTarget(targetsViews, mustChoose).getNick();
-            for(Player p : targets)
-                if(p.getNick().equals(nickChosen))
-                    return p;
+            PlayerView chosen = client.chooseTarget(targetsViews, mustChoose);
+            if(chosen != null) {
+                String nickChosen = chosen.getNick();
+                for (Player p : targets)
+                    if (p.getNick().equals(nickChosen))
+                        return p;
+            }
             return null;
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -185,7 +199,6 @@ public class RMIConn implements Connection, Serializable
             return client.moveEnemy(enemy.getView(), destinations, mustChoose);
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -199,11 +212,14 @@ public class RMIConn implements Connection, Serializable
      */
     public Power discardPower(List<Power> powers, boolean mustChoose) throws ClientDisconnectedException {
         try {
-            int id = client.discardPower(powers, mustChoose).getId();
-            return powers.stream().filter(p->p.getId()==id).findFirst().orElse(null);
+            Power chosen = client.discardPower(powers, mustChoose);
+            if(chosen != null) {
+                int id = chosen.getId();
+                return powers.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+            }
+            return null;
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -218,10 +234,11 @@ public class RMIConn implements Connection, Serializable
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) throws ClientDisconnectedException {
         try {
             Integer room = client.chooseRoom(rooms, mustChoose);
+            if(room == null)
+                return null;
             return rooms.stream().filter( r -> r.equals(room)).findFirst().orElse(null);
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -255,7 +272,6 @@ public class RMIConn implements Connection, Serializable
             return client.choosePosition(positions, mustChoose);
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -270,7 +286,6 @@ public class RMIConn implements Connection, Serializable
             return client.getNickname();
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -285,7 +300,6 @@ public class RMIConn implements Connection, Serializable
             return client.getPhrase();
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -301,7 +315,6 @@ public class RMIConn implements Connection, Serializable
             return client.getFighter(available);
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -316,7 +329,6 @@ public class RMIConn implements Connection, Serializable
             return client.getSkullNum();
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -334,7 +346,6 @@ public class RMIConn implements Connection, Serializable
             return client.discardWeapon(inHand, mustChoose);
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -349,7 +360,6 @@ public class RMIConn implements Connection, Serializable
             return client.chooseMap();
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -364,7 +374,6 @@ public class RMIConn implements Connection, Serializable
             return client.chooseFrenzy();
         }
         catch (Exception e) {
-
             throw new ClientDisconnectedException();
         }
     }
@@ -379,6 +388,8 @@ public class RMIConn implements Connection, Serializable
     public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException {
         try {
             Power chosen = client.choosePower(inHand, mustChoose);
+            if(chosen == null)
+                return null;
             return inHand.stream().filter(p -> p.getId() == chosen.getId()).findFirst().orElse(null);
         }
         catch (Exception e) {
@@ -395,8 +406,7 @@ public class RMIConn implements Connection, Serializable
      */
     public Color chooseAmmo(List<Color> available, boolean mustChoose) throws ClientDisconnectedException {
         try {
-            Color chosen = client.chooseAmmo(available, mustChoose);
-            return chosen;
+            return client.chooseAmmo(available, mustChoose);
         }
         catch (Exception e) {
             throw new ClientDisconnectedException();
@@ -454,7 +464,7 @@ public class RMIConn implements Connection, Serializable
      * Cancels current connection
      */
     public void cancelConnection() {
-        return;
+        //Method called by server to interrupt connection, no need to do anything in RMI
     }
 
 }

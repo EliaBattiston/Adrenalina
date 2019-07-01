@@ -13,8 +13,8 @@ public class MapView implements Serializable
     private CellView[][] cells;
 
     //Defines block
-    private transient static final int mapWidth = 4;
-    private transient static final int mapHeight = 3;
+    private static final transient int MAPWIDTH = 4;
+    private static final transient int MAPHEIGHT = 3;
 
     public MapView(int id, CellView[][] cv)
     {
@@ -34,7 +34,7 @@ public class MapView implements Serializable
      * @return cell reference (or null in case of out of bound coordinates or missing cell)
      */
     public CellView getCell(int x, int y) {
-        if(x >= 0 && x < mapWidth && y >= 0 && y < mapHeight)
+        if(x >= 0 && x < MAPWIDTH && y >= 0 && y < MAPHEIGHT)
             return cells[x][y];
         return null;
     }

@@ -20,18 +20,22 @@ public class Main {
                 new SMain(null);
         }
         else if(flags.contains("-ai")){
-            new AIMain(false);
+            new AIMain(false, false);
         }
         else if(flags.contains("-gai")){
-            new AIMain(true);
+            new AIMain(true, false);
         }
         else {
-            System.out.println("Flag errati");
-            System.out.println("\t-s\tAvvia Server");
-            System.out.println("\t-c\tAvvia CLI Client");
-            System.out.println("\t-g\tAvvia GUI Client");
-            System.out.println("\t-ai\tAvvia CLI AIClient");
-            System.out.println("\t-gai\tAvvia GUI AIClient");
+            println("Flag errati");
+            println("\t-s\tAvvia Server");
+            println("\t-c\tAvvia CLI Client");
+            println("\t-g\tAvvia GUI Client");
+            println("\t-ai\tAvvia CLI AIClient");
+            println("\t-gai\tAvvia GUI AIClient");
         }
+    }
+
+    private static void println(String s) {
+        System.out.println(s);
     }
 }

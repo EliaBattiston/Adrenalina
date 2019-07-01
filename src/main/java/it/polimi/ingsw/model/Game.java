@@ -10,13 +10,14 @@ import it.polimi.ingsw.clientmodel.GameView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Game {
-    private transient final static int killsNumber = 8;
-    private transient final static int minSkullsNumber = 5;
-    private transient final static int maxPlayersNumber = 5;
+public class Game implements Serializable {
+    private static final transient int KILLS_NUMBER = 8;
+    private static final transient int MIN_SKULLS_NUMBER = 5;
+    private static final transient int MAX_PLAYERS_NUMBER = 5;
 
     /**
      * Map used in this match
@@ -54,8 +55,8 @@ public class Game {
      */
     Game(int skullsNum, Map gameMap, EndlessDeck<Power> powersDeck, EndlessDeck<Loot> ammoDeck, Deck<Weapon> weaponsDeck)
     {
-        skullsBoard = new Kill[killsNumber];
-        for(int i=0; i<killsNumber; i++)
+        skullsBoard = new Kill[KILLS_NUMBER];
+        for(int i = 0; i< KILLS_NUMBER; i++)
         {
             skullsBoard[i] = new Kill(i<skullsNum);
         }
@@ -85,7 +86,7 @@ public class Game {
      */
     public boolean addPlayer(Player pl)
     {
-        if(players.size() < maxPlayersNumber && !players.contains(pl))
+        if(players.size() < MAX_PLAYERS_NUMBER && !players.contains(pl))
         {
             if(players.stream().anyMatch(player -> player.getNick().equals(pl.getNick()) ))
             {
@@ -157,9 +158,8 @@ public class Game {
      * Deserialize a json representing the class
      * @param pathJsonFile the file containing the json representation of the class
      * @return the object made from the json
-     * @throws FileNotFoundException if the file is not found
      */
-    public static Game jsonDeserialize(String pathJsonFile) throws FileNotFoundException
+    public static Game jsonDeserialize(String pathJsonFile)
     {
         JsonReader reader = new JsonReader(new InputStreamReader(Game.class.getClassLoader().getResourceAsStream(pathJsonFile)));
 
@@ -185,9 +185,9 @@ public class Game {
      * @return true if the number of skulls was compatible with the specification
      */
     public boolean initializeSkullsBoard(int skullsNum){
-        if(skullsNum>=minSkullsNumber && skullsNum<=killsNumber){
-            skullsBoard = new Kill[killsNumber];
-            for(int i=0; i<killsNumber; i++)
+        if(skullsNum>= MIN_SKULLS_NUMBER && skullsNum<= KILLS_NUMBER){
+            skullsBoard = new Kill[KILLS_NUMBER];
+            for(int i = 0; i< KILLS_NUMBER; i++)
                 skullsBoard[i] = new Kill(i<skullsNum);
 
             return true;

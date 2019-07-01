@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
  * Class containing the static methods that are used to change the status of a player when they are targeted by an enemy action
  */
 public class EffectsLambda {
-    private final static int maxMarksNumber = 3;
-    private final static int maxWeaponsNumber = 3;
-    private final static int damagesNumber = 12;
-    private final static String mirinoID = "p1";
-    private final static String granataVenomID = "p3";
+    private static final int MAX_MARKS_NUMBER = 3;
+    private static final int MAX_WEAPONS_NUMBER = 3;
+    private static final int DAMAGES_NUMBER = 12;
+    private static final String MIRINO_ID = "p1";
+    private static final String GRANATA_VENOM_ID = "p3";
     private static final Logger LOGGER = Logger.getLogger( EffectsLambda.class.getName() );
 
     private EffectsLambda(){}
@@ -34,14 +34,14 @@ public class EffectsLambda {
         return (damage, marks, position, weapons, powers, ammo)->{
             int i=0;
             int d = damageReceived;
-            while(i<damagesNumber && damage[i]!=null)
+            while(i< DAMAGES_NUMBER && damage[i]!=null)
                 i++;
-            while(i<damagesNumber && d>0){
+            while(i< DAMAGES_NUMBER && d>0){
                 damage[i] = damageGiver.getNick();
                 d--;
                 i++;
             }
-            while(i<damagesNumber && marks.contains(damageGiver.getNick())){
+            while(i< DAMAGES_NUMBER && marks.contains(damageGiver.getNick())){
                 damage[i] = damageGiver.getNick();
                 marks.remove(damageGiver.getNick());
                 i++;
@@ -83,7 +83,7 @@ public class EffectsLambda {
         return (damage, marks, position, weapons, powers, ammo)->{
             int actualMarks = Collections.frequency(marks, damageGiver);
             int recMarks = marksReceived;
-            while(actualMarks < maxMarksNumber && recMarks > 0){
+            while(actualMarks < MAX_MARKS_NUMBER && recMarks > 0){
                 marks.add(damageGiver.getNick());
                 recMarks--;
                 actualMarks++;
@@ -146,7 +146,7 @@ public class EffectsLambda {
     {
         return ((damage, marks, position, weapons, powers, ammo) -> {
             int pos = Arrays.asList(weapons).indexOf(toRemove);
-            if(pos>-1 && pos<=maxWeaponsNumber)
+            if(pos>-1 && pos<= MAX_WEAPONS_NUMBER)
             {
                 weapons[pos].setLoaded(true);
                 cell.refillWeapon(weapons[pos]);
@@ -164,10 +164,10 @@ public class EffectsLambda {
         taker.applyEffects(EffectsLambda.damage(damage, giver));
 
         //Mirino
-        if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals(mirinoID)) &&
+        if(giver.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals(MIRINO_ID)) &&
                 (giver.getAmmo(Color.RED, false)>0 || giver.getAmmo(Color.BLUE, false)>0 || giver.getAmmo(Color.YELLOW, false)>0))
         {
-            Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals(mirinoID)).collect(Collectors.toList()), false);
+            Power chosen = giver.getConn().discardPower(giver.getPowers().stream().filter(p->p.getBase().getLambdaID().equals(MIRINO_ID)).collect(Collectors.toList()), false);
             if(chosen != null)
             {
                 List<Color> available = new ArrayList<>();
@@ -191,11 +191,10 @@ public class EffectsLambda {
         }
 
         //Granata venom
-        if(taker.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals(granataVenomID)))
+        if(taker.getPowers().stream().anyMatch(p->p.getBase().getLambdaID().equals(GRANATA_VENOM_ID)))
         {
-            Power chosen = taker.getConn().discardPower(taker.getPowers().stream().filter(p->p.getBase().getLambdaID().equals(granataVenomID)).collect(Collectors.toList()), false);
-            if(chosen != null);
-            {
+            Power chosen = taker.getConn().discardPower(taker.getPowers().stream().filter(p->p.getBase().getLambdaID().equals(GRANATA_VENOM_ID)).collect(Collectors.toList()), false);
+            if(chosen != null) {
                 //Give mark
                 giver.applyEffects(EffectsLambda.marks(1, taker));
 

@@ -29,14 +29,14 @@ public class MapTest {
         /**
          * Check the correct instantiation of both Cell child classes
          */
-        assertTrue(rc.getRoomNumber() == 3);
-        assertTrue(sc.getRoomNumber() == 3);
+        assertEquals(3, rc.getRoomNumber());
+        assertEquals(3, sc.getRoomNumber());
 
-        assertTrue(rc.getSides().length == 4);
-        assertTrue(sc.getSides().length == 4);
+        assertEquals(4, rc.getSides().length);
+        assertEquals(4, sc.getSides().length);
 
-        assertTrue(rc.getPawns().size() == 0);
-        assertTrue(rc.getPawns().size() == 0);
+        assertEquals(0, rc.getPawns().size());
+        assertEquals(0, rc.getPawns().size());
     }
 
     /**
@@ -66,8 +66,8 @@ public class MapTest {
         //Removing
         sc.removePawn(pl);
         rc.removePawn(pl);
-        assertTrue(rc.getPawns().size() == 0);
-        assertTrue(rc.getPawns().size() == 0);
+        assertEquals(0, rc.getPawns().size());
+        assertEquals(0, rc.getPawns().size());
     }
 
     /**
@@ -98,10 +98,10 @@ public class MapTest {
         /**
          * Check the correct functionality of the Loot filling and picking
          */
-        assertTrue(rc.getLoot() == l);
-        assertTrue(rc.pickLoot() == l); //now we don't have it
-        assertTrue(rc.getLoot() == null);
-        assertTrue(rc.pickLoot() == null);
+        assertSame(rc.getLoot(), l);
+        assertSame(rc.pickLoot(), l); //now we don't have it
+        assertNull(rc.getLoot());
+        assertNull(rc.pickLoot());
     }
 
     /**
@@ -180,7 +180,7 @@ public class MapTest {
         /**
          * Check the correct configuration of the spawn color
          */
-        assertTrue(sc.getSpawn() == Color.BLUE);
+        assertSame(Color.BLUE, sc.getSpawn());
         assertTrue(sc.getWeapons().isEmpty());
 
         ArrayList<Color> cost = new ArrayList<>();
@@ -196,9 +196,9 @@ public class MapTest {
         /**
          * Check the correct functionality of the Weapon filling and picking
          */
-        assertTrue(sc.getWeapons().size() == 1);
+        assertEquals(1, sc.getWeapons().size());
         assertTrue(sc.getWeapons().contains(w));
-        assertTrue(sc.pickWeapon(w) == w);
+        assertSame(w, sc.pickWeapon(w));
         assertTrue(sc.getWeapons().isEmpty());
     }
 
@@ -244,13 +244,13 @@ public class MapTest {
 
         assertTrue(calculated.contains(pl.get(0)));
         assertTrue(calculated.contains(pl.get(1)));
-        assertTrue(!calculated.contains(pl.get(2)));
+        assertFalse(calculated.contains(pl.get(2)));
 
         //in a cardinal direction
         calculated = Map.visiblePlayers(viewer, m, Direction.EAST);
         assertFalse(calculated.containsAll(pl));
 
-        assertTrue(!calculated.contains(pl.get(0)));
+        assertFalse(calculated.contains(pl.get(0)));
         assertTrue(calculated.contains(pl.get(1)));
         assertTrue(calculated.contains(pl.get(2)));
     }
@@ -284,7 +284,7 @@ public class MapTest {
 
         assertTrue(calculated.contains(pl.get(0)));
         assertTrue(calculated.contains(pl.get(1)));
-        assertTrue(!calculated.contains(pl.get(2)));
+        assertFalse(calculated.contains(pl.get(2)));
     }
 
     /**
@@ -329,7 +329,7 @@ public class MapTest {
 
         List<Point> visible = Map.visiblePoints(viewer.getPosition(), m, 0);
 
-        assertTrue(visible.size() == 7);
+        assertEquals(7, visible.size());
     }
 
     /**
@@ -341,7 +341,7 @@ public class MapTest {
         Player p1 = new Player("Player 1", "", Fighter.DSTRUTTOR3);
         Player p2 = new Player("Player 2", "", Fighter.DSTRUTTOR3);
 
-        Point points[] = new Point[12];
+        Point[] points = new Point[12];
         for(int y = 0; y < 3; y++)
             for(int x = 0; x < 4; x++)
                 points[x+4*y] = new Point(x,y);
@@ -351,17 +351,17 @@ public class MapTest {
         p1.applyEffects(EffectsLambda.move(p1, points[0], m));
         p2.applyEffects(EffectsLambda.move(p2, points[0], m));
         distance = m.distance(p1,p2);
-        assertTrue(distance == 0);
+        assertEquals(0, distance);
 
         p1.applyEffects(EffectsLambda.move(p1, points[0], m));
         p2.applyEffects(EffectsLambda.move(p2, points[1], m));
         distance = m.distance(p1,p2);
-        assertTrue(distance == 1);
+        assertEquals(1, distance);
 
         p1.applyEffects(EffectsLambda.move(p1, points[0], m));
         p2.applyEffects(EffectsLambda.move(p2, points[4], m));
         distance = m.distance(p1,p2);
-        assertTrue(distance == 1);
+        assertEquals(1, distance);
 
         p1.applyEffects(EffectsLambda.move(p1, points[4], m));
         p2.applyEffects(EffectsLambda.move(p2, points[1], m));
@@ -371,26 +371,26 @@ public class MapTest {
         p1.applyEffects(EffectsLambda.move(p1, points[0], m));
         p2.applyEffects(EffectsLambda.move(p2, points[5], m));
         distance = m.distance(p1,p2);
-        assertTrue(distance == 2);
+        assertEquals(2, distance);
 
         p1.applyEffects(EffectsLambda.move(p1, points[4], m));
         p2.applyEffects(EffectsLambda.move(p2, points[5], m));
         distance = m.distance(p1,p2);
-        assertTrue(distance == 1);
+        assertEquals(1, distance);
 
         p1.applyEffects(EffectsLambda.move(p1, points[6], m));
         p2.applyEffects(EffectsLambda.move(p2, points[10], m));
         distance = m.distance(p1,p2);
-        assertTrue(distance == 3);
+        assertEquals(3, distance);
 
         p1.applyEffects(EffectsLambda.move(p1, points[0], m));
         p2.applyEffects(EffectsLambda.move(p2, points[11], m));
         distance = m.distance(p1,p2);
-        assertTrue(distance == 5);
+        assertEquals(5, distance);
 
         p1.applyEffects(EffectsLambda.move(p1, points[4], m));
         p2.applyEffects(EffectsLambda.move(p2, points[7], m));
         distance = m.distance(p1,p2);
-        assertTrue(distance == 3);
+        assertEquals(3, distance);
     }
 }

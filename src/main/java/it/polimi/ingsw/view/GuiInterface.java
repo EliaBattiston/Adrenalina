@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.clientmodel.GameView;
 import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.controller.GamePhase;
@@ -20,6 +19,7 @@ import java.util.logging.Logger;
 public class GuiInterface implements UserInterface{
     private GuiExchanger exchanger;
 
+    //TODO remove main and test pieces
     public static void main(String[] args){
         new GuiInterface().tester();
     }
@@ -39,7 +39,7 @@ public class GuiInterface implements UserInterface{
      */
     private void tester(){
         try {
-            System.out.println("Start test gui");
+            println("Start test gui");
 
 
 
@@ -53,9 +53,9 @@ public class GuiInterface implements UserInterface{
             chooseFrenzy();
 
 
-            System.out.println("IP choosen: " + ip + ", RMI: " + isRMI + "  " + nick + "   " + phrase);
+            println("IP choosen: " + ip + ", RMI: " + isRMI + "  " + nick + "   " + phrase);
 
-            System.out.println(f.toString() + "  " + s);
+            println(f.toString() + "  " + s);
 */
             MatchView testView = initForTest();
             this.updateGame( testView );
@@ -66,13 +66,13 @@ public class GuiInterface implements UserInterface{
 
             Action chosen = chooseAction(available, false);
 
-            System.out.println(chosen==null?"null":chosen.getName() + " scelta");
+            println(chosen==null?"null":chosen.getName() + " scelta");
 
             available = ac.getAvailable(9, true, false);
 
             chosen = chooseAction(available, false);
 
-            System.out.println(chosen==null?"null":chosen.getName() + " scelta");
+            println(chosen==null?"null":chosen.getName() + " scelta");
 
             /*List<Power> p = new ArrayList<>();
             p.add(new Power(1, "sdb", null, Color.RED));
@@ -93,7 +93,7 @@ public class GuiInterface implements UserInterface{
             rooms.add(3);
 
             Integer choosen = chooseRoom(rooms, true);
-            System.out.println(choosen!=null?choosen:"null");
+            println(choosen!=null?choosen:"null");
 */
 
             /*List<Color> color = new ArrayList<>();
@@ -102,7 +102,7 @@ public class GuiInterface implements UserInterface{
             color.add(Color.YELLOW);
 
             Color chosen = chooseAmmo(color, false);
-            System.out.println(chosen==null?"null":chosen);*/
+            println(chosen==null?"null":chosen);*/
 
             /*List<Action> actions = new ArrayList<>();
             actions.add(new Action("trdsbdnbnbfy", "asvdsbsd", null, "w2-a"));
@@ -113,9 +113,9 @@ public class GuiInterface implements UserInterface{
             /*Player chosen = chooseTarget(players, false);
 
             if(chosen != null)
-                System.out.println(chosen.toString());
+                println(chosen.toString());
             else
-                System.out.println("NULL");*/
+                println("NULL");*/
 
 
             /*List<Action> a = new ArrayList<>();
@@ -123,15 +123,15 @@ public class GuiInterface implements UserInterface{
 
             Action cho = chooseAction(a, true);
 
-            System.out.println(cho.getName());
+            println(cho.getName());
 */
             /*List<Point> dest = Map.possibleMovements(testView.getMyPlayer().getPosition(), 1, testView.getGame().getMap());
 
             Point chosenP = movePlayer(dest,false);
             if(chosenP == null)
-                System.out.println("null");
+                println("null");
             else
-                System.out.println(chosenP.getX() + " y: "+ chosenP.getY());
+                println(chosenP.getX() + " y: "+ chosenP.getY());
 
             List<Weapon> goodW = new ArrayList<>();
             goodW.add(new Weapon(1, "", "", null, null, null, Color.RED));
@@ -149,7 +149,7 @@ public class GuiInterface implements UserInterface{
             Thread.sleep(200);
 
             if(w!=null)
-                System.out.println("Done, chosen weapon: " + w.getName());
+                println("Done, chosen weapon: " + w.getName());
 
             Thread.sleep(500);
             //getFighter();
@@ -169,7 +169,7 @@ public class GuiInterface implements UserInterface{
             chooseDirection(possible, true);*/
 
         }catch (Exception e){
-
+            //Check for errors not needed
         }
     }
 
@@ -267,7 +267,8 @@ public class GuiInterface implements UserInterface{
 
             //it's just for test
             for(Player p:players){
-                int x, y;
+                int x;
+                int y;
                 do {
                     x = new Random().nextInt(4);
                     y = new Random().nextInt(3);
@@ -284,7 +285,7 @@ public class GuiInterface implements UserInterface{
 
             return new MatchView(me.getFullView(), me.getView(), allGame.getView(), GamePhase.REGULAR, 99999);
         }catch (Exception ex){
-            ;
+            //No error check needed
         }
         return null;
     }
@@ -600,7 +601,7 @@ public class GuiInterface implements UserInterface{
      * @param message Message to be printed
      */
     public void generalMessage(String message){
-        System.out.println(message);
+        println(message);
         exchanger.setRequest(Interaction.LOG, message, null, true);
         exchanger.waitFreeToUse();
     }
@@ -639,7 +640,7 @@ public class GuiInterface implements UserInterface{
      * @return true if it's an IP address, false otherwise
      */
     private boolean checkIP(String ip) {
-        String pieces[];
+        String[] pieces;
         pieces = ip.split("\\.");
         if(ip.equals("localhost"))
             return true;
@@ -664,4 +665,6 @@ public class GuiInterface implements UserInterface{
         exchanger.waitFreeToUse();
         return (String)exchanger.getAnswer();
     }
+
+    protected static void println(String s) { System.out.println(s);}
 }

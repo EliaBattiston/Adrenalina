@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class CMain
 {
-    public final static int socketPort = 1906;
+    private static final int SOCKETPORT = 1906;
 
     /**
      * Endpoint for interface control
@@ -44,9 +44,8 @@ public class CMain
      */
     public CMain(boolean gui)
     {
-        Client connection;
-
-        String ip, localIP;
+        String ip;
+        String localIP;
         boolean socket;
 
         localIP = null;
@@ -67,7 +66,7 @@ public class CMain
 
             try {
                 if (socket) {
-                    connection = new SocketClient(ip, socketPort, ui);
+                    new SocketClient(ip, SOCKETPORT, ui);
                 }
                 else {
 
@@ -81,8 +80,6 @@ public class CMain
                             String address = inetAddresses.nextElement()
                                     .getHostAddress();
                             if (address.contains(".")) {
-                                String[] split = address.split("\\.");
-                                //if(!split[0].samePoint("127") && !split[0].samePoint("169") && !split[0].samePoint("172"))
                                 addresses.add(address);
                             }
                         }
@@ -110,8 +107,6 @@ public class CMain
                             }
                             localIP = reducedAddresses.get(0);
                         }
-
-                        //localIP = ui.getLocalAddress(addresses);
                     }
                     else {
                         localIP = addresses.get(0);
@@ -119,7 +114,7 @@ public class CMain
 
                     System.setProperty("java.rmi.server.hostname", localIP);
 
-                    connection = new RMIClient(ip, ui);
+                    new RMIClient(ip, ui);
                 }
                 instanced = true;
                 ui.generalMessage("Connesso al server Adrenalina");

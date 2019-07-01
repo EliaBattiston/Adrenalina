@@ -4,6 +4,7 @@ import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.clientmodel.MatchView;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Client's connection to the socket
  */
-public interface Client extends Remote
+public interface Client extends Remote, Serializable
 {
     /**
      * Receive the actual matchView to the client

@@ -17,12 +17,12 @@ import java.util.logging.Logger;
  */
 public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHandler, Serializable
 {
-    public final static int RMIPort = 1099;
+    private static final int RMIPORT = 1099;
 
     /**
      * Local binding registry
      */
-    private Registry registry;
+    private transient Registry registry;
     /**
      * List of new connections waiting to be handled by the game main thread
      */
@@ -36,7 +36,7 @@ public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHan
         newConn = new ArrayList<>();
 
         try {
-            registry = LocateRegistry.createRegistry(RMIPort);
+            registry = LocateRegistry.createRegistry(RMIPORT);
             registry.bind("AM06", this);
         }
         catch(Exception e) {

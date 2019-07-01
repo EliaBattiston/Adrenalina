@@ -1,7 +1,6 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.clientmodel.PlayerView;
-import it.polimi.ingsw.model.Player;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 
@@ -12,8 +11,7 @@ import java.util.List;
  */
 public class GuiClickableObjectPawn extends GuiClickableObject {
     private PlayerView pl;
-    private boolean viewer;
-    private final static String whiteHex = "#ffffff";
+    private static final String WHITE_HEX = "#ffffff";
 
     public GuiClickableObjectPawn(PlayerView pl, double size, boolean viewer){
         super(size, size);
@@ -22,12 +20,10 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
 
         this.getGraphicsContext2D().drawImage( img, 0, 0, size, size);
 
-        this.viewer = viewer;
-
-        if(this.viewer)
+        if(viewer)
             this.setEffect(makeGlow("#123aff"));
         else
-            this.setEffect(makeGlow(whiteHex));
+            this.setEffect(makeGlow(WHITE_HEX));
     }
 
     /**
@@ -53,8 +49,8 @@ public class GuiClickableObjectPawn extends GuiClickableObject {
     @Override
     public void resetEventsStyle(){
         setOnMouseEntered(e -> setEffect(makeGlow("#d1d331")));
-        setOnMouseExited(e-> setEffect(makeGlow(whiteHex)) );
-        setEffect(makeGlow(whiteHex));
+        setOnMouseExited(e-> setEffect(makeGlow(WHITE_HEX)) );
+        setEffect(makeGlow(WHITE_HEX));
     }
 
     /**

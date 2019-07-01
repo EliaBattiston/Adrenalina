@@ -11,7 +11,7 @@ public class Timeout
 
     public Timeout(long timeout, TimeUnit unit, Match m)
     {
-        final Runnable stuffToDo = new Thread(() -> m.playerTurn());
+        final Runnable stuffToDo = new Thread(m::playerTurn);
 
         executor = Executors.newSingleThreadExecutor();
         future = executor.submit(stuffToDo);

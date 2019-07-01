@@ -9,9 +9,9 @@ import java.util.List;
 
 public class SpawnCellView extends CellView implements Serializable
 {
-    List<Weapon> weapons;
+    private List<Weapon> weapons;
 
-    Color spawn;
+    private Color spawn;
 
     public SpawnCellView(List<PlayerView> pawns, int roomNumber, Side[] sides, List<Weapon> weapons, Color spawn)
     {
@@ -28,9 +28,6 @@ public class SpawnCellView extends CellView implements Serializable
     @Override
     public boolean hasSpawn(Color c)
     {
-        if(c==spawn)
-            return true;
-
-        return false;
+        return c == spawn;
     }
 }

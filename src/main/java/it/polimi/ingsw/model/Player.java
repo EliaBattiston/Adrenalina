@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
  */
 public class Player implements Serializable
 {
-    private transient final static int maxWeaponsNumber = 3;
-    private transient final static int maxPowersNumber = 3;
-    private transient final static int damagesNumber = 12;
+    private static final transient int MAX_WEAPONS_NUMBER = 3;
+    private static final transient int MAX_POWERS_NUMBER = 3;
+    private static final transient int DAMAGES_NUMBER = 12;
 
     /**
      * Nickname used to log in
@@ -97,12 +97,12 @@ public class Player implements Serializable
         this.actionPhrase = phrase;
         this.character = f;
         this.points = 0;
-        this.weapons = new Weapon[maxWeaponsNumber];
-        this.receivedDamage = new String[damagesNumber];
+        this.weapons = new Weapon[MAX_WEAPONS_NUMBER];
+        this.receivedDamage = new String[DAMAGES_NUMBER];
         this.receivedMarks = new ArrayList<>();
         this.skulls = 0;
         this.ammo = new Ammunitions();
-        this.powers = new Power[maxPowersNumber];
+        this.powers = new Power[MAX_POWERS_NUMBER];
         this.position = new Point(0, 0);
         this.spawned = false;
         this.usedPowers = new ArrayList<>();
@@ -295,7 +295,7 @@ public class Player implements Serializable
     }
 
     public void clearForView(){
-        for(int i=0; i<maxWeaponsNumber; i++)
+        for(int i = 0; i< MAX_WEAPONS_NUMBER; i++)
             if(weapons[i] != null && weapons[i].isLoaded())
                 weapons[i] = null;
 

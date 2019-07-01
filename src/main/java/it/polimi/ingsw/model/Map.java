@@ -32,9 +32,9 @@ public class Map implements Serializable {
     private Cell[][] cells;
 
     //Defines block
-    private transient static final int mapWidth = 4;
-    private transient static final int mapHeight = 3;
-    private transient static final int mapsNumber = 4;
+    private static final transient int MAPWIDTH = 4;
+    private static final transient int MAPHEIGHT = 3;
+    private static final transient int MAPS_NUMBER = 4;
 
     public int getId() {
         return id;
@@ -47,7 +47,7 @@ public class Map implements Serializable {
      * @return cell reference (or null in case of out of bound coordinates or missing cell)
      */
     public Cell getCell(int x, int y) {
-        if(x >= 0 && x < mapWidth && y >= 0 && y < mapHeight)
+        if(x >= 0 && x < MAPWIDTH && y >= 0 && y < MAPHEIGHT)
             return cells[x][y];
         return null;
     }
@@ -68,8 +68,8 @@ public class Map implements Serializable {
      * @return Point with X and Y coordinates of the cell in the map
      */
     public Point getCellPosition(Cell c){
-        for(int i=0; i < mapWidth;i++)
-            for(int j=0; j < mapHeight; j++)
+        for(int i = 0; i < MAPWIDTH; i++)
+            for(int j = 0; j < MAPHEIGHT; j++)
                 if(cells[i][j] == c)
                     return new Point(i,j);
 
@@ -82,26 +82,20 @@ public class Map implements Serializable {
      * @return the deserialized map or null if mapNumber it's not in the range
      */
     public static Map jsonDeserialize(int mapNumber) {
-        try{
-            if(mapNumber >= 1 && mapNumber <= mapsNumber)
-            {
-                return Map.jsonDeserialize("map" + mapNumber + ".json");
-            }
-            else
-                return null;
-        }catch(FileNotFoundException ex){
-            Logger.getGlobal().log( Level.SEVERE, ex.toString(), ex );
-            return null;
+        if(mapNumber >= 1 && mapNumber <= MAPS_NUMBER)
+        {
+            return Map.jsonDeserialize("map" + mapNumber + ".json");
         }
+        else
+            return null;
     }
 
     /**
      * Deserializes the JSON config file and loads the data in the matrix
      * @param pathJsonFile JSON map config file
      * @return Map class with its matrix correctly initialized according to the json file's content
-     * @throws FileNotFoundException If there is a problem accessing the file
      */
-    public static Map jsonDeserialize(String pathJsonFile) throws FileNotFoundException {
+    public static Map jsonDeserialize(String pathJsonFile) {
         JsonReader reader = new JsonReader(new InputStreamReader(Map.class.getClassLoader().getResourceAsStream(pathJsonFile)));
 
         GsonBuilder gsonBilder = new GsonBuilder();
@@ -218,12 +212,12 @@ public class Map implements Serializable {
                         visible.addAll(map.getCell(viewer.getPosition().getX(), y).getPawns());
                 break;
             case EAST:
-                for(int x=viewer.getPosition().getX()+1; x<mapWidth; x++)
+                for(int x = viewer.getPosition().getX()+1; x< MAPWIDTH; x++)
                     if(map.getCell(x, viewer.getPosition().getY()) != null)
                         visible.addAll(map.getCell(x, viewer.getPosition().getY()).getPawns());
                 break;
             case SOUTH:
-                for(int y=viewer.getPosition().getY()+1; y<mapHeight; y++)
+                for(int y = viewer.getPosition().getY()+1; y< MAPHEIGHT; y++)
                     if(map.getCell(viewer.getPosition().getX(), y) != null)
                         visible.addAll(map.getCell(viewer.getPosition().getX(), y).getPawns());
                 break;
@@ -534,9 +528,9 @@ public class Map implements Serializable {
         Cell selectedCell = null;
         List<Player> pawnsList = null;
 
-        for(int x = 0; x < mapWidth; x++)
+        for(int x = 0; x < MAPWIDTH; x++)
         {
-            for(int y = 0; y < mapHeight; y++)
+            for(int y = 0; y < MAPHEIGHT; y++)
             {
                 //Don't check if the cell is unused
                 selectedCell = getCell(x, y);
@@ -557,10 +551,10 @@ public class Map implements Serializable {
 
     public MapView getView()
     {
-        CellView[][] cellsV = new CellView[mapWidth][mapHeight];
-        for(int x = 0; x < mapWidth; x++)
+        CellView[][] cellsV = new CellView[MAPWIDTH][MAPHEIGHT];
+        for(int x = 0; x < MAPWIDTH; x++)
         {
-            for (int y = 0; y < mapHeight; y++)
+            for (int y = 0; y < MAPHEIGHT; y++)
             {
                 cellsV[x][y] = cells[x][y] == null ? null : cells[x][y].getView();
             }

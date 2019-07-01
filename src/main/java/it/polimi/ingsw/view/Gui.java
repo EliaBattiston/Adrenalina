@@ -41,10 +41,11 @@ import static java.lang.Math.*;
  * The Gui class that extends the JavaFX Application
  */
 public class Gui extends Application{
-    private final static double SETTINGSFONTDIM = 28;
-    private final static double POPUPFONTDIM = 22;
-    private final static String whiteHex = "#ffffff";
-    private final static String confirmButtonText = "Conferma";
+    private static final double SETTINGSFONTDIM = 28;
+    private static final double POPUPFONTDIM = 22;
+    private static final String WHITE_HEX = "#ffffff";
+    private static final String CONFIRM_BUTTON_TEXT = "Conferma";
+    private static final String DROPS = "drops/";
 
     //Ui Executor
     private static Executor uiExec = Platform::runLater;
@@ -138,7 +139,7 @@ public class Gui extends Application{
         });
 
         //OnClose
-        primaryStage.setOnCloseRequest((t)->{
+        primaryStage.setOnCloseRequest(t->{
             Platform.exit();
             System.exit(0);
         });
@@ -180,7 +181,12 @@ public class Gui extends Application{
     private Pane drawGame(){
         Pane pane = new Pane();
         Canvas canvas;
-        StackPane myWeaponsPane, MyPowers, weaponsLoot, mapLoot, pawns, info;
+        StackPane myWeaponsPane;
+        StackPane myPowers;
+        StackPane weaponsLoot;
+        StackPane mapLoot;
+        StackPane pawns;
+        StackPane info;
 
         masterPane = new Pane();
         canvas = new Canvas(backgroundWidth, backgroundHeight);
@@ -194,14 +200,14 @@ public class Gui extends Application{
         drawSkulls(match.getGame().getSkullsBoard());
 
         myWeaponsPane = drawMyWeapons(match.getMyPlayer().getWeapons());
-        MyPowers = drawMyPowers(match.getMyPlayer().getPowers());
+        myPowers = drawMyPowers(match.getMyPlayer().getPowers());
         weaponsLoot = drawWeaponsLoot(match.getGame().getMap());
         mapLoot = drawLootOnMap(match.getGame().getMap());
         pawns = drawPawnsOnMap(match.getGame().getMap());
         info = drawEnemyInfo(match.getGame().getPlayers());
 
         myWeaponsPane.setPickOnBounds(false);
-        MyPowers.setPickOnBounds(false);
+        myPowers.setPickOnBounds(false);
         weaponsLoot.setPickOnBounds(false);
         mapLoot.setPickOnBounds(false);
         pawns.setPickOnBounds(false);
@@ -241,7 +247,7 @@ public class Gui extends Application{
         skipAction.setOnMouseExited(e-> skipAction.setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0);") );
         skipAction.setPickOnBounds(false);
 
-        pane.getChildren().addAll( canvas, infoTextCanvas,  myWeaponsPane, MyPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
+        pane.getChildren().addAll( canvas, infoTextCanvas,  myWeaponsPane, myPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
 
         if(runAction!=null)//check if one it's initialized all are
             pane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
@@ -249,7 +255,7 @@ public class Gui extends Application{
             pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot, powerAction);
 
 
-        System.out.println("Re-drawn the pane!");
+        println("Re-drawn the pane!");
         return pane;
     }
 
@@ -501,13 +507,9 @@ public class Gui extends Application{
 
         for(PlayerView pl: players) {
             if(!pl.getNick().equals(match.getMyPlayer().getNick())) {
-                info = new GuiClickableInfo(pl, size, size);
+                info = new GuiClickableInfo(size, size);
 
-                info.setOnMousePressed(e -> {
-                    uiExec.execute(() -> {
-                        showEnemyInfo(pl);
-                    });
-                });
+                info.setOnMousePressed(e ->uiExec.execute(()->showEnemyInfo(pl)));
 
                 info.setPickOnBounds(false);
                 info.setPosition(boardX + boardW + (30 * dimMult), boardY + (53 * dimMult));
@@ -538,11 +540,11 @@ public class Gui extends Application{
                     gc.drawImage(GuiImagesMap.getImage("skull.png"), x * dimMult, y * dimMult, w, skullH);
                 else {
                     if(kills.get(s).getOverkill()) {
-                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), (x-6) * dimMult, (y-6) * dimMult);
-                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), (x+6) * dimMult, y * dimMult);
+                        gc.drawImage(GuiImagesMap.getImageWithShadow(DROPS + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), (x-6) * dimMult, (y-6) * dimMult);
+                        gc.drawImage(GuiImagesMap.getImageWithShadow(DROPS + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), (x+6) * dimMult, y * dimMult);
                     }
                     else
-                        gc.drawImage(GuiImagesMap.getImageWithShadow("drops/" + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), x * dimMult, (y-3) * dimMult);
+                        gc.drawImage(GuiImagesMap.getImageWithShadow(DROPS + kills.get(s).getKiller().getCharacter() + ".png", w, dropH), x * dimMult, (y-3) * dimMult);
                 }
             }
 
@@ -607,7 +609,7 @@ public class Gui extends Application{
         //damages
         for(int i=0; i<12; i++){
             if(player.getDamage(i) != null)
-                gc.drawImage( GuiImagesMap.getImageWithShadow("drops/" + PlayerView.fighterFromNick(players, player.getDamage(i)) + ".png", widthDrop, heightDrop), xDrop, yDrop);
+                gc.drawImage( GuiImagesMap.getImageWithShadow(DROPS + PlayerView.fighterFromNick(players, player.getDamage(i)) + ".png", widthDrop, heightDrop), xDrop, yDrop);
 
             xDrop += deltaX;
         }
@@ -618,7 +620,7 @@ public class Gui extends Application{
         deltaX = widthDrop * 1.1; //put just a little bit of space, we don't know how many marks a player will get
         for(String p: player.getReceivedMarks()){
             if(p != null)
-                gc.drawImage( GuiImagesMap.getImageWithShadow("drops/" + PlayerView.fighterFromNick(players, p) + ".png", widthDrop, heightDrop), xDrop, yDrop);
+                gc.drawImage( GuiImagesMap.getImageWithShadow(DROPS + PlayerView.fighterFromNick(players, p) + ".png", widthDrop, heightDrop), xDrop, yDrop);
 
             xDrop += deltaX;
         }
@@ -791,7 +793,7 @@ public class Gui extends Application{
                 });
             }
 
-            System.out.println(exchanger.getActualInteraction().toString());
+            println(exchanger.getActualInteraction().toString());
 
             //start the timer -> it starts only if already in game
             timerDisconnectionStart();
@@ -878,9 +880,7 @@ public class Gui extends Application{
                         String logMessage = dtf.format(now) + " " + exchanger.getMessage();
                         loggedText = logMessage + "\n" + loggedText;
                         if (logArea != null)
-                            uiExec.execute(() -> {
-                                logArea.setText(loggedText);
-                            });
+                            uiExec.execute(() -> logArea.setText(loggedText));
                         if (match == null) {
                             uiExec.execute(() -> this.settingsMessage(loggedText));
                         }
@@ -1105,8 +1105,8 @@ public class Gui extends Application{
 
             Button buttonAction = new Button("Usa " + a.getName());
             buttonAction.setFont(getFont(POPUPFONTDIM*dimMult*0.8));
-            buttonAction.setOnAction((e)->{
-                System.out.println("Scelto: " + a.getName());
+            buttonAction.setOnAction(e->{
+                println("Scelto: " + a.getName());
                 exchanger.setAnswer(a);
                 clearInfoOnMap();
                 exchanger.setActualInteraction(Interaction.NONE);
@@ -1148,9 +1148,7 @@ public class Gui extends Application{
         //Close button
         Button closeButton = new Button("Chiudi" );
         closeButton.setFont(getFont(POPUPFONTDIM*dimMult*0.8));
-        closeButton.setOnAction((e)->{
-            masterPane.getChildren().remove(popupPane);
-        });
+        closeButton.setOnAction(e -> masterPane.getChildren().remove(popupPane));
         StackPane.setAlignment(closeButton, Pos.CENTER);
         closeButton.setTranslateX(500*dimMult);
         closeButton.setTranslateY(-290*dimMult);
@@ -1283,7 +1281,7 @@ public class Gui extends Application{
 
             powerCard.setEventsChoosable();
             powerCard.setOnMousePressed(e->{
-                System.out.println("Scelto: " + p.getName());
+                println("Scelto: " + p.getName());
                 exchanger.setAnswer(p);
                 exchanger.setActualInteraction(Interaction.NONE);
                 clearInfoOnMap();
@@ -1361,9 +1359,9 @@ public class Gui extends Application{
         List<GuiClickableObjectPawn> pawns = playersPawns.stream().filter(c->c.inList(choosable)).collect(Collectors.toList());
 
         for(GuiClickableObjectPawn p : pawns){
-            System.out.println(p.getPlayer().getCharacter().toString());//debug
+            println(p.getPlayer().getCharacter().toString());//debug
             p.setOnMousePressed(e -> {
-                System.out.println("Clicked player: " + p.getPlayer().getNick());
+                println("Clicked player: " + p.getPlayer().getNick());
                 exchanger.setAnswer(p.getPlayer());
                 exchanger.setActualInteraction(Interaction.NONE);
                 clearInfoOnMap();
@@ -1398,7 +1396,7 @@ public class Gui extends Application{
 
         Label l = new Label(message);
         l.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+        l.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
         grid.add(l,0,0);
 
         List<String> roomsNames = new ArrayList<>();
@@ -1421,17 +1419,17 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(s);
             radio.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
             radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+            radio.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
             if(row==1)
                 radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
-        Button submit = new Button(confirmButtonText);
+        Button submit = new Button(CONFIRM_BUTTON_TEXT);
         submit.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
-            System.out.println(answer + ": " + roomsNames.indexOf(answer));
+            println(answer + ": " + roomsNames.indexOf(answer));
             exchanger.setAnswer(roomsNames.indexOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
             masterPane.getChildren().remove(popupPane);
@@ -1472,7 +1470,7 @@ public class Gui extends Application{
 
         Label l = new Label(message);
         l.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+        l.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
         grid.add(l,0,0);
 
         List<String> colorNames = new ArrayList<>();
@@ -1489,14 +1487,14 @@ public class Gui extends Application{
         for(String s : colorNames){
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+            radio.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
             radio.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
             if(row==1)
                 radio.setSelected(true);
             grid.add(radio,0,row++);
         }
 
-        Button submit = new Button(confirmButtonText);
+        Button submit = new Button(CONFIRM_BUTTON_TEXT);
         submit.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
@@ -1507,7 +1505,7 @@ public class Gui extends Application{
                 c= Color.BLUE;
             else if(answer.equals("Giallo"))
                 c=Color.YELLOW;
-            System.out.println(answer + ": " + colorNames.indexOf(answer));
+            println(answer + ": " + colorNames.indexOf(answer));
             exchanger.setAnswer(c);
             exchanger.setActualInteraction(Interaction.NONE);
             masterPane.getChildren().remove(popupPane);
@@ -1548,7 +1546,7 @@ public class Gui extends Application{
 
         Label l = new Label(message);
         l.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+        l.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
         GridPane.setHalignment(l, HPos.CENTER);
         grid.add(l,0,0);
 
@@ -1559,7 +1557,7 @@ public class Gui extends Application{
             RadioButton radio = new RadioButton(d.toString());
             radio.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
             radio.setToggleGroup(radioGroup);
-            radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+            radio.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
             if(row==1)
                 radio.setSelected(true);
             GridPane.setHalignment(radio, HPos.CENTER);
@@ -1567,11 +1565,11 @@ public class Gui extends Application{
         }
 
         //continue here
-        Button submit = new Button(confirmButtonText);
+        Button submit = new Button(CONFIRM_BUTTON_TEXT);
         submit.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
-            System.out.println(answer);
+            println(answer);
             exchanger.setAnswer(Direction.valueOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
             masterPane.getChildren().remove(popupPane);
@@ -1640,20 +1638,20 @@ public class Gui extends Application{
 
         Label l = new Label(message);
         l.setFont(getFont(SETTINGSFONTDIM*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+        l.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
         l.setTextAlignment(TextAlignment.CENTER);
         l.setWrapText(true);
 
         TextField field = new TextField("localhost");
         field.setFont(Font.font(SETTINGSFONTDIM*dimMult));
 
-        Button submit = new Button(confirmButtonText);
+        Button submit = new Button(CONFIRM_BUTTON_TEXT);
         submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
-        submit.setOnAction((e)->{
+        submit.setOnAction(e->{
             String answer = field.getText();
             if(!answer.isEmpty() && !answer.isBlank())
             {
-                System.out.println(answer);
+                println(answer);
                 exchanger.setAnswer(answer);
                 exchanger.setActualInteraction(Interaction.NONE);
                 appStage.setScene(new Scene(initializerBackground()));
@@ -1691,7 +1689,7 @@ public class Gui extends Application{
         l.setPrefSize(480 * dimMult, 420 * dimMult);
         l.setWrapText(true);
         l.setFont(getFont(SETTINGSFONTDIM*0.8*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+        l.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
 
         GridPane.setHalignment(l, HPos.RIGHT);
         GridPane.setValignment(l, VPos.TOP);
@@ -1715,7 +1713,7 @@ public class Gui extends Application{
 
         Label l = new Label(message);
         l.setFont(getFont(SETTINGSFONTDIM*dimMult));
-        l.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+        l.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
         l.setWrapText(true);
         l.setTextAlignment(TextAlignment.CENTER);
         GridPane.setHalignment(l, HPos.CENTER);
@@ -1726,14 +1724,14 @@ public class Gui extends Application{
         for(String s:buttons){
             RadioButton radio = new RadioButton(s);
             radio.setToggleGroup(group);
-            radio.setTextFill(javafx.scene.paint.Color.web(whiteHex));
+            radio.setTextFill(javafx.scene.paint.Color.web(WHITE_HEX));
             radio.setFont(getFont( SETTINGSFONTDIM*dimMult));
             if(row==1)
                 radio.setSelected(true);
             grid.add(radio, 0, row++);
         }
 
-        Button submit = new Button(confirmButtonText);
+        Button submit = new Button(CONFIRM_BUTTON_TEXT);
         submit.setFont(getFont(SETTINGSFONTDIM*dimMult));
         submit.setOnAction(eventHandler);
         submit.setDefaultButton(true);
@@ -1754,7 +1752,7 @@ public class Gui extends Application{
 
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
-            System.out.println(answer);
+            println(answer);
             exchanger.setAnswer(answer);
             exchanger.setActualInteraction(Interaction.NONE);
             appStage.setScene(new Scene(initializerBackground()));
@@ -1774,7 +1772,7 @@ public class Gui extends Application{
         buttons.add("RMI");
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
-            System.out.println(answer);
+            println(answer);
             exchanger.setAnswer(answer.equalsIgnoreCase("RMI"));
             exchanger.setActualInteraction(Interaction.NONE);
             appStage.setScene(new Scene(initializerBackground()));
@@ -1797,7 +1795,7 @@ public class Gui extends Application{
 
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
-            System.out.println(answer);
+            println(answer);
             exchanger.setAnswer(Fighter.valueOf(answer));
             exchanger.setActualInteraction(Interaction.NONE);
             appStage.setScene(new Scene(initializerBackground()));
@@ -1819,7 +1817,7 @@ public class Gui extends Application{
 
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
-            System.out.println(answer);
+            println(answer);
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);
             appStage.setScene(new Scene(initializerBackground()));
@@ -1842,7 +1840,7 @@ public class Gui extends Application{
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             answer = answer.substring(6);//get the number
-            System.out.println(answer);
+            println(answer);
             exchanger.setAnswer(Integer.parseInt(answer));
             exchanger.setActualInteraction(Interaction.NONE);
             appStage.setScene(new Scene(initializerBackground()));
@@ -1862,7 +1860,7 @@ public class Gui extends Application{
         buttons.add("Senza Frenesia");
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
-            System.out.println(answer);
+            println(answer);
             exchanger.setAnswer(answer.equalsIgnoreCase("Con Frenesia"));
             exchanger.setActualInteraction(Interaction.NONE);
             appStage.setScene(new Scene(initializerBackground()));
@@ -1876,4 +1874,6 @@ public class Gui extends Application{
 
         return Font.loadFont(streamFont, dim*0.8); //the new font is bigger
     }
+
+    private static void println(String s) { System.out.println(s);}
 }

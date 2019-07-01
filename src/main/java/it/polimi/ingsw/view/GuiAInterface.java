@@ -2,7 +2,6 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.view.GuiInterface;
 
 import java.util.List;
 import java.util.Random;
@@ -145,7 +144,7 @@ public class GuiAInterface extends GuiInterface {
     @Override
     public String getNickname() {
         String nick = Integer.toString( new Random().nextInt() );
-        System.out.println("Giocatore " +  nick);
+        println("Giocatore " +  nick);
         return nick;
     }
 
@@ -221,6 +220,7 @@ public class GuiAInterface extends GuiInterface {
      * Asks the user to choose between TCP and RMI connection
      * @return true in case of RMI connection, false elsewhere
      */
+    @Override
     public boolean useRMI(){
         return false;
     }
@@ -229,6 +229,7 @@ public class GuiAInterface extends GuiInterface {
      * Asks the user for the IP address of the server
      * @return Server's IP address
      */
+    @Override
     public String getIPAddress(){
         return "localhost";
     }
@@ -237,6 +238,7 @@ public class GuiAInterface extends GuiInterface {
      * Asks the user for the IP address of the local machine
      * @return Server's IP address
      */
+    @Override
     public String getLocalAddress(List<String> possibleIP){
         return "localhost";
     }

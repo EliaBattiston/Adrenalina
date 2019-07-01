@@ -85,7 +85,13 @@ public class CLInterface implements UserInterface {
     private static final String L_VERT = "|";
 
     //Other defines
-    private static final int damagesNumber = 12;
+    private static final int DAMAGES_NUMBER = 12;
+    private static final String AMMUNITION = "MUNIZIONE ";
+    private static final String SELECTION = "Selezione [1-";
+    private static final String GAMEINFO = "[?] Informazioni sul gioco";
+    private static final String NOCHOOSE = "[0] Non scegliere nulla";
+    private static final String COST = ", costo: ";
+    private static final String CHOOSE = "Scelta: ";
 
 
     /**
@@ -116,11 +122,9 @@ public class CLInterface implements UserInterface {
         for(String s: ANSI_BACKGROUNDS)
             copy = copy.replace(s, "");
 
-        String ret = toPrint;
-        for(int i = 0; i < CELLDIM - 2 - copy.length(); i++) {
-            ret += " ";
-        }
-        return ret;
+        StringBuilder ret = new StringBuilder(toPrint);
+        ret.append(" ".repeat(CELLDIM - 2 - copy.length()));
+        return ret.toString();
     }
 
     /**
@@ -136,11 +140,9 @@ public class CLInterface implements UserInterface {
         for(String s: ANSI_BACKGROUNDS)
             copy = copy.replace(s, "");
 
-        String ret = toPrint;
-        for(int i = 0; i < totChar - copy.length(); i++) {
-            ret += " ";
-        }
-        return ret;
+        StringBuilder ret = new StringBuilder(toPrint);
+        ret.append(" ".repeat(totChar - copy.length()));
+        return ret.toString();
     }
 
     /**
@@ -155,12 +157,10 @@ public class CLInterface implements UserInterface {
         for(String s: ANSI_BACKGROUNDS)
             copy = copy.replace(s, "");
 
-        String ret = "";
-        for(int i = 0; i < CELLDIM - 2 - copy.length(); i++) {
-            ret += " ";
-        }
-        ret += toPrint;
-        return ret;
+        StringBuilder ret = new StringBuilder();
+        ret.append(" ".repeat(CELLDIM - 2 - copy.length()));
+        ret.append(toPrint);
+        return ret.toString();
     }
 
     /**
@@ -204,7 +204,7 @@ public class CLInterface implements UserInterface {
      * Print of string line (with terminator) method
      * @param toBePrinted String to be printed
      */
-    private void println(String toBePrinted) {
+    protected void println(String toBePrinted) {
         stdout.println(toBePrinted);
         stdout.flush();
     }
@@ -312,23 +312,23 @@ public class CLInterface implements UserInterface {
 
         println(String.format(formatter, "Base", weapon.getBase().getDescription()));
         if(weapon.getAlternative() != null) {
-            String cost = "";
+            StringBuilder cost = new StringBuilder();
             for(Color c: weapon.getAlternative().getCost()) {
-                cost += " " + formatColorBox(c);
+                cost.append(" " + formatColorBox(c));
             }
-            println(String.format(formatter, "Alternativo", "(" + weapon.getAlternative().getName() + costString + cost + ") " + weapon.getAlternative().getDescription()));
+            println(String.format(formatter, "Alternativo", "(" + weapon.getAlternative().getName() + costString + cost.toString() + ") " + weapon.getAlternative().getDescription()));
         }
         if(weapon.getAdditional() != null) {
-            String cost = "";
+            StringBuilder cost = new StringBuilder();
             for(Color c: weapon.getAdditional().get(0).getCost()) {
-                cost += " " + formatColorBox(c);
+                cost.append(" " + formatColorBox(c));
             }
-            println(String.format(formatter, "Addizionale", "(" + weapon.getAdditional().get(0).getName() + costString + cost + ") " + weapon.getAdditional().get(0).getDescription()));
+            println(String.format(formatter, "Addizionale", "(" + weapon.getAdditional().get(0).getName() + costString + cost.toString() + ") " + weapon.getAdditional().get(0).getDescription()));
             if(weapon.getAdditional().size() == 2) {
                 for(Color c: weapon.getAdditional().get(1).getCost()) {
-                    cost += " " + formatColorBox(c);
+                    cost.append(" " + formatColorBox(c));
                 }
-                println(String.format(formatter, "Addizionale", "(" + weapon.getAdditional().get(1).getName() + costString + cost + ") " + weapon.getAdditional().get(1).getDescription()));
+                println(String.format(formatter, "Addizionale", "(" + weapon.getAdditional().get(1).getName() + costString + cost.toString() + ") " + weapon.getAdditional().get(1).getDescription()));
             }
         }
     }
@@ -389,13 +389,13 @@ public class CLInterface implements UserInterface {
                             for (Color color : rc.getLoot().getContent()) {
                                 switch (color) {
                                     case RED:
-                                        print("MUNIZIONE " + ANSI_RED + "rossa " + ANSI_RESET);
+                                        print(AMMUNITION + ANSI_RED + "rossa " + ANSI_RESET);
                                         break;
                                     case YELLOW:
-                                        print("MUNIZIONE " + ANSI_YELLOW + "gialla " + ANSI_RESET);
+                                        print(AMMUNITION + ANSI_YELLOW + "gialla " + ANSI_RESET);
                                         break;
                                     case BLUE:
-                                        print("MUNIZIONE " + ANSI_BLUE + "blu " + ANSI_RESET);
+                                        print(AMMUNITION + ANSI_BLUE + "blu " + ANSI_RESET);
                                         break;
                                     case POWER:
                                         print("POTENZIAMENTO (da pescare) ");
@@ -416,12 +416,9 @@ public class CLInterface implements UserInterface {
                     while(weaplist.size() < WEAPONSNUM) {
                         weaplist.add(baseGame.getWeaponsDeck().draw());
                     }
-                    Collections.sort(weaplist, new Comparator<Weapon>() {
-                        @Override
-                        public int compare(Weapon o1, Weapon o2) {
-                            return o1.getName().compareToIgnoreCase(o2.getName());
-                        }
-                    });
+
+                    Collections.sort(weaplist, (Weapon o1, Weapon o2)->o1.getName().compareToIgnoreCase(o2.getName()));
+
                     for(int i = 0; i < weaplist.size() - (weaplist.size() % 2); i += 2) {
                         println(String.format("[%2d] %-23s [%2d] %-23s", i+1, weaplist.get(i).getName(), i+2, weaplist.get(i+1).getName()));
                     }
@@ -430,7 +427,7 @@ public class CLInterface implements UserInterface {
                     }
                     int sel2;
                     do {
-                        print("Selezione [1-" + weaplist.size() + "]: ");
+                        print(SELECTION + weaplist.size() + "]: ");
                         sel2 = scanInt();
                     }while (sel2 < 1 || sel2 > weaplist.size());
                     sel2--;
@@ -449,7 +446,7 @@ public class CLInterface implements UserInterface {
                     }
                     int sel3;
                     do {
-                        print("Selezione [1-" + powlist.size() + "]: ");
+                        print(SELECTION + powlist.size() + "]: ");
                         sel3 = scanInt();
                     }while (sel3 < 1 || sel3 > powlist.size());
                     sel3--;
@@ -526,7 +523,7 @@ public class CLInterface implements UserInterface {
             print += p.getAmmo(Color.YELLOW) + "x" + formatColorBox(Color.YELLOW) + " ";
             print += p.getAmmo(Color.RED) + "x" + formatColorBox(Color.RED) + " ";
             print += "Danni: ";
-            for(int i = 0; i < damagesNumber; i++) {
+            for(int i = 0; i < DAMAGES_NUMBER; i++) {
                 boolean found = false;
                 for(PlayerView pl: view.getGame().getPlayers()) {
                     if (p.getDamage(i) != null && p.getDamage(i).equals(pl.getNick())) {
@@ -599,7 +596,7 @@ public class CLInterface implements UserInterface {
                 println(opt);
 
             if (gameInfo)
-                println("[?] Informazioni sul gioco");
+                println(GAMEINFO);
 
             int end;
             if(starting == 0)
@@ -655,7 +652,7 @@ public class CLInterface implements UserInterface {
      */
     private String printCell(int x, int y, int row, List<PlayerView> marked, List<Point> highlighted) {
         CellView c = view.getGame().getMap().getCell(x,y);
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         String highlight = "";
         if(highlighted != null) {
             for (Point p : highlighted) {
@@ -665,51 +662,45 @@ public class CLInterface implements UserInterface {
         }
 
         if(row == 0) {
-            ret = ANSI_COLORS[c.getRoomNumber()] + corner(x,y,true,true);
+            ret.append(ANSI_COLORS[c.getRoomNumber()] + corner(x,y,true,true));
             switch (c.getSide(Direction.NORTH)) {
                 case DOOR:
-                    for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
-                        ret += HOR;
-                    for(int i = 0; i < DOORDIM; i++)
-                        ret += SPACE;
-                    for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
-                        ret += HOR;
-
+                    ret.append(HOR.repeat((CELLDIM - DOORDIM)/2 - 1));
+                    ret.append(SPACE.repeat(DOORDIM));
+                    ret.append(HOR.repeat((CELLDIM - DOORDIM)/2 - 1));
                     break;
                 case WALL:
-                    for(int i = 0; i < CELLDIM - 2; i++)
-                        ret += HOR;
+                    ret.append(HOR.repeat(CELLDIM - 2));
                     break;
                 case NOTHING:
-                    for(int i = 0; i < CELLDIM - 2; i++)
-                        ret += L_HOR;
+                    ret.append(L_HOR.repeat(CELLDIM - 2));
                     break;
                 default:
                     break;
             }
-            ret += corner(x,y,true, false) + ANSI_RESET;
+            ret.append(corner(x,y,true, false) + ANSI_RESET);
         }
         else if(row == 1) {
             if(c.getSide(Direction.WEST) != Side.NOTHING)
-                ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
+                ret.append(ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET);
             else
-                ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
+                ret.append(ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET);
 
-            ret += highlight + innerCellFormat(String.format("CELLA %-2d", (x + 4* y + 1))) + ANSI_RESET;
+            ret.append(highlight + innerCellFormat(String.format("CELLA %-2d", (x + 4* y + 1))) + ANSI_RESET);
 
             if(c.getSide(Direction.EAST) != Side.NOTHING)
-                ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
+                ret.append(ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET);
             else
-                ret += SPACE;
+                ret.append(SPACE);
         }
         else if(row >= 2 && row < CELLROWNUM) {
             if (c.getSide(Direction.WEST) == Side.NOTHING)
-                ret = ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET;
+                ret.append(ANSI_COLORS[c.getRoomNumber()] + L_VERT + ANSI_RESET);
             else {
                 if (c.getSide(Direction.WEST) == Side.DOOR && row > DOORHEIGHT && row < CELLROWNUM - DOORHEIGHT) {
-                    ret = SPACE;
+                    ret.append(SPACE);
                 } else
-                    ret = ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
+                    ret.append(ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET);
             }
 
             if (row == 2) {
@@ -740,7 +731,7 @@ public class CLInterface implements UserInterface {
                         }
                     }
                 }
-                ret += highlight + innerCellFormatRight(loot) + ANSI_RESET;
+                ret.append(highlight + innerCellFormatRight(loot) + ANSI_RESET);
             }
             else {
                 if (c.getPawns().size() >= row - 2) {
@@ -753,51 +744,46 @@ public class CLInterface implements UserInterface {
                             }
                         }
                     }
-                    ret += highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET;
+                    ret.append(highlight + innerCellFormat(bgd + p.getNick().substring(0, Math.min(p.getNick().length(), CELLDIM - 2)) + ANSI_RESET + highlight) + ANSI_RESET);
                 }
                 else
-                ret += highlight + innerCellFormat("") + ANSI_RESET;
+                    ret.append(highlight + innerCellFormat("") + ANSI_RESET);
             }
 
             switch (c.getSide(Direction.EAST)) {
                 case WALL:
-                    ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
+                    ret.append(ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET);
                     break;
                 case NOTHING:
-                    ret += SPACE;
+                    ret.append(SPACE);
                     break;
                 case DOOR:
                     if (row > DOORHEIGHT && row < CELLROWNUM - DOORHEIGHT) {
-                        ret += SPACE;
+                        ret.append(SPACE);
                     } else
-                        ret += ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET;
+                        ret.append(ANSI_COLORS[c.getRoomNumber()] + VERT + ANSI_RESET);
                     break;
             }
         }
         else if(row == CELLROWNUM) {
-            ret = ANSI_COLORS[c.getRoomNumber()] + corner(x,y,false,true);
+            ret.append(ANSI_COLORS[c.getRoomNumber()] + corner(x,y,false,true));
             switch (c.getSide(Direction.SOUTH)) {
                 case DOOR:
-                    for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
-                        ret += HOR;
-                    for(int i = 0; i < DOORDIM; i++)
-                        ret += SPACE;
-                    for(int i = 1; i < (CELLDIM - DOORDIM)/2; i++)
-                        ret += HOR;
+                    ret.append(HOR.repeat((CELLDIM - DOORDIM)/2 - 1));
+                    ret.append(SPACE.repeat(DOORDIM));
+                    ret.append(HOR.repeat((CELLDIM - DOORDIM)/2 - 1));
                     break;
                 case WALL:
-                    for(int i = 0; i < CELLDIM - 2; i++)
-                        ret += HOR;
+                    ret.append(HOR.repeat(CELLDIM - 2));
                     break;
                 case NOTHING:
-                    for(int i = 0; i < CELLDIM - 2; i++)
-                        ret += SPACE;
+                    ret.append(SPACE.repeat(CELLDIM - 2));
                     break;
             }
-            ret += corner(x,y,false,false) + ANSI_RESET;
+            ret.append(corner(x,y,false,false) + ANSI_RESET);
         }
 
-        return ret;
+        return ret.toString();
     }
 
     /**
@@ -906,7 +892,7 @@ public class CLInterface implements UserInterface {
         for(Action disp: available) {
             i++;
             List<Color> cost = disp.getCost();
-            String s = "[" + i + "] " + disp.getName() + " (" + disp.getDescription() + ")" + ( disp.getLambdaID().contains("a-")? "" : ", costo: " ) ;
+            String s = "[" + i + "] " + disp.getName() + " (" + disp.getDescription() + ")" + ( disp.getLambdaID().contains("a-")? "" : COST ) ;
             for(Color c: cost) {
                 s += formatColorBox(c) + " ";
             }
@@ -936,7 +922,7 @@ public class CLInterface implements UserInterface {
         int choose;
         if(!mustChoose) {
             starting = 0;
-            options.add("[0] Non scegliere nulla");
+            options.add(NOCHOOSE);
         }
         for(Weapon disp: available) {
             i++;
@@ -965,13 +951,13 @@ public class CLInterface implements UserInterface {
         int choose;
         if(!mustChoose) {
             starting = 0;
-            options.add("[0] Non scegliere nulla");
+            options.add(NOCHOOSE);
         }
         for(Weapon disp: grabbable) {
             i++;
             options.add("[" + i + "] " + disp.getName());
         }
-        println("[?] Informazioni sul gioco");
+        println(GAMEINFO);
 
         choose = generalMenu(options, starting);
 
@@ -995,13 +981,13 @@ public class CLInterface implements UserInterface {
         int choose;
         if(!mustChoose) {
             starting = 0;
-            options.add("[0] Non scegliere nulla");
+            options.add(NOCHOOSE);
         }
         for(Weapon disp: reloadable) {
             String s = "";
             i++;
             List<Color> cost = disp.getBase().getCost();
-            s = "[" + i + "] " + disp.getName() + ", costo: ";
+            s = "[" + i + "] " + disp.getName() + COST;
             for(Color c: cost) {
                 s += formatColorBox(c) + " ";
             }
@@ -1024,8 +1010,8 @@ public class CLInterface implements UserInterface {
      */
     public Point movePlayer(List<Point> destinations, boolean mustChoose) {
         List<Integer> options = new ArrayList<>();
-        int choose, actPos;
-        actPos = -1;
+        int choose;
+        int actPos = -1;
         if(!mustChoose)
             destinations.add(view.getActive().getPosition());
         for(Point disp: destinations) {
@@ -1042,7 +1028,7 @@ public class CLInterface implements UserInterface {
         }
         println("");
         do {
-            print("Scelta: ");
+            print(CHOOSE);
             choose = scanInt();
         }
         while (!options.contains(choose));
@@ -1103,8 +1089,8 @@ public class CLInterface implements UserInterface {
         List<Integer> options = new ArrayList<>();
         plist.add(enemy);
 
-        int choose, actPos;
-        actPos = -1;
+        int choose;
+        int actPos = -1;
         if(!mustChoose)
             destinations.add(view.getActive().getPosition());
         for(Point disp: destinations) {
@@ -1126,7 +1112,7 @@ public class CLInterface implements UserInterface {
 
         println("");
         do {
-            print("Scelta: ");
+            print(CHOOSE);
             choose = scanInt();
         }
         while (!options.contains(choose));
@@ -1265,7 +1251,7 @@ public class CLInterface implements UserInterface {
             }
         }
 
-        println("[?] Informazioni sul gioco");
+        println(GAMEINFO);
 
         do {
             print("La tua scelta: ");
@@ -1314,7 +1300,7 @@ public class CLInterface implements UserInterface {
         }
         println("");
         do {
-            print("Scelta: ");
+            print(CHOOSE);
             choose = scanInt();
         }
         while (!options.contains(choose));
@@ -1417,7 +1403,7 @@ public class CLInterface implements UserInterface {
         int choose;
         if(!mustChoose) {
             starting = 0;
-            options.add("[0] Non scegliere nulla");
+            options.add(NOCHOOSE);
         }
         for(Weapon weapon: inHand) {
             i++;
@@ -1451,7 +1437,6 @@ public class CLInterface implements UserInterface {
      * @return Number of the chosen map
      */
     public Integer chooseMap() {
-        int map;
         List<String> options = new ArrayList<>();
         options.add("\nScegli la mappa da utilizzare:");
         options.add("[1] Ottima per iniziare");
@@ -1494,7 +1479,7 @@ public class CLInterface implements UserInterface {
         }
         for(Power pow: inHand) {
             i++;
-            options.add("[" + i + "] " + pow.getName() + ", costo: " + formatColorBox(pow.getColor()) + " ");
+            options.add("[" + i + "] " + pow.getName() + COST + formatColorBox(pow.getColor()) + " ");
         }
 
         choose = generalMenu(options, starting);
@@ -1619,7 +1604,7 @@ public class CLInterface implements UserInterface {
             println("[" + (i + 1) + "] " + possibleIP.get(i));
         }
         do {
-            print("Selezione [1-" + possibleIP.size() + "]: ");
+            print(SELECTION + possibleIP.size() + "]: ");
             pos = scanInt() - 1;
         }
         while (pos < 0 || pos >= possibleIP.size());

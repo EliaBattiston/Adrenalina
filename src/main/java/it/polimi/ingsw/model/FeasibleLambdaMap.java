@@ -123,7 +123,6 @@ public class FeasibleLambdaMap
             //Scegli 1 bersaglio che non puoi vedere e dagli 3 danni.
 
             List<Player> targets = Map.playersInTheMap(map);
-            boolean found = false;
             targets.remove(pl);
             targets.removeAll(Map.visiblePlayers(pl, map));
             return !targets.isEmpty();

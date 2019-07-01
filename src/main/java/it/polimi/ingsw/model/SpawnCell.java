@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * The class represents a spawning cell
  */
 public class SpawnCell extends Cell{
-    public transient final static int weaponsNumber = 3;
+    public static final transient int WEAPONS_NUMBER = 3;
 
     /**
      * spawn represents the color of the cell (needed in spawning phase to identify the correct spawning point)
@@ -37,7 +37,7 @@ public class SpawnCell extends Cell{
     {
         super(sides, roomNumber);
         this.spawn = spawn;
-        weapons = new Weapon[weaponsNumber];
+        weapons = new Weapon[WEAPONS_NUMBER];
     }
     /**
      * returns a list with the weapons inside the cell, without modifying the list itself
@@ -146,7 +146,7 @@ public class SpawnCell extends Cell{
         pickWeapon(picked);
 
         //If the player already has 3 weapons he has to discard one
-        if(pl.getWeapons().size() >= weaponsNumber)
+        if(pl.getWeapons().size() >= WEAPONS_NUMBER)
         {
             Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
 
@@ -161,18 +161,18 @@ public class SpawnCell extends Cell{
         ActionLambdaMap.purchase(pl, cost);
 
         //Give the new weapon to the player
-        pl.applyEffects(((damage, marks, position, weapons, powers, ammo) -> {
+        pl.applyEffects(((damage, marks, position, weaponsInHand, powers, ammo) -> {
             int pos;
-            for(pos=0; pos<weaponsNumber && weapons[pos] != null; pos++)
+            for(pos=0; pos< WEAPONS_NUMBER && weaponsInHand[pos] != null; pos++)
                 ;
-            if(pos<=weaponsNumber && weapons[pos] == null)
+            if(pos<= WEAPONS_NUMBER && weaponsInHand[pos] == null)
             {
-                weapons[pos] = picked;
+                weaponsInHand[pos] = picked;
                 picked.setLoaded(true);
             }
             else
             {
-                Logger.getGlobal().log(Level.SEVERE, "No space for new weapon in players hand", pl);
+                Logger.getGlobal().log(Level.INFO, "No space for new weapon in players hand", pl.getNick());
             }
         }));
 
@@ -185,7 +185,7 @@ public class SpawnCell extends Cell{
      */
     public void refill(Game game){
         boolean empty = false;
-        while (getWeapons().size() < weaponsNumber && !empty)
+        while (getWeapons().size() < WEAPONS_NUMBER && !empty)
             try {
                 refillWeapon(game.getWeaponsDeck().draw());
             }

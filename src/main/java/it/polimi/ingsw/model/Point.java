@@ -8,8 +8,8 @@ import java.io.Serializable;
  * Coordinates of a Player in the Map. Because of its use X values have to be between 0 and 2, Y values between 0 and 3
  */
 public class Point implements Serializable {
-    private transient final static int mapWidth = 4;
-    private transient final static int mapHeight = 3;
+    private static final transient int MAP_WIDTH = 4;
+    private static final transient int MAP_HEIGHT = 3;
 
     /**
      * X coordinate
@@ -42,7 +42,7 @@ public class Point implements Serializable {
      */
     public void set(int x, int y)
     {
-        if(x>=0 && x < mapWidth && y>=0 && y < mapHeight)
+        if(x>=0 && x < MAP_WIDTH && y>=0 && y < MAP_HEIGHT)
         {
             this.x = x;
             this.y = y;

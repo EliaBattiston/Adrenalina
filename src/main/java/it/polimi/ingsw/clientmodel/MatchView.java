@@ -1,11 +1,7 @@
 package it.polimi.ingsw.clientmodel;
 
 import it.polimi.ingsw.controller.GamePhase;
-import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.model.Player;
-
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Client's version of the model, which only gives information about what the receiving player knows

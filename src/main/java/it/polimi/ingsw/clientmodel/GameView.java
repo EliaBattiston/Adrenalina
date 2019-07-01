@@ -1,9 +1,5 @@
 package it.polimi.ingsw.clientmodel;
 
-import it.polimi.ingsw.model.Kill;
-import it.polimi.ingsw.model.Map;
-import it.polimi.ingsw.model.Player;
-
 import java.io.Serializable;
 import java.util.List;
 
