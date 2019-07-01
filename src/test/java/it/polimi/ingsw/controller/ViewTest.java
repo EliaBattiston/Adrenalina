@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.clientmodel.KillView;
 import it.polimi.ingsw.clientmodel.MyPlayerView;
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
@@ -123,5 +124,69 @@ public class ViewTest {
         assertEquals(3, view.getAmmo().getBlue());
         assertEquals(2, view.getAmmo().getYellow());
         assertEquals(1, view.getAmmo().getRed());
+    }
+
+    @Test
+    public void checkKillView() {
+        try {
+            Match m = new Match(5);
+            Player p = new Player("Pippo", "", Fighter.DSTRUTTOR3);
+            m.getGame().loadMap(1);
+            m.getGame().getSkulls()[0].setKiller(p, false);
+            m.getGame().getSkulls()[1].setKiller(p, true);
+
+            List<KillView> view = m.getGame().getView().getSkullsBoard();
+
+            assertEquals(8, view.size());
+            assertFalse(view.get(7).isUsed());
+            assertTrue(view.get(3).isUsed());
+            assertTrue(view.get(1).isUsed());
+
+            assertTrue(view.get(1).getOverkill());
+            assertFalse(view.get(0).getOverkill());
+            assertFalse(view.get(2).getOverkill());
+
+            assertEquals(p.getView().getNick(), view.get(0).getKiller().getNick());
+            assertEquals(p.getView().getNick(), view.get(1).getKiller().getNick());
+            assertNull(view.get(2).getKiller());
+
+            assertFalse(view.get(0).getSkull());
+            assertTrue(view.get(2).getSkull());
+            assertFalse(view.get(6).getSkull());
+
+        }
+        catch (FileNotFoundException e) { ; }
+    }
+
+    @Test
+    public void checkGameView() {
+        try {
+            Match m = new Match(5);
+            Player p = new Player("Pippo", "", Fighter.DSTRUTTOR3);
+            Player q = new Player("Pluto", "", Fighter.DSTRUTTOR3);
+            m.getGame().loadMap(1);
+            m.getGame().addPlayer(p);
+            m.getGame().addPlayer(q);
+
+            List<PlayerView> list = new ArrayList<>();
+            list.add(p.getView());
+            list.add(p.getView());
+
+            assertEquals(m.getGame().getMap().getId(), m.getGame().getView().getMap().getId());
+
+            List<PlayerView> viewList = m.getGame().getView().getPlayers();
+            assertEquals(list.size(), viewList.size());
+
+            for (PlayerView pv: list) {
+                boolean found = false;
+                for(PlayerView pvv: viewList) {
+                    if(pv.getNick().equals(pvv.getNick()))
+                        found = true;
+                }
+                assertTrue(found);
+            }
+
+        }
+        catch (FileNotFoundException e) { ; }
     }
 }
