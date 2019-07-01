@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
  */
 public class Player implements Serializable
 {
-    private transient final static int maxMarksNumber = 3;
     private transient final static int maxWeaponsNumber = 3;
     private transient final static int maxPowersNumber = 3;
     private transient final static int damagesNumber = 12;
@@ -87,11 +86,6 @@ public class Player implements Serializable
     private boolean frenzyBoard;
 
     /**
-     * Counter of marks dealt to other players, to avoid going over the limit of 3 marks
-     */
-    private int dealtMarks;
-
-    /**
      * Creates a new user, in a suitable configuration to start the game
      * @param nick Nickname
      * @param phrase Action phrase
@@ -113,7 +107,6 @@ public class Player implements Serializable
         this.spawned = false;
         this.usedPowers = new ArrayList<>();
         this.frenzyBoard = false;
-        this.dealtMarks = 0;
 
         this.conn = null;
     }
@@ -367,36 +360,6 @@ public class Player implements Serializable
     public void setFrenzyBoard(boolean val)
     {
         frenzyBoard = val;
-    }
-
-    /**
-     * Returns the number of currently dealt marks of this player
-     */
-    public int getMarksCount()
-    {
-        return dealtMarks;
-    }
-
-    /**
-     * Adds some marks to the counter. The value of dealtMarks is capped at 3
-     * @param amount How many marks to add
-     */
-    public void addMarksCount(int amount)
-    {
-        dealtMarks += amount;
-        if(dealtMarks>maxMarksNumber)
-            dealtMarks = maxMarksNumber;
-    }
-
-    /**
-     * Removes some marks to the counter
-     * @param amount How many marks to remove
-     */
-    public void removeMarksCount(int amount)
-    {
-        dealtMarks -= amount;
-        if(dealtMarks<0)
-            dealtMarks = 0;
     }
 
     public MyPlayerView getFullView()

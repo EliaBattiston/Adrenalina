@@ -44,7 +44,6 @@ public class EffectsLambda {
             while(i<damagesNumber && marks.contains(damageGiver.getNick())){
                 damage[i] = damageGiver.getNick();
                 marks.remove(damageGiver.getNick());
-                damageGiver.removeMarksCount(1);
                 i++;
             }
         };
@@ -82,13 +81,12 @@ public class EffectsLambda {
      */
     public static PlayerLambda marks(int marksReceived, Player damageGiver){
         return (damage, marks, position, weapons, powers, ammo)->{
-            //Deal marks only if the amount dealt by the damageGiver is globally less or equal to 3
-            int possible = Math.min(maxMarksNumber - damageGiver.getMarksCount(), marksReceived);
-            damageGiver.addMarksCount(possible);
-
-            for(int i=0; i<possible; i++)
-            {
+            int actualMarks = Collections.frequency(marks, damageGiver);
+            int recMarks = marksReceived;
+            while(actualMarks < maxMarksNumber && recMarks > 0){
                 marks.add(damageGiver.getNick());
+                recMarks--;
+                actualMarks++;
             }
         };
     }

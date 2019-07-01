@@ -60,39 +60,6 @@ public class LambdaTest {
     }
 
     /**
-     *
-     */
-    @Test
-    public void TestMarksLimit()
-    {
-        Map m = Map.jsonDeserialize(1);
-        Player p = new Player("Player", "Ready to rock", Fighter.BANSHEE);
-        Player enemy1 = new Player("Enemy1", "I'm taking damage", Fighter.VIOLETTA);
-        Player enemy2 = new Player("Enemy2", "I'm taking damage", Fighter.DSTRUTTOR3);
-        Player enemy3 = new Player("Enemy3", "I'm taking damage", Fighter.SPROG);
-
-        //Valid marks, a player can deal up to 3 of them
-        enemy1.applyEffects(EffectsLambda.marks(1, p));
-        enemy2.applyEffects(EffectsLambda.marks(1, p));
-        enemy3.applyEffects(EffectsLambda.marks(1, p));
-
-        //This one is over the limit, should not be dealt
-        enemy1.applyEffects(EffectsLambda.marks(1, p));
-
-        assertEquals(enemy1.getReceivedMarks().size(), 1);
-        assertEquals(enemy2.getReceivedMarks().size(), 1);
-        assertEquals(enemy3.getReceivedMarks().size(), 1);
-        assertEquals(p.getMarksCount(), 3);
-
-        //Let's check the count goes to 0 when all marks convert to damages
-        enemy1.applyEffects(EffectsLambda.damage(1, p));
-        enemy2.applyEffects(EffectsLambda.damage(1, p));
-        enemy3.applyEffects(EffectsLambda.damage(1, p));
-
-        assertEquals(p.getMarksCount(), 0);
-    }
-
-    /**
      * Tests the correct movement of a player using an EffectLambda
      */
     @Test
