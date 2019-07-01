@@ -81,7 +81,7 @@ public class EffectsLambda {
      */
     public static PlayerLambda marks(int marksReceived, Player damageGiver){
         return (damage, marks, position, weapons, powers, ammo)->{
-            int actualMarks = Collections.frequency(marks, damageGiver);
+            int actualMarks = Collections.frequency(marks, damageGiver.getNick());
             int recMarks = marksReceived;
             while(actualMarks < MAX_MARKS_NUMBER && recMarks > 0){
                 marks.add(damageGiver.getNick());

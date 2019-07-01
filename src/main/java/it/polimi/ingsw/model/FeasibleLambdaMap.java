@@ -69,7 +69,7 @@ public class FeasibleLambdaMap
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
-                if(p!=pl && pointsAll.contains(p.getPosition()))
+                if(p!=pl && pointsAll.stream().anyMatch(point -> point.getX() == p.getPosition().getX() && point.getY() == p.getPosition().getY()))
                         targets.add(p);
 
             return !targets.isEmpty();
@@ -328,6 +328,7 @@ public class FeasibleLambdaMap
         });
 
         data.put("w12-al", (pl, map, memory)-> {
+            //Scegli 2 quadrati come prima. (come w12-b) Dai 2 danni a chiunque sia nel primo quadrato e 1 danno a chiunque si trovi nel secondo quadrato.
             List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2) -> map.distance(p1, p2) == 1);
             return !targets.isEmpty();
         });

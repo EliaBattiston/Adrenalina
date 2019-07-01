@@ -162,8 +162,8 @@ public class Map implements Serializable {
         List<Integer> visRooms = Map.visibleRooms(viewer.getPosition(), map);
 
         //Get all the people in those rooms
-        for(int i=0; i<=3;i++)
-            for(int j=0; j<=2; j++)
+        for(int i=0; i < MAPWIDTH; i++)
+            for(int j=0; j < MAPHEIGHT; j++)
                 if(map.getCell(i,j) != null &&
                     visRooms.contains(map.getCell(i,j).getRoomNumber()))
                         visibles.addAll(map.getCell(i, j).getPawns());
@@ -500,8 +500,8 @@ public class Map implements Serializable {
         List<Point> points = new ArrayList<>();
 
         //Get all the visible points
-        for(int i=0; i<=3;i++)
-            for(int j=0; j<=2; j++)
+        for(int i=0; i < MAPWIDTH;i++)
+            for(int j=0; j < MAPHEIGHT; j++)
                 if(map.getCell(i,j) != null &&
                     visRooms.contains(map.getCell(i,j).getRoomNumber()))
                         points.add(new Point(i,j));

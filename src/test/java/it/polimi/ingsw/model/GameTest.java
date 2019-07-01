@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import it.polimi.ingsw.exceptions.UsedNameException;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -13,6 +14,43 @@ import java.util.Collections;
  * Tests about the correct functioning of Games
  */
 public class GameTest {
+    /**
+     * Initialization used to prepare a test game environment to make sure weapons behave correctly
+     * @param playersNumber Number of players to be instantiated to carry out the test
+     * @return Resulting test game
+     */
+    public static Game initializeGameForTest(int playersNumber)
+    {
+        //Create an empty game with map 1
+        Game game = new Game(5, null, null, null, null);
+        try
+        {
+            game.loadMap(1);
+        }
+        catch(FileNotFoundException e)
+        {
+            fail();
+        }
+
+        /*
+            Put the requested number of players in the game
+            They need to be moved before being able to see each other on the map
+            They have no weapons or powers
+         */
+        ArrayList<Player> players = new ArrayList<>();
+        for(int i=0; i<playersNumber && i<5; i++)
+        {
+            players.add(new Player("p"+i, "phrase", Fighter.values()[i]));
+            //Attach a test connection to the fake player to make him answer predictably
+            players.get(i).setConn(new TestConnection());
+        }
+
+        for(Player p : players)
+            game.addPlayer(p);
+
+        return game;
+    }
+
     /**
      * Check Ammunitions Class for edge cases
      */

@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 
 public class PlayerView implements Serializable
 {
+    private static final transient int DAMAGES_NUMBER = 12;
+
     private String nickname;
 
     private Fighter character;
@@ -69,7 +71,7 @@ public class PlayerView implements Serializable
 
     public String getDamage(int i)
     {
-        if(i >= 0 && i < 12)
+        if(i >= 0 && i < DAMAGES_NUMBER)
         {
             return receivedDamage.get(i);
         }

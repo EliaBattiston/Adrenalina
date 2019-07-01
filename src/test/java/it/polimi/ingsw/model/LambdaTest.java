@@ -50,13 +50,17 @@ public class LambdaTest {
         p.applyEffects(EffectsLambda.marks(2, att));
         assertEquals( 2, Collections.frequency(p.getReceivedMarks(), att.getNick()));
 
+        //Test the marks don't go over the 3-per-enemy limit
+        p.applyEffects(EffectsLambda.marks(2, att));
+        assertEquals( 3, Collections.frequency(p.getReceivedMarks(), att.getNick()));
+
         //Check that the mark correctly converts to damage after another damage
         p.applyEffects(EffectsLambda.damage(2, att));
         damages=0;
         for(int i=0; i<12; i++)
             if( p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(att.getNick()) )
                 damages++;
-        assertEquals(4, damages);
+        assertEquals(5, damages);
     }
 
     /**
