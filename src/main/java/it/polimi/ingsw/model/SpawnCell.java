@@ -172,7 +172,7 @@ public class SpawnCell extends Cell{
             }
             else
             {
-                Logger.getGlobal().log(Level.INFO, "No space for new weapon in players hand", pl.getNick());
+                Logger.getGlobal().log(Level.INFO, "No space for new weapon in players hand");
             }
         }));
 

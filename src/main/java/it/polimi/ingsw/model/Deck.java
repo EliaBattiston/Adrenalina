@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.exceptions.EmptyDeckException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * A normal deck for non reusable cards
  * @param <T> The type of cards handled by the deck
  */
-public class Deck<T extends Card> {
+public class Deck<T extends Card> implements Serializable {
     protected List<T> cards;
 
     /**

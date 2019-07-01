@@ -7,7 +7,6 @@ import it.polimi.ingsw.clientmodel.CellView;
 import it.polimi.ingsw.clientmodel.MapView;
 import it.polimi.ingsw.exceptions.WrongPointException;
 
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;

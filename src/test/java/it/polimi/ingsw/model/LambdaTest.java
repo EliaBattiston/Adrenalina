@@ -85,8 +85,8 @@ public class LambdaTest {
         //Move the player again
         try {
             p.applyEffects(EffectsLambda.move(p, new Point(3, 2), m));
-            assertEquals(p.getPosition().getX(),3);
-            assertEquals(p.getPosition().getY(),2);
+            assertEquals(3, p.getPosition().getX());
+            assertEquals(2, p.getPosition().getY());
             assertFalse(m.getCell(2, 1).getPawns().contains(p));
             assertTrue(m.getCell(3,2).getPawns().contains(p));
         }catch (WrongPointException ex){

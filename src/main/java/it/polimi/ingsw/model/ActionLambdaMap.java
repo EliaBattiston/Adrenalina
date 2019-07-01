@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 public class ActionLambdaMap {
     private HashMap<String, ActionLambda> data;
     private static ActionLambdaMap instance = null;
-    private final static transient String RUNSIN = " corre in ";
-    private final static transient String SHOOTSWITH = " spara con ";
+    private static final String RUNSIN = " corre in ";
+    private static final String SHOOTSWITH = " spara con ";
 
     private ActionLambdaMap() {
         data = new HashMap<>();

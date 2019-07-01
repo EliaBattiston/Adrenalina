@@ -310,10 +310,10 @@ public class MapTest {
 
         List<Point> possible = Map.possibleMovements(viewer.getPosition(), 2, m);
 
-        assertEquals(possible.size(),9);
+        assertEquals(9, possible.size());
         for(Point e : expected)
         {
-            assertEquals( possible.stream().filter(point -> point.getX() == e.getX() && point.getY() == e.getY()).count(), 1 );
+            assertEquals(1, possible.stream().filter(point -> point.getX() == e.getX() && point.getY() == e.getY()).count());
         }
     }
 

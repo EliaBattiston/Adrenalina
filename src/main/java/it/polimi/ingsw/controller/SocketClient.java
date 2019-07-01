@@ -29,12 +29,12 @@ public class SocketClient implements Client {
     /**
      * Socket connection instance to the game server
      */
-    private Socket serverSocket;
+    private transient Socket serverSocket;
 
     /**
      * User gui/cli interface
      */
-    private UserInterface user;
+    private transient UserInterface user;
 
     /**
      * Flag that says if a game is ended

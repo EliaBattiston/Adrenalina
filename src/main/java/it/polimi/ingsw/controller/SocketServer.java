@@ -17,7 +17,7 @@ public class SocketServer implements Server {
     /**
      * ServerSocket instance
      */
-    private ServerSocket serverSocket;
+    private transient ServerSocket serverSocket;
 
     /**
      * Create a new SocketServer instance starting a server socket at the given port

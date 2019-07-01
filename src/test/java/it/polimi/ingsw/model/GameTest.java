@@ -330,7 +330,7 @@ public class GameTest {
         {
             ;
         }
-        assertEquals(g.getPlayers().size(), 1);
+        assertEquals(1, g.getPlayers().size());
 
         //Test the addition of too many players (More than 5)
         try

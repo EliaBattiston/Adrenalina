@@ -1,6 +1,5 @@
 package it.polimi.ingsw.controller;
 
-import java.io.Serializable;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
@@ -15,7 +14,7 @@ import java.util.logging.Logger;
 /**
  * RMI implementation of the server interface, it handles the RMI connections of all the game
  */
-public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHandler, Serializable
+public class RMIServer extends UnicastRemoteObject implements Server, RMIConnHandler
 {
     private static final int RMIPORT = 1099;
 
