@@ -219,7 +219,7 @@ public class SMain
         }
     }
 
-    private void println(String payload) {
+    protected void println(String payload) {
         System.out.println(payload);
     }
 
