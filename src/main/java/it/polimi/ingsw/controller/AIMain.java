@@ -53,6 +53,8 @@ public class AIMain
     /**
      * Creates a new AIMain referring a specified IP address for the server
      * @param ip server IP
+     * @param gui if true shows the GUI, otherwise the CLI
+     * @param rmi if true uses RMI, otherwise SOCKETS
      */
     public AIMain(String ip, boolean gui, boolean rmi)
     {

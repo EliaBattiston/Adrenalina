@@ -3,10 +3,10 @@ package it.polimi.ingsw.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import it.polimi.ingsw.clientmodel.GameView;
 import it.polimi.ingsw.clientmodel.KillView;
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.UsedNameException;
-import it.polimi.ingsw.clientmodel.GameView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;

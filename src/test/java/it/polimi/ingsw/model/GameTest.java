@@ -42,7 +42,7 @@ public class GameTest {
         {
             players.add(new Player("p"+i, "phrase", Fighter.values()[i]));
             //Attach a test connection to the fake player to make him answer predictably
-            players.get(i).setConn(new TestConnection());
+            players.get(i).setConn(new ConnectionTest());
         }
 
         for(Player p : players)

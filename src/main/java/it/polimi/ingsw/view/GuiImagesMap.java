@@ -48,6 +48,8 @@ public class GuiImagesMap {
      * the resources folder.
      * It caches the image too.
      * @param imgPath the path of the requested image
+     * @param w width
+     * @param h height
      * @return Image the image requested
      */
     public static Image getImageWithShadow(String imgPath, double w, double h){

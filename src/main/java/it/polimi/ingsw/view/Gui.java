@@ -33,7 +33,8 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
 
 //todo move all the strings printed in final Strings
 //todo move the ratios in defines
@@ -182,7 +183,7 @@ public class Gui extends Application{
         Pane pane = new Pane();
         Canvas canvas;
         StackPane myWeaponsPane;
-        StackPane myPowers;
+        StackPane myPowersPane;
         StackPane weaponsLoot;
         StackPane mapLoot;
         StackPane pawns;
@@ -200,14 +201,14 @@ public class Gui extends Application{
         drawSkulls(match.getGame().getSkullsBoard());
 
         myWeaponsPane = drawMyWeapons(match.getMyPlayer().getWeapons());
-        myPowers = drawMyPowers(match.getMyPlayer().getPowers());
+        myPowersPane = drawMyPowers(match.getMyPlayer().getPowers());
         weaponsLoot = drawWeaponsLoot(match.getGame().getMap());
         mapLoot = drawLootOnMap(match.getGame().getMap());
         pawns = drawPawnsOnMap(match.getGame().getMap());
         info = drawEnemyInfo(match.getGame().getPlayers());
 
         myWeaponsPane.setPickOnBounds(false);
-        myPowers.setPickOnBounds(false);
+        myPowersPane.setPickOnBounds(false);
         weaponsLoot.setPickOnBounds(false);
         mapLoot.setPickOnBounds(false);
         pawns.setPickOnBounds(false);
@@ -247,7 +248,7 @@ public class Gui extends Application{
         skipAction.setOnMouseExited(e-> skipAction.setStyle("-fx-effect: innershadow(gaussian, #36ff0e, 10, 0.5, 0, 0);") );
         skipAction.setPickOnBounds(false);
 
-        pane.getChildren().addAll( canvas, infoTextCanvas,  myWeaponsPane, myPowers, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
+        pane.getChildren().addAll( canvas, infoTextCanvas,  myWeaponsPane, myPowersPane, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
 
         if(runAction!=null)//check if one it's initialized all are
             pane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);

@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.Side;
 import java.io.Serializable;
 import java.util.List;
 
-public class CellView implements Serializable
+public abstract class CellView implements Serializable
 {
     private List<PlayerView> pawns;
 

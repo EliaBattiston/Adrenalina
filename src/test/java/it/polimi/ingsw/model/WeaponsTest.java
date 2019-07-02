@@ -15,7 +15,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Distruttore
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseDistruttore() throws ClientDisconnectedException
@@ -45,7 +45,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Distruttore
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAddDistruttore() throws ClientDisconnectedException
@@ -82,7 +82,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Mitragliatrice
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseMitragliatrice() throws ClientDisconnectedException
@@ -118,7 +118,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Mitragliatrice
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAdd1Mitragliatrice() throws ClientDisconnectedException
@@ -156,7 +156,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Mitragliatrice
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAdd2Mitragliatrice() throws ClientDisconnectedException
@@ -200,7 +200,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Torpedine
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseTorpedine() throws ClientDisconnectedException
@@ -230,7 +230,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Torpedine
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAdd1Torpedine() throws ClientDisconnectedException
@@ -267,7 +267,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Torpedine
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAdd2Torpedine() throws ClientDisconnectedException
@@ -311,7 +311,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Fucile al Plasma
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseFucilePlasma() throws ClientDisconnectedException
@@ -341,7 +341,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Fucile al Plasma
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAdd2FucilePlasma() throws ClientDisconnectedException
@@ -372,7 +372,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Fucile di Precisione
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseFucilePrecisione() throws ClientDisconnectedException
@@ -402,7 +402,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Falce Protonica
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseFalceProtonica() throws ClientDisconnectedException
@@ -432,7 +432,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Falce Protonica
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltFalceProtonica() throws ClientDisconnectedException
@@ -468,7 +468,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Raggio Traente
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseRaggioTraente() throws ClientDisconnectedException
@@ -498,7 +498,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Raggio Traente
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltRaggioTraente() throws ClientDisconnectedException
@@ -532,7 +532,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Cannone Vortex
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseCannoneVortex() throws ClientDisconnectedException
@@ -567,7 +567,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Cannone Vortex
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAdd1CannoneVortex() throws ClientDisconnectedException
@@ -617,7 +617,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Vulcanizzatore
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseVulcanizzatore() throws ClientDisconnectedException
@@ -653,7 +653,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Vulcanizzatore
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltVulcanizzatore() throws ClientDisconnectedException
@@ -689,7 +689,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Razzo Termico
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseRazzoTermico() throws ClientDisconnectedException
@@ -719,7 +719,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Raggio Solare
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseRaggioSolare() throws ClientDisconnectedException
@@ -755,7 +755,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Raggio Solare
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltRaggioSolare() throws ClientDisconnectedException
@@ -791,7 +791,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Lanciafiamme
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseLanciafiamme() throws ClientDisconnectedException
@@ -828,7 +828,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Lanciafiamme
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltLanciafiamme() throws ClientDisconnectedException
@@ -864,7 +864,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Lanciagranate
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseLanciagranate() throws ClientDisconnectedException
@@ -894,7 +894,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Lanciagranate
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAddLanciagranate() throws ClientDisconnectedException
@@ -930,7 +930,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Lanciarazzi
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseLanciarazzi() throws ClientDisconnectedException
@@ -960,7 +960,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Lanciarazzi
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAdd2Lanciarazzi() throws ClientDisconnectedException
@@ -1003,7 +1003,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Fucile Laser
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseFucileLaser() throws ClientDisconnectedException
@@ -1033,7 +1033,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Fucile Laser
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltFucileLaser() throws ClientDisconnectedException
@@ -1069,7 +1069,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Spada Fotonica
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseSpadaFotonica() throws ClientDisconnectedException
@@ -1099,7 +1099,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Spada Fotonica
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAddSpadaFotonica() throws ClientDisconnectedException
@@ -1136,7 +1136,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of ZX-2
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseZX2() throws ClientDisconnectedException
@@ -1166,7 +1166,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of ZX-2
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltZX2() throws ClientDisconnectedException
@@ -1208,7 +1208,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Fucile a Pompa
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseFucilePompa() throws ClientDisconnectedException
@@ -1238,7 +1238,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Fucile a Pompa
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltFucilePompa() throws ClientDisconnectedException
@@ -1268,7 +1268,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Cyberguanto
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseCyberguanto() throws ClientDisconnectedException
@@ -1302,7 +1302,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Cyberguanto
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltCyberguanto() throws ClientDisconnectedException
@@ -1345,7 +1345,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Onda d'urto
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseOndaUrto() throws ClientDisconnectedException
@@ -1387,7 +1387,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Onda d'urto
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltOndaUrto() throws ClientDisconnectedException
@@ -1429,7 +1429,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Martello Ionico
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestBaseMartelloIonico() throws ClientDisconnectedException
@@ -1459,7 +1459,7 @@ public class WeaponsTest {
 
     /**
      * Test the correct behaviour of Martello Ionico
-     * @throws ClientDisconnectedException Will never be thrown by TestConnection
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
     public void TestAltMartelloIonico() throws ClientDisconnectedException

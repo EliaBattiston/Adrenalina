@@ -221,10 +221,10 @@ public class MapTest {
     }
 
     /**
-     * Tests both visiblePlayer methods (the normal one and the one limited to a cardinal direction)
+     * Tests the visiblePlayers from a user
      */
     @Test
-    public void checkVisiblePlayers()
+    public void testVisiblePlayersFromUser()
     {
         Map m = Map.jsonDeserialize(1);
         List<Player> pl = new ArrayList<>();
@@ -245,14 +245,55 @@ public class MapTest {
         assertTrue(calculated.contains(pl.get(0)));
         assertTrue(calculated.contains(pl.get(1)));
         assertFalse(calculated.contains(pl.get(2)));
+    }
 
-        //in a cardinal direction
-        calculated = Map.visiblePlayers(viewer, m, Direction.EAST);
+    /**
+     * Tests the visible players in a single direction from a player
+     */
+    @Test
+    public void testVisiblePlayersFromUserCardinalDirection()
+    {
+        Map m = Map.jsonDeserialize(1);
+        List<Player> pl = new ArrayList<>();
+        pl.add(new Player("one", "hi", Fighter.DSTRUTTOR3));
+        pl.add(new Player("two", "hi", Fighter.DOZER));
+        pl.add(new Player("three", "hi", Fighter.VIOLETTA));
+        m.getCell(1,0).addPawn(pl.get(0));
+        m.getCell(2,1).addPawn(pl.get(1));
+        m.getCell(3,1).addPawn(pl.get(2));
+
+        Player viewer = new Player("viewer", "hi", Fighter.SPROG);
+        viewer.applyEffects(EffectsLambda.move(viewer, new Point(1,1), m));
+
+        List<Player> calculated = Map.visiblePlayers(viewer, m, Direction.EAST);
         assertFalse(calculated.containsAll(pl));
 
         assertFalse(calculated.contains(pl.get(0)));
         assertTrue(calculated.contains(pl.get(1)));
         assertTrue(calculated.contains(pl.get(2)));
+    }
+
+    /**
+     * Tests the Visible players from a specified position
+     */
+    @Test
+    public void testVisiblePlayerFromPoint(){
+        Map m = Map.jsonDeserialize(2);
+        Player p1 = new Player("Player 1", "", Fighter.DSTRUTTOR3);
+        Player p2 = new Player("Player 2", "", Fighter.DSTRUTTOR3);
+
+        try {
+            m.getCell(0, 0).addPawn(p1);
+            m.getCell(0, 0).addPawn(p2);
+
+            List<Player> vis = Map.visiblePlayers(new Point(0, 0), m);
+
+            assertTrue(vis.contains(p1));
+            assertTrue(vis.contains(p2));
+            assertEquals(vis.size(), 2);
+        }catch (Exception ignore){
+            fail();
+        }
     }
 
     /**

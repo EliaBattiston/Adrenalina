@@ -5,10 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.clientmodel.CellView;
 import it.polimi.ingsw.clientmodel.CellViewAdapter;
+import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.clientmodel.MatchView;
 
 import java.io.IOException;
 import java.io.PrintWriter;

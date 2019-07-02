@@ -1,6 +1,7 @@
 package it.polimi.ingsw.clientmodel;
 
 import it.polimi.ingsw.controller.GamePhase;
+
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,11 @@ public class MatchView implements Serializable {
 
     /**
      * Instances a MatchView object representing the current Match
+     * @param viewer myPlayer
+     * @param active the actual active player
+     * @param gv the gameview
+     * @param phase the current phase of the match
+     * @param playerTurnDuration the maximum duration of a player turn
      */
     public MatchView(MyPlayerView viewer, PlayerView active, GameView gv, GamePhase phase, long playerTurnDuration) {
         this.viewer = viewer;

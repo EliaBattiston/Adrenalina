@@ -2,7 +2,10 @@ package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.clientmodel.*;
+import it.polimi.ingsw.clientmodel.GameView;
+import it.polimi.ingsw.clientmodel.MatchView;
+import it.polimi.ingsw.clientmodel.MyPlayerView;
+import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.*;
 
@@ -84,13 +87,12 @@ public class Match implements Runnable, Serializable
     private static final transient int NUMBER_OF_DAMAGES = 12;
     private static final transient int INDEX_OF_KILLER_IN_DAMAGES = 10;
     private static final transient int INDEX_OF_OVER_KILLER_IN_DAMAGES = 11;
-
+    private static final transient String BASE_GAME_FILE = "baseGame.json";
     /**
      * Creates a new empty match
      * @param skullsNum Number of skulls to be used in the game
-     * @throws FileNotFoundException If the file is not found in the filesystem
      */
-    public Match(int skullsNum) throws FileNotFoundException
+    public Match(int skullsNum)
     {
         this.activities = Activities.getInstance();
         this.active = null;
@@ -101,7 +103,7 @@ public class Match implements Runnable, Serializable
         this.turnNumber = 0;
         this.gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
 
-        game = Game.jsonDeserialize("baseGame.json");
+        game = Game.jsonDeserialize(BASE_GAME_FILE);
         game.getPowersDeck().shuffle();
         game.getWeaponsDeck().shuffle();
         game.getAmmoDeck().shuffle();

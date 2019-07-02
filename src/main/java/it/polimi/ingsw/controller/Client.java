@@ -1,8 +1,8 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.clientmodel.MatchView;
 
 import java.io.Serializable;
 import java.rmi.Remote;

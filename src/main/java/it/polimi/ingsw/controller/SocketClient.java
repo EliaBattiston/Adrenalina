@@ -5,11 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.clientmodel.CellView;
 import it.polimi.ingsw.clientmodel.CellViewAdapter;
+import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.clientmodel.PlayerView;
 import it.polimi.ingsw.exceptions.ServerDisconnectedException;
 import it.polimi.ingsw.exceptions.ServerNotFoundException;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.view.UserInterface;
 
 import java.io.IOException;
