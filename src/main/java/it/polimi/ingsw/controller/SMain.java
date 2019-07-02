@@ -329,13 +329,9 @@ public class SMain
                     ClientConnThread clientT = new ClientConnThread(this, player);
                     new Thread(clientT).start();
 
-                    if (waiting[index] == null) {
-                        try {
-                            waiting[index] = new Match(skulls);
-                        } catch (FileNotFoundException e) {
-                            Logger.getGlobal().log(Level.SEVERE, e.toString(), e);
-                        }
-                    }
+                    if (waiting[index] == null)
+                        waiting[index] = new Match(skulls);
+
                     waiting[index].getGame().addPlayer(player);
                 }
                 player.getConn().sendMessage("Benvenuto in Adrenalina!");

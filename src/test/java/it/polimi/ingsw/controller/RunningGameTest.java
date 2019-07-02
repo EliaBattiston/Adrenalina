@@ -55,32 +55,29 @@ public class RunningGameTest {
 
     /**
      * Run a server and some AI clients, wait until the end of the match. Check the game ends with no problems
+     * @param numOfPlayers number of players in the game
      */
     private void checkGameWithAI(int numOfPlayers){
+        int skullsNum = ((int)(Math.random()*4))+5;
+        Match m = new Match(skullsNum);
+
+        Player simulated;
+        for(int i=0; i<numOfPlayers; i++) {
+            simulated = new Player(Integer.toString(i +1), "Testing is hard work, but someone has to do it!", Fighter.values()[i]);
+            simulated.setConn(new AIConnection());
+            m.getGame().addPlayer(simulated);
+        }
+
+        Thread runner = new Thread(m);
+        runner.start();
+
         try {
-            int skullsNum = ((int)(Math.random()*4))+5;
-            Match m = new Match(skullsNum);
-
-            Player simulated;
-            for(int i=0; i<numOfPlayers; i++) {
-                simulated = new Player(Integer.toString(i +1), "Testing is hard work, but someone has to do it!", Fighter.values()[i]);
-                simulated.setConn(new AIConnection());
-                m.getGame().addPlayer(simulated);
-            }
-
-            Thread runner = new Thread(m);
-            runner.start();
-
-            try {
-                runner.join();
-            } catch(InterruptedException e) {
-                fail();
-            }
-
-            System.out.println("\n\n\u001B[32mPartita completata con successo\u001B[0m\n\n\n\n");
-            assertTrue(true);
-        } catch(FileNotFoundException e) {
+            runner.join();
+        } catch(InterruptedException e) {
             fail();
         }
+
+        System.out.println("\n\n\u001B[32mPartita completata con successo\u001B[0m\n\n\n\n");
+        assertTrue(true);
     }
 }

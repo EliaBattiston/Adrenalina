@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Fake connection for test purposes which always returns the first available element
  */
-public class TestConnection implements Connection
+public class ConnectionTest implements Connection
 {
     /**
      * Send the actual matchView to the client

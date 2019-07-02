@@ -1136,6 +1136,7 @@ public class ActionLambdaMap {
      * Perform actions needed to complete a purchase, by letting the user pay with powers too
      * @param pl Player who has to make the purchase
      * @param originalCost List of colors the player has to pay
+     * @throws ClientDisconnectedException when the clients disconnects
      */
     public static void purchase(Player pl, List<Color> originalCost) throws ClientDisconnectedException
     {

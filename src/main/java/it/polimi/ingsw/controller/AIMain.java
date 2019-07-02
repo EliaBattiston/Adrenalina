@@ -37,6 +37,8 @@ public class AIMain
 
     /**
      * Creates a new AIMain
+     * @param gui if true shows the GUI, otherwise the CLI
+     * @param rmi if true uses RMI, otherwise SOCKETS
      */
     public AIMain(boolean gui, boolean rmi)
     {
