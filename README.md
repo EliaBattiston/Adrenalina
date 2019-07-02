@@ -23,3 +23,47 @@
 [![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#)
 [![GREEN](https://placehold.it/15/44bb44/44bb44)](#)
 -->
+
+# Execution instructions
+## Running the Server
+The server can be executed with `AM06_Server.jar`, built during Maven's `package` step. 
+
+```
+java -jar AM06_Server.jar
+```
+
+### Configuration
+The configuration of the server can be changed by placing a `config.json` file in the same folder of the server jar.
+
+The syntax of the configuration file is the following:
+
+```
+{
+    "startMatchSeconds": 60,
+    "playerTurnSeconds": 120,
+    "minPlayers": 3
+}
+```
+The values reported in this example are the defaults, set by the server if no `config.json` is found.
+
+## Running the Client
+The client can be executed with `AM06_Client.jar`, built during Maven's `package` step.
+
+```
+java -jar AM06_Client.jar
+```
+
+This command executes the CLI version of the client. Starting up the Client in its GUI version can be achieved adding startup flags:
+
+|Flag|Function|
+|-|-|
+|-g|Start with a GUI|
+
+### JavaFX external libraries
+When executing the Client with a GUI (with the -g startup flag) JavaFX libraries for the correct OS have to be provided by placing them in the `./lib` folder:
+
+```
+javafx.base.jar
+javafx.controls.jar
+javafx.graphics.jar
+```
