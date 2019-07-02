@@ -20,10 +20,10 @@ public class Main {
                 new SMain(null);
         }
         else if(flags.contains("-ai")){
-            new AIMain(false, false);
+            new AIMain("localhost", false, false);
         }
         else if(flags.contains("-gai")){
-            new AIMain(true, false);
+            new AIMain("localhost", true, false);
         }
         else {
             println("Flag errati");
