@@ -60,7 +60,8 @@ This command executes the CLI version of the client. Starting up the Client in i
 |-g|Start with a GUI|
 
 ### JavaFX external libraries
-When executing the Client with a GUI (with the -g startup flag) JavaFX libraries for the correct OS have to be provided by placing them in the `./lib` folder:
+When executing the Client with a GUI (with the -g startup flag) JavaFX libraries for the correct OS have to be provided by placing the `javafx-sdk-11` folder in the same folder where `AM06_Client.jar` is placed.
+In particular, these files need to be present in `./javafx-sdk-11/lib/`:
 
 ```
 javafx.base.jar
