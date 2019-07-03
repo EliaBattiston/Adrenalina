@@ -184,7 +184,7 @@
                     <mainClass>it.polimi.ingsw.controller.CMain</mainClass>
                   </manifest>
                   <manifestEntries>
-                    <Class-Path>./lib/javafx.base.jar ./lib/javafx.controls.jar ./lib/javafx.graphics.jar</Class-Path>
+                    <Class-Path>./javafx-sdk-11/lib/javafx.base.jar ./javafx-sdk-11/lib/javafx.controls.jar ./javafx-sdk-11/lib/javafx.graphics.jar</Class-Path>
                   </manifestEntries>
                 </archive>
                 <descriptors>
@@ -207,7 +207,7 @@
                     <mainClass>it.polimi.ingsw.controller.AIMain</mainClass>
                   </manifest>
                   <manifestEntries>
-                    <Class-Path>./lib/javafx.base.jar ./lib/javafx.controls.jar ./lib/javafx.graphics.jar</Class-Path>
+                    <Class-Path>./javafx-sdk-11/lib/javafx.base.jar ./javafx-sdk-11/lib/javafx.controls.jar ./javafx-sdk-11/lib/javafx.graphics.jar</Class-Path>
                   </manifestEntries>
                 </archive>
                 <descriptors>
