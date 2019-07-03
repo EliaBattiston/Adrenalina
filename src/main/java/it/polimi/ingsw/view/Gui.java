@@ -1666,7 +1666,7 @@ public class Gui extends Application{
         l.setTextAlignment(TextAlignment.CENTER);
         l.setWrapText(true);
 
-        TextField field = new TextField("localhost");
+        TextField field = new TextField();
         field.setFont(Font.font(SETTINGSFONTDIM*dimMult));
 
         Button submit = new Button(CONFIRM_BUTTON_TEXT);

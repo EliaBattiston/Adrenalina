@@ -616,7 +616,7 @@ public class CLInterface implements UserInterface {
 
 
             print += background + stringFormat(p.getNick() + " - " + background + fighterToString(p.getCharacter()), 32) + ANSI_RESET;
-            print += MORTI + p.getSkulls() + X + SKULL;
+            print += MORTI + p.getSkulls() + X + SKULL + SPACE;
             print += AMMO;
             print += p.getAmmo(Color.BLUE) + X + formatColorBox(Color.BLUE) + SPACE;
             print += p.getAmmo(Color.YELLOW) + X + formatColorBox(Color.YELLOW) + SPACE;
@@ -1310,7 +1310,7 @@ public class CLInterface implements UserInterface {
         if(choose == 0)
             return null;
         else
-            return choose - 1;
+            return rooms.get(choose - 1);
     }
 
     /**

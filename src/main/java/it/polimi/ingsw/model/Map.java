@@ -506,6 +506,7 @@ public class Map implements Serializable {
                         points.add(new Point(i,j));
 
         if(notVisDist > 0){
+            //TODO checkout the function, this returns Points duplicated 3+ times
             HashSet<Point> notVisible = new HashSet<>();
             for(Point p:points)
                 notVisible.addAll(Map.possibleMovements(p, notVisDist, map));

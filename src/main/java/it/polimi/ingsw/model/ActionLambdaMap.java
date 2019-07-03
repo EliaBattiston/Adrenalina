@@ -104,7 +104,12 @@ public class ActionLambdaMap {
             List<Point> pointsAll = Map.visiblePoints(pl.getPosition(), map, 2);
             List<Point> pointsVisible = Map.visiblePoints(pl.getPosition(), map, 0);
             List<Point> pointsNotVisible = new ArrayList<>(pointsAll);
-            pointsNotVisible.removeAll(pointsVisible);
+
+            for(Point p: pointsAll)
+                for(Point p2: pointsVisible)
+                    if(p.samePoint(p2))
+                        pointsNotVisible.remove(p);
+
             List<Player> targets = new ArrayList<>();
 
             for(Player p:Map.playersInTheMap(map))
@@ -113,8 +118,23 @@ public class ActionLambdaMap {
 
             Player chosen = pl.getConn().chooseTarget(targets, true);
 
-            if(pointsNotVisible.contains(chosen.getPosition())){
-                List<Point> movableTo = Map.possibleMovements(chosen.getPosition(), 2, map);
+            boolean notVisible = false;
+            for(Point point: pointsNotVisible)
+                if(point.samePoint(chosen.getPosition()))
+                    notVisible = true;
+
+            if(notVisible){
+                List<Point> possibleMoves = Map.possibleMovements(chosen.getPosition(), 2, map);
+                List<Point> movableTo = new ArrayList<>();
+                for(Point p: possibleMoves) {
+                    boolean found = false;
+                    for(Point nv: pointsNotVisible) {
+                        if(nv.samePoint(p))
+                            found = true;
+                    }
+                    if(!found)
+                        movableTo.add(p);
+                }
                 movableTo.removeAll(pointsNotVisible);
                 Point newPos = pl.getConn().moveEnemy(chosen, movableTo, true);
 
@@ -169,13 +189,13 @@ public class ActionLambdaMap {
             List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
             List<Integer> playersRooms = new ArrayList<>();
 
+            visibleRooms.remove(((Integer)(map.getCell(pl.getPosition()).getRoomNumber())));
+
             for(Player p : allInMap)
             {
                 if( visibleRooms.contains( map.getCell(p.getPosition()).getRoomNumber() ) )
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
-
-            visibleRooms.remove(((Integer)(map.getCell(pl.getPosition()).getRoomNumber())));
 
             int roomChosen = pl.getConn().chooseRoom(playersRooms, true);
 
@@ -671,8 +691,10 @@ public class ActionLambdaMap {
                 try{
                     List<Point> nextPoints = new ArrayList<>();
                     nextPoints.add(secondPoint);
-                    posChosen = pl.getConn().movePlayer(nextPoints, false);
-                    if(posChosen != null){
+                    nextPoints.add(pl.getPosition());
+
+                    posChosen = pl.getConn().movePlayer(nextPoints, true);
+                    if(!posChosen.samePoint(pl.getPosition())){
                         pl.applyEffects(EffectsLambda.move(pl, posChosen, map));
 
                         targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)->map.distance(p1,p2)==0);
@@ -903,6 +925,7 @@ public class ActionLambdaMap {
     private static void runToShoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
+        possible.add(pl.getPosition());
         List<Point> destinations = new ArrayList<>(possible);
 
         Point initialPosition = new Point(pl.getPosition());

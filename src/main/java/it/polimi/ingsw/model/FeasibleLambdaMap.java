@@ -107,14 +107,14 @@ public class FeasibleLambdaMap
             List<Integer> visibleRooms = Map.visibleRooms(pl.getPosition(), map);
             List<Integer> playersRooms = new ArrayList<>();
 
+            //Without converting to integer it removes the one @ position instead of the value - Andrea Aspesi
+            visibleRooms.remove(((Integer)(map.getCell(pl.getPosition()).getRoomNumber())));
+
             for(Player p : allInMap)
             {
                 if( visibleRooms.contains( map.getCell(p.getPosition()).getRoomNumber() ) )
                     playersRooms.add(map.getCell(p.getPosition()).getRoomNumber());
             }
-
-            //Without converting to integer it removes the one @ position instead of the value - Andrea Aspesi
-            visibleRooms.remove(((Integer)(map.getCell(pl.getPosition()).getRoomNumber())));
 
             return !playersRooms.isEmpty();
         });
