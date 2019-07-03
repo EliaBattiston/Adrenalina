@@ -9,12 +9,14 @@ import it.polimi.ingsw.model.CellAdapter;
 import it.polimi.ingsw.model.Fighter;
 import it.polimi.ingsw.model.Player;
 
+import java.awt.*;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,7 +78,6 @@ public class SMain
      */
     public SMain(String passedIp)
     {
-
         minPlayers = Configuration.getInstance().getMinPlayers();
 
         lock = new Object();

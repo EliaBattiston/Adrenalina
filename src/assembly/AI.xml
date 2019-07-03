@@ -29,7 +29,26 @@
                 <include>it/polimi/ingsw/controller/SocketClient*</include>
                 <include>it/polimi/ingsw/controller/Timeout*</include>
 
-                <include>it/polimi/ingsw/model/*</include>
+                <include>it/polimi/ingsw/model/Action*</include>
+                <include>it/polimi/ingsw/model/ActionLambda*</include>
+                <include>it/polimi/ingsw/model/Activities*</include>
+                <include>it/polimi/ingsw/model/Card*</include>
+                <include>it/polimi/ingsw/model/Cell*</include>
+                <include>it/polimi/ingsw/model/Color*</include>
+                <include>it/polimi/ingsw/model/Deck*</include>
+                <include>it/polimi/ingsw/model/Direction*</include>
+                <include>it/polimi/ingsw/model/EffectsLambda*</include>
+                <include>it/polimi/ingsw/model/EndlessDeck*</include>
+                <include>it/polimi/ingsw/model/FeasibleLambda*</include>
+                <include>it/polimi/ingsw/model/Fighter*</include>
+                <include>it/polimi/ingsw/model/Loot*</include>
+                <include>it/polimi/ingsw/model/MapDistanceStrategy*</include>
+                <include>it/polimi/ingsw/model/PlayerLambda*</include>
+                <include>it/polimi/ingsw/model/Point*</include>
+                <include>it/polimi/ingsw/model/Power*</include>
+                <include>it/polimi/ingsw/model/Side*</include>
+                <include>it/polimi/ingsw/model/Weapon*</include>
+
                 <include>it/polimi/ingsw/view/*</include>
                 <include>it/polimi/ingsw/exceptions/*</include>
                 <include>it/polimi/ingsw/clientmodel/*</include>

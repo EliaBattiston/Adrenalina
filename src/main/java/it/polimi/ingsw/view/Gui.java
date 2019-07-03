@@ -125,6 +125,7 @@ public class Gui extends Application{
         loggedText = "";
 
         appStage = primaryStage;
+        appStage.getIcons().add(GuiImagesMap.getImage("icon.jpg"));
 
         backgroundWidth = 960;
         backgroundHeight = backgroundWidth*9/16;
