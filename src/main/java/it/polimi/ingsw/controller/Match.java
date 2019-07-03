@@ -88,6 +88,32 @@ public class Match implements Runnable, Serializable
     private static final transient int INDEX_OF_KILLER_IN_DAMAGES = 10;
     private static final transient int INDEX_OF_OVER_KILLER_IN_DAMAGES = 11;
     private static final transient String BASE_GAME_FILE = "baseGame.json";
+
+    /**
+     * Strings used inside this class
+     */
+    private static final String STA_CONFIGURANDO_LA_PARTITA = " sta configurando la partita";
+    private static final String HA_SCELTO_DI_USARE_LA_MAPPA = " ha scelto di usare la mappa ";
+    private static final String HA_SCELTO_DI = " ha scelto di";
+    private static final String USARE_LA_MODALITÀ_FRENESIA = " usare la modalità Frenesia";
+    private static final String PARTITA_AVVIATA_È_IL_TURNO_DI = "Partita avviata, è il turno di ";
+    private static final String IL_SERVER_HA_SCELTO_DI_USARE_LA_MAPPA = "Il server ha scelto di usare la mappa ";
+    private static final String IL_SERVER_HA_SCELTO_DI_USARE_LA_MODALITÀ_FRENESIA = "Il server ha scelto di usare la modalità Frenesia";
+    private static final String NON_ESEGUE_MOSSE_POICHÈ_NON_È_CONNESSO = " non esegue mosse poichè non è connesso";
+    private static final String È_IL_TURNO_DI = "È il turno di ";
+    private static final String FINE_TURNO = "\u001B[31mFine turno ";
+    private static final String ERROR_IN_WRITING_PERSISTANCE_FILE = "Error in writing persistance file";
+    private static final String COULDN_T_DELETE_FILE = "Couldn't delete file";
+    private static final String ADR_CORRECTLY_DELETED = ".adr correctly deleted";
+    private static final String PER_PESCARE_UN_NUOVO_POTENZIAMENTO = " per pescare un nuovo potenziamento";
+    private static final String SCARTA = " scarta ";
+    private static final String SCEGLI_UN_POTENZIAMENTO = "Scegli un potenziamento da scartare, il colore del potenziamento scartato determinerà la cella di spawn";
+    private static final String E_SPAWNA_NELLA_CELLA = " e spawna nella cella ";
+    private static final String GLI_OGGETTI_MANCANTI_DALLA_MAPPA_SONO_STATI_POSIZIONATI = "Gli oggetti mancanti dalla mappa sono stati posizionati";
+    private static final String È_STATO_UCCISO_DA = " è stato ucciso da ";
+    private static final String IL_GIOCO_È_TERMINATO = "\u001b[34mIl gioco è terminato\u001B[0m";
+    private static final String SI_È_DISCONNESSO = " si è disconnesso";
+
     /**
      * Creates a new empty match
      * @param skullsNum Number of skulls to be used in the game
@@ -116,7 +142,7 @@ public class Match implements Runnable, Serializable
      */
     private void initialize() throws ClientDisconnectedException
     {
-        broadcastMessage(game.getPlayers().get(0).getNick() + " sta configurando la partita", game.getPlayers());
+        broadcastMessage(game.getPlayers().get(0).getNick() + STA_CONFIGURANDO_LA_PARTITA, game.getPlayers());
 
         //Ask the user which maps he wants to use and if he wants to use frenzy mode
         int mapNum = game.getPlayers().get(0).getConn().chooseMap();
@@ -128,10 +154,10 @@ public class Match implements Runnable, Serializable
         {
             Logger.getGlobal().log(Level.SEVERE, "Map file not found");
         }
-        broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di usare la mappa " + mapNum, game.getPlayers());
+        broadcastMessage(game.getPlayers().get(0).getNick() + HA_SCELTO_DI_USARE_LA_MAPPA + mapNum, game.getPlayers());
 
         useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
-        broadcastMessage(game.getPlayers().get(0).getNick() + " ha scelto di" +  ( useFrenzy ? "" : " non" ) + " usare la modalità Frenesia", game.getPlayers());
+        broadcastMessage(game.getPlayers().get(0).getNick() + HA_SCELTO_DI +  ( useFrenzy ? "" : " non" ) + USARE_LA_MODALITÀ_FRENESIA, game.getPlayers());
 
         //Make folder for persistance files
         new File("matches").mkdirs();
@@ -144,7 +170,7 @@ public class Match implements Runnable, Serializable
         active = game.getPlayers().get(0);
         actionsNumber = REGULAR_ACTIONS_NUMBER;
 
-        broadcastMessage("Partita avviata, è il turno di " + active.getNick(), game.getPlayers());
+        broadcastMessage(PARTITA_AVVIATA_È_IL_TURNO_DI + active.getNick(), game.getPlayers());
 
         this.phase = GamePhase.REGULAR;
     }
@@ -183,11 +209,11 @@ public class Match implements Runnable, Serializable
                     {
                         Logger.getGlobal().log(Level.SEVERE, "Map file not found");
                     }
-                    broadcastMessage("Il server ha scelto di usare la mappa " + mapNum, game.getPlayers());
+                    broadcastMessage(IL_SERVER_HA_SCELTO_DI_USARE_LA_MAPPA + mapNum, game.getPlayers());
                 }
 
                 useFrenzy = true;
-                broadcastMessage("Il server ha scelto di usare la modalità Frenesia", game.getPlayers());
+                broadcastMessage(IL_SERVER_HA_SCELTO_DI_USARE_LA_MODALITÀ_FRENESIA, game.getPlayers());
             }
         }
 
@@ -209,7 +235,7 @@ public class Match implements Runnable, Serializable
                 new Timeout(Configuration.getInstance().getPlayerTurnSeconds(), TimeUnit.SECONDS, this);
             }
             else
-                broadcastMessage(active.getNick() + " non esegue mosse poichè non è connesso", game.getPlayers());
+                broadcastMessage(active.getNick() + NON_ESEGUE_MOSSE_POICHÈ_NON_È_CONNESSO, game.getPlayers());
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
@@ -227,7 +253,7 @@ public class Match implements Runnable, Serializable
             //When the active player's turn finishes, we pick the next active player
             active = game.getNextPlayer(active);
 
-            broadcastMessage("È il turno di " + active.getNick(), game.getPlayers());
+            broadcastMessage(È_IL_TURNO_DI + active.getNick(), game.getPlayers());
 
             if(phase == GamePhase.FRENZY)
             {
@@ -268,7 +294,7 @@ public class Match implements Runnable, Serializable
             else {
                 updateViews();
 
-                println("\u001B[31mFine turno " + turnNumber + "\u001B[0m");
+                println(FINE_TURNO + turnNumber + "\u001B[0m");
                 turnNumber++;
             }
 
@@ -277,7 +303,7 @@ public class Match implements Runnable, Serializable
             }
             catch(FileNotFoundException e)
             {
-                Logger.getGlobal().log(Level.SEVERE, "Error in writing persistance file", e);
+                Logger.getGlobal().log(Level.SEVERE, ERROR_IN_WRITING_PERSISTANCE_FILE, e);
             }
         }
 
@@ -285,9 +311,9 @@ public class Match implements Runnable, Serializable
         {
             File saved = new File("matches/" + this.hashCode() + ".adr");
             if(saved.delete())
-                println("File" + this.hashCode() + ".adr correctly deleted");
+                println("File" + this.hashCode() + ADR_CORRECTLY_DELETED);
             else
-                println("Couldn't delete file" + this.hashCode() + ".adr");
+                println(COULDN_T_DELETE_FILE + this.hashCode() + ".adr");
 
         }
     }
@@ -428,7 +454,7 @@ public class Match implements Runnable, Serializable
 
                     game.getPowersDeck().scrapCard(discarded);
 
-                    Match.broadcastMessage(pl.getNick() + " scarta " + discarded.getName() + " per pescare un nuovo potenziamento", game.getPlayers());
+                    Match.broadcastMessage(pl.getNick() + SCARTA + discarded.getName() + PER_PESCARE_UN_NUOVO_POTENZIAMENTO, game.getPlayers());
                 }
 
                 int empty = Arrays.asList(powers).indexOf(discarded);
@@ -449,7 +475,7 @@ public class Match implements Runnable, Serializable
         {
             try
             {
-                pl.getConn().sendMessage("Scegli un potenziamento da scartare, il colore del potenziamento scartato determinerà la cella di spawn");
+                pl.getConn().sendMessage(SCEGLI_UN_POTENZIAMENTO);
                 chosen = pl.getConn().discardPower(pl.getPowers(), true);
                 spawned = true;
             }
@@ -490,7 +516,7 @@ public class Match implements Runnable, Serializable
         }
         //If not found the map is incorrect
 
-        broadcastMessage(pl.getNick() + " scarta " + chosen.getName() + " e spawna nella cella " + ((spawnY* MAPWIDTH)+spawnX+1), game.getPlayers() );
+        broadcastMessage(pl.getNick() + SCARTA + chosen.getName() + E_SPAWNA_NELLA_CELLA + ((spawnY* MAPWIDTH)+spawnX+1), game.getPlayers() );
 
         pl.setSpawned(true);
 
@@ -516,7 +542,7 @@ public class Match implements Runnable, Serializable
             }
         }
 
-        broadcastMessage("Gli oggetti mancanti dalla mappa sono stati posizionati", game.getPlayers());
+        broadcastMessage(GLI_OGGETTI_MANCANTI_DALLA_MAPPA_SONO_STATI_POSIZIONATI, game.getPlayers());
     }
 
     /**
@@ -604,7 +630,7 @@ public class Match implements Runnable, Serializable
                 game.getPlayer(killed.getReceivedDamage()[INDEX_OF_OVER_KILLER_IN_DAMAGES]).applyEffects(EffectsLambda.marks(1, killed));
             }
 
-            broadcastMessage(killed.getNick() + " è stato ucciso da " + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getActionPhrase(), game.getPlayers());
+            broadcastMessage(killed.getNick() + È_STATO_UCCISO_DA + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getActionPhrase(), game.getPlayers());
 
             //Reset damages
             for (int i = 0; i < NUMBER_OF_DAMAGES; i++)
@@ -789,7 +815,7 @@ public class Match implements Runnable, Serializable
                 ;
             }
         }
-        println("\u001b[34mIl gioco è terminato\u001B[0m");
+        println(IL_GIOCO_È_TERMINATO);
     }
 
     /**
@@ -834,12 +860,12 @@ public class Match implements Runnable, Serializable
      */
     public static void disconnectPlayer(Player pl, List<Player> players)
     {
-        Logger.getGlobal().log( Level.INFO, pl.getNick()+" si è disconnesso" );
+        Logger.getGlobal().log( Level.INFO, pl.getNick()+ SI_È_DISCONNESSO);
         if(pl.getConn() != null)
             pl.getConn().cancelConnection();
         pl.setConn(null);
 
-        broadcastMessage(pl.getNick() + " si è disconnesso", players);
+        broadcastMessage(pl.getNick() + SI_È_DISCONNESSO, players);
     }
 
     /**

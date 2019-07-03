@@ -45,8 +45,30 @@ public class Gui extends Application{
     private static final double SETTINGSFONTDIM = 28;
     private static final double POPUPFONTDIM = 22;
     private static final String WHITE_HEX = "#ffffff";
+
+    private static final String FONT_NAME = "font/ethnocentric_rg.ttf";
+
+    //Strings for the texts
     private static final String CONFIRM_BUTTON_TEXT = "Conferma";
     private static final String DROPS = "drops/";
+    private static final String CHIUDI = "Chiudi";
+    private static final String ARMI_SCARICHE_DI = "Armi scariche di ";
+    private static final String SCELTO = "Scelto: ";
+    private static final String CLICKED_PLAYER = "Clicked player: ";
+    private static final String ATTENDI_CHE_IL_NEMICO_SCELGA_UN_POWER = "Attendi che il nemico scelga un power";
+    private static final String ROSSA = "Rossa";
+    private static final String BLU = "Blu";
+    private static final String GIALLA = "Gialla";
+    private static final String BIANCA = "Bianca";
+    private static final String VIOLA = "Viola";
+    private static final String VERDE = "Verde";
+    private static final String ROSSO = "Rosso";
+    private static final String GIALLO = "Giallo";
+    private static final String SOCKET = "Socket";
+    private static final String RMI = "RMI";
+    private static final String MAPPA = "Mappa";
+    private static final String CON_FRENESIA = "Con Frenesia";
+    private static final String SENZA_FRENESIA = "Senza Frenesia";
 
     //Ui Executor
     private static Executor uiExec = Platform::runLater;
@@ -1107,7 +1129,7 @@ public class Gui extends Application{
             Button buttonAction = new Button("Usa " + a.getName());
             buttonAction.setFont(getFont(POPUPFONTDIM*dimMult*0.8));
             buttonAction.setOnAction(e->{
-                println("Scelto: " + a.getName());
+                println(SCELTO + a.getName());
                 exchanger.setAnswer(a);
                 clearInfoOnMap();
                 exchanger.setActualInteraction(Interaction.NONE);
@@ -1147,7 +1169,7 @@ public class Gui extends Application{
         Canvas weapon;
 
         //Close button
-        Button closeButton = new Button("Chiudi" );
+        Button closeButton = new Button(CHIUDI);
         closeButton.setFont(getFont(POPUPFONTDIM*dimMult*0.8));
         closeButton.setOnAction(e -> masterPane.getChildren().remove(popupPane));
         StackPane.setAlignment(closeButton, Pos.CENTER);
@@ -1155,7 +1177,7 @@ public class Gui extends Application{
         closeButton.setTranslateY(-290*dimMult);
 
         //Player name
-        Label nameLbl = new Label("Armi scariche di " + pl.getNick() + " - " + pl.getCharacter());
+        Label nameLbl = new Label(ARMI_SCARICHE_DI + pl.getNick() + " - " + pl.getCharacter());
         nameLbl.setTextFill(javafx.scene.paint.Color.WHITE);
         nameLbl.setFont(getFont(POPUPFONTDIM * 1.3 * dimMult));
         nameLbl.setWrapText(true);
@@ -1282,7 +1304,7 @@ public class Gui extends Application{
 
             powerCard.setEventsChoosable();
             powerCard.setOnMousePressed(e->{
-                println("Scelto: " + p.getName());
+                println(SCELTO + p.getName());
                 exchanger.setAnswer(p);
                 exchanger.setActualInteraction(Interaction.NONE);
                 clearInfoOnMap();
@@ -1362,11 +1384,11 @@ public class Gui extends Application{
         for(GuiClickableObjectPawn p : pawns){
             println(p.getPlayer().getCharacter().toString());//debug
             p.setOnMousePressed(e -> {
-                println("Clicked player: " + p.getPlayer().getNick());
+                println(CLICKED_PLAYER + p.getPlayer().getNick());
                 exchanger.setAnswer(p.getPlayer());
                 exchanger.setActualInteraction(Interaction.NONE);
                 clearInfoOnMap();
-                showInfoOnMap("Attendi che il nemico scelga un power");
+                showInfoOnMap(ATTENDI_CHE_IL_NEMICO_SCELGA_UN_POWER);
                 //After finishing the click event, reset all the events to the original option
                 for(GuiClickableObjectPawn p2 : pawns)
                     p2.resetEventsStyle();
@@ -1402,17 +1424,17 @@ public class Gui extends Application{
 
         List<String> roomsNames = new ArrayList<>();
         if(rooms.contains(0))
-            roomsNames.add("Rossa");
+            roomsNames.add(ROSSA);
         if(rooms.contains(1))
-            roomsNames.add("Blu");
+            roomsNames.add(BLU);
         if(rooms.contains(2))
-            roomsNames.add("Gialla");
+            roomsNames.add(GIALLA);
         if(rooms.contains(3))
-            roomsNames.add("Bianca");
+            roomsNames.add(BIANCA);
         if(rooms.contains(4))
-            roomsNames.add("Viola");
+            roomsNames.add(VIOLA);
         if(rooms.contains(5))
-            roomsNames.add("Verde");
+            roomsNames.add(VERDE);
 
         ToggleGroup radioGroup = new ToggleGroup();
         int row = 1;
@@ -1477,11 +1499,11 @@ public class Gui extends Application{
         List<String> colorNames = new ArrayList<>();
 
         if(colors.contains(Color.BLUE))
-            colorNames.add("Blu");
+            colorNames.add(BLU);
         if(colors.contains(Color.RED))
-            colorNames.add("Rosso");
+            colorNames.add(ROSSO);
         if(colors.contains(Color.YELLOW))
-            colorNames.add("Giallo");
+            colorNames.add(GIALLO);
 
         ToggleGroup radioGroup = new ToggleGroup();
         int row = 1;
@@ -1500,11 +1522,11 @@ public class Gui extends Application{
         submit.setOnAction(rs -> {
             String answer = ((RadioButton)radioGroup.getSelectedToggle()).getText();
             Color c = null;
-            if(answer.equals("Rosso"))
+            if(answer.equals(ROSSO))
                 c = Color.RED;
-            else if (answer.equals("Blu"))
+            else if (answer.equals(BLU))
                 c= Color.BLUE;
-            else if(answer.equals("Giallo"))
+            else if(answer.equals(GIALLO))
                 c=Color.YELLOW;
             println(answer + ": " + colorNames.indexOf(answer));
             exchanger.setAnswer(c);
@@ -1769,12 +1791,12 @@ public class Gui extends Application{
     private void askRMI(String message){
         ToggleGroup group = new ToggleGroup();
         List<String> buttons = new ArrayList<>();
-        buttons.add("Socket");
-        buttons.add("RMI");
+        buttons.add(SOCKET);
+        buttons.add(RMI);
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             println(answer);
-            exchanger.setAnswer(answer.equalsIgnoreCase("RMI"));
+            exchanger.setAnswer(answer.equalsIgnoreCase(RMI));
             exchanger.setActualInteraction(Interaction.NONE);
             appStage.setScene(new Scene(initializerBackground()));
         });
@@ -1834,10 +1856,10 @@ public class Gui extends Application{
     private void askMap(String message){
         ToggleGroup group = new ToggleGroup();
         List<String> buttons = new ArrayList<>();
-        buttons.add("Mappa 1");
-        buttons.add("Mappa 2");
-        buttons.add("Mappa 3");
-        buttons.add("Mappa 4");
+        buttons.add(MAPPA + " 1");
+        buttons.add(MAPPA + " 2");
+        buttons.add(MAPPA + " 3");
+        buttons.add(MAPPA + " 4");
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             answer = answer.substring(6);//get the number
@@ -1857,12 +1879,12 @@ public class Gui extends Application{
     private void askFrenzy(String message){
         ToggleGroup group = new ToggleGroup();
         List<String> buttons = new ArrayList<>();
-        buttons.add("Con Frenesia");
-        buttons.add("Senza Frenesia");
+        buttons.add(CON_FRENESIA);
+        buttons.add(SENZA_FRENESIA);
         javafx.event.EventHandler<javafx.event.ActionEvent> eventHandler = (e->{
             String answer = ((RadioButton)group.getSelectedToggle()).getText();
             println(answer);
-            exchanger.setAnswer(answer.equalsIgnoreCase("Con Frenesia"));
+            exchanger.setAnswer(answer.equalsIgnoreCase(CON_FRENESIA));
             exchanger.setActualInteraction(Interaction.NONE);
             appStage.setScene(new Scene(initializerBackground()));
         });
@@ -1871,7 +1893,7 @@ public class Gui extends Application{
     }
 
     private Font getFont(double dim){
-        InputStream streamFont = getClass().getClassLoader().getResourceAsStream("font/ethnocentric_rg.ttf");
+        InputStream streamFont = getClass().getClassLoader().getResourceAsStream(FONT_NAME);
 
         return Font.loadFont(streamFont, dim*0.8); //the new font is bigger
     }

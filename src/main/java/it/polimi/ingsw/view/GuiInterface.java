@@ -17,7 +17,44 @@ import java.util.logging.Logger;
  * GuiInterface implements UserInterface and it's the Class that handles the connection between the server and the GUI
  */
 public class GuiInterface implements UserInterface{
+    /**
+     * The exchanger of the information between Gui and GuiInterface
+     */
     private GuiExchanger exchanger;
+
+    /**
+     * Strings used in this class
+     */
+    private static final String UPDATING_VIEW = "Updating view...";
+    private static final String INSERISCI_IL_TUO_NICKNAME = "Inserisci il tuo nickname";
+    private static final String INSERISCI_LA_TUA_FRASE_DI_BATTAGLIA = "Inserisci la tua frase di battaglia";
+    private static final String SCEGLI_IL_TUO_COMBATTENTE = "Scegli il tuo combattente";
+    private static final String SCEGLI_IL_NUMERO_DI_TESCHI_DA_USARE = "Scegli il numero di teschi da usare";
+    private static final String ACTIVITY_PREFIX = "a-";
+    private static final String SCEGLI_UN_AZIONE_DI_BASE = "Scegli un'azione di base";
+    private static final String WEAPON_PREFIX = "w";
+    private static final String SCEGLI_L_AZIONE_DA_USARE = "Scegli l'azione da usare";
+    private static final String ACTION_REQUESTED_CAN_T_BE_HANDLED = "Action requested can't be handled!!!";
+    private static final String SCEGLI_UN_ARMA_CON_CUI_SPARARE = "Scegli un'arma con cui sparare";
+    private static final String SCEGLI_UN_ARMA_DA_RACCOGLIERE = "Scegli un'arma da raccogliere";
+    private static final String SCEGLI_UN_ARMA_DA_RICARICARE = "Scegli un'arma da ricaricare";
+    private static final String SCEGLI_UN_ARMA_DA_SCARTARE = "Scegli un'arma da scartare";
+    private static final String SCEGLI_UNA_POWER_DA_USARE = "Scegli una power da usare";
+    private static final String SCEGLI_UNA_CARTA_POWER = "Scegli una carta power";
+    private static final String SCEGLI_DOVE_MUOVERTI = "Scegli dove muoverti";
+    private static final String SCEGLI_UNA_POSIZIONE = "Scegli una posizione";
+    private static final String SCEGLI_UNA_MUNIZIONE_DA_USARE = "Scegli una munizione da usare";
+    private static final String SCEGLI_DOVE_MUOVERE_IL_NEMICO = "Scegli dove muovere il nemico";
+    private static final String SCEGLI_UN_NEMICO = "Scegli un nemico";
+    private static final String SCEGLI_UNA_STANZA = "Scegli una stanza";
+    private static final String SCEGLI_UNA_DIREZIONE_CARDINALE = "Scegli una direzione cardinale";
+    private static final String CON_QUALE_MAPPA_VUOI_GIOCARE = "Con quale mappa vuoi giocare?";
+    private static final String VUOI_USARE_LA_MODALITÀ_FRENESIA = "Vuoi usare la modalità frenesia?";
+    private static final String ENDGAME = "ENDGAME\n";
+    private static final String VUOI_USARE_RMI_O_SOCKET = "Vuoi usare RMI o Socket?";
+    private static final String INSERISCI_L_IP_DEL_SERVER = "Inserisci l'IP del server.";
+    private static final String INDIRIZZO_IP_NON_CORRETTAMENTE_FORMATTATO = "Indirizzo IP non correttamente formattato\nInserisci l'IP del server.";
+    private static final String SELEZIONA_L_INDIRIZZO_SU_CUI_VUOI_GIOCARE = "Seleziona l'indirizzo su cui vuoi giocare";
 
     //TODO remove main and test pieces
     public static void main(String[] args){
@@ -297,7 +334,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public void updateGame(MatchView matchView) {
-        exchanger.setRequest(Interaction.UPDATEVIEW, "Updating view...", matchView, true);
+        exchanger.setRequest(Interaction.UPDATEVIEW, UPDATING_VIEW, matchView, true);
         exchanger.waitFreeToUse();
     }
 
@@ -308,7 +345,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public String getNickname() {
-        exchanger.setRequest(Interaction.GETNICKNAME, "Inserisci il tuo nickname", null, true);
+        exchanger.setRequest(Interaction.GETNICKNAME, INSERISCI_IL_TUO_NICKNAME, null, true);
         exchanger.waitFreeToUse();
         return (String)exchanger.getAnswer();
     }
@@ -320,7 +357,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public String getPhrase() {
-        exchanger.setRequest(Interaction.GETPHRASE, "Inserisci la tua frase di battaglia", null, true);
+        exchanger.setRequest(Interaction.GETPHRASE, INSERISCI_LA_TUA_FRASE_DI_BATTAGLIA, null, true);
         exchanger.waitFreeToUse();
         return (String)exchanger.getAnswer();
     }
@@ -332,7 +369,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Fighter getFighter(List<Fighter> available) {
-        exchanger.setRequest(Interaction.GETFIGHTER, "Scegli il tuo combattente", available, true);
+        exchanger.setRequest(Interaction.GETFIGHTER, SCEGLI_IL_TUO_COMBATTENTE, available, true);
         exchanger.waitFreeToUse();
         return (Fighter) exchanger.getAnswer();
     }
@@ -344,7 +381,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer getSkullNum() {
-        exchanger.setRequest(Interaction.GETSKULLSNUM, "Scegli il numero di teschi da usare", null, true);
+        exchanger.setRequest(Interaction.GETSKULLSNUM, SCEGLI_IL_NUMERO_DI_TESCHI_DA_USARE, null, true);
         exchanger.waitFreeToUse();
         return (Integer) exchanger.getAnswer();
     }
@@ -359,21 +396,21 @@ public class GuiInterface implements UserInterface{
     @Override
     public Action chooseAction(List<Action> available, boolean mustChoose) {
         //if id "a-*" -> run, shoot...
-        if(available.get(0).getLambdaID().contains("a-")) {
-            exchanger.setRequest(Interaction.CHOOSEBASEACTION, "Scegli un'azione di base", available, mustChoose);
+        if(available.get(0).getLambdaID().contains(ACTIVITY_PREFIX)) {
+            exchanger.setRequest(Interaction.CHOOSEBASEACTION, SCEGLI_UN_AZIONE_DI_BASE, available, mustChoose);
             exchanger.waitFreeToUse();
             return (Action) exchanger.getAnswer();
         }
 
         //weapons
-        if(available.get(0).getLambdaID().contains("w")) {
-            exchanger.setRequest(Interaction.CHOOSEWEAPONACTION, "Scegli l'azione da usare", available, mustChoose);
+        if(available.get(0).getLambdaID().contains(WEAPON_PREFIX)) {
+            exchanger.setRequest(Interaction.CHOOSEWEAPONACTION, SCEGLI_L_AZIONE_DA_USARE, available, mustChoose);
             exchanger.waitFreeToUse();
             return (Action) exchanger.getAnswer();
         }
 
         //Not sure 100% there's no other type of action
-        Logger.getGlobal().log(Level.SEVERE, "Action requested can't be handled!!!");
+        Logger.getGlobal().log(Level.SEVERE, ACTION_REQUESTED_CAN_T_BE_HANDLED);
         return null;
     }
 
@@ -386,7 +423,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Scegli un'arma con cui sparare", available, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, SCEGLI_UN_ARMA_CON_CUI_SPARARE, available, mustChoose);
         exchanger.waitFreeToUse();
         return (Weapon)exchanger.getAnswer();
     }
@@ -400,7 +437,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Scegli un'arma da raccogliere", grabbable, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, SCEGLI_UN_ARMA_DA_RACCOGLIERE, grabbable, mustChoose);
         exchanger.waitFreeToUse();
         return (Weapon)exchanger.getAnswer();
     }
@@ -414,7 +451,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon reload(List<Weapon> reloadable, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Scegli un'arma da ricaricare", reloadable, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, SCEGLI_UN_ARMA_DA_RICARICARE, reloadable, mustChoose);
         exchanger.waitFreeToUse();
         return (Weapon)exchanger.getAnswer();
     }
@@ -428,7 +465,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEWEAPON, "Scegli un'arma da scartare", inHand, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEWEAPON, SCEGLI_UN_ARMA_DA_SCARTARE, inHand, mustChoose);
         exchanger.waitFreeToUse();
         return (Weapon)exchanger.getAnswer();
     }
@@ -442,7 +479,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power choosePower(List<Power> inHand, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEPOWER, "Scegli una power da usare", inHand, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEPOWER, SCEGLI_UNA_POWER_DA_USARE, inHand, mustChoose);
         exchanger.waitFreeToUse();
         return (Power)exchanger.getAnswer();
     }
@@ -456,7 +493,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Power discardPower(List<Power> powers, boolean mustChoose) {
-        exchanger.setRequest(Interaction.DISCARDPOWER, "Scegli una carta power", powers, mustChoose);
+        exchanger.setRequest(Interaction.DISCARDPOWER, SCEGLI_UNA_CARTA_POWER, powers, mustChoose);
         exchanger.waitFreeToUse();
         return (Power)exchanger.getAnswer();
     }
@@ -470,7 +507,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Point movePlayer(List<Point> destinations, boolean mustChoose) {
-        exchanger.setRequest(Interaction.MOVEPLAYER, "Scegli dove muoverti", destinations, mustChoose);
+        exchanger.setRequest(Interaction.MOVEPLAYER, SCEGLI_DOVE_MUOVERTI, destinations, mustChoose);
         exchanger.waitFreeToUse();
         return (Point) exchanger.getAnswer();
     }
@@ -484,7 +521,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Point choosePosition(List<Point> positions, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEPOSITION, "Scegli una posizione", positions, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEPOSITION, SCEGLI_UNA_POSIZIONE, positions, mustChoose);
         exchanger.waitFreeToUse();
         return (Point) exchanger.getAnswer();
     }
@@ -497,7 +534,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Color chooseAmmo(List<Color> available, boolean mustChoose){
-        exchanger.setRequest(Interaction.CHOOSEAMMO, "Scegli una munizione da usare", available, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEAMMO, SCEGLI_UNA_MUNIZIONE_DA_USARE, available, mustChoose);
         exchanger.waitFreeToUse();
         return (Color) exchanger.getAnswer();
     }
@@ -512,7 +549,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Point moveEnemy(PlayerView enemy, List<Point> destinations, boolean mustChoose) {
-        exchanger.setRequest(Interaction.MOVEENEMY, "Scegli dove muovere il nemico", destinations, mustChoose);
+        exchanger.setRequest(Interaction.MOVEENEMY, SCEGLI_DOVE_MUOVERE_IL_NEMICO, destinations, mustChoose);
         exchanger.waitFreeToUse();
         return (Point) exchanger.getAnswer();
     }
@@ -526,7 +563,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public PlayerView chooseTarget(List<PlayerView> targets, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSETARGET, "Scegli un nemico", targets, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSETARGET, SCEGLI_UN_NEMICO, targets, mustChoose);
         exchanger.waitFreeToUse();
         return (PlayerView) exchanger.getAnswer();
     }
@@ -540,7 +577,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEROOM, "Scegli una stanza", rooms, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEROOM, SCEGLI_UNA_STANZA, rooms, mustChoose);
         exchanger.waitFreeToUse();
         return (Integer)exchanger.getAnswer();
     }
@@ -553,7 +590,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Direction chooseDirection(List<Direction> possible, boolean mustChoose) {
-        exchanger.setRequest(Interaction.CHOOSEDIRECTION, "Scegli una direzione cardinale", possible, mustChoose);
+        exchanger.setRequest(Interaction.CHOOSEDIRECTION, SCEGLI_UNA_DIREZIONE_CARDINALE, possible, mustChoose);
         exchanger.waitFreeToUse();
         return (Direction) exchanger.getAnswer();
     }
@@ -565,7 +602,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Integer chooseMap() {
-        exchanger.setRequest(Interaction.CHOOSEMAP, "Con quale mappa vuoi giocare?", null, true);
+        exchanger.setRequest(Interaction.CHOOSEMAP, CON_QUALE_MAPPA_VUOI_GIOCARE, null, true);
         exchanger.waitFreeToUse();
         return (Integer) exchanger.getAnswer();
     }
@@ -577,7 +614,7 @@ public class GuiInterface implements UserInterface{
      */
     @Override
     public Boolean chooseFrenzy() {
-        exchanger.setRequest(Interaction.CHOOSEFRENZY, "Vuoi usare la modalità frenesia?", null, true);
+        exchanger.setRequest(Interaction.CHOOSEFRENZY, VUOI_USARE_LA_MODALITÀ_FRENESIA, null, true);
         exchanger.waitFreeToUse();
         return (boolean)exchanger.getAnswer();
     }
@@ -587,7 +624,7 @@ public class GuiInterface implements UserInterface{
      * @param winnerList Ordered players' list
      */
     public void endGame(List<PlayerView> winnerList) {
-        String message = "ENDGAME\n";
+        String message = ENDGAME;
 
         for(int i = winnerList.size() - 1; i >= 0; i--) {
             message += (i + 1) +"° con " + winnerList.get(i).getPoints() + " punti è " + winnerList.get(i).getNick() + "\n";
@@ -611,7 +648,7 @@ public class GuiInterface implements UserInterface{
      * @return true in case of RMI connection, false elsewhere
      */
     public boolean useRMI(){
-        exchanger.setRequest(Interaction.RMIORSOCKET, "Vuoi usare RMI o Socket?", null, true);
+        exchanger.setRequest(Interaction.RMIORSOCKET, VUOI_USARE_RMI_O_SOCKET, null, true);
         exchanger.waitFreeToUse();
         return (boolean)exchanger.getAnswer();
     }
@@ -621,12 +658,12 @@ public class GuiInterface implements UserInterface{
      * @return Server's IP address
      */
     public String getIPAddress(){
-        exchanger.setRequest(Interaction.SERVERIP, "Inserisci l'IP del server.", null, true);
+        exchanger.setRequest(Interaction.SERVERIP, INSERISCI_L_IP_DEL_SERVER, null, true);
         exchanger.waitFreeToUse();
         String ip = (String)exchanger.getAnswer();
 
         while(!checkIP(ip)) {
-            exchanger.setRequest(Interaction.SERVERIP, "Indirizzo IP non correttamente formattato\nInserisci l'IP del server.", null, true);
+            exchanger.setRequest(Interaction.SERVERIP, INDIRIZZO_IP_NON_CORRETTAMENTE_FORMATTATO, null, true);
             exchanger.waitFreeToUse();
             ip = (String)exchanger.getAnswer();
         }
@@ -661,7 +698,7 @@ public class GuiInterface implements UserInterface{
      * @return Server's IP address
      */
     public String getLocalAddress(List<String> possibleIP){
-        exchanger.setRequest(Interaction.ASKLOCALADDRESS, "Seleziona l'indirizzo su cui vuoi giocare", possibleIP, true);
+        exchanger.setRequest(Interaction.ASKLOCALADDRESS, SELEZIONA_L_INDIRIZZO_SU_CUI_VUOI_GIOCARE, possibleIP, true);
         exchanger.waitFreeToUse();
         return (String)exchanger.getAnswer();
     }

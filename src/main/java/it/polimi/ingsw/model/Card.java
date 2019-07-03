@@ -7,7 +7,14 @@ import java.io.Serializable;
  * It's useful for the description of the Decks that can only be made of Cards
  */
 public abstract class Card implements Serializable {
+    /**
+     * Id of the card
+     */
     protected int id;
 
+    /**
+     * Returns the id of the card
+     * @return The id
+     */
     public int getId() { return id; }
 }
