@@ -8,7 +8,7 @@
 | Functionality | State |
 |:-----------------------|:------------------------------------:|
 | Basic rules | [![GREEN](https://placehold.it/15/44bb44/44bb44)](#) |
-| Complete rules | [![GREEN](https://placehold.it/15/44bb44/44bb44)](#) |
+| Complete rules | [![GREEN](https://placehold.it/15/44bb44/44bb44)](#)te |
 | Socket | [![GREEN](https://placehold.it/15/44bb44/44bb44)](#) |
 | RMI | [![GREEN](https://placehold.it/15/44bb44/44bb44)](#) |
 | GUI | [![GREEN](https://placehold.it/15/44bb44/44bb44)](#) |
@@ -29,6 +29,10 @@
 The "Executables" folder, found in the root of this repository, contains already built versions of every jar, configured in already set-up environments for every OS. JavaFX libraries for different operating systems are also provided in the aforementioned environments.
 
 These environments include easy to use `.sh` and `.bat` files which can be used to start servers and clients with a simple double click.
+If you're trying to run `.sh` scripts on Linux or MacOS, please make sure the scripts have _execute_ permissions. Otherwise, you can set them with the following command:
+```
+chmod +x [SCRIPT NAME]
+```
 
 ## Running the Server
 The server can be executed with `AM06_Server.jar`, built during Maven's `package` step.
