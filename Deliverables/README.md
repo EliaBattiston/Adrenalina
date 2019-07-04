@@ -5,3 +5,6 @@
 
 ### 13/05 delivery
 * __Communication Protocol.pdf__: description of the communication protocol and its implementation
+
+### 05/07 delivery
+* __Final report.pdf__: final report of project development

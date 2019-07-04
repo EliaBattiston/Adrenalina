@@ -1,0 +1,1 @@
+java -jar AM06_Client.jar -g

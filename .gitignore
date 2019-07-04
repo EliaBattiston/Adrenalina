@@ -8,5 +8,6 @@
 !javadoc/
 !others/
 !images/
+!Executables/
 src/main/java/META-INF/*
 src/main/resources/META-INF/*
