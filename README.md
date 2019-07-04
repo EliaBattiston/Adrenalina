@@ -31,7 +31,7 @@ The "Executables" folder, found in the root of this repository, contains already
 These environments include easy to use `.sh` and `.bat` files which can be used to start servers and clients with a simple double click.
 If you're trying to run `.sh` scripts on Linux or MacOS, please make sure the scripts have _execute_ permissions. Otherwise, you can set them with the following command:
 ```
-chmod +x [SCRIPT NAME]
+chmod a+x [SCRIPT NAME]
 ```
 
 ## Running the Server
