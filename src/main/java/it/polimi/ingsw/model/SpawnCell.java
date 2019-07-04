@@ -149,6 +149,11 @@ public class SpawnCell extends Cell{
         if(pl.getWeapons().size() >= WEAPONS_NUMBER)
         {
             Weapon discard = pl.getConn().discardWeapon(pl.getWeapons(), true);
+            if(!pl.getWeapons().contains(discard)) {
+                for(Weapon w: pl.getWeapons())
+                    if(w.getId() == discard.getId())
+                        discard = w;
+            }
 
             pl.applyEffects(EffectsLambda.removeWeapon(discard, this));
         }
@@ -165,7 +170,7 @@ public class SpawnCell extends Cell{
             int pos;
             for(pos=0; pos< WEAPONS_NUMBER && weaponsInHand[pos] != null; pos++)
                 ;
-            if(pos<= WEAPONS_NUMBER && weaponsInHand[pos] == null)
+            if(pos <= WEAPONS_NUMBER && weaponsInHand[pos] == null)
             {
                 weaponsInHand[pos] = picked;
                 picked.setLoaded(true);

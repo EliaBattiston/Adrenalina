@@ -638,6 +638,7 @@ public class GuiInterface implements UserInterface{
      * @param message Message to be printed
      */
     public void generalMessage(String message){
+        exchanger.waitFreeToUse();
         println(message);
         exchanger.setRequest(Interaction.LOG, message, null, true);
         exchanger.waitFreeToUse();
