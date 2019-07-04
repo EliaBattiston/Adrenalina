@@ -1,0 +1,5 @@
+{
+    "startMatchSeconds": 60,
+    "playerTurnSeconds": 180,
+    "minPlayers": 3
+}
