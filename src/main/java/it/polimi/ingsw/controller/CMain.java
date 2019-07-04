@@ -6,14 +6,12 @@ import it.polimi.ingsw.view.CLInterface;
 import it.polimi.ingsw.view.GuiInterface;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,8 +30,16 @@ public class CMain
     public static void main(String[] args) {
         System.setProperty("java.security.policy", "AM06.policy");
         List<String> flags = Arrays.asList(args);
-        if(flags.contains("-g"))
-            new CMain(true);
+        if(flags.contains("-g")) {
+            if(new File("./javafx-sdk-11/lib/javafx.base.jar").exists()
+            && new File("./javafx-sdk-11/lib/javafx.graphics.jar").exists()
+            && new File("./javafx-sdk-11/lib/javafx.controls.jar").exists())
+                new CMain(true);
+            else {
+                Logger.getGlobal().log(Level.SEVERE, "No JavaFX libraries found in path ./javafx-sdk-11/lib/\nPlease provide libraries as explained in README\n\nPress Enter to continue...");
+                new Scanner(System.in).nextLine();
+            }
+        }
         else
             new CMain(false);
     }

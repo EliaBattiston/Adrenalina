@@ -6,14 +6,14 @@ import it.polimi.ingsw.view.AInterface;
 import it.polimi.ingsw.view.GuiAInterface;
 import it.polimi.ingsw.view.UserInterface;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main class for the AInterface
@@ -44,8 +44,17 @@ public class AIMain
             }
         }
 
-        if(flags.contains("-g"))
-            new AIMain(host, true, rmi);
+        if(flags.contains("-g")) {
+            if(new File("./javafx-sdk-11/lib/javafx.base.jar").exists()
+                    && new File("./javafx-sdk-11/lib/javafx.graphics.jar").exists()
+                    && new File("./javafx-sdk-11/lib/javafx.controls.jar").exists())
+                new AIMain(host, true, rmi);
+            else {
+                Logger.getGlobal().log(Level.SEVERE, "No JavaFX libraries found in path ./javafx-sdk-11/lib/\nPlease provide libraries as explained in README\n\nPress Enter to continue...");
+                new Scanner(System.in).nextLine();
+
+            }
+        }
         else
             new AIMain(host, false, rmi);
     }
