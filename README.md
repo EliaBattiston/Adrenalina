@@ -44,7 +44,6 @@ java -jar AM06_Server.jar
 
 ### Configuration
 The configuration of the server can be changed by placing a `config.json` file in the same folder of the server jar.
-A compiled version of the file can be found in the "Executables" folder of this repository.
 
 The syntax of the configuration file is the following:
 
@@ -59,6 +58,7 @@ The values reported in this example are the defaults, set by the server if no `c
 
 ## Running the Client
 The client can be executed with `AM06_Client.jar`, built during Maven's `package` step.
+A compiled version of the file can be found in the "Executables" folder of this repository.
 
 ```
 java -jar AM06_Client.jar
@@ -73,7 +73,7 @@ This command executes the CLI version of the client. Starting up the Client in i
 ### JavaFX external libraries
 When executing the Client with a GUI (with the `-g` startup flag) JavaFX libraries for the correct OS have to be provided by placing the `javafx-sdk-11` folder in the same folder where `AM06_Client.jar` is placed.
 
-A working version of the libraries can be found in the "Executables" folder of this repository.
+A compatible version of the libraries can be found in the "Executables" folder of this repository.
 
 In particular, these files need to be present in `./javafx-sdk-11/lib/`:
 
