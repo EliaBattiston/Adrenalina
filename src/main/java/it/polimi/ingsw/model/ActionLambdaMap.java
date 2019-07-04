@@ -540,6 +540,37 @@ public class ActionLambdaMap {
         });
 
         //Alternative effects
+        data.put("w4-al", (pl, map, memory)->{
+            //Muovi di 1 o 2 quadrati e dai 2 danni a 1 bersaglio che puoi vedere.
+
+            List<Point> possible = Map.possibleMovements(pl.getPosition(), 2, map);
+            List<Point> points = new ArrayList<>(possible);
+
+            Point initialPosition = new Point(pl.getPosition());
+
+            for(Point p : possible)
+            {
+                //Put the player in the simulated future position
+                pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+                //If no weapon has suitable action, we can't propose to move to this position
+                if(!FeasibleLambdaMap.isFeasible("w4-b", pl, map, memory) || p.samePoint(initialPosition))
+                    points.remove(p);
+            }
+
+            //Return the player to its real position
+            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+            Point chosenPoint = pl.getConn().movePlayer(points, true);
+            pl.applyEffects(EffectsLambda.move(pl, chosenPoint, map));
+
+            List<Player> targets = Map.visiblePlayers(pl, map);
+            Player chosen = pl.getConn().chooseTarget(targets, true);
+            EffectsLambda.giveDamage(pl, chosen, 2);
+
+            ((Player[])memory)[0] = chosen;
+        });
+
         data.put("w6-al", (pl, map, memory)->{
             //Dai 2 danni a ogni altro giocatore presente nel quadrato in cui ti trovi.
 
@@ -628,6 +659,37 @@ public class ActionLambdaMap {
             EffectsLambda.giveDamage(pl, chosen1, 2);
             if(chosen2 != null)
                 chosen2.applyEffects(EffectsLambda.damage(2, pl));
+        });
+
+        data.put("w16-al", (pl, map, memory)->{
+            //Muovi di 1 o 2 quadrati e dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.
+
+            List<Point> possible = Map.possibleMovements(pl.getPosition(), 1, map);
+            List<Point> points = new ArrayList<>(possible);
+
+            Point initialPosition = new Point(pl.getPosition());
+
+            for(Point p : possible)
+            {
+                //Put the player in the simulated future position
+                pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+                //If no weapon has suitable action, we can't propose to move to this position
+                if(!FeasibleLambdaMap.isFeasible("w16-b", pl, map, memory) || p.samePoint(initialPosition))
+                    points.remove(p);
+            }
+
+            //Return the player to its real position
+            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+            Point chosenPoint = pl.getConn().movePlayer(points, true);
+            pl.applyEffects(EffectsLambda.move(pl, chosenPoint, map));
+
+            List<Player> targets = Map.playersAtGivenDistance(pl, map, true, (p1, p2)-> map.distance(p1, p2)==0);
+            Player chosen = pl.getConn().chooseTarget(targets, true);
+            EffectsLambda.giveDamage(pl, chosen, 2);
+
+            ((Player[])memory)[0] = chosen;
         });
 
         data.put("w17-al", (pl, map, memory)->{
@@ -894,6 +956,7 @@ public class ActionLambdaMap {
     private static void runToLoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
+        possible.add(pl.getPosition());
         List<Point> destinations = new ArrayList<>(possible);
 
         for(Point p : possible)
@@ -904,7 +967,7 @@ public class ActionLambdaMap {
             }
         }
 
-        Point chosen = pl.getConn().movePlayer(destinations, false);
+        Point chosen = pl.getConn().movePlayer(destinations, true);
 
         if(chosen != null)
         {
@@ -1006,7 +1069,9 @@ public class ActionLambdaMap {
             case "w2-b":
             case "w3-b":
             case "w4-b":
+            case "w4-al":
             case "w16-b":
+            case "w16-al":
             case "w8-b":
                 mem = new Player[2];
                 break;
@@ -1020,10 +1085,11 @@ public class ActionLambdaMap {
             purchase(pl, toExecute.getCost());
 
         toExecute.execute(pl, map, mem);
+        String firstExecute = toExecute.getLambdaID();
 
         Match.broadcastMessage(pl.getNick() + SHOOTSWITH + chosen.getName() + ": " +toExecute.getName(), messageReceivers);
 
-        if(toExecute.getLambdaID().contains("-b")) //Base action
+        if(toExecute.getLambdaID().contains("-b") || toExecute.getLambdaID().equals("w4-al") || toExecute.getLambdaID().equals("w16-al")) //Base action
         {
             //Additional actions management
             weaponActions.clear();
@@ -1038,6 +1104,11 @@ public class ActionLambdaMap {
                 {
                     purchaseable.add(a);
                 }
+            }
+
+            //Don't let users use the same action of the weapon twice in these cases
+            if(toExecute.getLambdaID().equals("w4-al") || toExecute.getLambdaID().equals("w16-al")){
+                purchaseable.remove(0);
             }
 
             if(!purchaseable.isEmpty()){
@@ -1061,6 +1132,11 @@ public class ActionLambdaMap {
                         {
                             purchaseable.add(a);
                         }
+                    }
+
+                    //Don't let users use the same action of the weapon twice in these cases
+                    if(firstExecute.equals("w4-al") || firstExecute.equals("w16-al")){
+                        purchaseable.remove(0);
                     }
 
                     if (!purchaseable.isEmpty())

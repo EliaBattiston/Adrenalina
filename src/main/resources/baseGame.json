@@ -92,7 +92,12 @@
                 "cost": ["BLUE"],
                 "lambdaIdentifier": "w4-ad2"
             }],
-            "alternative": null,
+            "alternative": {
+                "description": "Muovi di 1 o 2 quadrati e dai 2 danni a 1 bersaglio che puoi vedere.",
+                "name": "Slittamento di fase",
+                "cost": [],
+                "lambdaIdentifier": "w4-al"
+            },
             "color": "BLUE"
         }, {
             "id": 5,
@@ -310,7 +315,7 @@
                 "lambdaIdentifier": "w16-b"
             },
             "additional": [{
-                "description": "Muovi di 1 quadrato prima o dopo l'effetto base.",
+                "description": "Muovi di 1 quadrato.",
                 "name": "Passo d'ombra",
                 "cost": [],
                 "lambdaIdentifier": "w16-ad1"
@@ -320,7 +325,12 @@
                 "cost": ["YELLOW"],
                 "lambdaIdentifier": "w16-ad2"
             }],
-            "alternative": null,
+            "alternative": {
+                "description": "Muovi di 1 e dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.",
+                "name": "Passo d'ombra",
+                "cost": [],
+                "lambdaIdentifier": "w16-al"
+            },
             "color": "YELLOW"
         }, {
             "id": 17,

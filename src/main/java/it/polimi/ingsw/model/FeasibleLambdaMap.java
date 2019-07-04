@@ -299,6 +299,29 @@ public class FeasibleLambdaMap
         });
 
         //Alternative effects
+        data.put("w4-al", (pl, map, memory)->{
+            //Muovi di 1 o 2 quadrati e dai 2 danni a 1 bersaglio che puoi vedere.
+            List<Point> possible = Map.possibleMovements(pl.getPosition(), 2, map);
+            List<Point> destinations = new ArrayList<>(possible);
+
+            Point initialPosition = new Point(pl.getPosition());
+
+            for(Point p : possible)
+            {
+                //Put the player in the simulated future position
+                pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+                //If no weapon has suitable action, we can't propose to move to this position
+                if(!isFeasible("w4-b", pl, map, memory) || p.samePoint(initialPosition))
+                    destinations.remove(p);
+            }
+
+            //Return the player to its real position
+            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+            return !destinations.isEmpty();
+        });
+
         data.put("w6-al", (pl, map, memory)->{
             //Dai 2 danni a ogni altro giocatore presente nel quadrato in cui ti trovi.
 
@@ -341,6 +364,29 @@ public class FeasibleLambdaMap
             targets.addAll(Map.visiblePlayers(pl, map, Direction.SOUTH));
             targets.addAll(Map.visiblePlayers(pl, map, Direction.WEST));
             return !targets.isEmpty();
+        });
+
+        data.put("w16-al", (pl, map, memory)->{
+            //Muovi di 1 o 2 quadrati e dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.
+            List<Point> possible = Map.possibleMovements(pl.getPosition(), 1, map);
+            List<Point> destinations = new ArrayList<>(possible);
+
+            Point initialPosition = new Point(pl.getPosition());
+
+            for(Point p : possible)
+            {
+                //Put the player in the simulated future position
+                pl.applyEffects(EffectsLambda.move(pl, p, map));
+
+                //If no weapon has suitable action, we can't propose to move to this position
+                if(!isFeasible("w16-b", pl, map, memory) || p.samePoint(initialPosition))
+                    destinations.remove(p);
+            }
+
+            //Return the player to its real position
+            pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
+
+            return !destinations.isEmpty();
         });
 
         data.put("w17-al", (pl, map, memory)->{
