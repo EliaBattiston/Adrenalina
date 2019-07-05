@@ -3,6 +3,9 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.exceptions.ClientDisconnectedException;
 import it.polimi.ingsw.model.Player;
 
+/**
+ * Runnable Client connection
+ */
 public class ClientConnThread implements Runnable {
     private Player player;
     private SMain main;

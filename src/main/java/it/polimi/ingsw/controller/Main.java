@@ -3,6 +3,9 @@ package it.polimi.ingsw.controller;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Main class of Adrenalina, it lets you choose if you want to start server/client/AI
+ */
 public class Main {
 
     private static final String LOCALHOST = "localhost";

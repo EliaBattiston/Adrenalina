@@ -4,6 +4,9 @@ import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Handler of the timeouts of the player's turn
+ */
 public class Timeout
 {
     final ExecutorService executor;

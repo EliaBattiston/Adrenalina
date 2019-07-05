@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.*;
 import java.security.SecureRandom;
 import java.util.List;
 
+/**
+ * Interface for AIs
+ */
 public class AInterface extends CLInterface {
 
     /**

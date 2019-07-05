@@ -2,6 +2,9 @@ package it.polimi.ingsw.clientmodel;
 
 import java.io.Serializable;
 
+/**
+ * View version of the Kill Class
+ */
 public class KillView implements Serializable
 {
     private boolean skull;

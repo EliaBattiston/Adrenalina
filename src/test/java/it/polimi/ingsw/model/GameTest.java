@@ -389,4 +389,23 @@ public class GameTest {
         g.removePlayer(p1.getNick());
         assertFalse(g.getPlayers().contains(p1));
     }
+
+    /**
+     * Tests the next player logic in the game
+     */
+    @Test
+    public void testNextPlayer(){
+        Game g = new Game(5, new Map(), null, null, null);
+        Player p1 = new Player("ERap320", "Yay!", Fighter.DSTRUTTOR3);
+        Player p2 = new Player("Aaa", "Yay!", Fighter.DOZER);
+        Player p3 = new Player("Bbb", "Yay!", Fighter.BANSHEE);
+
+        g.addPlayer(p1);
+        g.addPlayer(p2);
+        g.addPlayer(p3);
+
+        assertEquals(g.getNextPlayer(p1), p2);
+        assertEquals(g.getNextPlayer(p2), p3);
+        assertEquals(g.getNextPlayer(p3), p1);
+    }
 }

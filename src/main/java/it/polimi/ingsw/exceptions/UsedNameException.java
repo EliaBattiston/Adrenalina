@@ -1,5 +1,8 @@
 package it.polimi.ingsw.exceptions;
 
+/**
+ * Exception thrown when there's another player already in the game queue with the same Nick
+ */
 public class UsedNameException extends RuntimeException
 {
     public UsedNameException()

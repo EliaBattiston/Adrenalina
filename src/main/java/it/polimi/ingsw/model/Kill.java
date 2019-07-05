@@ -27,7 +27,7 @@ public class Kill implements Serializable {
      *
      * @param hasSkull If true, the box is created with a skull on it
      */
-    Kill(boolean hasSkull)
+    public Kill(boolean hasSkull)
     {
         this.skull = hasSkull;
         this.killer = null;

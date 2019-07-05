@@ -68,6 +68,11 @@ public class Game implements Serializable {
         this.players = new ArrayList<>();
     }
 
+    /**
+     * Return the player after the actual one
+     * @param current the current player
+     * @return the player in the list after the actual one
+     */
     public Player getNextPlayer(Player current)
     {
         int position = players.indexOf(current);

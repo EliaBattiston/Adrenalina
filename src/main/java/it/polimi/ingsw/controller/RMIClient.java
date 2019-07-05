@@ -18,6 +18,9 @@ import java.util.List;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * The RMI implementation of a Client
+ */
 public class RMIClient extends UnicastRemoteObject implements Client, Serializable
 {
     /**

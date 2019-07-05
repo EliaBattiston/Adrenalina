@@ -3,6 +3,9 @@ package it.polimi.ingsw.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Singleton which contains base actions
+ */
 public class Activities {
     private static final int FIRST_DAMAGE_LIMIT = 3;
     private static final int SECOND_DAMAGE_LIMIT = 6;

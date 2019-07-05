@@ -8,6 +8,10 @@ import it.polimi.ingsw.model.Weapon;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * This class contains all the information needed by the client to display its user's player information.
+ * It contains information only available to the player whose perspective is reflected in the MatchView.
+ */
 public class MyPlayerView extends PlayerView implements Serializable
 {
     private List<Power> powers;

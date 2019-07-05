@@ -4,6 +4,9 @@ import it.polimi.ingsw.clientmodel.AmmoView;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test for the ammunitions class
+ */
 public class AmmunitionsTest {
 
     /**

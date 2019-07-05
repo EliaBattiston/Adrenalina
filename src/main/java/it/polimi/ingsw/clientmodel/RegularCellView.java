@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.Side;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * View version of the RegularCell Class
+ */
 public class RegularCellView extends CellView implements Serializable
 {
     private Loot loot;

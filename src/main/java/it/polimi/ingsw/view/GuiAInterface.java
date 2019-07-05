@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.*;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Implementation of an AI using a GUI
+ */
 public class GuiAInterface extends GuiInterface {
 
     /**

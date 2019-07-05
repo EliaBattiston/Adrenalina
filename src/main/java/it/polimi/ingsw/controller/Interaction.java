@@ -1,5 +1,8 @@
 package it.polimi.ingsw.controller;
 
+/**
+ * Enumeration containing all the possible interactions used for network and GUI
+ */
 public enum Interaction {
     CHOOSEACTION,
     CHOOSEWEAPON,

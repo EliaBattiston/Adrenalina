@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test the ammo view class
+ */
 public class AmmoViewTest {
     /**
      * Check of ammoView correct information hiding

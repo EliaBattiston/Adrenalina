@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.*;
 
 import java.util.List;
 
+/**
+ * Generic interface to use CLI and GUI interchangeably
+ */
 public interface UserInterface
 {
     /**

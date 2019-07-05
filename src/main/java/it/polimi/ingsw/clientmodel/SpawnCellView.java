@@ -7,6 +7,9 @@ import it.polimi.ingsw.model.Weapon;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * View version of the SpawnCell Class
+ */
 public class SpawnCellView extends CellView implements Serializable
 {
     private List<Weapon> weapons;

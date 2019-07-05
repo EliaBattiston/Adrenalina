@@ -6,6 +6,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * View version of the Player Class
+ */
 public class PlayerView implements Serializable
 {
     private static final transient int DAMAGES_NUMBER = 12;

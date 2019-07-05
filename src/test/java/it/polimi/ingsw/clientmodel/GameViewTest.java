@@ -11,6 +11,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test the game view class
+ */
 public class GameViewTest {
     /**
      * Check of gameView information hiding

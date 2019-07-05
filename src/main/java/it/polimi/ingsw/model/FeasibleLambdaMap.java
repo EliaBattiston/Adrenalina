@@ -8,6 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Map of all the feasible lambdas used for the action possibility availability
+ */
 public class FeasibleLambdaMap
 {
     private HashMap<String, FeasibleLambda> data;

@@ -7,6 +7,9 @@ import it.polimi.ingsw.clientmodel.MatchView;
 import java.security.SecureRandom;
 import java.util.List;
 
+/**
+ * Connection with simulated AIs
+ */
 public class AIConnection implements Connection
 {
     /**

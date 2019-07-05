@@ -2,6 +2,9 @@ package it.polimi.ingsw.clientmodel;
 
 import java.io.Serializable;
 
+/**
+ * View version of the Ammo Class
+ */
 public class AmmoView implements Serializable
 {
     private int red;

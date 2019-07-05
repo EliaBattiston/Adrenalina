@@ -25,6 +25,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The Socket implementation of a Client
+ */
 public class SocketClient implements Client {
     /**
      * Socket connection instance to the game server

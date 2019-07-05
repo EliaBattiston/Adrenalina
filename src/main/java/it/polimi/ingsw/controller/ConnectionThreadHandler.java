@@ -1,5 +1,8 @@
 package it.polimi.ingsw.controller;
 
+/**
+ * Handler of the connection thread
+ */
 public class ConnectionThreadHandler implements Runnable {
     private Server server;
     private SMain main;

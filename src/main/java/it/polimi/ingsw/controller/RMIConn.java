@@ -10,6 +10,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The RMI implementation of a Connection
+ */
 public class RMIConn implements Connection, Serializable
 {
     /**

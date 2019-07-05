@@ -14,6 +14,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test the match view class
+ */
 public class MatchViewTest {
     /**
      * Check of matchView information hiding

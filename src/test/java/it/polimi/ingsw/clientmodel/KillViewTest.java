@@ -2,6 +2,7 @@ package it.polimi.ingsw.clientmodel;
 
 import it.polimi.ingsw.controller.Match;
 import it.polimi.ingsw.model.Fighter;
+import it.polimi.ingsw.model.Kill;
 import it.polimi.ingsw.model.Player;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/**
+ * Test the kill view class
+ */
 public class KillViewTest {
     /**
      * Check of killView information hiding
@@ -48,5 +52,20 @@ public class KillViewTest {
 
         }
         catch (FileNotFoundException ignore) { ; }
+    }
+
+    /**
+     * Tests the kill to killview method
+     */
+    @Test
+    public void testKillViewInitialization(){
+        Player p3 = new Player("Bbb", "Yay!", Fighter.BANSHEE);
+        Kill k = new Kill(true);
+        k.setKiller(p3, true);
+
+        KillView view = k.getView();
+
+        assertEquals(k.getOverkill(), view.getOverkill());
+        assertEquals(k.getKiller().getNick(), view.getKiller().getNick());
     }
 }

@@ -21,6 +21,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The Socket implementation of a Connection
+ */
 public class SocketConn implements Connection {
     /**
      * Socket connection instance to referred player

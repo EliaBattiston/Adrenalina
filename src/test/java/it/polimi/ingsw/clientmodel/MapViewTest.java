@@ -8,6 +8,9 @@ import java.io.FileNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test the map view class
+ */
 public class MapViewTest {
     /**
      * Check of mapView, spawnCellView and regularCellView information hiding

@@ -10,6 +10,9 @@ import it.polimi.ingsw.exceptions.EmptyDeckException;
 
 import java.util.ArrayList;
 
+/**
+ * Test for the Cards class
+ */
 public class CardsTest {
     /**
      * Check POWER Class: check the functionality of the constructor
