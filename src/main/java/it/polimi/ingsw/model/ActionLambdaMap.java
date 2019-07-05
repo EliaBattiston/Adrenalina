@@ -1007,7 +1007,7 @@ public class ActionLambdaMap {
         //Return the player to its real position
         pl.applyEffects(EffectsLambda.move(pl, initialPosition, map));
 
-        Point chosen = pl.getConn().movePlayer(destinations, false);
+        Point chosen = pl.getConn().movePlayer(destinations, true);
 
         if(chosen != null) {
             pl.applyEffects(EffectsLambda.move(pl, chosen, map));

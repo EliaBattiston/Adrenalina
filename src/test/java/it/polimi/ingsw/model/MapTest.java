@@ -290,7 +290,7 @@ public class MapTest {
 
             assertTrue(vis.contains(p1));
             assertTrue(vis.contains(p2));
-            assertEquals(vis.size(), 2);
+            assertEquals(2, vis.size());
         }catch (Exception ignore){
             fail();
         }

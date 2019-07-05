@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Main {
+
+    private static final String LOCALHOST = "localhost";
+
     public static void main(String[] args) {
 
         System.setProperty("java.security.policy", "AM06.policy");
@@ -15,15 +18,15 @@ public class Main {
             new CMain(true);
         else if(flags.contains("-s")) {
             if(flags.contains("-l"))
-                new SMain("localhost");
+                new SMain(LOCALHOST);
             else
                 new SMain(null);
         }
         else if(flags.contains("-ai")){
-            new AIMain("localhost", false, false);
+            new AIMain(LOCALHOST, false, false);
         }
         else if(flags.contains("-gai")){
-            new AIMain("localhost", true, false);
+            new AIMain(LOCALHOST, true, false);
         }
         else {
             println("Flag errati");

@@ -124,7 +124,7 @@ public class CLInterface implements UserInterface {
     private static final String POTENZIAMENTI_IN_MANO = "Potenziamenti in mano: ";
     private static final String NESSUN_POTENZIAMENTO_IN_MANO = "\tNessun potenziamento in mano";
     private static final String SCELTA_NON_PRESENTE_IN_ELENCO_RIPETERE = "Scelta non presente in elenco, ripetere";
-    private static final String MODALITÀ_FRENESIA = "\nModalità Frenesia: ";
+    private static final String MODALITA_FRENESIA = "\nModalità Frenesia: ";
     private static final String SI = "SI";
     private static final String NO = "NO";
     private static final String GIOCATORI = "\nGiocatori: ";
@@ -134,7 +134,7 @@ public class CLInterface implements UserInterface {
     private static final String DANNI = "Danni: ";
     private static final String MARCHI = " Marchi: ";
     private static final String TESCHI = "\nTeschi: ";
-    private static final String QUAL_È_LA_TUA_SCELTA = "Qual è la tua scelta? [";
+    private static final String QUAL_E_LA_TUA_SCELTA = "Qual è la tua scelta? [";
     private static final String AZIONI_DISPONIBILI = "\nAzioni disponibili:";
     private static final String NON_FARE_NULLA = "[0] Non fare nulla";
     private static final String ARMI_DISPONIBILI = "\nArmi disponibili:";
@@ -171,7 +171,7 @@ public class CLInterface implements UserInterface {
     private static final String OTTIMA_PER_3_O_4_GIOCATORI = "[2] Ottima per 3 o 4 giocatori";
     private static final String OTTIMA_PER_QUALSIASI_NUMERO_DI_GIOCATORI = "[3] Ottima per qualsiasi numero di giocatori";
     private static final String OTTIMA_PER_4_O_5_GIOCATORI = "[4] Ottima per 4 o 5 giocatori";
-    private static final String VUOI_LA_MODALITÀ_FRENESIA_A_FINE_PARTITA_S_N = "\nVuoi la modalità Frenesia a fine partita? [S/N]: ";
+    private static final String VUOI_LA_MODALITA_FRENESIA_A_FINE_PARTITA_S_N = "\nVuoi la modalità Frenesia a fine partita? [S/N]: ";
     private static final String SCEGLI_UN_POTENZIAMENTO_DA_USARE = "\nScegli un potenziamento da usare:";
     private static final String NON_USARE_NESSUN_POTENZIAMENTO = "[0] Non usare nessun potenziamento";
     private static final String SCEGLI_QUALE_MUNIZIONE_USARE = "\nScegli quale munizione usare:";
@@ -181,7 +181,7 @@ public class CLInterface implements UserInterface {
     private static final String IP_IN_FORMATO_NON_CORRETTO_REINSERISCILO = "IP in formato non corretto, reinseriscilo";
     private static final String LOG_ULTIMI_MESSAGGI = "--------------Log (ultimi messaggi)--------------";
     private static final String SELEZIONA_L_IP_DELLA_MACCHINA = "Seleziona l'IP della macchina";
-    private static final String LA_PARTITÀ_È_TERMINATA = "----------------- La partità è terminata --------------------\n";
+    private static final String LA_PARTITA_E_TERMINATA = "----------------- La partità è terminata --------------------\n";
     private static final String CLASSIFICA = "                         Classifica";
     private static final String ALLA_PROSSIMA = "\n\nAlla prossima!";
 
@@ -591,7 +591,7 @@ public class CLInterface implements UserInterface {
      * Prints out the Frenzy mode status
      */
     private void frenzyInfo() {
-        print(MODALITÀ_FRENESIA);
+        print(MODALITA_FRENESIA);
         if(view.getPhase() == GamePhase.FRENZY)
             print(ANSI_GREEN + SI);
         else
@@ -704,7 +704,7 @@ public class CLInterface implements UserInterface {
                 end = options.size() - 1;
 
             do {
-                print(QUAL_È_LA_TUA_SCELTA + starting + "-" + end + "]: ");
+                print(QUAL_E_LA_TUA_SCELTA + starting + "-" + end + "]: ");
                 choose = scanInt();
                 if (choose == -1 && gameInfo)
                     generalInfo();
@@ -1553,7 +1553,7 @@ public class CLInterface implements UserInterface {
     public Boolean chooseFrenzy() {
         String ans;
         do {
-            print(VUOI_LA_MODALITÀ_FRENESIA_A_FINE_PARTITA_S_N);
+            print(VUOI_LA_MODALITA_FRENESIA_A_FINE_PARTITA_S_N);
             ans = scan();
         }
         while(!ans.equalsIgnoreCase("s") && !ans.equalsIgnoreCase("n"));
@@ -1717,7 +1717,7 @@ public class CLInterface implements UserInterface {
     public void endGame(List<PlayerView> winnerList) {
         for(int i = 0; i < TOPSPACE; i++)
             println("");
-        println(LA_PARTITÀ_È_TERMINATA);
+        println(LA_PARTITA_E_TERMINATA);
         println(ANSI_BOLD + CLASSIFICA + ANSI_RESET);
         println(String.format("Pos.    %-40s Punti", "Giocatore"));
         for(int i = 0; i < winnerList.size(); i++) {
