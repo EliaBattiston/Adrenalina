@@ -50,7 +50,7 @@ The syntax of the configuration file is the following:
 ```
 {
     "startMatchSeconds": 60,
-    "playerTurnSeconds": 120,
+    "playerTurnSeconds": 180,
     "minPlayers": 3
 }
 ```
