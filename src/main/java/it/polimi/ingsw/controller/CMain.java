@@ -73,6 +73,7 @@ public class CMain
             try {
                 if (socket) {
                     new SocketClient(ip, SOCKETPORT, ui);
+                    ui.generalMessage("Connesso al server Adrenalina");
                 }
                 else {
 
@@ -123,10 +124,9 @@ public class CMain
                     new RMIClient(ip, ui);
                 }
                 instanced = true;
-                ui.generalMessage("Connesso al server Adrenalina");
             }
             catch (SocketException e) {
-                ui.generalMessage("Impossibile trovate interfacce di rete, riprova\n");
+                ui.generalMessage("Impossibile trovare interfacce di rete, riprova\n");
                 return;
             }
             catch (ServerNotFoundException e) {

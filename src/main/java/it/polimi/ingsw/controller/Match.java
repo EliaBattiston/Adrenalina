@@ -95,12 +95,12 @@ public class Match implements Runnable, Serializable
     private static final String STA_CONFIGURANDO_LA_PARTITA = " sta configurando la partita";
     private static final String HA_SCELTO_DI_USARE_LA_MAPPA = " ha scelto di usare la mappa ";
     private static final String HA_SCELTO_DI = " ha scelto di";
-    private static final String USARE_LA_MODALITÀ_FRENESIA = " usare la modalità Frenesia";
-    private static final String PARTITA_AVVIATA_È_IL_TURNO_DI = "Partita avviata, è il turno di ";
+    private static final String USARE_LA_MODALITA_FRENESIA = " usare la modalità Frenesia";
+    private static final String PARTITA_AVVIATA_E_IL_TURNO_DI = "Partita avviata, è il turno di ";
     private static final String IL_SERVER_HA_SCELTO_DI_USARE_LA_MAPPA = "Il server ha scelto di usare la mappa ";
-    private static final String IL_SERVER_HA_SCELTO_DI_USARE_LA_MODALITÀ_FRENESIA = "Il server ha scelto di usare la modalità Frenesia";
-    private static final String NON_ESEGUE_MOSSE_POICHÈ_NON_È_CONNESSO = " non esegue mosse poichè non è connesso";
-    private static final String È_IL_TURNO_DI = "È il turno di ";
+    private static final String IL_SERVER_HA_SCELTO_DI_USARE_LA_MODALITA_FRENESIA = "Il server ha scelto di usare la modalità Frenesia";
+    private static final String NON_ESEGUE_MOSSE_POICHE_NON_E_CONNESSO = " non esegue mosse poichè non è connesso";
+    private static final String E_IL_TURNO_DI = "È il turno di ";
     private static final String FINE_TURNO = "\u001B[31mFine turno ";
     private static final String ERROR_IN_WRITING_PERSISTANCE_FILE = "Error in writing persistance file";
     private static final String COULDN_T_DELETE_FILE = "Couldn't delete file";
@@ -110,9 +110,9 @@ public class Match implements Runnable, Serializable
     private static final String SCEGLI_UN_POTENZIAMENTO = "Scegli un potenziamento da scartare, il colore del potenziamento scartato determinerà la cella di spawn";
     private static final String E_SPAWNA_NELLA_CELLA = " e spawna nella cella ";
     private static final String GLI_OGGETTI_MANCANTI_DALLA_MAPPA_SONO_STATI_POSIZIONATI = "Gli oggetti mancanti dalla mappa sono stati posizionati";
-    private static final String È_STATO_UCCISO_DA = " è stato ucciso da ";
-    private static final String IL_GIOCO_È_TERMINATO = "\u001b[34mIl gioco è terminato\u001B[0m";
-    private static final String SI_È_DISCONNESSO = " si è disconnesso";
+    private static final String E_STATO_UCCISO_DA = " è stato ucciso da ";
+    private static final String IL_GIOCO_E_TERMINATO = "\u001b[34mIl gioco è terminato\u001B[0m";
+    private static final String SI_E_DISCONNESSO = " si è disconnesso";
 
     /**
      * Creates a new empty match
@@ -157,7 +157,7 @@ public class Match implements Runnable, Serializable
         broadcastMessage(game.getPlayers().get(0).getNick() + HA_SCELTO_DI_USARE_LA_MAPPA + mapNum, game.getPlayers());
 
         useFrenzy = game.getPlayers().get(0).getConn().chooseFrenzy();
-        broadcastMessage(game.getPlayers().get(0).getNick() + HA_SCELTO_DI +  ( useFrenzy ? "" : " non" ) + USARE_LA_MODALITÀ_FRENESIA, game.getPlayers());
+        broadcastMessage(game.getPlayers().get(0).getNick() + HA_SCELTO_DI +  ( useFrenzy ? "" : " non" ) + USARE_LA_MODALITA_FRENESIA, game.getPlayers());
 
         //Make folder for persistance files
         new File("matches").mkdirs();
@@ -170,7 +170,7 @@ public class Match implements Runnable, Serializable
         active = game.getPlayers().get(0);
         actionsNumber = REGULAR_ACTIONS_NUMBER;
 
-        broadcastMessage(PARTITA_AVVIATA_È_IL_TURNO_DI + active.getNick(), game.getPlayers());
+        broadcastMessage(PARTITA_AVVIATA_E_IL_TURNO_DI + active.getNick(), game.getPlayers());
 
         this.phase = GamePhase.REGULAR;
     }
@@ -213,7 +213,7 @@ public class Match implements Runnable, Serializable
                 }
 
                 useFrenzy = true;
-                broadcastMessage(IL_SERVER_HA_SCELTO_DI_USARE_LA_MODALITÀ_FRENESIA, game.getPlayers());
+                broadcastMessage(IL_SERVER_HA_SCELTO_DI_USARE_LA_MODALITA_FRENESIA, game.getPlayers());
             }
         }
 
@@ -235,7 +235,7 @@ public class Match implements Runnable, Serializable
                 new Timeout(Configuration.getInstance().getPlayerTurnSeconds(), TimeUnit.SECONDS, this);
             }
             else
-                broadcastMessage(active.getNick() + NON_ESEGUE_MOSSE_POICHÈ_NON_È_CONNESSO, game.getPlayers());
+                broadcastMessage(active.getNick() + NON_ESEGUE_MOSSE_POICHE_NON_E_CONNESSO, game.getPlayers());
 
             //Check if some cell's loot or weapons need to be refilled
             refillMap();
@@ -253,7 +253,7 @@ public class Match implements Runnable, Serializable
             //When the active player's turn finishes, we pick the next active player
             active = game.getNextPlayer(active);
 
-            broadcastMessage(È_IL_TURNO_DI + active.getNick(), game.getPlayers());
+            broadcastMessage(E_IL_TURNO_DI + active.getNick(), game.getPlayers());
 
             if(phase == GamePhase.FRENZY)
             {
@@ -630,7 +630,7 @@ public class Match implements Runnable, Serializable
                 game.getPlayer(killed.getReceivedDamage()[INDEX_OF_OVER_KILLER_IN_DAMAGES]).applyEffects(EffectsLambda.marks(1, killed));
             }
 
-            broadcastMessage(killed.getNick() + È_STATO_UCCISO_DA + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getActionPhrase(), game.getPlayers());
+            broadcastMessage(killed.getNick() + E_STATO_UCCISO_DA + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getActionPhrase(), game.getPlayers());
 
             //Reset damages
             for (int i = 0; i < NUMBER_OF_DAMAGES; i++)
@@ -815,7 +815,7 @@ public class Match implements Runnable, Serializable
                 ;
             }
         }
-        println(IL_GIOCO_È_TERMINATO);
+        println(IL_GIOCO_E_TERMINATO);
     }
 
     /**
@@ -860,12 +860,12 @@ public class Match implements Runnable, Serializable
      */
     public static void disconnectPlayer(Player pl, List<Player> players)
     {
-        Logger.getGlobal().log( Level.INFO, pl.getNick()+ SI_È_DISCONNESSO);
+        Logger.getGlobal().log( Level.INFO, pl.getNick()+ SI_E_DISCONNESSO);
         if(pl.getConn() != null)
             pl.getConn().cancelConnection();
         pl.setConn(null);
 
-        broadcastMessage(pl.getNick() + SI_È_DISCONNESSO, players);
+        broadcastMessage(pl.getNick() + SI_E_DISCONNESSO, players);
     }
 
     /**

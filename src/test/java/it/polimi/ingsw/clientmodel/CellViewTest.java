@@ -28,8 +28,8 @@ public class CellViewTest {
         CellView c = new RegularCellView(players, 2, sides, null);
 
         assertTrue(c.getPawns().contains(players.get(0)));
-        assertEquals(c.getSide(Direction.WEST), Side.NOTHING);
-        assertEquals(c.getRoomNumber(), 2);
+        assertEquals(Side.NOTHING, c.getSide(Direction.WEST));
+        assertEquals(2, c.getRoomNumber());
         assertFalse(c.hasSpawn(null));
     }
 

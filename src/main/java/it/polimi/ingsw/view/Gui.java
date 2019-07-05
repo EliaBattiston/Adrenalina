@@ -156,8 +156,7 @@ public class Gui extends Application{
                 }
 
                 //ANDREA: on my tiling window manager on linux, when one of these are called, the window is going to be resized
-                if(exchanger != null && exchanger.getLastRealInteraction() != null && exchanger.getLastRealInteraction() != Interaction.CHOOSEDIRECTION &&
-                        exchanger.getLastRealInteraction() != Interaction.CHOOSEROOM)
+                if(exchanger != null && exchanger.getLastRealInteraction() != null )
                     exchanger.resetLastRealInteraction();
             }
         });
