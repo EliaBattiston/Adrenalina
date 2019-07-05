@@ -488,6 +488,7 @@ public class FeasibleLambdaMap
 
     private static boolean possibleShoot(Player pl, Map map, int steps){
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
+        possible.add(pl.getPosition());
         List<Point> destinations = new ArrayList<>(possible);
 
         Point initialPosition = new Point(pl.getPosition());

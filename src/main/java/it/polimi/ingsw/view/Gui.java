@@ -806,7 +806,7 @@ public class Gui extends Application{
             exchanger.waitRequestIncoming();
 
             //handle the mustChoose
-            if(!exchanger.isMustChoose() && exchanger.needsPopup() && exchanger.getActualInteraction()!=Interaction.MOVEPLAYER ){
+            if(!exchanger.isMustChoose() && exchanger.needsPopup() && exchanger.getActualInteraction()!=Interaction.MOVEPLAYER && exchanger.getActualInteraction() != Interaction.LOG){
                 uiExec.execute(()->{
                     masterPane.getChildren().add(skipAction);
                     skipAction.setOnMousePressed(e->{
