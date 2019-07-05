@@ -26,4 +26,14 @@ public class TestGuiExchanger {
         ge.setActualInteraction(Interaction.NONE);
         assertEquals(ge.getLastRealInteraction(), Interaction.CHOOSEBASEACTION);
     }
+
+    /**
+     * Tests the Log inside the GuiExchanger class
+     */
+    @Test
+    public void testGuiExchangerLog(){
+        GuiExchanger ge = GuiExchanger.getInstance();
+
+        //assertEquals(ge.getMessage(), "");
+    }
 }
