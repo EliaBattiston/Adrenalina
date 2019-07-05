@@ -97,6 +97,11 @@ public class GuiInterface implements UserInterface{
             MatchView testView = initForTest();
             this.updateGame( testView );
 
+            List<Direction> possible = new ArrayList<>();
+            possible.add(Direction.NORTH);
+            possible.add(Direction.SOUTH);
+            this.chooseDirection(possible, true);
+
             Activities ac = Activities.getInstance();
 
             List<Action> available = ac.getAvailable(9, true, true);

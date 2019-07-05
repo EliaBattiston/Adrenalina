@@ -56,6 +56,8 @@ public class GuiExchanger {
      * @param mustChoose if the user must or not choose
      */
     public synchronized void setRequest(Interaction interaction, String message, Object request, boolean mustChoose){
+        //waitFreeToUse();
+
         instance.actualInteraction = interaction;
         instance.message = message;
         instance.request = request;
