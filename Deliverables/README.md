@@ -8,3 +8,4 @@
 
 ### 05/07 delivery
 * __Final report.pdf__: final report of project development
+* __Final UML.pdf__: collection of final UMLs of the project in a single document, `.svg` versions are available under the `Final UMLs` folder

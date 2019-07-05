@@ -3,8 +3,7 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.Interaction;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestGuiExchanger {
 
@@ -14,6 +13,8 @@ public class TestGuiExchanger {
     @Test
     public void testGuiExchangerSetRequest(){
         GuiExchanger ge = GuiExchanger.getInstance();
+
+        ge.setActualInteraction(Interaction.NONE);
 
         assertEquals(ge.getActualInteraction(), Interaction.NONE);
 
@@ -33,7 +34,18 @@ public class TestGuiExchanger {
     @Test
     public void testGuiExchangerLog(){
         GuiExchanger ge = GuiExchanger.getInstance();
+        assertEquals(ge.getLog(), "");
 
-        //assertEquals(ge.getMessage(), "");
+        ge.addToLog("Prova");
+        assertNotEquals(ge.getLog(), "Prova"); //It added also the datetime!
+        assertNotEquals(ge.getLog(), "");
+
+        ge.setActualInteraction(Interaction.SERVERIP);
+        ge.setNewLogIncoming();
+        assertEquals(ge.getActualInteraction(), Interaction.SERVERIP);
+
+        ge.setActualInteraction(Interaction.NONE);
+        ge.setNewLogIncoming();
+        assertEquals(ge.getActualInteraction(), Interaction.LOG);
     }
 }
