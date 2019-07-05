@@ -134,7 +134,7 @@ public class PlayerView implements Serializable
             if(p.getNick().equals(nick))
                 return p.getCharacter();
 
-        Logger.getGlobal().log(Level.INFO, "Error while looking for Fighter from nick");
+        Logger.getGlobal().log(Level.INFO, "Player not found!");
         return null;
     }
 }

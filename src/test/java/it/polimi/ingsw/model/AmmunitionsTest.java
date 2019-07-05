@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.clientmodel.AmmoView;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,5 +47,22 @@ public class AmmunitionsTest {
         assertEquals(ammo.getBlue(), ammoCopy.getBlue());
         assertEquals(ammo.getRed(), ammoCopy.getRed());
         assertEquals(ammo.getYellow(), ammoCopy.getYellow());
+    }
+
+    /**
+     * Tests the ammunitions class to AmmoView method2
+     */
+    @Test
+    public void testAmmoView(){
+        Ammunitions ammo = new Ammunitions();
+        ammo.add(Color.BLUE, 2);
+        ammo.add(Color.RED, 2);
+        ammo.add(Color.YELLOW, 3);
+
+        AmmoView view = ammo.getView();
+
+        assertEquals(view.getBlue(), ammo.getBlue());
+        assertEquals(view.getRed(), ammo.getRed());
+        assertEquals(view.getYellow(), ammo.getYellow());
     }
 }

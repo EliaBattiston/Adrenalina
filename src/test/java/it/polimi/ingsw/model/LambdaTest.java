@@ -18,7 +18,6 @@ public class LambdaTest {
     @Test
     public void TestDamageLambda()
     {
-        Map m = Map.jsonDeserialize(1);
         Player p = new Player("Andre", "Ciao ragazzi!", Fighter.BANSHEE);
         Player att = new Player("Ale", "Vi distrugg0o0o0o0o0o0o0o0!", Fighter.VIOLETTA);
 
@@ -31,8 +30,6 @@ public class LambdaTest {
             if(p.getReceivedDamage()[i] != null && p.getReceivedDamage()[i].equals(att.getNick()))
                 damages++;
         assertEquals(3, damages);
-
-
     }
 
     /**
@@ -41,7 +38,6 @@ public class LambdaTest {
     @Test
     public void TestMarksLambda()
     {
-        Map m = Map.jsonDeserialize(1);
         Player p = new Player("Andre", "Ciao ragazzi!", Fighter.BANSHEE);
         Player att = new Player("Ale", "Vi distrugg0o0o0o0o0o0o0o0!", Fighter.VIOLETTA);
         int damages = 0;

@@ -26,9 +26,7 @@ public class MapTest {
         RegularCell rc = new RegularCell( sides, 3);
         SpawnCell sc = new SpawnCell(sides, 3, Color.BLUE);
 
-        /**
-         * Check the correct instantiation of both Cell child classes
-         */
+        //Check the correct instantiation of both Cell child classes
         assertEquals(3, rc.getRoomNumber());
         assertEquals(3, sc.getRoomNumber());
 
@@ -53,9 +51,7 @@ public class MapTest {
         RegularCell rc = new RegularCell( sides, 3);
         SpawnCell sc = new SpawnCell(sides, 3, Color.BLUE);
 
-        /**
-         * Check the correct player insertion and deletion procedure in the cell
-         */
+        //Check the correct player insertion and deletion procedure in the cell
         Player pl = new Player("nickname", "whoaaaa", Fighter.DSTRUTTOR3);
         //Adding
         rc.addPawn(pl);

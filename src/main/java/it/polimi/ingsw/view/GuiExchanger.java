@@ -65,7 +65,7 @@ public class GuiExchanger {
 
     /**
      * Set the actual interaction, if it's a NONE one, it stops the timer
-     * @param actualInteraction whill be the new actual interaction
+     * @param actualInteraction will be the new actual interaction
      */
     public synchronized void setActualInteraction(Interaction actualInteraction) {
         this.lastRealInteraction = this.actualInteraction;

@@ -52,11 +52,10 @@ public class GameTest {
     }
 
     /**
-     * Check Ammunitions Class for edge cases
+     * Tests the ammunitions' class constructor
      */
     @Test
-    public void checkAmmunitionsClass()
-    {
+    public void testAmmunitionsConstructor(){
         Ammunitions a = new Ammunitions();
 
         //test initial value of all ammos are 1
@@ -73,6 +72,20 @@ public class GameTest {
         assertTrue(a.getRed() == 0);
         assertTrue(a.getBlue() == 0);
         assertTrue(a.getYellow() == 0);
+    }
+
+    /**
+     * Check Ammunitions Class for edge cases
+     */
+    @Test
+    public void checkAmmunitionsClass()
+    {
+        Ammunitions a = new Ammunitions();
+
+        //Emptying ammo
+        a.useRed(1);
+        a.useBlue(1);
+        a.useYellow(1);
 
         //can't get ammo if there's none
         assertFalse(a.useRed(1));
@@ -216,30 +229,24 @@ public class GameTest {
         Point p = null;
 
         //Correct instantiation of a point
-        try
-        {
+        try {
             p = new Point(1, 1);
+        } catch(WrongPointException e) {
+            fail();
         }
-        catch(WrongPointException e)
-        { fail();};
         assertEquals(1, p.getX());
         assertEquals(1, p.getY());
 
-
-
         //x value out of bounds, it shouldn't change the value from before
-        try
-        {
+        try {
             p.set(5, 3);
             fail();
-        }
-        catch(WrongPointException e)
+        } catch(WrongPointException e)
         {
             ;
         }
         assertEquals(1, p.getX());
         assertEquals(1, p.getY());
-
 
         //Negative y value, it shouldn't change the value from before
         try
