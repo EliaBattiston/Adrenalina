@@ -27,7 +27,7 @@ public class RMIConn implements Connection, Serializable
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
     @Override
-    public void updateGame(MatchView matchView) throws ClientDisconnectedException {
+    synchronized public void updateGame(MatchView matchView) throws ClientDisconnectedException {
         try {
             client.updateGame(matchView);
         }
@@ -44,7 +44,7 @@ public class RMIConn implements Connection, Serializable
      * @return Chosen action
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Action chooseAction(List<Action> available, boolean mustChoose) throws ClientDisconnectedException
+    synchronized public Action chooseAction(List<Action> available, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             Action lambda = client.chooseAction(available, mustChoose);
@@ -68,7 +68,7 @@ public class RMIConn implements Connection, Serializable
      * @return Chosen weapon
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) throws ClientDisconnectedException
+    synchronized public Weapon chooseWeapon(List<Weapon> available, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             Weapon chosen = client.chooseWeapon(available, mustChoose);
@@ -93,7 +93,7 @@ public class RMIConn implements Connection, Serializable
      * @return Chosen weapon
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) throws ClientDisconnectedException
+    synchronized public Weapon grabWeapon(List<Weapon> grabbable, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             Weapon chosen = client.grabWeapon(grabbable, mustChoose);
@@ -118,7 +118,7 @@ public class RMIConn implements Connection, Serializable
      * @return Weapon to be reloaded
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws ClientDisconnectedException
+    synchronized public Weapon reload(List<Weapon> reloadable, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             Weapon chosen = client.reload(reloadable, mustChoose);
@@ -143,7 +143,7 @@ public class RMIConn implements Connection, Serializable
      * @return Point where the player will be when he's done moving
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Point movePlayer(List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
+    synchronized public Point movePlayer(List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.movePlayer(destinations, mustChoose);
@@ -161,7 +161,7 @@ public class RMIConn implements Connection, Serializable
      * @return Chosen target
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Player chooseTarget(List<Player> targets, boolean mustChoose) throws ClientDisconnectedException
+    synchronized public Player chooseTarget(List<Player> targets, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             List<PlayerView> targetsViews = new ArrayList<>();
@@ -193,7 +193,7 @@ public class RMIConn implements Connection, Serializable
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
 
-    public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
+    synchronized public Point moveEnemy(Player enemy, List<Point> destinations, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.moveEnemy(enemy.getView(), destinations, mustChoose);
@@ -231,7 +231,7 @@ public class RMIConn implements Connection, Serializable
      * @return chosen room
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) throws ClientDisconnectedException {
+    synchronized public Integer chooseRoom(List<Integer> rooms, boolean mustChoose) throws ClientDisconnectedException {
         try {
             Integer room = client.chooseRoom(rooms, mustChoose);
             if(room == null)
@@ -250,7 +250,7 @@ public class RMIConn implements Connection, Serializable
      * @return chosen direction
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Direction chooseDirection(List<Direction> possible, boolean mustChoose) throws ClientDisconnectedException {
+    synchronized public Direction chooseDirection(List<Direction> possible, boolean mustChoose) throws ClientDisconnectedException {
         try {
             return client.chooseDirection(possible, mustChoose);
         }
@@ -267,7 +267,7 @@ public class RMIConn implements Connection, Serializable
      * @return chosen position
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Point choosePosition(List<Point> positions, boolean mustChoose) throws ClientDisconnectedException {
+    synchronized public Point choosePosition(List<Point> positions, boolean mustChoose) throws ClientDisconnectedException {
         try {
             return client.choosePosition(positions, mustChoose);
         }
@@ -281,7 +281,7 @@ public class RMIConn implements Connection, Serializable
      * @return user's nickname
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public String getNickname() throws ClientDisconnectedException {
+    synchronized public String getNickname() throws ClientDisconnectedException {
         try {
             return client.getNickname();
         }
@@ -295,7 +295,7 @@ public class RMIConn implements Connection, Serializable
      * @return user's effect phrase
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public String getPhrase() throws ClientDisconnectedException {
+    synchronized public String getPhrase() throws ClientDisconnectedException {
         try {
             return client.getPhrase();
         }
@@ -310,7 +310,7 @@ public class RMIConn implements Connection, Serializable
      * @return user's fighter
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Fighter getFighter(List<Fighter> available) throws ClientDisconnectedException {
+    synchronized public Fighter getFighter(List<Fighter> available) throws ClientDisconnectedException {
         try {
             return client.getFighter(available);
         }
@@ -324,7 +324,7 @@ public class RMIConn implements Connection, Serializable
      * @return skulls number
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Integer getSkullNum() throws ClientDisconnectedException {
+    synchronized public Integer getSkullNum() throws ClientDisconnectedException {
         try {
             return client.getSkullNum();
         }
@@ -340,7 +340,7 @@ public class RMIConn implements Connection, Serializable
      * @return Chosen weapon
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) throws ClientDisconnectedException
+    synchronized public Weapon discardWeapon(List<Weapon> inHand, boolean mustChoose) throws ClientDisconnectedException
     {
         try {
             return client.discardWeapon(inHand, mustChoose);
@@ -355,7 +355,7 @@ public class RMIConn implements Connection, Serializable
      * @return Number of the chosen map
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Integer chooseMap() throws ClientDisconnectedException {
+    synchronized public Integer chooseMap() throws ClientDisconnectedException {
         try {
             return client.chooseMap();
         }
@@ -369,7 +369,7 @@ public class RMIConn implements Connection, Serializable
      * @return True for final Frenzy mode, false elsewhere
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Boolean chooseFrenzy() throws ClientDisconnectedException {
+    synchronized public Boolean chooseFrenzy() throws ClientDisconnectedException {
         try {
             return client.chooseFrenzy();
         }
@@ -385,7 +385,7 @@ public class RMIConn implements Connection, Serializable
      * @return Chosen power
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException {
+    synchronized public Power choosePower(List<Power> inHand, boolean mustChoose) throws ClientDisconnectedException {
         try {
             Power chosen = client.choosePower(inHand, mustChoose);
             if(chosen == null)
@@ -404,7 +404,7 @@ public class RMIConn implements Connection, Serializable
      * @return Color of the chosen ammo
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public Color chooseAmmo(List<Color> available, boolean mustChoose) throws ClientDisconnectedException {
+    synchronized public Color chooseAmmo(List<Color> available, boolean mustChoose) throws ClientDisconnectedException {
         try {
             return client.chooseAmmo(available, mustChoose);
         }
@@ -418,7 +418,7 @@ public class RMIConn implements Connection, Serializable
      * @param winnerList Ordered players' list
      * @throws ClientDisconnectedException In case of client unexpected disconnection
      */
-    public void endGame(List<Player> winnerList) throws ClientDisconnectedException {
+    synchronized public void endGame(List<Player> winnerList) throws ClientDisconnectedException {
         try {
             List<PlayerView> winners = new ArrayList<>();
             for(Player p : winnerList)
@@ -438,7 +438,7 @@ public class RMIConn implements Connection, Serializable
      * @param payload Message payload
      * @throws ClientDisconnectedException If the client disconnects
      */
-    public void sendMessage(String payload) throws ClientDisconnectedException {
+    synchronized public void sendMessage(String payload) throws ClientDisconnectedException {
         try {
             client.sendMessage(payload);
         }
@@ -451,7 +451,7 @@ public class RMIConn implements Connection, Serializable
      * Returns true indifferently, needed from the server to ping the client
      * @throws ClientDisconnectedException in case of client unexpected disconnection
      */
-    public void clientPing() throws ClientDisconnectedException {
+    synchronized public void clientPing() throws ClientDisconnectedException {
         try {
             client.clientPing();
         }
@@ -463,7 +463,7 @@ public class RMIConn implements Connection, Serializable
     /**
      * Cancels current connection
      */
-    public void cancelConnection() {
+    synchronized public void cancelConnection() {
         //Method called by server to interrupt connection, no need to do anything in RMI
     }
 

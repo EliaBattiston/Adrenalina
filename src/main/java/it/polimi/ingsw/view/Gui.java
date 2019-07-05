@@ -806,7 +806,7 @@ public class Gui extends Application{
             exchanger.waitRequestIncoming();
 
             //handle the mustChoose
-            if(!exchanger.isMustChoose() && exchanger.needsPopup() && exchanger.getActualInteraction()!=Interaction.MOVEPLAYER ){
+            if(!exchanger.isMustChoose() && exchanger.needsPopup() && exchanger.getActualInteraction()!=Interaction.MOVEPLAYER && exchanger.getActualInteraction() != Interaction.LOG){
                 uiExec.execute(()->{
                     masterPane.getChildren().add(skipAction);
                     skipAction.setOnMousePressed(e->{
@@ -896,12 +896,14 @@ public class Gui extends Application{
                     });
                     break;
                 case LOG:
-                    if(!exchanger.getMessage().equalsIgnoreCase("Server disconnesso inaspettatamente, rilancia il client e riprova\n")) {
+                    if(!exchanger.isServerDown()){
+                    //if(!exchanger.getMessage().equalsIgnoreCase("Server disconnesso inaspettatamente, rilancia il client e riprova\n")) {
 
-                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+                        /*DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
                         String logMessage = dtf.format(now) + " " + exchanger.getMessage();
-                        loggedText = logMessage + "\n" + loggedText;
+                        loggedText = logMessage + "\n" + loggedText;*/
+                        loggedText = exchanger.getLog();
                         if (logArea != null)
                             uiExec.execute(() -> logArea.setText(loggedText));
                         if (match == null) {
