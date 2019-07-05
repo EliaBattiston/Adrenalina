@@ -2,6 +2,8 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.Interaction;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 /**
@@ -16,9 +18,13 @@ public class GuiExchanger {
     private String message;
     private boolean mustChoose;
     private Thread myTimer;
+    private String logMessage;
+    private boolean serverDown;
 
     private GuiExchanger(){
         actualInteraction = Interaction.NONE;
+        logMessage = "";
+        serverDown = false;
     }
 
     /**
@@ -77,6 +83,13 @@ public class GuiExchanger {
                 myTimer.interrupt();
             setMyTimer(null);
             notifyAll(); //notify the GuiInterface
+        }
+    }
+
+    public synchronized void setNewLogIncoming(){
+        if(actualInteraction == Interaction.WAITINGUSER || actualInteraction == Interaction.NONE) {
+            actualInteraction = Interaction.LOG;
+            notifyAll();
         }
     }
 
@@ -172,5 +185,26 @@ public class GuiExchanger {
 
     public synchronized void setMyTimer(Thread myTimer) {
         this.myTimer = myTimer;
+    }
+
+    /**
+     * Add a new string to the log before the old log
+     * @param newLogString the new string to be added
+     */
+    public synchronized void addToLog(String newLogString) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        this.logMessage = dtf.format(now) + " " + newLogString + "\n" +  " " + this.logMessage;
+
+        if(newLogString.equalsIgnoreCase("Server disconnesso inaspettatamente, rilancia il client e riprova\n"))
+            this.serverDown = true;
+    }
+
+    public synchronized String getLog(){
+        return this.logMessage;
+    }
+
+    public boolean isServerDown() {
+        return serverDown;
     }
 }
