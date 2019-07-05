@@ -488,7 +488,7 @@ public class FeasibleLambdaMap
 
     private static boolean possibleShoot(Player pl, Map map, int steps){
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
-        possible.add(pl.getPosition());
+        possible.add( new Point(pl.getPosition()) );
         List<Point> destinations = new ArrayList<>(possible);
 
         Point initialPosition = new Point(pl.getPosition());
@@ -500,8 +500,9 @@ public class FeasibleLambdaMap
 
             //If no weapon has suitable action, we can't propose to move to this position
             if( pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w -> w.getBase().isFeasible(pl, map, null)) &&
-                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative().isFeasible(pl, map, null) && ActionLambdaMap.enoughAmmo(pl, w.getAlternative().getCost(), true) ) )
-                    destinations.remove(p);
+                    pl.getWeapons().stream().filter(Weapon::isLoaded).noneMatch(w-> w.getAlternative() != null && w.getAlternative()
+                            .isFeasible(pl, map, null) && ActionLambdaMap.enoughAmmo(pl, w.getAlternative().getCost(), true) ) )
+                destinations.remove(p);
         }
 
         //Return the player to its real position

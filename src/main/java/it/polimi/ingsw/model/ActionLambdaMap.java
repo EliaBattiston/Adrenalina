@@ -956,7 +956,7 @@ public class ActionLambdaMap {
     private static void runToLoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
-        possible.add(pl.getPosition());
+        possible.add(new Point (pl.getPosition()));
         List<Point> destinations = new ArrayList<>(possible);
 
         for(Point p : possible)
@@ -988,7 +988,7 @@ public class ActionLambdaMap {
     private static void runToShoot(Player pl, Map map, int steps, List<Player> messageReceivers) throws ClientDisconnectedException
     {
         List<Point> possible = Map.possibleMovements(pl.getPosition(), steps, map);
-        possible.add(pl.getPosition());
+        possible.add(new Point(pl.getPosition()));
         List<Point> destinations = new ArrayList<>(possible);
 
         Point initialPosition = new Point(pl.getPosition());
