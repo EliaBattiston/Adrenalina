@@ -25,8 +25,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -36,8 +34,6 @@ import java.util.stream.Collectors;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
-//todo move all the strings printed in final Strings
-//todo move the ratios in defines
 /**
  * The Gui class that extends the JavaFX Application
  */

@@ -2,14 +2,10 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.clientmodel.MatchView;
 import it.polimi.ingsw.clientmodel.PlayerView;
-import it.polimi.ingsw.controller.GamePhase;
 import it.polimi.ingsw.controller.Interaction;
 import it.polimi.ingsw.model.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

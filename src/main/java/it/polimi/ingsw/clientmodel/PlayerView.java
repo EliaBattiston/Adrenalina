@@ -5,8 +5,6 @@ import it.polimi.ingsw.model.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PlayerView implements Serializable
 {
@@ -134,7 +132,6 @@ public class PlayerView implements Serializable
             if(p.getNick().equals(nick))
                 return p.getCharacter();
 
-        Logger.getGlobal().log(Level.INFO, "Player not found!");
         return null;
     }
 }
