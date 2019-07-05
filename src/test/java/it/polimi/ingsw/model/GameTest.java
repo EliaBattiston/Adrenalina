@@ -139,6 +139,23 @@ public class GameTest {
     }
 
     /**
+     * Tests that the powers have been removed from the player class after calling the method clearForView
+     */
+    @Test
+    public void testPlayerClearForView(){
+        Player p = new Player("Andre", "try", Fighter.DSTRUTTOR3);
+        p.applyEffects((damage, marks, position, weapons, powers, ammo) -> {
+            powers[0] = new Power(1, "try", null, null);
+        });
+
+        assertEquals(p.getPowers().size(), 1);
+
+        p.clearForView();
+
+        assertNull(p.getPowers());
+    }
+
+    /**
      * Check how the player gets modified with PlayerLambdas
      */
     @Test
@@ -345,5 +362,24 @@ public class GameTest {
         {
             fail();
         }
+    }
+
+    /**
+     * Tests the removePlayer methods
+     */
+    @Test
+    public void testRemovePlayerFromGame(){
+        Game g =  new Game(5, new Map(), null, null, null);
+        Player p1 = new Player("ERap320", "Yay!", Fighter.DSTRUTTOR3);
+
+        g.addPlayer(p1);
+        assertTrue(g.getPlayers().contains(p1));
+        g.removePlayer(p1);
+        assertFalse(g.getPlayers().contains(p1));
+
+        g.addPlayer(p1);
+        assertTrue(g.getPlayers().contains(p1));
+        g.removePlayer(p1.getNick());
+        assertFalse(g.getPlayers().contains(p1));
     }
 }

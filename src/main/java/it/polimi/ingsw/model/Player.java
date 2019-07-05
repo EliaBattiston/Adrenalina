@@ -243,6 +243,9 @@ public class Player implements Serializable
      */
     public List<Power> getPowers()
     {
+        if(powers == null)
+            return null;
+
         List<Power> list = new ArrayList<>(Arrays.asList(powers));
         while(list.contains(null))
             list.remove(null);

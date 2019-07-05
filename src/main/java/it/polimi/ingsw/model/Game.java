@@ -106,6 +106,7 @@ public class Game implements Serializable {
         for(Player p: players) {
             if(p.getNick().equals(nickname)) {
                 removePlayer(p);
+                return ;
             }
         }
     }

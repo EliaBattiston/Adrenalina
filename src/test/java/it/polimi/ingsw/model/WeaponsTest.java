@@ -14,7 +14,7 @@ import java.util.Collections;
 public class WeaponsTest {
 
     /**
-     * Test the correct behaviour of Distruttore
+     * Test the correct behaviour w4-alof Distruttore
      * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
      */
     @Test
@@ -330,6 +330,36 @@ public class WeaponsTest {
         //Make memory variable for some actions and execute
         Player[] memory = new Player[2];
         ActionLambdaMap.getLambda("w4-b").execute(me, game.getMap(), memory);
+
+        //Count damages
+        int damages = Collections.frequency(Arrays.asList( enemy.getReceivedDamage() ), me.getNick());
+        int marks = Collections.frequency(enemy.getReceivedMarks(), me.getNick());
+
+        assertEquals(2, damages);
+        assertEquals(0, marks);
+    }
+
+    /**
+     * Test the correct behaviour of Fucile al Plasma
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
+     */
+    @Test
+    public void TestAltFucilePlasma() throws ClientDisconnectedException
+    {
+        //Muovi di 1 o 2 quadrati e dai 2 danni a 1 bersaglio che puoi vedere.
+
+        //Initialize test game
+        Game game = GameTest.initializeGameForTest(2);
+        Player me = game.getPlayers().get(0);
+        Player enemy = game.getPlayers().get(1);
+
+        //Position test players
+        me.applyEffects(EffectsLambda.move(me, new Point(0,0), game.getMap()));
+        enemy.applyEffects(EffectsLambda.move(enemy, new Point(1,0), game.getMap()));
+
+        //Make memory variable for some actions and execute
+        Player[] memory = new Player[2];
+        ActionLambdaMap.getLambda("w4-al").execute(me, game.getMap(), memory);
 
         //Count damages
         int damages = Collections.frequency(Arrays.asList( enemy.getReceivedDamage() ), me.getNick());
@@ -1088,6 +1118,36 @@ public class WeaponsTest {
         //Make memory variable for some actions and execute
         Player[] memory = new Player[2];
         ActionLambdaMap.getLambda("w16-b").execute(me, game.getMap(), memory);
+
+        //Count damages
+        int damages = Collections.frequency(Arrays.asList( enemy.getReceivedDamage() ), me.getNick());
+        int marks = Collections.frequency(enemy.getReceivedMarks(), me.getNick());
+
+        assertEquals(2, damages);
+        assertEquals(0, marks);
+    }
+
+    /**
+     * Test the correct behaviour of Spada Fotonica
+     * @throws ClientDisconnectedException Will never be thrown by ConnectionTest
+     */
+    @Test
+    public void TestAltSpadaFotonica() throws ClientDisconnectedException
+    {
+        //Muovi di 1 o 2 quadrati e dai 2 danni a 1 bersaglio nel quadrato in cui ti trovi.
+
+        //Initialize test game
+        Game game = GameTest.initializeGameForTest(2);
+        Player me = game.getPlayers().get(0);
+        Player enemy = game.getPlayers().get(1);
+
+        //Position test players
+        me.applyEffects(EffectsLambda.move(me, new Point(0,0), game.getMap()));
+        enemy.applyEffects(EffectsLambda.move(enemy, new Point(1,0), game.getMap()));
+
+        //Make memory variable for some actions and execute
+        Player[] memory = new Player[2];
+        ActionLambdaMap.getLambda("w16-al").execute(me, game.getMap(), memory);
 
         //Count damages
         int damages = Collections.frequency(Arrays.asList( enemy.getReceivedDamage() ), me.getNick());
