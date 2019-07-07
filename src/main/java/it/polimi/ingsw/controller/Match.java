@@ -222,13 +222,13 @@ public class Match implements Runnable, Serializable
             this.gson = new GsonBuilder().registerTypeAdapter(Cell.class, new CellAdapter()).create();
         }
 
+        if(activities == null)
+            activities = Activities.getInstance();
+
         updateViews();
 
         while(phase != GamePhase.ENDED)
         {
-            if(game.getPlayers().stream().map(Player::getConn).filter(Objects::nonNull).count() < Configuration.getInstance().getMinPlayers())
-                phase = GamePhase.ENDED;
-
             if(active.getConn() != null)
             {
                 //Run the player's turn until the timeout runs out
@@ -285,6 +285,9 @@ public class Match implements Runnable, Serializable
             {
                 actionsNumber = REGULAR_ACTIONS_NUMBER;
             }
+
+            if(game.getPlayers().stream().map(Player::getConn).filter(Objects::nonNull).count() < Configuration.getInstance().getMinPlayers())
+                phase = GamePhase.ENDED;
 
             //If the game ended make the last points calculation
             if(phase == GamePhase.ENDED)
@@ -630,14 +633,6 @@ public class Match implements Runnable, Serializable
                 game.getPlayer(killed.getReceivedDamage()[INDEX_OF_OVER_KILLER_IN_DAMAGES]).applyEffects(EffectsLambda.marks(1, killed));
             }
 
-            broadcastMessage(killed.getNick() + E_STATO_UCCISO_DA + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getActionPhrase(), game.getPlayers());
-
-            //Reset damages
-            for (int i = 0; i < NUMBER_OF_DAMAGES; i++)
-            {
-                killed.getReceivedDamage()[i] = null;
-            }
-
             //Check if it's time for frenzy mode
             if(nextSkull == 0)
             {
@@ -652,6 +647,14 @@ public class Match implements Runnable, Serializable
             frenzyKills.add( game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]) );
             if(killed.getReceivedDamage()[INDEX_OF_OVER_KILLER_IN_DAMAGES] != null)
                 frenzyKills.add( game.getPlayer( killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES] ) );
+        }
+
+        broadcastMessage(killed.getNick() + E_STATO_UCCISO_DA + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getNick() + "! " + game.getPlayer(killed.getReceivedDamage()[INDEX_OF_KILLER_IN_DAMAGES]).getActionPhrase(), game.getPlayers());
+
+        //Reset damages
+        for (int i = 0; i < NUMBER_OF_DAMAGES; i++)
+        {
+            killed.getReceivedDamage()[i] = null;
         }
 
         killed.setSpawned(false);

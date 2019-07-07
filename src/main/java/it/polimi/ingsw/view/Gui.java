@@ -268,9 +268,9 @@ public class Gui extends Application{
 
         pane.getChildren().addAll( canvas, infoTextCanvas,  myWeaponsPane, myPowersPane, weaponsLoot, mapLoot, cellsClick, pawns, info, logArea);
 
-        if(runAction!=null)//check if one it's initialized all are
+        if(!match.getMyPlayer().getFrenzyBoard())//check if one it's initialized all are
             pane.getChildren().addAll(runAction, pickAction, shootAction, powerAction, adrPickAction, adrShootAction);
-        else if(frenzyRunTreePick != null)
+        else
             pane.getChildren().addAll(frenzyRunFour, frenzyRunReloadShoot,frenzyRunTreePick,frenzyRunTwoPick,frenzyRunTwoPickShoot, powerAction);
 
 
@@ -681,8 +681,8 @@ public class Gui extends Application{
 
             double secondActionsY = ((float)184)/ 270 * height;
             powerAction = new GuiClickableObjectNoImage(x + ((float)134)/1121*width, y+actionsY + 6*dimMult, actionsWidth, actionsHeight);
-            frenzyRunTwoPickShoot = new GuiClickableObjectNoImage(x, y+secondActionsY+actionsY, actionsWidth, actionsHeight);
-            frenzyRunTreePick = new GuiClickableObjectNoImage(x, y+secondActionsY+2*actionsY, actionsWidth, actionsHeight);
+            frenzyRunTwoPickShoot = new GuiClickableObjectNoImage(x, y+secondActionsY, actionsWidth, actionsHeight);
+            frenzyRunTreePick = new GuiClickableObjectNoImage(x, y+secondActionsY+actionsY, actionsWidth, actionsHeight);
         }
     }
 
@@ -916,7 +916,7 @@ public class Gui extends Application{
                     if(!serverDisconnectedOnHisOwn)
                         uiExec.execute(()-> settingsMessage("Disconnesso dal server per inattività"));
                     else
-                        uiExec.execute(()-> settingsMessage(exchanger.getMessage()));
+                        uiExec.execute(()-> settingsMessage("Server disconnesso inaspettatamente"));
                     exchanger.setActualInteraction(Interaction.WAITINGUSER);
                     break;
                 case ENDGAME:
